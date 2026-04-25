@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&amp;family=Zilla+Slab:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#f9f9ff",
+                    "tertiary-container": "#b95700",
+                    "surface": "#f9f9ff",
+                    "on-error": "#ffffff",
+                    "secondary-container": "#dce0e4",
+                    "surface-container-low": "#f2f3fc",
+                    "inverse-primary": "#a7c8ff",
+                    "tertiary-fixed-dim": "#ffb68b",
+                    "on-background": "#181c22",
+                    "on-secondary-fixed-variant": "#43474b",
+                    "surface-tint": "#005eb2",
+                    "on-secondary-fixed": "#171c1f",
+                    "on-primary-fixed-variant": "#004788",
+                    "on-tertiary-fixed-variant": "#753400",
+                    "surface-container-highest": "#e0e2eb",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#d5e3ff",
+                    "surface-variant": "#e0e2eb",
+                    "surface-dim": "#d8dae2",
+                    "secondary-fixed": "#dfe3e7",
+                    "surface-container-high": "#e6e8f0",
+                    "on-tertiary-container": "#fff9f7",
+                    "on-secondary": "#ffffff",
+                    "surface-bright": "#f9f9ff",
+                    "on-surface": "#181c22",
+                    "outline-variant": "#c1c6d4",
+                    "on-surface-variant": "#414752",
+                    "tertiary": "#934400",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#a7c8ff",
+                    "on-primary-container": "#faf9ff",
+                    "secondary": "#5a5f62",
+                    "tertiary-fixed": "#ffdbc8",
+                    "on-tertiary-fixed": "#321300",
+                    "on-error-container": "#93000a",
+                    "inverse-on-surface": "#eff0f9",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#c3c7cb",
+                    "on-primary-fixed": "#001b3c",
+                    "on-tertiary": "#ffffff",
+                    "primary": "#005aab",
+                    "outline": "#717784",
+                    "on-secondary-container": "#5e6367",
+                    "primary-container": "#1173d4",
+                    "inverse-surface": "#2d3037",
+                    "surface-container": "#ecedf6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "p-lg": "24px",
+                    "gap-grid": "16px",
+                    "p-md": "16px",
+                    "header-height": "64px",
+                    "p-sm": "8px"
+            },
+            "fontFamily": {
+                    "alert-text": ["Public Sans"],
+                    "card-title": ["Public Sans"],
+                    "body-main": ["Public Sans"],
+                    "display-header": ["Zilla Slab"]
+            },
+            "fontSize": {
+                    "alert-text": ["16px", {"lineHeight": "1.25", "fontWeight": "700"}],
+                    "card-title": ["18px", {"lineHeight": "20px", "fontWeight": "700"}],
+                    "body-main": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-header": ["24px", {"lineHeight": "32px", "letterSpacing": "0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-main antialiased min-h-screen flex flex-col">
+<header class="bg-white dark:bg-slate-900 shadow-md docked full-width top-0 border-b-2 border-blue-700 dark:border-blue-500 z-50 sticky">
+<div class="flex justify-between items-center w-full max-w-7xl mx-auto px-8 h-16">
+<div class="text-2xl font-black text-blue-800 dark:text-blue-100 uppercase font-sans antialiased tracking-tight">
+                Guia Cidadão
+            </div>
+<nav class="hidden md:flex items-center gap-8 h-full">
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 font-sans font-semibold tracking-tight h-full flex items-center" href="#">Home</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 font-sans font-semibold tracking-tight h-full flex items-center" href="#">Relatar</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 font-sans font-semibold tracking-tight h-full flex items-center" href="#">Votos</a>
+<a class="text-blue-800 dark:text-blue-300 border-b-4 border-blue-800 pb-1 font-sans font-semibold tracking-tight h-full flex items-center" href="#">Petições</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-600 hover:bg-slate-50 transition-colors duration-200 active:scale-95">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="p-2 text-slate-600 hover:bg-slate-50 transition-colors duration-200 active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-600 hover:bg-slate-50 transition-colors duration-200 active:scale-95">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+<button class="bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                    Entrar
+                </button>
+</div>
+</div>
+</header>
+<main class="flex-grow flex flex-col md:flex-row max-h-[calc(100vh-64px)] overflow-hidden">
+<aside class="w-full md:w-[400px] lg:w-[448px] bg-surface flex flex-col border-r border-outline-variant z-40 overflow-hidden">
+<div class="p-md bg-white shadow-sm space-y-4">
+<h1 class="font-display-header text-display-header text-primary">Comércio Local</h1>
+<div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
+<button class="flex-none px-4 py-2 bg-primary text-on-primary rounded-full font-alert-text text-sm transition-transform active:scale-95">
+                        Todos
+                    </button>
+<button class="flex-none px-4 py-2 bg-secondary-container text-on-secondary-container rounded-full font-alert-text text-sm hover:bg-outline-variant transition-colors active:scale-95">
+                        Restaurantes
+                    </button>
+<button class="flex-none px-4 py-2 bg-secondary-container text-on-secondary-container rounded-full font-alert-text text-sm hover:bg-outline-variant transition-colors active:scale-95">
+                        Farmácias
+                    </button>
+<button class="flex-none px-4 py-2 bg-secondary-container text-on-secondary-container rounded-full font-alert-text text-sm hover:bg-outline-variant transition-colors active:scale-95">
+                        Mercados
+                    </button>
+<button class="flex-none px-4 py-2 bg-secondary-container text-on-secondary-container rounded-full font-alert-text text-sm hover:bg-outline-variant transition-colors active:scale-95">
+                        Serviços
+                    </button>
+</div>
+</div>
+<div class="flex-grow overflow-y-auto p-md space-y-gap-grid bg-background">
+<div class="bg-surface-container-lowest p-md border-b-2 border-primary hover:border-b-4 transition-all group cursor-pointer shadow-sm rounded-lg">
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Café do Centro" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" data-alt="cozy local cafe interior with warm lighting wooden furniture and plants on shelves artisan atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgoF0AjE7YXovOMW0JnKAFL8JNI3sfGVfTMpRvXwAcifho46HUbJArchNnFPcOA_uZxKIXbOMvN0WXhc8tCDlH_BxLDzBYm2FLhnfd6T_f9ASCFaGA3igeMhY2d23g4iEQ4mntCPnlWqiGdn5d-uaTxIyGLH40X0X4kNtmTZETl5XEm9NIxN7iOLg2-usJbXqERZLKfoxsLXGV-VJqKdo_HXQw3EavpknwkUcJD1Ch7lN_lZWbjTcJdzEKE1U1pKcxljoFtOcId_A"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-card-title text-card-title text-on-surface mb-1">Café do Centro</h3>
+<div class="flex items-center gap-1 text-tertiary-container mb-2">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold text-sm">4.8</span>
+<span class="text-on-surface-variant text-xs ml-1">(120 avaliações)</span>
+</div>
+<p class="text-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-base">location_on</span>
+                                Rua das Flores, 123
+                            </p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md border-b-2 border-primary hover:border-b-4 transition-all group cursor-pointer shadow-sm rounded-lg">
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Mercado Real" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" data-alt="well organized modern grocery store aisle with fresh produce and bright clean interior lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRKymDDktW7TjRrREn19EeTLEDNSswm6CYrxjeOl1alUl1YBFwxYIpjCVumWmqSXE1Sms6j7qGaZT8A4ry6khSTf3DuDzSrwMy4woykgLKXCForGDhD1mzdNELTkb4TFfSi-ME8lwu9sjab-aK8TTOrg-UPdG2JALmIBN3jffGMYK6IojXT0PABzW4ldI6gn2Wsep9ea5C0KjvK7Mwezxqad_yk8ZHRcoeYUtnkM_zKYbGWRnrz6kCYK8fuQGD5dOwE0rfZvMLfqw"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-card-title text-card-title text-on-surface mb-1">Mercado Real</h3>
+<div class="flex items-center gap-1 text-tertiary-container mb-2">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold text-sm">4.5</span>
+<span class="text-on-surface-variant text-xs ml-1">(340 avaliações)</span>
+</div>
+<p class="text-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-base">location_on</span>
+                                Av. Principal, 450
+                            </p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md border-b-2 border-primary hover:border-b-4 transition-all group cursor-pointer shadow-sm rounded-lg">
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Farmácia Vida" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" data-alt="modern pharmacy interior with white shelves clinical lighting and organized healthcare products" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-2dSiFL7yEVnRptO2NLvgz1QbU8jUe5pDyg6SikQ1SRbqfXctFlBg_hzdzOOag1R2AHpHz1E1Rf4aRGqIB6qCj3QTkSAT67dkG5zZvZLtX56CxJNgkKSMfJv9Rk7CUizTnH2fIz_RSDrlFGp5O83Q31UWyDgkttTZlp8pLFdIwcxRhnDTLr3GDvwD6pVlh8SHu_bme-xFxFnFaO3-4uT832zslEnFlTefDGlcKZ5rWtmJ9Hp4w0-QYy1LPf7kS653F9mOGYt5baQ"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-card-title text-card-title text-on-surface mb-1">Farmácia Vida</h3>
+<div class="flex items-center gap-1 text-tertiary-container mb-2">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold text-sm">4.9</span>
+<span class="text-on-surface-variant text-xs ml-1">(89 avaliações)</span>
+</div>
+<p class="text-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-base">location_on</span>
+                                Rua Sete de Setembro, 88
+                            </p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md border-b-2 border-primary hover:border-b-4 transition-all group cursor-pointer shadow-sm rounded-lg">
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Cantina Bella" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" data-alt="upscale italian restaurant dining room with elegant table settings and atmospheric warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdohaRAuE-WTcpzKVnLga9QTrLGFKGUFCFgMossAMgX73HjQRBnTR0GyoJixk7-8pO9jEFSw9u8flo13N9QbUATKdm_m3hYDiOfth5wcfiuHHRcPGKy2zCwk19MTrelsFg1wpv1bgnEQSiJ2XDgoGUE9Xkc_0OnI6BvFwyX-NBDqWpSY_sWKQLMvvN7d6ipRui0Vzdp6mnoyLY0IpSd57Hgvy_7HZXIDJ-rN3V6TonCR67ChdIT_b0I90ZNvujG95WyV4or4o0QOk"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-card-title text-card-title text-on-surface mb-1">Cantina Bella</h3>
+<div class="flex items-center gap-1 text-tertiary-container mb-2">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold text-sm">4.7</span>
+<span class="text-on-surface-variant text-xs ml-1">(215 avaliações)</span>
+</div>
+<p class="text-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-base">location_on</span>
+                                Praça da Matriz, 12
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<section class="flex-grow relative h-[400px] md:h-full bg-surface-dim">
+<div class="absolute inset-0 z-0">
+<img alt="Mapa de Comércio" class="w-full h-full object-cover" data-alt="top-down satellite view of a city map with stylized blue and gray vector aesthetic including pins and highlights" data-location="Curitiba" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPb7czVMd9yuhGX07Ul44CFs86FZxRWv6xRUQcz85B1AgeFkVrysrZxFKmu8RxEPEPS29y7Ec9XeAZOou2vAuDjIeHLOIp6kwa_266U9MVPXxTqFj_h-Bb9i49nSx0sAS6VRn2-u6Ee1gLI3oKPFtbtA8ljvOqDe3w2Mbir7WcXDEGJsyQ2NthxEHM0-W-BQyMegBSF3mwRUG4j2ZTfCNeLSPf3Kt1_BIoSm6g-CVp8CrtCnFyQMBtJg8y3hGr3Z-848qIe2fyHM0"/>
+<div class="absolute top-1/4 left-1/3 group cursor-pointer">
+<div class="bg-primary text-white p-2 rounded-full shadow-lg border-2 border-white scale-110 hover:scale-125 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_cafe</span>
+</div>
+<div class="absolute top-10 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+<p class="text-xs font-bold text-on-surface">Café do Centro</p>
+</div>
+</div>
+<div class="absolute top-1/2 left-2/3 group cursor-pointer">
+<div class="bg-primary text-white p-2 rounded-full shadow-lg border-2 border-white scale-110 hover:scale-125 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+</div>
+<div class="absolute top-10 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+<p class="text-xs font-bold text-on-surface">Mercado Real</p>
+</div>
+</div>
+<div class="absolute bottom-1/3 left-1/2 group cursor-pointer">
+<div class="bg-primary text-white p-2 rounded-full shadow-lg border-2 border-white scale-110 hover:scale-125 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+</div>
+<div class="absolute top-10 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+<p class="text-xs font-bold text-on-surface">Farmácia Vida</p>
+</div>
+</div>
+</div>
+<div class="absolute bottom-8 right-8 flex flex-col gap-2 z-10">
+<button class="w-12 h-12 bg-white shadow-lg rounded-lg flex items-center justify-center text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-12 h-12 bg-white shadow-lg rounded-lg flex items-center justify-center text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<button class="w-12 h-12 bg-primary text-on-primary shadow-lg rounded-lg flex items-center justify-center hover:opacity-90 transition-opacity mt-4">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+</section>
+</main>
+<footer class="bg-slate-50 dark:bg-slate-950 border-t-2 border-slate-200 dark:border-slate-800 z-50">
+<div class="flex flex-col md:flex-row justify-between items-center w-full max-w-7xl mx-auto px-8 py-12 gap-4">
+<div class="text-lg font-bold text-slate-700 dark:text-slate-300">
+                © 2024 Guia Cidadão - Portal da Transparência e Serviços Municipais
+            </div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-all font-sans text-sm" href="#">Sobre o Portal</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-all font-sans text-sm" href="#">Privacidade</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-all font-sans text-sm" href="#">Termos de Uso</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-all font-sans text-sm" href="#">Ouvidoria</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-all font-sans text-sm" href="#">Contato</a>
+</div>
+<div class="flex gap-4">
+<button class="text-slate-500 hover:text-blue-600 transition-opacity duration-200 hover:opacity-80">
+<span class="material-symbols-outlined">language</span>
+</button>
+<button class="text-slate-500 hover:text-blue-600 transition-opacity duration-200 hover:opacity-80">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+</footer>
+</body></html>

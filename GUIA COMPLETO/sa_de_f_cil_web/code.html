@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&amp;family=Zilla+Slab:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#f9f9ff",
+                    "tertiary-container": "#b95700",
+                    "surface": "#f9f9ff",
+                    "on-error": "#ffffff",
+                    "secondary-container": "#dce0e4",
+                    "surface-container-low": "#f2f3fc",
+                    "inverse-primary": "#a7c8ff",
+                    "tertiary-fixed-dim": "#ffb68b",
+                    "on-background": "#181c22",
+                    "on-secondary-fixed-variant": "#43474b",
+                    "surface-tint": "#005eb2",
+                    "on-secondary-fixed": "#171c1f",
+                    "on-primary-fixed-variant": "#004788",
+                    "on-tertiary-fixed-variant": "#753400",
+                    "surface-container-highest": "#e0e2eb",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#d5e3ff",
+                    "surface-variant": "#e0e2eb",
+                    "surface-dim": "#d8dae2",
+                    "secondary-fixed": "#dfe3e7",
+                    "surface-container-high": "#e6e8f0",
+                    "on-tertiary-container": "#fff9f7",
+                    "on-secondary": "#ffffff",
+                    "surface-bright": "#f9f9ff",
+                    "on-surface": "#181c22",
+                    "outline-variant": "#c1c6d4",
+                    "on-surface-variant": "#414752",
+                    "tertiary": "#934400",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#a7c8ff",
+                    "on-primary-container": "#faf9ff",
+                    "secondary": "#5a5f62",
+                    "tertiary-fixed": "#ffdbc8",
+                    "on-tertiary-fixed": "#321300",
+                    "on-error-container": "#93000a",
+                    "inverse-on-surface": "#eff0f9",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#c3c7cb",
+                    "on-primary-fixed": "#001b3c",
+                    "on-tertiary": "#ffffff",
+                    "primary": "#005aab",
+                    "outline": "#717784",
+                    "on-secondary-container": "#5e6367",
+                    "primary-container": "#1173d4",
+                    "inverse-surface": "#2d3037",
+                    "surface-container": "#ecedf6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "p-lg": "24px",
+                    "gap-grid": "16px",
+                    "p-md": "16px",
+                    "header-height": "64px",
+                    "p-sm": "8px"
+            },
+            "fontFamily": {
+                    "alert-text": ["Public Sans"],
+                    "card-title": ["Public Sans"],
+                    "body-main": ["Public Sans"],
+                    "display-header": ["Zilla Slab"]
+            },
+            "fontSize": {
+                    "alert-text": ["16px", {"lineHeight": "1.25", "fontWeight": "700"}],
+                    "card-title": ["18px", {"lineHeight": "20px", "fontWeight": "700"}],
+                    "body-main": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-header": ["24px", {"lineHeight": "32px", "letterSpacing": "0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav-border {
+            position: relative;
+        }
+        .active-nav-border::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: #005aab;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-main selection:bg-primary selection:text-white">
+<header class="bg-white dark:bg-slate-900 shadow-md border-b-2 border-blue-700 dark:border-blue-500 sticky top-0 z-50">
+<div class="flex justify-between items-center w-full max-w-7xl mx-auto px-8 h-16">
+<div class="text-2xl font-black text-blue-800 dark:text-blue-100 uppercase font-sans antialiased tracking-tight">
+                Guia Cidadão
+            </div>
+<nav class="hidden md:flex items-center gap-8 h-full">
+<a class="h-full flex items-center text-blue-800 dark:text-blue-300 border-b-4 border-blue-800 pb-1 font-semibold" href="#">Home</a>
+<a class="h-full flex items-center text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200" href="#">Relatar</a>
+<a class="h-full flex items-center text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200" href="#">Votos</a>
+<a class="h-full flex items-center text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200" href="#">Petições</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+<span>Entrar</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-8 py-8">
+<section class="mb-10 relative overflow-hidden rounded-xl bg-primary text-white p-8 md:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between">
+<div class="z-10 max-w-xl">
+<h1 class="font-display-header text-4xl mb-4">Saúde Fácil: O seu portal de atendimento rápido</h1>
+<p class="text-lg opacity-90 mb-8">Consulte o tempo de espera em tempo real nas unidades de saúde e agende sua consulta sem filas.</p>
+<button class="bg-white text-primary px-8 py-4 rounded-xl font-bold text-lg flex items-center gap-3 shadow-lg hover:bg-surface-container transition-all active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+                    Agendar Consulta
+                </button>
+</div>
+<div class="absolute right-0 top-0 w-1/3 h-full opacity-20 pointer-events-none">
+<img alt="Medical background" class="object-cover h-full w-full" data-alt="abstract professional medical clinic interior with soft blue and white lighting and clean glass surfaces" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8rs-DGgxlw6wz-snIZAEqzB2iriFQv_pC7NSCdn55t83WkVldLQamlKEtzPcQfPuzzs2ZKQTWrSe_0lCxTk65r_Zy96L6peS4f1ElL_AUimg0C9R46zRG0mHBvCfoQkmA7hI6HTZ844AmB5MOfOD9ZQy4J02XOcg6S7zaSE4S7jPPDqEDBEXtJ1klCjRPRjdJ0PqnRfa1R0rNMl2ub-Lmoao9dqH8IozclZpbmS_aQkpmLcmZ9Bf1k-wV8odEM6hhX_2NN7Wc2R8"/>
+</div>
+</section>
+<section class="mb-12">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h2 class="font-display-header text-3xl text-on-surface">Unidades de Pronto Atendimento</h2>
+<p class="text-on-surface-variant">Monitoramento de espera em tempo real</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold border border-green-200">
+<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        Fluxo Normal
+                    </div>
+<div class="flex items-center gap-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-bold border border-red-200">
+<span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                        Alta Demanda
+                    </div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="bg-white rounded-xl shadow-sm border-b-2 border-primary hover:border-b-4 transition-all group p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="p-3 bg-primary-fixed rounded-lg text-primary">
+<span class="material-symbols-outlined text-3xl">emergency</span>
+</span>
+<div class="text-right">
+<span class="text-sm font-bold text-green-600 block">ESPERA BAIXA</span>
+<span class="text-2xl font-black text-on-surface">15 min</span>
+</div>
+</div>
+<h3 class="font-card-title text-xl mb-1">UPA Central</h3>
+<p class="text-sm text-on-surface-variant flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                            Av. Principal, 1200 - Centro
+                        </p>
+</div>
+<div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+<span class="text-xs font-bold text-slate-400">Atualizado há 2 min</span>
+<button class="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all">
+                            Ver detalhes <span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="bg-white rounded-xl shadow-sm border-b-2 border-primary hover:border-b-4 transition-all group p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="p-3 bg-primary-fixed rounded-lg text-primary">
+<span class="material-symbols-outlined text-3xl">local_hospital</span>
+</span>
+<div class="text-right">
+<span class="text-sm font-bold text-red-600 block">ESPERA ALTA</span>
+<span class="text-2xl font-black text-on-surface">120 min</span>
+</div>
+</div>
+<h3 class="font-card-title text-xl mb-1">Hospital Municipal</h3>
+<p class="text-sm text-on-surface-variant flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                            Rua da Paz, 45 - Jardim Botânico
+                        </p>
+</div>
+<div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+<span class="text-xs font-bold text-slate-400">Atualizado há 5 min</span>
+<button class="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all">
+                            Ver detalhes <span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="bg-white rounded-xl shadow-sm border-b-2 border-primary hover:border-b-4 transition-all group p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="p-3 bg-primary-fixed rounded-lg text-primary">
+<span class="material-symbols-outlined text-3xl">medical_services</span>
+</span>
+<div class="text-right">
+<span class="text-sm font-bold text-green-600 block">ESPERA MÉDIA</span>
+<span class="text-2xl font-black text-on-surface">45 min</span>
+</div>
+</div>
+<h3 class="font-card-title text-xl mb-1">UPA Norte</h3>
+<p class="text-sm text-on-surface-variant flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                            Av. Brasil, 890 - Vila Nova
+                        </p>
+</div>
+<div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+<span class="text-xs font-bold text-slate-400">Atualizado há 1 min</span>
+<button class="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all">
+                            Ver detalhes <span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+<div class="lg:col-span-2 bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-display-header text-2xl">Próximos Agendamentos</h2>
+<button class="text-primary font-bold text-sm">Ver histórico</button>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4 p-4 rounded-lg bg-surface-container-low border border-slate-100">
+<div class="bg-white p-2 rounded-lg text-primary shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">stethoscope</span>
+</div>
+<div class="flex-grow">
+<h4 class="font-bold">Clínico Geral - Dr. Ricardo Silva</h4>
+<p class="text-sm text-on-surface-variant">UBS Santa Felicidade • 24 Out, 14:30</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-primary hover:bg-white rounded-lg transition-all"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-2 text-error hover:bg-white rounded-lg transition-all"><span class="material-symbols-outlined">close</span></button>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-lg bg-surface-container-low border border-slate-100 opacity-60">
+<div class="bg-white p-2 rounded-lg text-secondary shadow-sm">
+<span class="material-symbols-outlined">vaccines</span>
+</div>
+<div class="flex-grow">
+<h4 class="font-bold">Vacinação - Gripe</h4>
+<p class="text-sm text-on-surface-variant">UBS Centro • 20 Out, 09:00</p>
+</div>
+<span class="px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-xs font-bold uppercase">Realizado</span>
+</div>
+</div>
+</div>
+<div class="bg-tertiary-container text-white p-8 rounded-xl shadow-lg flex flex-col justify-between">
+<div>
+<div class="bg-white/20 w-12 h-12 rounded-lg flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">campaign</span>
+</div>
+<h3 class="font-display-header text-2xl mb-2">Campanha Outubro Rosa</h3>
+<p class="opacity-90 mb-6">Exames de mamografia sem agendamento prévio para mulheres acima de 40 anos durante todo o mês.</p>
+</div>
+<button class="w-full py-3 bg-white text-tertiary-container font-bold rounded-lg hover:shadow-lg transition-all active:scale-95">Saiba mais</button>
+</div>
+</section>
+<section class="bg-primary-container text-on-primary-container p-6 rounded-xl flex flex-col md:flex-row items-center gap-6 justify-between">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">health_and_safety</span>
+<div>
+<h4 class="font-bold text-lg">Cartão do SUS Digital</h4>
+<p class="text-sm opacity-80">Tenha seu documento sempre em mãos no aplicativo.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="bg-on-background text-white px-6 py-2 rounded-lg font-bold flex items-center gap-2 text-sm shadow-md">
+<span class="material-symbols-outlined">download</span> App Store
+                </button>
+<button class="bg-on-background text-white px-6 py-2 rounded-lg font-bold flex items-center gap-2 text-sm shadow-md">
+<span class="material-symbols-outlined">download</span> Google Play
+                </button>
+</div>
+</section>
+</main>
+<footer class="bg-slate-50 dark:bg-slate-950 border-t-2 border-slate-200 dark:border-slate-800 mt-20">
+<div class="flex flex-col md:flex-row justify-between items-center w-full max-w-7xl mx-auto px-8 py-12 gap-4">
+<div class="flex flex-col items-center md:items-start gap-2">
+<div class="text-lg font-bold text-slate-700 dark:text-slate-300">Guia Cidadão</div>
+<p class="font-sans text-sm text-slate-500">© 2024 Guia Cidadão - Portal da Transparência e Serviços Municipais</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:underline transition-all font-sans text-sm" href="#">Sobre o Portal</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:underline transition-all font-sans text-sm" href="#">Privacidade</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:underline transition-all font-sans text-sm" href="#">Termos de Uso</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:underline transition-all font-sans text-sm" href="#">Ouvidoria</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:underline transition-all font-sans text-sm" href="#">Contato</a>
+</nav>
+<div class="flex gap-4">
+<button class="text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">social_leaderboard</span></button>
+<button class="text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">share</span></button>
+</div>
+</div>
+</footer>
+</body></html>

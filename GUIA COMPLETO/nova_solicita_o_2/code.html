@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&amp;family=Zilla+Slab:wght@700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#ffb68b",
+                      "outline-variant": "#c1c6d4",
+                      "primary-fixed-dim": "#a7c8ff",
+                      "inverse-surface": "#2d3037",
+                      "primary-fixed": "#d5e3ff",
+                      "inverse-primary": "#a7c8ff",
+                      "on-primary-fixed-variant": "#004788",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed-variant": "#43474b",
+                      "tertiary": "#934400",
+                      "secondary": "#5a5f62",
+                      "secondary-fixed": "#dfe3e7",
+                      "on-tertiary-fixed": "#321300",
+                      "on-secondary-fixed": "#171c1f",
+                      "inverse-on-surface": "#eff0f9",
+                      "on-background": "#181c22",
+                      "surface-container-high": "#e6e8f0",
+                      "surface-dim": "#d8dae2",
+                      "outline": "#717784",
+                      "secondary-container": "#dce0e4",
+                      "surface-variant": "#e0e2eb",
+                      "on-secondary-container": "#5e6367",
+                      "tertiary-fixed": "#ffdbc8",
+                      "surface": "#f9f9ff",
+                      "surface-container-highest": "#e0e2eb",
+                      "surface-container-low": "#f2f3fc",
+                      "on-tertiary-fixed-variant": "#753400",
+                      "surface-tint": "#005eb2",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "on-primary": "#ffffff",
+                      "on-primary-container": "#faf9ff",
+                      "on-primary-fixed": "#001b3c",
+                      "background": "#f9f9ff",
+                      "secondary-fixed-dim": "#c3c7cb",
+                      "primary": "#005aab",
+                      "surface-bright": "#f9f9ff",
+                      "on-surface-variant": "#414752",
+                      "on-surface": "#181c22",
+                      "error": "#ba1a1a",
+                      "surface-container": "#ecedf6",
+                      "primary-container": "#1173d4",
+                      "on-error": "#ffffff",
+                      "tertiary-container": "#b95700",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-container": "#fff9f7"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "4px",
+                      "gap-grid": "16px",
+                      "p-sm": "8px",
+                      "p-lg": "24px",
+                      "header-height": "64px",
+                      "p-md": "16px"
+              },
+              "fontFamily": {
+                      "alert-text": ["Public Sans"],
+                      "card-title": ["Public Sans"],
+                      "display-header": ["Zilla Slab"],
+                      "body-main": ["Public Sans"]
+              },
+              "fontSize": {
+                      "alert-text": ["16px", {"lineHeight": "1.25", "fontWeight": "700"}],
+                      "card-title": ["18px", {"lineHeight": "20px", "fontWeight": "700"}],
+                      "display-header": ["24px", {"lineHeight": "32px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                      "body-main": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body-main text-on-background min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-blue-600 dark:bg-blue-900 text-white fixed top-0 w-full z-50 h-16 border-b-2 border-blue-800 dark:border-blue-700 shadow-md">
+<div class="flex items-center justify-between px-4 max-w-md mx-auto w-full h-full">
+<button class="transition-all duration-200 active:scale-95 hover:bg-blue-700 dark:hover:bg-blue-800 p-2 rounded-full">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-sans font-bold tracking-tight uppercase text-white">Nova Solicitação</h1>
+<div class="w-10 h-10 rounded-full bg-blue-500 overflow-hidden border-2 border-white/20">
+<img alt="User avatar" class="w-full h-full object-cover" data-alt="close-up portrait of a friendly professional person in neutral lighting with a clean background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtGFL2N41JNBl4pY1-CtnWEdTID5_U7Z_z5ZH1ynAwmp13zde18McXBwwqYIN9qRn0qhMxTe-hFXufW1Z4RavZJ_vOqkc4ZisH1W7CEAHERXbKufl8rlZsYIhTuvty3i39uFFg25QBD_Zs32_kFBZUY05kfptGAMtsEsD9W2gjRxssjE4rYoMCUCrIyB0tNZ389LXeuNffd6JXg1Q2yY8kbrpbqYMpgECA_V1mbDw6FTDseOsr5o57AGsLhP3mT8WoBBybJ1FjtjQ"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-20 pb-24 px-p-md max-w-md mx-auto min-h-screen flex flex-col gap-6">
+<!-- Identity Verification -->
+<section class="flex flex-col gap-2">
+<h2 class="font-card-title text-card-title text-on-surface">Identificação</h2>
+<p class="text-sm text-on-surface-variant">Para garantir a autenticidade do seu relato, conecte sua conta oficial.</p>
+<button class="flex items-center justify-center gap-3 w-full py-3 bg-white border border-outline-variant rounded-lg shadow-sm hover:bg-surface-container-low transition-all duration-200 active:scale-95">
+<img alt="Google Logo" class="w-5 h-5" data-alt="official google multicolor g logo icon on white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8O3fTcgCM8gLpfKsBDdAYK0Ckd1povCWRYapmc5aNNrUI14ppiZHkIcMCnosjdVbPErPzJpcldqgUUMIJTyCkYtvR3O0-J0vjc2ST1T2tiiw4vxTB1WQ8_y4xWLEAW16VRbBetjrpriz7eFmdWD1nnb7qycJPppvp0BslOo8XaknYn4xF4pGx88YN-Z2Tc5ACXJaaE8D9gi_WP7PeVOQz7J26lr5pZ6NEamQ2O6xfapgfxs1gHULq777b7OqaihgFaxT6xEiuhJg"/>
+<span class="font-bold text-on-surface">Login com Google</span>
+</button>
+</section>
+<!-- Alert Banner (Urgency Indicator) -->
+<div class="bg-error text-on-error p-4 rounded shadow-md flex items-start gap-3">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div>
+<span class="font-alert-text text-alert-text">Atenção</span>
+<p class="text-xs opacity-90">Falsas comunicações de crime ou infrações estão sujeitas a penalidades legais conforme o Código Penal.</p>
+</div>
+</div>
+<!-- Form Section -->
+<form class="flex flex-col gap-6">
+<!-- Issue Title -->
+<div class="flex flex-col gap-2">
+<label class="font-bold text-on-surface-variant text-sm" for="title">Título do Problema</label>
+<input class="w-full p-4 bg-surface-container-lowest border-b-2 border-primary focus:border-b-4 focus:ring-0 text-on-surface placeholder:text-outline transition-all duration-150" id="title" placeholder="Ex: Buraco na Rua das Palmeiras" type="text"/>
+</div>
+<!-- Category -->
+<div class="flex flex-col gap-2">
+<label class="font-bold text-on-surface-variant text-sm" for="category">Categoria</label>
+<div class="relative">
+<select class="w-full p-4 appearance-none bg-surface-container-lowest border-b-2 border-primary focus:border-b-4 focus:ring-0 text-on-surface" id="category">
+<option disabled="" selected="" value="">Selecione uma categoria</option>
+<option value="infra">Infraestrutura</option>
+<option value="saude">Saúde Pública</option>
+<option value="seguranca">Segurança</option>
+<option value="ambiente">Meio Ambiente</option>
+<option value="transito">Trânsito</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary">expand_more</span>
+</div>
+</div>
+<!-- Description -->
+<div class="flex flex-col gap-2">
+<label class="font-bold text-on-surface-variant text-sm" for="description">Descrição Detalhada</label>
+<textarea class="w-full p-4 bg-surface-container-lowest border-b-2 border-primary focus:border-b-4 focus:ring-0 text-on-surface placeholder:text-outline transition-all duration-150" id="description" placeholder="Descreva o ocorrido com o máximo de detalhes possível..." rows="4"></textarea>
+</div>
+<!-- Upload Photo -->
+<div class="flex flex-col gap-2">
+<label class="font-bold text-on-surface-variant text-sm">Anexar Evidências</label>
+<div class="border-2 border-dashed border-outline-variant bg-surface-container rounded-lg p-6 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-4xl text-primary group-hover:scale-110 transition-transform duration-200">add_a_photo</span>
+<span class="text-sm font-bold text-primary">Adicionar Foto</span>
+<span class="text-xs text-outline">JPEG ou PNG (Máx 5MB)</span>
+</div>
+</div>
+<!-- Petition Toggle -->
+<div class="bg-surface-container-high p-4 rounded-xl border-l-4 border-tertiary shadow-sm">
+<label class="flex items-start gap-3 cursor-pointer">
+<input class="mt-1 w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Criar como Petição Pública</span>
+<p class="text-xs text-on-surface-variant mt-1">Ao ativar, seu relato precisará de um mínimo de 1.000 assinaturas virtuais para ser encaminhado à Câmara Municipal.</p>
+</div>
+</label>
+</div>
+<!-- Submit Button (High-Contrast Anchor) -->
+<div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md p-4 bg-white/80 backdrop-blur-md">
+<button class="w-full bg-primary text-on-primary py-4 rounded-lg font-alert-text text-alert-text shadow-lg border-b-4 border-on-primary-fixed-variant transition-all duration-200 active:translate-y-1 active:border-b-0 flex items-center justify-center gap-2" type="submit">
+<span class="material-symbols-outlined">send</span>
+                    ENVIAR RELATO
+                </button>
+</div>
+</form>
+<!-- Institutional Footer Note -->
+<footer class="pb-32 pt-8 text-center">
+<div class="inline-flex items-center gap-2 text-outline font-bold text-[10px] tracking-widest uppercase">
+<span class="material-symbols-outlined text-sm">gavel</span>
+                Guia Cidadão • Transparência Pública
+            </div>
+</footer>
+</main>
+<!-- Contextual FAB Suppression: FAB not rendered on focused form screen -->
+</body></html>

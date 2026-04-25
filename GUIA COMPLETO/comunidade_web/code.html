@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Comunidade - Guia Cidadão</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&amp;family=Zilla+Slab:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f9f9ff",
+                        "tertiary-container": "#b95700",
+                        "surface": "#f9f9ff",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#dce0e4",
+                        "surface-container-low": "#f2f3fc",
+                        "inverse-primary": "#a7c8ff",
+                        "tertiary-fixed-dim": "#ffb68b",
+                        "on-background": "#181c22",
+                        "on-secondary-fixed-variant": "#43474b",
+                        "surface-tint": "#005eb2",
+                        "on-secondary-fixed": "#171c1f",
+                        "on-primary-fixed-variant": "#004788",
+                        "on-tertiary-fixed-variant": "#753400",
+                        "surface-container-highest": "#e0e2eb",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#d5e3ff",
+                        "surface-variant": "#e0e2eb",
+                        "surface-dim": "#d8dae2",
+                        "secondary-fixed": "#dfe3e7",
+                        "surface-container-high": "#e6e8f0",
+                        "on-tertiary-container": "#fff9f7",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f9f9ff",
+                        "on-surface": "#181c22",
+                        "outline-variant": "#c1c6d4",
+                        "on-surface-variant": "#414752",
+                        "tertiary": "#934400",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#a7c8ff",
+                        "on-primary-container": "#faf9ff",
+                        "secondary": "#5a5f62",
+                        "tertiary-fixed": "#ffdbc8",
+                        "on-tertiary-fixed": "#321300",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#eff0f9",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#c3c7cb",
+                        "on-primary-fixed": "#001b3c",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#005aab",
+                        "outline": "#717784",
+                        "on-secondary-container": "#5e6367",
+                        "primary-container": "#1173d4",
+                        "inverse-surface": "#2d3037",
+                        "surface-container": "#ecedf6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "p-lg": "24px",
+                        "gap-grid": "16px",
+                        "p-md": "16px",
+                        "header-height": "64px",
+                        "p-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "alert-text": ["Public Sans"],
+                        "card-title": ["Public Sans"],
+                        "body-main": ["Public Sans"],
+                        "display-header": ["Zilla Slab"]
+                    },
+                    "fontSize": {
+                        "alert-text": ["16px", {"lineHeight": "1.25", "fontWeight": "700"}],
+                        "card-title": ["18px", {"lineHeight": "20px", "fontWeight": "700"}],
+                        "body-main": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-header": ["24px", {"lineHeight": "32px", "letterSpacing": "0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .service-card-hover:hover {
+            border-bottom-width: 4px;
+            background-color: #f2f3fc;
+        }
+        .icon-scale:hover span {
+            transform: scale(1.1);
+            transition: transform 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-main selection:bg-primary selection:text-white">
+<!-- TopAppBar -->
+<header class="bg-white dark:bg-slate-900 shadow-md sticky top-0 z-50 border-b-2 border-blue-700 dark:border-blue-500">
+<div class="flex justify-between items-center w-full max-w-7xl mx-auto px-8 h-16">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black text-blue-800 dark:text-blue-100 uppercase font-sans antialiased tracking-tight">Guia Cidadão</span>
+<nav class="hidden md:flex gap-6 items-center h-full">
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 py-5" href="#">Home</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 py-5" href="#">Relatar</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 py-5" href="#">Votos</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 py-5" href="#">Petições</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-2">
+<button class="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+<button class="bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:bg-primary-container transition-all active:scale-95">Entrar</button>
+</div>
+</div>
+</header>
+<!-- Alert Banner (Institutional/Urgent) -->
+<div class="bg-error text-on-error w-full py-3 px-8 flex items-center justify-center gap-3">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-alert-text text-alert-text">Atenção: Participe apenas de grupos oficiais para garantir a segurança da sua vizinhança.</span>
+</div>
+<main class="max-w-7xl mx-auto px-8 py-12">
+<!-- Hero Section -->
+<div class="mb-12 text-center md:text-left">
+<h1 class="font-display-header text-4xl md:text-5xl text-primary mb-4">Conecte-se com sua Vizinhança</h1>
+<p class="text-on-surface-variant max-w-2xl text-lg">Encontre e participe dos grupos oficiais de WhatsApp do seu bairro. Fique por dentro de alertas de segurança, zeladoria e eventos locais.</p>
+</div>
+<!-- Neighborhood Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Column: Centro -->
+<section class="flex flex-col gap-6">
+<div class="flex items-center gap-2 pb-2 border-b-2 border-primary-fixed">
+<span class="material-symbols-outlined text-primary">location_city</span>
+<h2 class="font-card-title text-card-title text-on-background">Centro</h2>
+</div>
+<!-- Group Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-2 border-primary shadow-sm flex flex-col gap-4 service-card-hover transition-all duration-200">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-card-title text-lg">Segurança Centro</h3>
+<p class="text-sm text-on-surface-variant">428 membros ativos</p>
+</div>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed text-xs px-2 py-1 rounded font-bold">OFICIAL</span>
+</div>
+<p class="text-body-main text-sm text-on-surface-variant">Monitoramento colaborativo e alertas da Guarda Municipal em tempo real.</p>
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-primary-container active:scale-95 transition-all group icon-scale">
+<span>Participar do Grupo</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-2 border-primary shadow-sm flex flex-col gap-4 service-card-hover transition-all duration-200">
+<div>
+<h3 class="font-card-title text-lg">Zeladoria e Comércio</h3>
+<p class="text-sm text-on-surface-variant">156 membros ativos</p>
+</div>
+<p class="text-body-main text-sm text-on-surface-variant">Discussões sobre limpeza urbana, iluminação e suporte aos lojistas.</p>
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-primary-container active:scale-95 transition-all group icon-scale">
+<span>Participar do Grupo</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+</section>
+<!-- Column: Jardim Alvorada -->
+<section class="flex flex-col gap-6">
+<div class="flex items-center gap-2 pb-2 border-b-2 border-primary-fixed">
+<span class="material-symbols-outlined text-primary">park</span>
+<h2 class="font-card-title text-card-title text-on-background">Jardim Alvorada</h2>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-2 border-primary shadow-sm flex flex-col gap-4 service-card-hover transition-all duration-200">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-card-title text-lg">Alvorada Solidária</h3>
+<p class="text-sm text-on-surface-variant">312 membros ativos</p>
+</div>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed text-xs px-2 py-1 rounded font-bold">OFICIAL</span>
+</div>
+<p class="text-body-main text-sm text-on-surface-variant">Grupo de apoio mútuo, doações e eventos comunitários no bairro.</p>
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-primary-container active:scale-95 transition-all group icon-scale">
+<span>Participar do Grupo</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-2 border-primary shadow-sm flex flex-col gap-4 service-card-hover transition-all duration-200">
+<div>
+<h3 class="font-card-title text-lg">Vizinhança Atenta</h3>
+<p class="text-sm text-on-surface-variant">89 membros ativos</p>
+</div>
+<p class="text-body-main text-sm text-on-surface-variant">Rede de proteção entre vizinhos para as ruas das Flores e Ipês.</p>
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-primary-container active:scale-95 transition-all group icon-scale">
+<span>Participar do Grupo</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+</section>
+<!-- Column: Vila Nova -->
+<section class="flex flex-col gap-6">
+<div class="flex items-center gap-2 pb-2 border-b-2 border-primary-fixed">
+<span class="material-symbols-outlined text-primary">home_work</span>
+<h2 class="font-card-title text-card-title text-on-background">Vila Nova</h2>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border-b-2 border-primary shadow-sm flex flex-col gap-4 service-card-hover transition-all duration-200">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-card-title text-lg">Vila Nova Unida</h3>
+<p class="text-sm text-on-surface-variant">567 membros ativos</p>
+</div>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed text-xs px-2 py-1 rounded font-bold">OFICIAL</span>
+</div>
+<p class="text-body-main text-sm text-on-surface-variant">O maior grupo do bairro. Informações gerais e classificados locais.</p>
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-primary-container active:scale-95 transition-all group icon-scale">
+<span>Participar do Grupo</span>
+<span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+<div class="relative group overflow-hidden rounded-xl h-48 border-b-2 border-primary">
+<img alt="Community Meeting" class="w-full h-full object-cover" data-alt="diverse group of neighbors sitting in a sunlit urban park having a collaborative community meeting with laptops and coffee" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVkkI5AKE_KWI6_maio3FMH3qHyxeuOnFFOY7Cxk39VLs7HzMOTY9kjoTXUBXQA0Po1rdoJw91MXAGrZK_gvJMbWQVU64NprxxK3bLpPR-zleOTCgQ7D2Stw42Hvh31odt30_x8yQVCEY03YZWerxPcoEhPGn5mziYHUybX2grOqCY7gsCANfeujdq7IlrsZ3zPkfMn6m3h1FRNl6dVzGiuNth866oTg_QJefW2CWv2ovBavhtgw-CrcfdbmcQvRy-zWcW3E8j6sQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex items-end p-4">
+<p class="text-white font-bold text-sm">Sugerir novo grupo para seu bairro</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Featured Section (Bento Grid Style) -->
+<section class="mt-16 bg-surface-container-high rounded-2xl p-8 border-b-2 border-primary">
+<div class="flex flex-col md:flex-row gap-8 items-center">
+<div class="flex-1">
+<h2 class="font-display-header text-3xl text-primary mb-4">Por que participar?</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<div>
+<p class="font-bold">Verificação</p>
+<p class="text-sm">Moderadores oficiais garantem conteúdo relevante.</p>
+</div>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">speed</span>
+<div>
+<p class="font-bold">Agilidade</p>
+<p class="text-sm">Alertas de emergência chegam direto no seu celular.</p>
+</div>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">groups</span>
+<div>
+<p class="font-bold">Comunidade</p>
+<p class="text-sm">Fortaleça os laços com quem mora perto de você.</p>
+</div>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<div>
+<p class="font-bold">Voz Ativa</p>
+<p class="text-sm">Seus problemas chegam mais rápido à prefeitura.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full md:w-1/3 bg-white p-6 rounded-xl shadow-inner border-2 border-outline-variant">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-tertiary-container" style="font-variation-settings: 'FILL' 1;">shield</span>
+<h4 class="font-bold">Regras de Convivência</h4>
+</div>
+<ul class="text-sm space-y-2 text-on-surface-variant">
+<li>• Proibido propaganda política.</li>
+<li>• Respeito mútuo é obrigatório.</li>
+<li>• Sem compartilhamento de Fake News.</li>
+<li>• Use apenas para assuntos do bairro.</li>
+</ul>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-50 dark:bg-slate-950 w-full border-t-2 border-slate-200 dark:border-slate-800">
+<div class="flex flex-col md:flex-row justify-between items-center w-full max-w-7xl mx-auto px-8 py-12 gap-4">
+<div class="flex flex-col gap-2">
+<span class="text-lg font-bold text-slate-700 dark:text-slate-300">Guia Cidadão</span>
+<p class="font-sans text-sm text-slate-500">© 2024 Guia Cidadão - Portal da Transparência e Serviços Municipais</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:underline transition-all font-sans text-sm" href="#">Sobre o Portal</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:underline transition-all font-sans text-sm" href="#">Privacidade</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:underline transition-all font-sans text-sm" href="#">Termos de Uso</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:underline transition-all font-sans text-sm" href="#">Ouvidoria</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:underline transition-all font-sans text-sm" href="#">Contato</a>
+</nav>
+</div>
+</footer>
+</body></html>
