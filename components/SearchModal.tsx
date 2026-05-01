@@ -5,6 +5,9 @@ import { Search, X, ArrowRight, MapPin, Store, Briefcase, Heart, MessageSquare, 
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('SearchModal');
 
 interface SearchResult {
   id: string;
@@ -54,9 +57,9 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     return activeFilter === 'Todas' ? [] : filtered;
   }, [query, activeFilter]);
 
-  // Bloquear scroll quando aberto
   useEffect(() => {
     if (isOpen) {
+      log.info('Search modal opened');
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -66,6 +69,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   if (!isOpen) return null;
 
   const handleClose = () => {
+    log.info('Search modal closed', { queryLength: query.length });
     setQuery('');
     onClose();
   };

@@ -1,11 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Home, MessageSquare, Vote, FileText, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('BottomNavBar');
 
 const navItems = [
   { icon: Home, label: 'Início', href: '/' },
@@ -17,6 +20,10 @@ const navItems = [
 
 export default function BottomNavBar({ className }: { className?: string }) {
   const pathname = usePathname();
+
+  useEffect(() => {
+    log.info('Navigation', { path: pathname });
+  }, [pathname]);
 
   return (
     <nav className={cn(

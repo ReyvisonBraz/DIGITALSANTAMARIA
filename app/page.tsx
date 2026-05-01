@@ -93,13 +93,17 @@ export default function Home() {
                   <div className="space-y-6">
                      <div className="flex items-center gap-4">
                         <div className="w-14 h-14 rounded-2xl border-2 border-white/10 p-1 backdrop-blur-sm group-hover:scale-105 transition-transform">
-                           <Image 
-                              src={user?.photoURL || "https://picsum.photos/seed/user_civic/200/200"} 
-                              alt="User" 
-                              width={80} 
-                              height={80} 
-                              className="rounded-xl object-cover w-full h-full"
-                           />
+                            <Image 
+                               src={user?.photoURL || "https://picsum.photos/seed/user_civic/200/200"} 
+                               alt="User" 
+                               width={80} 
+                               height={80} 
+                               className="rounded-xl object-cover w-full h-full"
+                               onError={(e) => {
+                                 const target = e.currentTarget as HTMLImageElement;
+                                 target.style.display = 'none';
+                               }}
+                            />
                         </div>
                         <div className="space-y-0.5">
                            <h2 className="text-2xl md:text-4xl font-bold tracking-tight leading-none font-display">

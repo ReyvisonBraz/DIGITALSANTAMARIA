@@ -1,151 +1,112 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if false;
-    }
 
     function isSignedIn() { return request.auth != null; }
     function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
     function incoming() { return request.resource.data; }
     function existing() { return resource.data; }
-    function isValidId(id) { return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
-    function isAdmin() { return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
 
     // Users
-    function isValidUser(data) {
-      return data.keys().hasAll(['userId', 'email', 'createdAt', 'updatedAt'])
-        && data.userId == request.auth.uid
-        && data.email is string && data.email.size() > 0
-        && data.createdAt is number
-        && data.updatedAt is number
-        && data.role in ['citizen', 'admin']
-        && (!('cpf' in data) || (data.cpf is string && data.cpf.size() <= 14))
-        && (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100))
-        && (!('isVerified' in data) || (data.isVerified is bool));
-    }
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId) && isValidId(userId) && isValidUser(incoming()) && incoming().createdAt == request.time.toMillis() && incoming().updatedAt == request.time.toMillis() && incoming().role == 'citizen';
-      allow update: if isOwner(userId) && isValidId(userId) && isValidUser(incoming()) && incoming().updatedAt == request.time.toMillis() && incoming().createdAt == existing().createdAt && incoming().role == existing().role;
+      allow create: if isOwner(userId) && incoming().role == 'citizen';
+      allow update: if (isOwner(userId) && incoming().role == existing().role && incoming().uid == existing().uid) || isAdmin();
+    }
+
+    // Admins
+    match /admins/{uid} {
+      allow read: if isAdmin();
+      allow write: if isAdmin()
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
     }
 
     // Reports
-    function isValidReport(data) {
-        return data.keys().hasAll(['reporterId', 'type', 'description', 'status', 'createdAt', 'updatedAt'])
-            && data.reporterId == request.auth.uid
-            && data.type in ['infrastructure', 'environment', 'security', 'other']
-            && data.description is string && data.description.size() <= 1000
-            && data.status in ['pending', 'in_progress', 'resolved', 'rejected']
-            && data.createdAt is number
-            && data.updatedAt is number
-            && (!('location' in data) || (data.location is map && data.location.keys().hasAll(['lat', 'lng', 'address'])))
-            && (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() <= 1000));
-    }
     match /reports/{reportId} {
-      allow read: if isSignedIn() && (existing().reporterId == request.auth.uid || isAdmin());
-      allow create: if isSignedIn() && isValidId(reportId) && isValidReport(incoming()) && incoming().createdAt == request.time.toMillis() && incoming().updatedAt == request.time.toMillis() && incoming().status == 'pending';
+      allow read: if isOwner(resource.data.reporterId) || isAdmin();
+      allow list: if isSignedIn();
+      allow create: if isSignedIn()
+        && incoming().reporterId == request.auth.uid
+        && incoming().status == 'pending';
       allow update: if isAdmin();
-      allow list: if isSignedIn() && (resource.data.reporterId == request.auth.uid || isAdmin());
     }
 
-    // Appointments
-    function isValidAppointment(data) {
-        return data.keys().hasAll(['userId', 'type', 'unitId', 'date', 'status', 'createdAt', 'updatedAt'])
-            && data.userId == request.auth.uid
-            && data.type in ['health', 'social', 'other']
-            && data.unitId is string && data.unitId.size() <= 128
-            && data.date is string && data.date.size() <= 64
-            && data.status in ['scheduled', 'completed', 'cancelled']
-            && data.createdAt is number
-            && data.updatedAt is number;
-    }
-    match /appointments/{appointmentId} {
-        allow read: if isSignedIn() && (existing().userId == request.auth.uid || isAdmin());
-        allow create: if isSignedIn() && isValidId(appointmentId) && isValidAppointment(incoming()) && incoming().createdAt == request.time.toMillis() && incoming().updatedAt == request.time.toMillis() && incoming().status == 'scheduled';
-        allow update: if isSignedIn() && (isAdmin() || (existing().userId == request.auth.uid && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']) && incoming().updatedAt == request.time.toMillis()));
-        allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
-    }
-
-    // Jobs
-    function isValidJob(data) {
-        return data.keys().hasAll(['employerId', 'title', 'description', 'isActive', 'createdAt', 'updatedAt'])
-            && data.employerId == request.auth.uid
-            && data.title is string && data.title.size() <= 200
-            && data.description is string && data.description.size() <= 5000
-            && data.isActive is bool
-            && data.createdAt is number
-            && data.updatedAt is number
-            && (!('salary' in data) || (data.salary is string && data.salary.size() <= 100))
-            && (!('location' in data) || (data.location is string && data.location.size() <= 200));
-    }
-    match /jobs/{jobId} {
-        allow read: if true;
-        allow create: if isSignedIn() && isValidId(jobId) && isValidJob(incoming()) && incoming().createdAt == request.time.toMillis() && incoming().updatedAt == request.time.toMillis();
-        allow update: if isSignedIn() && isValidId(jobId) && isValidJob(incoming()) && incoming().employerId == existing().employerId && incoming().createdAt == existing().createdAt && incoming().updatedAt == request.time.toMillis();
-    }
-
-    // Job Applications
-    function isValidJobApp(data) {
-        return data.keys().hasAll(['jobId', 'applicantId', 'status', 'createdAt', 'updatedAt'])
-            && data.applicantId == request.auth.uid
-            && data.jobId is string && data.jobId.size() <= 128
-            && data.status in ['applied', 'reviewed', 'interview', 'rejected', 'hired']
-            && data.createdAt is number
-            && data.updatedAt is number;
-    }
-    match /job_applications/{applicationId} {
-        allow read: if isSignedIn() && (existing().applicantId == request.auth.uid || isAdmin());
-        allow create: if isSignedIn() && isValidId(applicationId) && isValidJobApp(incoming()) && exists(/databases/$(database)/documents/jobs/$(incoming().jobId)) && incoming().createdAt == request.time.toMillis() && incoming().updatedAt == request.time.toMillis() && incoming().status == 'applied';
-        allow update: if isAdmin();
-        allow list: if isSignedIn() && (resource.data.applicantId == request.auth.uid || isAdmin());
-    }
-
-    // Emergency Alerts
-    function isValidAlert(data) {
-        return data.keys().hasAll(['userId', 'type', 'location', 'status', 'createdAt', 'updatedAt'])
-            && data.userId == request.auth.uid
-            && data.type in ['sos', 'neighborhood']
-            && data.location is map && data.location.keys().hasAll(['lat', 'lng'])
-            && data.status in ['active', 'resolved']
-            && data.createdAt is number
-            && data.updatedAt is number
-            && (!('description' in data) || (data.description is string && data.description.size() <= 1000));
-    }
-    match /emergency_alerts/{alertId} {
-        allow read: if true;
-        allow create: if isSignedIn() && isValidId(alertId) && isValidAlert(incoming()) && incoming().createdAt == request.time.toMillis() && incoming().updatedAt == request.time.toMillis() && incoming().status == 'active';
-        allow update: if isAdmin();
+    // Demands (Ouvidoria)
+    match /demands/{demandId} {
+      allow read: if isOwner(resource.data.authorId) || isAdmin();
+      allow create: if isSignedIn()
+        && incoming().authorId == request.auth.uid
+        && incoming().status == 'pending'
+        && incoming().consent == true;
+      allow update: if isAdmin();
     }
 
     // Petitions
-    function isValidPetition(data) {
-        return data.keys().hasAll(['creatorId', 'title', 'description', 'goal', 'signaturesCount', 'status', 'createdAt', 'updatedAt'])
-            && data.creatorId == request.auth.uid
-            && data.title is string && data.title.size() <= 200
-            && data.description is string && data.description.size() <= 5000
-            && data.goal is number && data.goal > 0
-            && data.signaturesCount is number
-            && data.status in ['active', 'achieved', 'closed']
-            && data.createdAt is number
-            && data.updatedAt is number;
-    }
     match /petitions/{petitionId} {
-        allow read: if true;
-        allow create: if isSignedIn() && isValidId(petitionId) && isValidPetition(incoming()) && incoming().createdAt == request.time.toMillis() && incoming().updatedAt == request.time.toMillis() && incoming().signaturesCount == 0 && incoming().status == 'active';
-        allow update: if isSignedIn() && isValidId(petitionId) && isValidPetition(incoming()) && incoming().creatorId == existing().creatorId && incoming().createdAt == existing().createdAt && incoming().updatedAt == request.time.toMillis() && (incoming().diff(existing()).affectedKeys().hasOnly(['signaturesCount', 'status', 'updatedAt']));
+      allow read: if true;
+      allow create: if isSignedIn()
+        && incoming().creatorId == request.auth.uid
+        && incoming().signaturesCount == 0
+        && incoming().status == 'active';
+      allow update: if isOwner(resource.data.creatorId) || isAdmin();
     }
 
     // Petition Signatures
-    function isValidSignature(data) {
-        return data.keys().hasAll(['petitionId', 'userId', 'createdAt'])
-            && data.userId == request.auth.uid
-            && data.petitionId is string && data.petitionId.size() <= 128
-            && data.createdAt is number;
+    match /petition_signatures/{sigId} {
+      allow read: if true;
+      allow create: if isSignedIn()
+        && incoming().userId == request.auth.uid
+        && sigId == incoming().petitionId + '_' + request.auth.uid;
+      allow update, delete: if false;
     }
-    match /petition_signatures/{signatureId} {
-        allow read: if true;
-        allow create: if isSignedIn() && isValidId(signatureId) && isValidSignature(incoming()) && exists(/databases/$(database)/documents/petitions/$(incoming().petitionId)) && incoming().createdAt == request.time.toMillis();
+
+    // Appointments
+    match /appointments/{appointmentId} {
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow create: if isSignedIn()
+        && incoming().userId == request.auth.uid
+        && incoming().status == 'scheduled';
+      allow update: if (isOwner(resource.data.userId) && incoming().status == 'cancelled') || isAdmin();
+    }
+
+    // Health Units
+    match /health_units/{unitId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Jobs
+    match /jobs/{jobId} {
+      allow read: if true;
+      allow create: if isSignedIn()
+        && incoming().employerId == request.auth.uid;
+      allow update: if isOwner(resource.data.employerId) || isAdmin();
+    }
+
+    // Job Applications
+    match /job_applications/{appId} {
+      allow read: if isOwner(resource.data.applicantId) || isAdmin();
+      allow create: if isSignedIn()
+        && incoming().applicantId == request.auth.uid
+        && incoming().status == 'applied';
+      allow update: if isAdmin();
+    }
+
+    // Emergency Alerts
+    match /emergency_alerts/{alertId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn()
+        && incoming().userId == request.auth.uid
+        && incoming().status == 'active';
+      allow update: if isAdmin();
     }
   }
 }

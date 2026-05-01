@@ -1,11 +1,66 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import firebaseConfig from '../firebase-applet-config.json';
+import { createLogger } from './logger';
 
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const firebaseLogger = createLogger('Firebase');
+
+function getFirebaseConfig() {
+  const env = (typeof process !== 'undefined' ? process.env : {}) as Record<string, string | undefined>;
+
+  const projectId = env['NEXT_PUBLIC_FIREBASE_PROJECT_ID'];
+  const appId = env['NEXT_PUBLIC_FIREBASE_APP_ID'];
+  const apiKey = env['NEXT_PUBLIC_FIREBASE_API_KEY'];
+  const authDomain = env['NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN'];
+  const databaseId = env['NEXT_PUBLIC_FIREBASE_DATABASE_ID'] || '(default)';
+  const storageBucket = env['NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET'];
+  const messagingSenderId = env['NEXT_PUBLIC_FIREBASE_SENDER_ID'];
+  const measurementId = env['NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID'] || '';
+
+  if (apiKey && projectId && appId) {
+    return { config: { projectId, appId, apiKey, authDomain, storageBucket, messagingSenderId, measurementId }, databaseId };
+  }
+
+  try {
+    const fileConfig = require('../firebase-applet-config.json');
+    return { config: fileConfig, databaseId: fileConfig.firestoreDatabaseId };
+  } catch {
+    throw new Error(
+      'Firebase não configurado. Defina NEXT_PUBLIC_FIREBASE_* no .env.local ' +
+      'ou preencha firebase-applet-config.json'
+    );
+  }
+}
+
+const { config, databaseId } = getFirebaseConfig();
+
+export const app = getApps().length === 0 ? initializeApp(config) : getApps()[0];
 export const auth = getAuth(app);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = getFirestore(app, databaseId);
+
+firebaseLogger.info('Firebase initialized', {
+  projectId: config.projectId,
+  databaseId,
+});
+
+export class FirestoreError extends Error {
+  public operationType: string;
+  public path: string | null;
+  public authInfo: Record<string, unknown>;
+
+  constructor(
+    message: string,
+    operationType: string,
+    path: string | null = null,
+    authInfo: Record<string, unknown> = {}
+  ) {
+    super(message);
+    this.name = 'FirestoreError';
+    this.operationType = operationType;
+    this.path = path;
+    this.authInfo = authInfo;
+  }
+}
 
 export interface FirestoreErrorInfo {
   error: string;
@@ -20,27 +75,34 @@ export interface FirestoreErrorInfo {
   }
 }
 
-export function handleFirestoreError(error: any, operation: FirestoreErrorInfo['operationType'], path: string | null = null): never {
-  const info: FirestoreErrorInfo = {
-    error: error instanceof Error ? error.message : String(error),
-    operationType: operation,
-    path,
-    authInfo: {
-      userId: auth.currentUser?.uid || 'anonymous',
-      email: auth.currentUser?.email || '',
-      emailVerified: auth.currentUser?.emailVerified || false,
-      isAnonymous: auth.currentUser?.isAnonymous || true,
-      providerInfo: auth.currentUser?.providerData.map(p => ({
-        providerId: p.providerId,
-        displayName: p.displayName || '',
-        email: p.email || '',
-      })) || [],
-    }
+export function handleFirestoreError(
+  error: unknown,
+  operation: FirestoreErrorInfo['operationType'],
+  path: string | null = null,
+  userId?: string
+): never {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  const authInfo = {
+    userId: userId || auth.currentUser?.uid || 'anonymous',
+    email: auth.currentUser?.email || '',
+    emailVerified: auth.currentUser?.emailVerified || false,
+    isAnonymous: auth.currentUser?.isAnonymous || true,
+    providerInfo: auth.currentUser?.providerData.map(p => ({
+      providerId: p.providerId,
+      displayName: p.displayName || '',
+      email: p.email || '',
+    })) || [],
   };
-  
-  if (info.error.includes('insufficient permissions')) {
-    throw new Error(JSON.stringify(info));
+
+  firebaseLogger.error(`Firestore ${operation} failed`, {
+    path: path || undefined,
+    operation,
+    ...authInfo,
+  }, error);
+
+  if (errorMessage.includes('insufficient permissions')) {
+    throw new FirestoreError(errorMessage, operation, path, authInfo);
   }
-  
+
   throw error;
 }

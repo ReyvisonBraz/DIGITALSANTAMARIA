@@ -60,11 +60,13 @@ const clinics = [
   }
 ];
 
-export default function SaudePage() {  const { toast } = useToast();
+export default function SaudePage() {
+  const { toast } = useToast();
   const [selectedClinic, setSelectedClinic] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'unidades' | 'portal' | 'farmacia'>('unidades');
   const [modalOpen, setModalOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [clinicQueues] = useState(() => clinics.map(() => Math.floor(Math.random() * 10) + 1));
 
   const categories = [
     { id: 'unidades', label: 'Unidades', icon: Hospital },
@@ -131,7 +133,7 @@ export default function SaudePage() {  const { toast } = useToast();
                         </div>
                         
                         {clinics.map((clinic, idx) => (
-                           <div key={idx} 
+                           <div key={clinic.name} 
                               onClick={() => setSelectedClinic(clinic)}
                               className="bg-white p-5 rounded-[2.5rem] border-2 border-border hover:border-rose-500 group cursor-pointer transition-all flex items-center justify-between shadow-sm hover:shadow-xl hover:shadow-rose-500/5"
                            >
@@ -152,7 +154,7 @@ export default function SaudePage() {  const { toast } = useToast();
                               </div>
                               <div className="text-right">
                                  <p className="text-xl font-black text-text-main tabular-nums leading-none">{clinic.waitTime}</p>
-                                 <p className="text-[8px] font-black text-text-muted uppercase tracking-widest opacity-60">Filas: {Math.floor(Math.random() * 10) + 1}p</p>
+                                  <p className="text-[8px] font-black text-text-muted uppercase tracking-widest opacity-60">Filas: {clinicQueues[idx]}p</p>
                               </div>
                            </div>
                         ))}
@@ -233,8 +235,8 @@ export default function SaudePage() {  const { toast } = useToast();
                           { name: 'Amoxicilina 500mg', stock: 'Disponível', units: '12 unidades' },
                           { name: 'Ibuprofeno 600mg', stock: 'Em falta', units: '0 unidades' },
                           { name: 'Losartana 50mg', stock: 'Disponível', units: '540 unidades' }
-                        ].map((med, idx) => (
-                           <div key={idx} className="bg-white p-5 rounded-3xl border-2 border-border flex items-center justify-between group cursor-pointer hover:border-rose-500 transition-all">
+                        ].map((med) => (
+                           <div key={med.name} className="bg-white p-5 rounded-3xl border-2 border-border flex items-center justify-between group cursor-pointer hover:border-rose-500 transition-all">
                               <div className="space-y-0.5">
                                  <h4 className="text-sm font-black text-text-main uppercase">{med.name}</h4>
                                  <p className="text-[9px] font-bold text-text-muted uppercase tracking-widest">{med.units}</p>

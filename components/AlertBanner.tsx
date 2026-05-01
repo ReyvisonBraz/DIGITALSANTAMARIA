@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { AlertCircle, X, ChevronDown, ChevronUp, BellRing } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('AlertBanner');
 
 interface AlertBannerProps {
   message: string;
@@ -18,10 +21,12 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
   useEffect(() => {
     setMounted(true);
     const dismissedMessages = JSON.parse(localStorage.getItem('civic-dismissed-alerts') || '[]');
-    if (!dismissedMessages.includes(message)) {
+    const alreadyDismissed = dismissedMessages.includes(message);
+    if (!alreadyDismissed) {
       setIsVisible(true);
     }
-  }, [message]);
+    log.info('Alert banner', { type, visible: !alreadyDismissed, message: message.substring(0, 60) });
+  }, [message, type]);
 
   const handleDismiss = () => {
     setIsVisible(false);
@@ -30,6 +35,7 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
       dismissedMessages.push(message);
       localStorage.setItem('civic-dismissed-alerts', JSON.stringify(dismissedMessages));
     }
+    log.info('Alert dismissed', { message: message.substring(0, 60) });
   };
 
   if (!mounted || !isVisible) return null;

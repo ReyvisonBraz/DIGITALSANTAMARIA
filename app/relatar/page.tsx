@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { 
-  Camera, 
   Send, 
   Gavel, 
   AlertCircle, 
@@ -11,20 +10,32 @@ import {
   User as UserIcon,
   ChevronRight,
   ChevronLeft,
-  MapPin,
   ClipboardList,
-  Eye,
   ArrowRight
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Modal from '@/components/ui/Modal';
 import { useToast } from '@/lib/toast-context';
+import { createLogger } from '@/lib/logger';
+import { createReport } from '@/services/reports.service';
+import { uploadReportPhoto } from '@/services/storage.service';
+import LocationPicker from '@/features/relatar/LocationPicker';
+import PhotoUpload from '@/features/relatar/PhotoUpload';
+import type { ReportType, GeoLocation } from '@/types';
+
+const log = createLogger('RelatarPage');
+
+const categoryMap: Record<string, ReportType> = {
+  infra: 'infrastructure',
+  saude: 'other',
+  seguranca: 'security',
+  ambiente: 'environment',
+  transito: 'other',
+};
 
 export default function RelatarPage() {
   const { user, login } = useAuth();
@@ -33,12 +44,15 @@ export default function RelatarPage() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [geoLocation, setGeoLocation] = useState<GeoLocation | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     category: '',
     description: '',
     location: '',
-    isPetition: false
+    isPetition: false,
   });
 
   const categories = [
@@ -52,20 +66,24 @@ export default function RelatarPage() {
   const validateStep = (currentStep: number) => {
     if (currentStep === 1) {
       if (!formData.category) {
+        log.warn('Validation failed: no category selected', { step: currentStep });
         toast('Selecione uma categoria', 'error');
         return false;
       }
       if (formData.title.length < 5) {
+        log.warn('Validation failed: title too short', { step: currentStep, length: formData.title.length });
         toast('O título deve ter pelo menos 5 caracteres', 'error');
         return false;
       }
     }
     if (currentStep === 2) {
       if (formData.description.length < 10) {
+        log.warn('Validation failed: description too short', { step: currentStep, length: formData.description.length });
         toast('A descrição deve ter pelo menos 10 caracteres', 'error');
         return false;
       }
-      if (!formData.location) {
+      if (!formData.location && !geoLocation) {
+        log.warn('Validation failed: no location', { step: currentStep });
         toast('Informe a localização aproximada', 'error');
         return false;
       }
@@ -80,30 +98,40 @@ export default function RelatarPage() {
   const prevStep = () => setStep(step - 1);
 
   const handleSubmit = async () => {
-    if (!user) return login();
+    if (!user) {
+      log.info('Submit blocked: user not authenticated');
+      return login();
+    }
     if (!validateStep(step)) return;
     
     setLoading(true);
+    log.info('Submitting report', { category: formData.category, title: formData.title });
+    
     try {
-      // Simulação de protocolo
-      const protocol = `GC-${Math.floor(Math.random() * 900000 + 100000)}`;
-      
-      await addDoc(collection(db, 'reports'), {
-        ...formData,
-        userId: user.uid,
-        status: 'pending',
-        protocol,
-        votes: 0,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+      let photo = null;
+      if (photoFile) {
+        photo = await uploadReportPhoto(user.uid, photoFile);
+      }
+
+      await createReport({
+        reporterId: user.uid,
+        reporterName: user.displayName || 'Cidadão',
+        type: categoryMap[formData.category] || 'other',
+        title: formData.title,
+        description: formData.description,
+        location: geoLocation,
+        isPetition: formData.isPetition,
       });
       
+      log.info('Report submitted successfully', { category: formData.category });
       setShowSuccessModal(true);
-      // Reset form
       setFormData({ title: '', category: '', description: '', location: '', isPetition: false });
+      setPhotoFile(null);
+      setPhotoPreview(null);
+      setGeoLocation(null);
       setStep(1);
     } catch (error) {
-      console.error(error);
+      log.error('Failed to submit report', { category: formData.category }, error);
       toast('Erro ao enviar relato oficial.', 'error');
     } finally {
       setLoading(false);
@@ -222,19 +250,14 @@ export default function RelatarPage() {
               className="space-y-8"
             >
               <div className="space-y-6">
-                <div className="flex flex-col gap-3">
-                  <label className="font-black text-text-main text-[11px] uppercase tracking-widest">Ponto de Referência ou Endereço</label>
-                  <div className="relative">
-                    <MapPin className="absolute left-4 top-4 w-5 h-5 text-primary" />
-                    <input
-                      required
-                      placeholder="Rua, bairro ou ponto conhecido..."
-                      className="w-full p-4 pl-12 bg-white border-2 border-border rounded-xl focus:border-primary outline-none transition-all font-bold text-text-main"
-                      value={formData.location}
-                      onChange={e => setFormData({ ...formData, location: e.target.value })}
-                    />
-                  </div>
-                </div>
+                <LocationPicker
+                  value={formData.location}
+                  location={geoLocation}
+                  onChange={(address, loc) => {
+                    setFormData({ ...formData, location: address });
+                    setGeoLocation(loc);
+                  }}
+                />
 
                 <div className="flex flex-col gap-3">
                   <label className="font-black text-text-main text-[11px] uppercase tracking-widest">O que está acontecendo? (Mín. 10 letras)</label>
@@ -261,18 +284,14 @@ export default function RelatarPage() {
               className="space-y-8"
             >
               <div className="space-y-6">
-                <div className="flex flex-col gap-3">
-                  <label className="font-black text-text-main text-[11px] uppercase tracking-widest">Evidência Visual (Opcional)</label>
-                  <div className="border-4 border-dashed border-border/60 bg-white rounded-2xl p-10 flex flex-col items-center justify-center gap-4 group cursor-pointer hover:border-primary/50 transition-all shadow-inner">
-                    <div className="p-4 bg-primary/10 rounded-2xl text-primary group-hover:scale-110 transition-transform">
-                      <Camera className="w-8 h-8" />
-                    </div>
-                    <div className="text-center font-ui">
-                      <span className="block text-sm font-black text-text-main">Toque para anexar foto</span>
-                      <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest opacity-60">JPEG ou PNG • Max 5MB</span>
-                    </div>
-                  </div>
-                </div>
+                <PhotoUpload
+                  file={photoFile}
+                  previewUrl={photoPreview}
+                  onFileChange={(file, preview) => {
+                    setPhotoFile(file);
+                    setPhotoPreview(preview);
+                  }}
+                />
                 
                 <div 
                   onClick={() => setFormData({ ...formData, isPetition: !formData.isPetition })}

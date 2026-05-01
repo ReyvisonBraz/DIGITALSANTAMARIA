@@ -1,92 +1,47 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  FileText, 
   Users, 
   ChevronRight, 
   Search, 
-  Filter, 
   TrendingUp, 
-  CheckCircle2, 
   Megaphone,
   ArrowRight,
   Sparkles,
-  Gavel
+  Loader2
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/lib/toast-context';
-import Modal from '@/components/ui/Modal';
 import SidePanel from '@/components/ui/SidePanel';
 import CreatePetitionModal from '@/components/CreatePetitionModal';
-
-const petitions = [
-  {
-    id: '1',
-    title: 'Ciclovia na Rua das Palmeiras',
-    author: 'Associação de Ciclistas Urbanos',
-    description: 'Solicitamos a implementação de uma ciclovia protegida para ligar o bairro Alvorada ao Centro, garantindo segurança aos trabalhadores.',
-    signs: 842,
-    goal: 1000,
-    category: 'Mobilidade',
-    status: 'active',
-    image: 'https://picsum.photos/seed/cycling/800/400',
-    supporters: [
-      { name: 'Ana M.', comment: 'Totalmente necessário, a praça está perigosa à noite.' },
-      { name: 'Roberto J.', comment: 'Meus filhos não podem brincar lá.' }
-    ]
-  },
-  {
-    id: '2',
-    title: 'Reforma do Parquinho Vila Nova',
-    author: 'Comitê de Pais da Vila Nova',
-    description: 'Os brinquedos do parque central da Vila Nova estão deteriorados. Pedimos substituição por equipamentos modernos e seguros.',
-    signs: 1250,
-    goal: 1000,
-    category: 'Lazer',
-    status: 'goal_reached',
-    image: 'https://picsum.photos/seed/park/800/400',
-    supporters: [
-      { name: 'Ricardo P.', comment: 'É o único lazer das crianças aqui.' },
-      { name: 'Sandra L.', comment: 'Urgente!' }
-    ]
-  },
-  {
-    id: '3',
-    title: 'Hospital Veterinário Municipal',
-    author: 'Rede de Proteção Animal',
-    description: 'Criação de um ponto de atendimento gratuito para animais de famílias de baixa renda e animais de rua.',
-    signs: 4500,
-    goal: 5000,
-    category: 'Saúde Animal',
-    status: 'active',
-    image: 'https://picsum.photos/seed/pet/800/400',
-    supporters: [
-      { name: 'Juliana F.', comment: 'Os animais merecem respeito.' }
-    ]
-  }
-];
+import SignatureButton from '@/features/peticoes/SignatureButton';
+import SignatureProgress from '@/features/peticoes/SignatureProgress';
+import { getActivePetitions, getPetitionById } from '@/services/petitions.service';
+import type { Petition } from '@/types';
 
 export default function PeticoesPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [selectedPetition, setSelectedPetition] = useState<any>(null);
-  const [petitionToSign, setPetitionToSign] = useState<any>(null);
+  const [petitions, setPetitions] = useState<Petition[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedPetition, setSelectedPetition] = useState<Petition | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [filter, setFilter] = useState('Todas');
-  const [activeTab, setActiveTab] = useState('peticoes'); // 'peticoes' or 'relatos' on mobile
+  const [activeTab, setActiveTab] = useState('peticoes');
 
-  const handleSign = (p: any) => {
-    setPetitionToSign(p);
-  };
+  useEffect(() => {
+    getActivePetitions()
+      .then(setPetitions)
+      .catch(() => toast('Erro ao carregar petições', 'error'))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const confirmSign = () => {
-    toast(`Sua assinatura foi registrada com sucesso na petição "${petitionToSign?.title}"!`, 'success');
-    setPetitionToSign(null);
+  const refreshPetitions = () => {
+    getActivePetitions().then(setPetitions);
   };
 
   const recentReports = [
@@ -177,6 +132,11 @@ export default function PeticoesPage() {
             </div>
           </div>
 
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-tertiary" />
+            </div>
+          ) : (
           <div className="grid grid-cols-1 gap-6 md:gap-8">
             {petitions.map((p) => (
               <motion.article 
@@ -185,13 +145,13 @@ export default function PeticoesPage() {
                 animate={{ opacity: 1, x: 0 }}
                 className="bg-white p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] border-2 border-border shadow-sm hover:shadow-2xl hover:border-tertiary/30 transition-all group flex flex-col md:flex-row gap-6 md:gap-10 relative overflow-hidden active:scale-[0.99]"
               >
+                {p.coverImageURL && (
                 <div className="relative w-full md:w-64 h-48 md:h-52 rounded-2xl md:rounded-[2rem] overflow-hidden shrink-0 shadow-lg">
                    <Image 
-                     src={p.image} 
+                     src={p.coverImageURL} 
                      alt={p.title} 
                      fill 
                      className="object-cover group-hover:scale-110 transition-transform duration-1000" 
-                     referrerPolicy="no-referrer"
                    />
                    <div className="absolute top-4 left-4">
                       <span className="px-3 py-1 bg-white/90 backdrop-blur rounded-full text-[8px] font-black uppercase tracking-widest border border-border text-tertiary">
@@ -199,6 +159,7 @@ export default function PeticoesPage() {
                       </span>
                    </div>
                 </div>
+                )}
 
                 <div className="flex flex-col justify-between flex-grow py-2">
                    <div className="space-y-3">
@@ -211,29 +172,18 @@ export default function PeticoesPage() {
                    </div>
 
                    <div className="mt-6 space-y-4">
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-end text-[9px] md:text-[10px] font-black uppercase tracking-[0.1em]">
-                           <span className="text-tertiary">{p.signs} / {p.goal} assinaturas</span>
-                           <span className="text-text-muted">{Math.round((p.signs / p.goal) * 100)}%</span>
-                        </div>
-                        <div className="h-2.5 w-full bg-surface border border-border rounded-full p-0.5 overflow-hidden">
-                           <motion.div 
-                              initial={{ width: 0 }}
-                              animate={{ width: `${Math.min((p.signs / p.goal) * 100, 100)}%` }}
-                              className="h-full bg-tertiary rounded-full"
-                           />
-                        </div>
-                      </div>
+                      <SignatureProgress current={p.signaturesCount} goal={p.goal} />
 
                       <div className="flex flex-wrap items-center gap-3">
+                         <SignatureButton
+                          petitionId={p.id}
+                          petitionTitle={p.title}
+                          onSign={refreshPetitions}
+                         />
                          <button 
-                          onClick={() => handleSign(p)}
-                          className="flex-grow sm:flex-none px-10 py-4 bg-tertiary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-tertiary/20 hover:brightness-110 active:scale-95 transition-all"
-                         >
-                           Assinar Agora
-                         </button>
-                         <button 
-                          onClick={() => setSelectedPetition(p)}
+                          onClick={() => {
+                            getPetitionById(p.id).then(setSelectedPetition);
+                          }}
                           className="flex-grow sm:flex-none px-10 py-4 bg-white border-2 border-border text-text-main rounded-xl font-black text-[10px] uppercase tracking-widest hover:border-tertiary/50 transition-all text-center"
                          >
                            Ver Detalhes
@@ -242,11 +192,11 @@ export default function PeticoesPage() {
                    </div>
                 </div>
                 
-                {/* Visual decoration */}
                 <div className="absolute -right-10 -top-10 w-32 h-32 bg-tertiary/5 rounded-full blur-2xl group-hover:scale-150 transition-transform" />
               </motion.article>
             ))}
           </div>
+          )}
         </section>
 
         {/* RIGHT COLUMN: Reports & Stats */}
@@ -326,7 +276,6 @@ export default function PeticoesPage() {
 
       <CreatePetitionModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
 
-      {/* SidePanel: Petition Details */}
       <SidePanel 
         isOpen={!!selectedPetition} 
         onClose={() => setSelectedPetition(null)}
@@ -334,21 +283,14 @@ export default function PeticoesPage() {
       >
         {selectedPetition && (
           <div className="space-y-8 p-6 md:p-8">
-            <div className="relative aspect-video rounded-3xl overflow-hidden border-2 border-border shadow-xl">
-               <Image src={selectedPetition.image} alt={selectedPetition.title} fill className="object-cover" referrerPolicy="no-referrer" />
-            </div>
-            
             <div className="space-y-4">
                <div className="flex flex-wrap gap-2">
                   <span className="px-3 py-1 bg-tertiary/10 text-tertiary rounded-full text-[9px] font-black uppercase tracking-widest border border-tertiary/20">
                     {selectedPetition.category}
                   </span>
-                  <span className="px-3 py-1 bg-surface text-text-muted rounded-full text-[9px] font-black uppercase tracking-widest border border-border">
-                    Cod: #{selectedPetition.id.padStart(4, '0')}
-                  </span>
                </div>
                <h3 className="text-3xl font-black text-text-main tracking-tighter uppercase leading-none">{selectedPetition.title}</h3>
-               <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Autor: {selectedPetition.author}</p>
+               <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Autor: {selectedPetition.creatorName}</p>
             </div>
 
             <div className="bg-surface p-6 rounded-3xl border-2 border-border border-dashed font-ui text-sm font-bold text-text-muted leading-relaxed">
@@ -356,88 +298,23 @@ export default function PeticoesPage() {
             </div>
 
             <div className="space-y-4">
-               <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest">
-                  <span className="text-tertiary">{selectedPetition.signs.toLocaleString()} Apoiadores</span>
-                  <span className="opacity-40">Meta {selectedPetition.goal.toLocaleString()}</span>
-               </div>
-               <div className="w-full h-4 bg-white border-2 border-border rounded-full p-1 shadow-inner">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min((selectedPetition.signs / selectedPetition.goal) * 100, 100)}%` }}
-                    className="h-full bg-tertiary rounded-full shadow-lg shadow-tertiary/20" 
-                  />
-               </div>
-            </div>
-
-            <div className="space-y-4">
-               <h4 className="text-xs font-black text-text-main uppercase tracking-widest flex items-center gap-2">
-                 <Users className="w-4 h-4 text-primary" />
-                 Comentários Recentes
-               </h4>
-               <div className="space-y-3">
-                  {selectedPetition.supporters?.map((s: any, idx: number) => (
-                    <div key={idx} className="p-4 bg-white border border-border rounded-2xl shadow-sm">
-                       <p className="text-[10px] font-black text-text-main uppercase">{s.name}</p>
-                       <p className="text-xs font-ui font-medium text-text-muted opacity-70">"{s.comment}"</p>
-                    </div>
-                  ))}
-               </div>
+               <SignatureProgress current={selectedPetition.signaturesCount} goal={selectedPetition.goal} />
             </div>
 
             <div className="sticky bottom-0 pt-6 bg-background">
-              <button 
-                onClick={() => handleSign(selectedPetition)}
-                className="w-full btn-tactile bg-tertiary text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-tertiary/20 flex items-center justify-center gap-3"
-              >
-                Apoiar agora
-                <ChevronRight className="w-5 h-5" />
-              </button>
+              <SignatureButton
+                petitionId={selectedPetition.id}
+                petitionTitle={selectedPetition.title}
+                onSign={() => {
+                  getPetitionById(selectedPetition.id).then(setSelectedPetition);
+                  refreshPetitions();
+                }}
+                className="w-full justify-center"
+              />
             </div>
           </div>
         )}
       </SidePanel>
-
-      {/* Confirmation Modal for Signing */}
-      <Modal 
-        isOpen={!!petitionToSign} 
-        onClose={() => setPetitionToSign(null)}
-        title="Confirmar Apoio"
-      >
-        <div className="flex flex-col items-center text-center p-4 space-y-6">
-          <div className="w-20 h-20 bg-tertiary/10 text-tertiary rounded-full flex items-center justify-center border-4 border-tertiary/20">
-            <CheckCircle2 className="w-10 h-10" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-2xl font-black text-text-main uppercase tracking-tight">Assinar Manifesto</h3>
-            <p className="text-text-muted font-ui font-medium text-sm">
-              Você confirma seu apoio oficial com seus dados cadastrados no DigitalID?
-            </p>
-          </div>
-          
-          <div className="w-full bg-surface p-5 rounded-2xl border-2 border-border space-y-3 text-left shadow-inner">
-             <div className="flex justify-between items-center text-[10px] font-black text-text-muted uppercase tracking-widest">
-                <span>Cidadão Verificado</span>
-                <span className="bg-white px-2 py-0.5 rounded border border-border">ID ATIVO</span>
-             </div>
-             <p className="text-xs font-bold text-text-main">Vinculando assinatura ao CPF ***.***.428-**</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 w-full">
-            <button 
-              onClick={() => setPetitionToSign(null)}
-              className="btn-tactile bg-white border-2 border-border text-text-muted py-4 rounded-xl font-black text-[10px] uppercase tracking-widest"
-            >
-              Cancelar
-            </button>
-            <button 
-              onClick={confirmSign}
-              className="btn-tactile bg-tertiary text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-tertiary/20"
-            >
-              Confirmar
-            </button>
-          </div>
-        </div>
-      </Modal>
 
     </div>
   );

@@ -18,6 +18,9 @@ import NotificationsPanel from '@/components/NotificationsPanel';
 import { useAccessibility } from '@/lib/accessibility-context';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/lib/toast-context';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('TopAppBar');
 
 const navLinks = [
   { label: 'Ouvidoria', href: '/ouvidoria', icon: MessageSquare, category: 'Participação' },
@@ -55,12 +58,15 @@ export default function TopAppBar() {
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
+    log.info('TopAppBar mounted', { pathname, isAuthenticated: !!user });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleToggleContrast = () => {
+    const newState = !highContrast;
+    log.info('Accessibility: contrast toggled', { highContrast: newState });
     toggleHighContrast();
-    toast(!highContrast ? 'Modo de acessibilidade ativado.' : 'Modo padrão restaurado.', 'info');
+    toast(newState ? 'Modo de acessibilidade ativado.' : 'Modo padrão restaurado.', 'info');
   };
 
   return (
@@ -258,6 +264,10 @@ export default function TopAppBar() {
                         fill
                         className="object-cover"
                         referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
                       />
                     </div>
                   </motion.div>

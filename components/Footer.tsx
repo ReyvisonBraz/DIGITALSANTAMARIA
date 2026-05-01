@@ -4,11 +4,15 @@ import React from 'react';
 import Link from 'next/link';
 import { Globe, Camera, Share2 } from 'lucide-react';
 import { useToast } from '@/lib/toast-context';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('Footer');
 
 export default function Footer() {
   const { toast } = useToast();
 
   const handleSocialClick = (platform: string) => {
+    log.info('Social link clicked', { platform });
     toast(`Redirecionando para o ${platform} oficial da Prefeitura...`, 'info');
   };
   return (

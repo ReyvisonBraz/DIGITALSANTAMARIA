@@ -1,6 +1,31 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+
+const STORAGE_KEY = 'dsm-accessibility';
+
+interface SavedPrefs {
+  fontSize: number;
+  layoutScale: number;
+  highContrast: boolean;
+}
+
+function loadPrefs(): SavedPrefs {
+  if (typeof window === 'undefined') {
+    return { fontSize: 16, layoutScale: 1, highContrast: false };
+  }
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch { /* ignore */ }
+  return { fontSize: 16, layoutScale: 1, highContrast: false };
+}
+
+function savePrefs(prefs: SavedPrefs) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  } catch { /* ignore */ }
+}
 
 interface AccessibilityContextType {
   fontSize: number;
@@ -20,58 +45,62 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
   const [fontSize, setFontSize] = useState(16);
   const [layoutScale, setLayoutScale] = useState(1);
   const [highContrast, setHighContrast] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    const prefs = loadPrefs();
+    setFontSize(prefs.fontSize);
+    setLayoutScale(prefs.layoutScale);
+    setHighContrast(prefs.highContrast);
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     const root = document.documentElement;
     root.style.setProperty('--base-font-size', `${fontSize}px`);
-    
-    // Apply layout scale using a CSS variable to be used in globals.css
     root.style.setProperty('--layout-scale', `${layoutScale}`);
-    
-    if (highContrast) {
-      document.body.classList.add('high-contrast');
-    } else {
-      document.body.classList.remove('high-contrast');
-    }
-  }, [fontSize, layoutScale, highContrast]);
+    document.body.classList.toggle('high-contrast', highContrast);
+    savePrefs({ fontSize, layoutScale, highContrast });
+  }, [fontSize, layoutScale, highContrast, hydrated]);
 
-  const increaseFontSize = () => {
-    setFontSize(prev => {
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-      const max = isMobile ? 22 : 32; 
-      return Math.min(prev + 2, max);
-    });
-  };
+  const increaseFontSize = useCallback(() => {
+    setFontSize(prev => Math.min(prev + 2, 32));
+  }, []);
 
-  const decreaseFontSize = () => setFontSize(prev => Math.max(prev - 2, 12));
+  const decreaseFontSize = useCallback(() => {
+    setFontSize(prev => Math.max(prev - 2, 12));
+  }, []);
 
-  const increaseLayoutScale = () => {
+  const increaseLayoutScale = useCallback(() => {
     setLayoutScale(prev => Math.min(prev + 0.1, 1.5));
-  };
+  }, []);
 
-  const decreaseLayoutScale = () => {
+  const decreaseLayoutScale = useCallback(() => {
     setLayoutScale(prev => Math.max(prev - 0.1, 0.8));
-  };
+  }, []);
 
-  const toggleHighContrast = () => setHighContrast(prev => !prev);
-  
-  const resetAccessibility = () => {
+  const toggleHighContrast = useCallback(() => {
+    setHighContrast(prev => !prev);
+  }, []);
+
+  const resetAccessibility = useCallback(() => {
     setFontSize(16);
     setLayoutScale(1);
     setHighContrast(false);
-  };
+  }, []);
 
   return (
-    <AccessibilityContext.Provider value={{ 
-      fontSize, 
+    <AccessibilityContext.Provider value={{
+      fontSize,
       layoutScale,
-      highContrast, 
-      increaseFontSize, 
-      decreaseFontSize, 
+      highContrast,
+      increaseFontSize,
+      decreaseFontSize,
       increaseLayoutScale,
       decreaseLayoutScale,
       toggleHighContrast,
-      resetAccessibility 
+      resetAccessibility,
     }}>
       {children}
     </AccessibilityContext.Provider>

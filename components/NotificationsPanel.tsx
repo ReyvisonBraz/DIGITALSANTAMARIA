@@ -5,6 +5,9 @@ import { Bell, Info, ShieldCheck, MessageSquare, Heart, Vote, X, Clock } from 'l
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import SidePanel from '@/components/ui/SidePanel';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('NotificationsPanel');
 
 interface Notification {
   id: string;
@@ -52,6 +55,10 @@ interface NotificationsPanelProps {
 }
 
 export default function NotificationsPanel({ isOpen, onClose }: NotificationsPanelProps) {
+  React.useEffect(() => {
+    if (isOpen) log.info('Notifications panel opened');
+  }, [isOpen]);
+
   return (
     <SidePanel
       isOpen={isOpen}

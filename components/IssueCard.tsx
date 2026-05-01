@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ThumbsUp, Clock, MapPin, ArrowRight } from 'lucide-react';
+import { ThumbsUp, Clock, MapPin, ArrowRight, ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import Image from 'next/image';
@@ -32,6 +32,7 @@ export default function IssueCard({
   className,
   onClick 
 }: IssueCardProps) {
+  const [imgError, setImgError] = useState(false);
   const statusConfig = {
     pending: { label: 'Pendente', color: 'bg-tertiary-fixed text-on-tertiary-fixed-variant' },
     resolved: { label: 'Resolvido', color: 'bg-green-100 text-green-800 border-green-200' },
@@ -47,7 +48,7 @@ export default function IssueCard({
       )}
       onClick={onClick}
     >
-      {imageUrl && (
+      {imageUrl && !imgError && (
         <div className="w-full sm:w-48 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container relative">
           <Image 
             src={imageUrl} 
@@ -55,7 +56,13 @@ export default function IssueCard({
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-500" 
             referrerPolicy="no-referrer"
+            onError={() => setImgError(true)}
           />
+        </div>
+      )}
+      {imageUrl && imgError && (
+        <div className="w-full sm:w-48 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container flex items-center justify-center">
+          <ImageOff className="w-8 h-8 text-text-muted/40" />
         </div>
       )}
       <div className="flex-grow flex flex-col">

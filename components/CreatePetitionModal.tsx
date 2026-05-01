@@ -1,15 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { 
-  Megaphone, FileText, Layout, ShieldCheck, Send, 
-  CheckCircle2, ChevronRight, X, Image as ImageIcon, 
-  ArrowLeft, Upload, Target 
+  Megaphone, FileText, ShieldCheck, Send, 
+  CheckCircle2, ChevronRight, Image as ImageIcon, 
+  ArrowLeft, Upload, Target, Loader2
 } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import { useToast } from '@/lib/toast-context';
+import { useAuth } from '@/lib/auth-context';
 import { cn } from '@/lib/utils';
+import { createPetition } from '@/services/petitions.service';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('CreatePetitionModal');
 
 interface CreatePetitionModalProps {
   isOpen: boolean;
@@ -17,23 +22,45 @@ interface CreatePetitionModalProps {
 }
 
 export default function CreatePetitionModal({ isOpen, onClose }: CreatePetitionModalProps) {
+  const { user, login } = useAuth();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     category: 'Infraestrutura',
     goal: '5000',
     description: '',
-    hasImage: false
+    hasImage: false,
   });
 
   const nextStep = () => setStep(prev => prev + 1);
   const prevStep = () => setStep(prev => prev - 1);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setShowSuccess(true);
+    if (!user) {
+      await login();
+      return;
+    }
+    setLoading(true);
+    try {
+      await createPetition({
+        title: formData.title,
+        category: formData.category,
+        goal: parseInt(formData.goal) || 1000,
+        description: formData.description,
+        creatorId: user.uid,
+        creatorName: user.displayName || 'Cidadão',
+      });
+      log.info('Petition created', { title: formData.title });
+      setShowSuccess(true);
+    } catch (err) {
+      log.error('Failed to create petition', {}, err);
+      toast('Erro ao criar petição.', 'error');
+    }
+    setLoading(false);
   };
 
   const renderStep = () => {
@@ -180,13 +207,14 @@ export default function CreatePetitionModal({ isOpen, onClose }: CreatePetitionM
                >
                   <ArrowLeft className="w-5 h-5" />
                </button>
-               <button 
-                 onClick={handleSubmit}
-                 className="flex-1 btn-tactile bg-primary text-white py-5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3"
-               >
-                 Publicar Causa 
-                 <Send className="w-4 h-4" />
-               </button>
+                <button 
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="flex-1 btn-tactile bg-primary text-white py-5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                  {loading ? 'Publicando...' : 'Publicar Causa'}
+                </button>
             </div>
           </motion.div>
         );
