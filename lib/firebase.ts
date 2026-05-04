@@ -1,3 +1,19 @@
+/**
+ * @module firebase
+ * @description Inicialização centralizada do Firebase para o Digital Santa Maria.
+ *
+ * Configuração carregada por prioridade:
+ * 1. Variáveis de ambiente `NEXT_PUBLIC_FIREBASE_*` (.env.local)
+ * 2. Arquivo `firebase-applet-config.json` (fallback)
+ *
+ * Exporta:
+ * - `app` — Instância do Firebase App (singleton)
+ * - `auth` — Instância do Firebase Auth
+ * - `db` — Instância do Firestore (com database ID customizado)
+ * - `FirestoreError` — Classe de erro customizada para operações Firestore
+ * - `handleFirestoreError` — Handler centralizado de erros Firestore
+ */
+
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';

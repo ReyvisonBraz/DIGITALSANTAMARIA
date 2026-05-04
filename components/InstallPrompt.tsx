@@ -1,57 +1,108 @@
+/**
+ * @module InstallPrompt
+ * @description Componente PWA que exibe prompt de instalação do app na tela inicial.
+ *
+ * Funciona interceptando o evento `beforeinstallprompt` do browser,
+ * que é disparado quando o app atende os critérios de instalação PWA.
+ * O prompt aparece como um card flutuante no canto inferior direito.
+ *
+ * Nota: Este componente deve estar dentro dos providers (ToastProvider, etc.)
+ * para ter acesso ao contexto da aplicação.
+ */
+
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Download } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Download, X } from 'lucide-react';
+
+// ─── Tipos ──────────────────────────────────────────────────────────
+
+/**
+ * Interface para o evento `beforeinstallprompt` do browser.
+ * Não é um tipo padrão do TypeScript, precisa ser declarado manualmente.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/BeforeInstallPromptEvent
+ */
+interface BeforeInstallPromptEvent extends Event {
+  /** Exibe o prompt de instalação ao usuário */
+  prompt(): Promise<void>;
+  /** Resultado da escolha do usuário */
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+// ─── Componente ─────────────────────────────────────────────────────
 
 export default function InstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [show, setShow] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
+  /** Intercepta o evento beforeinstallprompt para exibir UI customizada */
   useEffect(() => {
     const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
       setShow(true);
     };
+
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
-  const handleInstall = async () => {
+  /** Dispara o prompt nativo de instalação do browser */
+  const handleInstall = useCallback(async () => {
     if (!deferredPrompt) return;
+
     deferredPrompt.prompt();
     const result = await deferredPrompt.userChoice;
-    if (result.outcome === 'accepted') setShow(false);
+
+    if (result.outcome === 'accepted') {
+      setShow(false);
+    }
+
+    // O prompt só pode ser usado uma vez
     setDeferredPrompt(null);
-  };
+  }, [deferredPrompt]);
+
+  /** Dispensa o prompt sem instalar */
+  const handleDismiss = useCallback(() => {
+    setDismissed(true);
+    setShow(false);
+  }, []);
 
   if (!show || dismissed) return null;
 
   return (
     <div className="fixed bottom-24 md:bottom-6 right-4 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 w-80">
+      <div className="bg-white rounded-2xl shadow-2xl border-2 border-border p-4 w-80">
         <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
-            <Download className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          {/* Ícone */}
+          <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Download className="w-5 h-5 text-primary" />
           </div>
+
+          {/* Conteúdo */}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <p className="text-sm font-bold text-text-main">
               Instale o App
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+            <p className="text-xs text-text-muted mt-0.5">
               Instale o Digital Santa Maria na tela inicial do seu dispositivo para acesso mais rápido.
             </p>
+
+            {/* Ações */}
             <div className="flex items-center gap-2 mt-3">
               <button
                 onClick={handleInstall}
-                className="flex-1 px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                className="flex-1 px-3 py-1.5 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-lg transition-colors"
+                aria-label="Instalar aplicativo"
               >
                 Instalar
               </button>
               <button
-                onClick={() => { setDismissed(true); setShow(false); }}
-                className="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                onClick={handleDismiss}
+                className="px-3 py-1.5 text-xs font-medium text-text-muted hover:text-text-main transition-colors"
+                aria-label="Dispensar prompt de instalação"
               >
                 Agora não
               </button>

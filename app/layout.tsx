@@ -1,4 +1,21 @@
-import type {Metadata} from 'next';
+/**
+ * @module RootLayout
+ * @description Layout raiz da aplicação Digital Santa Maria.
+ *
+ * Responsabilidades:
+ * - Configuração de fontes (Inter + Outfit via Google Fonts)
+ * - Metadata SEO e PWA
+ * - Árvore de providers (Accessibility → Auth → Toast)
+ * - Estrutura global: TopAppBar, main content, Footer, BottomNavBar
+ * - Registro do Service Worker para PWA
+ *
+ * Ordem dos providers (de fora para dentro):
+ * 1. AccessibilityProvider — não depende de ninguém
+ * 2. AuthProvider — depende de Firebase (inicializado em lib/firebase)
+ * 3. ToastProvider — pode ser usado por todos os filhos
+ */
+
+import type { Metadata } from 'next';
 import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
@@ -11,17 +28,21 @@ import RootLayoutLogger from './root-layout-logger';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import InstallPrompt from '@/components/InstallPrompt';
 
+// ─── Fontes ─────────────────────────────────────────────────────────
+
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-sans',
+  variable: '--font-inter',
   display: 'swap',
 });
 
 const outfit = Outfit({
   subsets: ['latin'],
-  variable: '--font-display',
+  variable: '--font-outfit',
   display: 'swap',
 });
+
+// ─── Metadata ───────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
   title: 'Digital Santa Maria | Santa Maria do Pará - PA',
@@ -35,26 +56,41 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({children}: {children: React.ReactNode}) {
+// ─── Layout ─────────────────────────────────────────────────────────
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className={`${inter.variable} ${outfit.variable}`}>
       <body suppressHydrationWarning className="antialiased min-h-screen flex flex-col bg-surface overflow-x-hidden">
         <AccessibilityProvider>
           <AuthProvider>
             <ToastProvider>
+              {/* Logger global: monitora navegação, erros e conectividade */}
               <RootLayoutLogger />
+
+              {/* Barra superior com navegação, busca e perfil */}
               <TopAppBar />
+
+              {/* Conteúdo principal com margem para header fixo e nav inferior */}
               <main className="flex-1 mt-16 pb-20 md:pb-0">
                 <ErrorBoundary>
                   {children}
                 </ErrorBoundary>
               </main>
+
+              {/* Rodapé institucional */}
               <Footer />
+
+              {/* Navegação inferior (apenas mobile) */}
               <BottomNavBar className="md:hidden" />
+
+              {/* Prompt de instalação PWA — agora dentro dos providers */}
+              <InstallPrompt />
             </ToastProvider>
           </AuthProvider>
         </AccessibilityProvider>
-        <InstallPrompt />
+
+        {/* Registro do Service Worker para funcionalidade PWA */}
         <script
           dangerouslySetInnerHTML={{
             __html: `

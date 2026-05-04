@@ -1,3 +1,23 @@
+/**
+ * @module accessibility-context
+ * @description Contexto de acessibilidade do Digital Santa Maria.
+ *
+ * Gerencia preferências de acessibilidade:
+ * - Tamanho da fonte (12px a 32px, incremento de 2px)
+ * - Escala do layout (0.8x a 1.5x, incremento de 0.1)
+ * - Modo de alto contraste
+ *
+ * Persistência:
+ * - Preferências salvas no localStorage (chave: 'dsm-accessibility')
+ * - Restauradas automaticamente ao carregar a página
+ * - Aplicadas via CSS custom properties (--base-font-size, --layout-scale)
+ *
+ * @example
+ * ```tsx
+ * const { fontSize, increaseFontSize, toggleHighContrast } = useAccessibility();
+ * ```
+ */
+
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';

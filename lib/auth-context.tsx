@@ -1,6 +1,27 @@
+/**
+ * @module auth-context
+ * @description Contexto de autenticação do Digital Santa Maria.
+ *
+ * Fornece:
+ * - Estado do usuário autenticado (Firebase Auth User)
+ * - Role do usuário (citizen, admin, clerk)
+ * - Estado de loading da autenticação
+ * - Métodos login() e logout()
+ *
+ * Fluxo de autenticação:
+ * 1. `onAuthStateChanged` detecta mudanças de estado
+ * 2. Se novo login, `syncUserProfile` cria perfil no Firestore (se não existe)
+ * 3. `fetchUserRole` busca role na coleção `admins`
+ *
+ * @example
+ * ```tsx
+ * const { user, userRole, login, logout, loading } = useAuth();
+ * ```
+ */
+
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import {
   User,
   onAuthStateChanged,
@@ -15,16 +36,30 @@ import type { UserRole } from '@/types';
 
 const authLogger = createLogger('Auth');
 
+// ─── Tipos do contexto ──────────────────────────────────────────────
+
+/** Interface pública do contexto de autenticação */
 interface AuthContextType {
+  /** Usuário do Firebase Auth (null se não autenticado) */
   user: User | null;
+  /** Role do usuário no sistema (citizen, admin, clerk) */
   userRole: UserRole;
+  /** Se a autenticação ainda está sendo verificada */
   loading: boolean;
+  /** Inicia login com Google via popup */
   login: () => Promise<void>;
+  /** Faz logout e limpa estado */
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// ─── Funções auxiliares ─────────────────────────────────────────────
+
+/**
+ * Busca a role do usuário na coleção `admins`.
+ * Se não encontrado, retorna 'citizen' como padrão.
+ */
 function fetchUserRole(uid: string): Promise<UserRole> {
   return getDoc(doc(db, 'admins', uid)).then((snap) => {
     if (!snap.exists()) return 'citizen' as UserRole;
@@ -33,6 +68,10 @@ function fetchUserRole(uid: string): Promise<UserRole> {
   });
 }
 
+/**
+ * Sincroniza o perfil do usuário no Firestore.
+ * Cria o documento apenas se não existir (primeiro login).
+ */
 function syncUserProfile(user: User): Promise<void> {
   const userRef = doc(db, 'users', user.uid);
   return getDoc(userRef).then((snap) => {
@@ -56,11 +95,14 @@ function syncUserProfile(user: User): Promise<void> {
   });
 }
 
+// ─── Provider ───────────────────────────────────────────────────────
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<UserRole>('citizen');
   const [loading, setLoading] = useState(true);
 
+  /** Escuta mudanças de estado de autenticação */
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
@@ -86,7 +128,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe;
   }, []);
 
-  const login = async () => {
+  /** Inicia login com Google OAuth via popup */
+  const login = useCallback(async () => {
     const provider = new GoogleAuthProvider();
     authLogger.info('Login initiated');
     try {
@@ -104,9 +147,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       authLogger.error('Login failed', {}, error);
       throw error;
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  /** Faz logout do Firebase Auth */
+  const logout = useCallback(async () => {
     authLogger.info('Logout initiated', { userId: auth.currentUser?.uid });
     try {
       await signOut(auth);
@@ -115,7 +159,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       authLogger.error('Logout failed', {}, error);
       throw error;
     }
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, userRole, loading, login, logout }}>
@@ -124,7 +168,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useAuth() {
+// ─── Hook ───────────────────────────────────────────────────────────
+
+/**
+ * Hook para acessar o contexto de autenticação.
+ * Deve ser usado dentro de um `AuthProvider`.
+ *
+ * @throws Error se usado fora do AuthProvider
+ */
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');

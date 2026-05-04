@@ -1,22 +1,49 @@
+/**
+ * @module globals.css
+ * @description Design system e estilos globais do Digital Santa Maria.
+ *
+ * Estrutura:
+ * 1. @theme - Tokens de design (cores, tipografia)
+ * 2. @layer base - Reset, tipografia global, acessibilidade
+ * 3. @layer components - Padrões reutilizáveis (tactile cards, buttons)
+ * 4. Utilities - Scrollbar hiding, animations
+ */
+
 @import "tailwindcss";
 
+/* ─── Design Tokens ──────────────────────────────────────────────── */
+
 @theme {
+  /* Cores primárias */
   --color-primary: #1173D4;
   --color-primary-dark: #004788;
   --color-primary-light: #D5E3FF;
+
+  /* Superfícies */
   --color-surface: #F9F9FF;
   --color-surface-container: #ECEDF6;
+  --color-background: #F8FAFC;
+
+  /* Texto */
   --color-text-main: #181C22;
   --color-text-muted: #414752;
+
+  /* Bordas */
   --color-border: #C1C6D4;
+
+  /* Acentos semânticos */
   --color-accent-danger: #BA1A1A;
   --color-tertiary: #934400;
-  
-  --font-display: var(--font-display);
-  --font-sans: var(--font-sans);
+
+  /* Tipografia — Variáveis injetadas pelo Next.js Google Fonts */
+  --font-display: var(--font-outfit, 'Outfit', sans-serif);
+  --font-sans: var(--font-inter, 'Inter', system-ui, sans-serif);
 }
 
+/* ─── Base Layer ─────────────────────────────────────────────────── */
+
 @layer base {
+  /* Variáveis CSS de acessibilidade (controladas pelo AccessibilityProvider) */
   :root {
     --base-font-size: 16px;
     --layout-scale: 1;
@@ -28,7 +55,7 @@
   }
 
   body {
-    background-color: #F8FAFC;
+    background-color: var(--color-background, #F8FAFC);
     color: var(--color-text-main);
     font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -38,6 +65,7 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
   }
 
+  /* Modo alto contraste (ativado via AccessibilityProvider) */
   body.high-contrast {
     --color-surface: #000000;
     --color-surface-container: #0A0A0A;
@@ -49,13 +77,14 @@
     --color-primary-light: #064E3B;
   }
 
-  /* Accessibility Scaling Safety Guards */
+  /* Tipografia responsiva para mobile */
   @media (max-width: 768px) {
     body {
       letter-spacing: -0.005em;
     }
   }
 
+  /* Hierarquia de headings com font-display */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display), var(--font-sans), sans-serif;
     @apply font-bold leading-tight tracking-tight;
@@ -66,7 +95,7 @@
   h3 { @apply text-xl md:text-2xl font-semibold; }
   h4 { @apply text-lg md:text-xl font-semibold; }
 
-  /* Utility classes for Names and Subnames */
+  /* Classes utilitárias para nomes e sub-títulos */
   .text-name {
     @apply font-semibold tracking-tight;
     color: var(--color-text-main);
@@ -77,14 +106,16 @@
     color: var(--color-text-muted);
   }
 
-  /* Reduction of visual noise in decorative icons */
+  /* Ícones decorativos (reduz opacidade para não competir com conteúdo) */
   .deco-fade {
     @apply opacity-20 scale-90 transition-transform duration-500;
   }
 }
 
+/* ─── Components Layer ───────────────────────────────────────────── */
+
 @layer components {
-  /* Tactile Boundaries Pattern */
+  /* Card com feedback tátil (borda inferior interativa) */
   .tactile-card {
     background-color: white;
     border-bottom: 2px solid #1173D4;
@@ -105,6 +136,7 @@
     border-bottom-width: 2px;
   }
 
+  /* Botão com feedback tátil */
   .btn-tactile {
     @apply relative inline-flex items-center justify-center font-bold transition-all active:scale-95 px-6 py-3 rounded-lg;
     border-bottom: 2px solid transparent;
@@ -121,10 +153,23 @@
   }
 }
 
+/* ─── Utilities ──────────────────────────────────────────────────── */
+
+/* Esconde scrollbar mantendo funcionalidade de scroll */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Animação de rotação lenta para ícones decorativos */
+@keyframes slow-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-slow-spin {
+  animation: slow-spin 20s linear infinite;
 }
