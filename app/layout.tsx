@@ -41,13 +41,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning className={`${inter.variable} ${outfit.variable}`}>
-      <body className="antialiased min-h-screen bg-background text-text-main font-display">
+      <body className="antialiased min-h-screen bg-background text-text-main font-display pt-[env(safe-area-inset-top,0px)]">
         <AccessibilityProvider>
           <AuthProvider>
             <ToastProvider>
               <ErrorBoundary>
                 <TopAppBar />
-                <main className="relative">{children}</main>
+                <main className="relative pt-20 md:pt-24">{children}</main>
                 <Footer />
                 <BottomNavBar />
                 <InstallPrompt />
