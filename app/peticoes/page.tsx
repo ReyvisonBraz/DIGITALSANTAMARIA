@@ -22,12 +22,15 @@ import CreatePetitionModal from '@/components/CreatePetitionModal';
 import SignatureButton from '@/features/peticoes/SignatureButton';
 import SignatureProgress from '@/features/peticoes/SignatureProgress';
 import { getActivePetitions, getPetitionById } from '@/services/petitions.service';
-import type { Petition } from '@/types';
+import { getPendingReports } from '@/services/reports.service';
+import type { Petition, Report } from '@/types';
 
 export default function PeticoesPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [petitions, setPetitions] = useState<Petition[]>([]);
+  const [recentReports, setRecentReports] = useState<Report[]>([]);
+  const [reportsLoading, setReportsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [selectedPetition, setSelectedPetition] = useState<Petition | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -38,17 +41,15 @@ export default function PeticoesPage() {
       .then(setPetitions)
       .catch(() => toast('Erro ao carregar petições', 'error'))
       .finally(() => setLoading(false));
+    getPendingReports()
+      .then(setRecentReports)
+      .catch(() => {})
+      .finally(() => setReportsLoading(false));
   }, []);
 
   const refreshPetitions = () => {
     getActivePetitions().then(setPetitions);
   };
-
-  const recentReports = [
-    { id: '1', title: 'Buraco na Rua das Palmeiras', category: 'Infra', time: 'Há 15 min', votes: 42, color: 'bg-orange-500' },
-    { id: '2', title: 'Iluminação Queimada na Praça', category: 'Segurança', time: 'Há 2 horas', votes: 128, color: 'bg-primary' },
-    { id: '3', title: 'Lixo Acumulado no Canal', category: 'Ambiente', time: 'Há 5 horas', votes: 34, color: 'bg-green-600' },
-  ];
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 md:p-12 pb-32 gap-10 md:gap-16">
@@ -214,27 +215,34 @@ export default function PeticoesPage() {
                 <h3 className="text-xl font-black text-text-main uppercase tracking-tight">Relatos Recentes</h3>
              </div>
 
-             <div className="space-y-4">
-                {recentReports.map((report) => (
-                  <motion.div 
-                    key={report.id}
-                    whileHover={{ x: 5 }}
-                    className="p-5 bg-surface border-2 border-border border-l-[8px] border-l-primary rounded-2xl hover:border-primary/30 transition-all cursor-pointer group"
-                  >
-                     <div className="flex justify-between items-start mb-3">
-                        <span className="text-[9px] font-black text-text-muted uppercase tracking-widest">{report.time}</span>
-                        <div className="flex items-center gap-1.5 px-2 py-1 bg-white rounded-lg border border-border text-[9px] font-black text-primary">
-                           <TrendingUp className="w-3 h-3" />
-                           {report.votes}
-                        </div>
-                     </div>
-                     <h4 className="font-black text-sm text-text-main uppercase leading-tight group-hover:text-primary transition-colors">{report.title}</h4>
-                     <button className="mt-4 flex items-center gap-2 text-[9px] font-black text-primary uppercase tracking-widest">
-                        Apoiar agora <ArrowRight className="w-3 h-3" />
-                     </button>
-                  </motion.div>
-                ))}
-             </div>
+              <div className="space-y-4">
+                 {reportsLoading ? (
+                   <div className="flex items-center justify-center py-8">
+                     <Loader2 className="w-6 h-6 animate-spin text-text-muted" />
+                   </div>
+                 ) : recentReports.length === 0 ? (
+                   <div className="text-center py-6">
+                     <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Nenhum relato recente</p>
+                   </div>
+                 ) : (
+                   recentReports.slice(0, 5).map((report) => (
+                   <motion.div 
+                     key={report.id}
+                     whileHover={{ x: 5 }}
+                     className="p-5 bg-surface border-2 border-border border-l-[8px] border-l-primary rounded-2xl hover:border-primary/30 transition-all cursor-pointer group"
+                   >
+                      <div className="flex justify-between items-start mb-3">
+                         <span className="text-[9px] font-black text-text-muted uppercase tracking-widest">{report.type}</span>
+                         <div className="flex items-center gap-1.5 px-2 py-1 bg-white rounded-lg border border-border text-[9px] font-black text-primary">
+                            <TrendingUp className="w-3 h-3" />
+                            {report.votes}
+                         </div>
+                      </div>
+                      <h4 className="font-black text-sm text-text-main uppercase leading-tight group-hover:text-primary transition-colors">{report.title}</h4>
+                   </motion.div>
+                   ))
+                 )}
+              </div>
 
              <button 
               onClick={() => router.push('/relatar')}

@@ -10,3 +10,4 @@ export { useAuthGuard } from './use-auth-guard';
 export { useFirestoreDoc } from './use-firestore-doc';
 export { useClickOutside } from './use-click-outside';
 export { useKeyboardShortcut } from './use-keyboard-shortcut';
+export { useContent } from './use-content';

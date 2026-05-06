@@ -24,7 +24,8 @@ import {
   School, Zap, Award, TrendingUp, MessageSquare,
   ThumbsUp, ChevronRight, Target, Sparkles,
   ShieldCheck, Radar, Wind, Search, Bell, Heart,
-  Calendar, Layers, MapPin, Clock, Radio, FileText
+  Calendar, Layers, MapPin, Clock, Radio, FileText,
+  Loader2
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -35,6 +36,10 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
 import { DASHBOARD_MODULES } from '@/lib/constants';
+import { getUserProfile } from '@/services/users.service';
+import { getReportsByUser } from '@/services/reports.service';
+import { getDemandsByUser } from '@/services/demands.service';
+import type { UserProfile } from '@/types';
 
 // ─── Tipos internos ─────────────────────────────────────────────────
 
@@ -65,15 +70,7 @@ interface UserStats {
   activeProtocols: number;
 }
 
-// ─── Dados estáticos (substituir por API real) ──────────────────────
-
-const USER_STATS: UserStats = {
-  points: 1250,
-  score: 842,
-  level: 'Cidadão Elite',
-  impact: '82%',
-  activeProtocols: 3,
-};
+// ─── Dados estáticos (substituir por API real quando disponível) ──────
 
 const CITY_METRICS: readonly CityMetric[] = [
   { label: 'Trânsito', val: 'Fluído', icon: Navigation, color: 'text-blue-500', trend: '-8%' },
@@ -89,6 +86,13 @@ const FEED_ITEMS: readonly FeedItem[] = [
   { label: 'Vaga Recomendada', desc: 'Nova oportunidade compatível com seu perfil.', time: '6h', icon: Briefcase, color: 'text-primary' },
 ] as const;
 
+function getLevel(points: number): string {
+  if (points >= 500) return 'Cidadão Elite';
+  if (points >= 200) return 'Cidadão Prata';
+  if (points >= 50) return 'Cidadão Bronze';
+  return 'Cidadão';
+}
+
 // ─── Componente principal ───────────────────────────────────────────
 
 export default function Home() {
@@ -98,11 +102,35 @@ export default function Home() {
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [activeProtocols, setActiveProtocols] = useState(0);
+  const [statsLoading, setStatsLoading] = useState(true);
 
-  /** Previne flash de conteúdo antes da hidratação */
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setStatsLoading(false);
+      return;
+    }
+    setStatsLoading(true);
+    Promise.all([
+      getUserProfile(user.uid),
+      getReportsByUser(user.uid),
+      getDemandsByUser(user.uid),
+    ]).then(([prof, reports, demands]) => {
+      setProfile(prof);
+      const active = [...reports, ...demands].filter(
+        (d) => d.status !== 'resolved' && d.status !== 'rejected' && d.status !== 'solved'
+      ).length;
+      setActiveProtocols(active);
+    }).catch(() => {}).finally(() => setStatsLoading(false));
+  }, [user]);
+
+  const userPoints = profile?.points ?? 0;
+  const userLevel = statsLoading ? 'Carregando...' : getLevel(userPoints);
 
   /** Abre a busca global (conectada ao input decorativo) */
   const handleSearchFocus = useCallback(() => {
@@ -161,10 +189,22 @@ export default function Home() {
                              Olá, {user?.displayName?.split(' ')[0] || 'Cidadão'}.
                           </h2>
                           <div className="flex items-center gap-3">
-                             <div className="px-2.5 py-0.5 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-primary">
-                                {USER_STATS.level}
-                             </div>
-                             <span className="text-[10px] font-medium text-white/40 uppercase tracking-widest">{USER_STATS.points} DigitalPoints</span>
+                     {statsLoading ? (
+                        <div className="px-2.5 py-0.5 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-primary flex items-center gap-2">
+                          <Loader2 className="w-3 h-3 animate-spin" /> Carregando
+                        </div>
+                     ) : (
+                        <div className="px-2.5 py-0.5 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-primary">
+                          {userLevel}
+                        </div>
+                     )}
+                     <span className="text-[10px] font-medium text-white/40 uppercase tracking-widest">
+                       {statsLoading ? (
+                         <Loader2 className="w-3 h-3 animate-spin inline" />
+                       ) : (
+                         `${userPoints} DigitalPoints`
+                       )}
+                     </span>
                           </div>
                        </div>
                     </div>
@@ -206,7 +246,7 @@ export default function Home() {
                        <Activity size={20} className="text-white/70" />
                        <div className="space-y-0.5">
                           <span className="text-[10px] font-bold uppercase tracking-widest opacity-40">Protocolos</span>
-                          <p className="text-base font-bold tracking-tight">{USER_STATS.activeProtocols} Ativos</p>
+                          <p className="text-base font-bold tracking-tight">{activeProtocols} Ativos</p>
                        </div>
                     </button>
                  </div>
@@ -223,7 +263,7 @@ export default function Home() {
                    </div>
                    <div className="text-right">
                       <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest leading-none mb-1">DigitalID Score</p>
-                      <p className="text-2xl font-bold text-text-main tracking-tight leading-none tabular-nums group-hover:text-primary transition-colors">{USER_STATS.score}</p>
+                      <p className="text-2xl font-bold text-text-main tracking-tight leading-none tabular-nums group-hover:text-primary transition-colors">{statsLoading ? '--' : userPoints}</p>
                    </div>
                 </div>
 

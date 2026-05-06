@@ -26,47 +26,26 @@ import {
   TrendingUp,
   Search as SearchIcon,
   Info,
-  ArrowRight
+  ArrowRight,
+  Loader2
 } from 'lucide-react';
 import ClinicCard from '@/components/ClinicCard';
 import AppointmentModal from '@/components/AppointmentModal';
 import HealthHistoryPanel from '@/components/HealthHistoryPanel';
 import Modal from '@/components/ui/Modal';
 import { useToast } from '@/lib/toast-context';
+import { useHealthUnits } from '@/features/saude/hooks/useHealthUnits';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
-
-const clinics = [
-  {
-    name: 'UPA Central',
-    address: 'Av. Principal, 1200 - Centro',
-    waitTime: '15 min',
-    status: 'low' as const,
-    icon: Activity
-  },
-  {
-    name: 'Hospital Municipal',
-    address: 'Rua da Paz, 45 - Jardim Botânico',
-    waitTime: '120 min',
-    status: 'high' as const,
-    icon: Activity
-  },
-  {
-    name: 'UPA Norte',
-    address: 'Av. Brasil, 890 - Vila Nova',
-    waitTime: '45 min',
-    status: 'medium' as const,
-    icon: Activity
-  }
-];
+import type { HealthUnit } from '@/types';
 
 export default function SaudePage() {
   const { toast } = useToast();
-  const [selectedClinic, setSelectedClinic] = useState<any>(null);
+  const { units, status, error } = useHealthUnits();
+  const [selectedClinic, setSelectedClinic] = useState<HealthUnit | null>(null);
   const [activeTab, setActiveTab] = useState<'unidades' | 'portal' | 'farmacia'>('unidades');
   const [modalOpen, setModalOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [clinicQueues] = useState(() => clinics.map(() => Math.floor(Math.random() * 10) + 1));
 
   const categories = [
     { id: 'unidades', label: 'Unidades', icon: Hospital },
@@ -131,33 +110,48 @@ export default function SaudePage() {
                               VERIFICADO
                            </div>
                         </div>
-                        
-                        {clinics.map((clinic, idx) => (
-                           <div key={clinic.name} 
-                              onClick={() => setSelectedClinic(clinic)}
+
+                        {status === 'loading' ? (
+                          <div className="flex items-center justify-center py-12">
+                            <Loader2 className="w-8 h-8 animate-spin text-rose-500" />
+                          </div>
+                        ) : status === 'error' ? (
+                          <div className="text-center py-8 space-y-3">
+                            <AlertTriangle className="w-8 h-8 text-rose-500 mx-auto" />
+                            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">{error}</p>
+                          </div>
+                        ) : units.length === 0 ? (
+                          <div className="text-center py-8">
+                            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Nenhuma unidade disponível</p>
+                          </div>
+                        ) : (
+                          units.map((unit) => (
+                           <div key={unit.id} 
+                              onClick={() => setSelectedClinic(unit)}
                               className="bg-white p-5 rounded-[2.5rem] border-2 border-border hover:border-rose-500 group cursor-pointer transition-all flex items-center justify-between shadow-sm hover:shadow-xl hover:shadow-rose-500/5"
                            >
                               <div className="flex items-center gap-4">
                                  <div className={cn(
                                     "w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-transform group-hover:scale-110",
-                                    clinic.status === 'low' ? "bg-green-50 border-green-100 text-green-600" : (clinic.status === 'medium' ? "bg-amber-50 border-amber-100 text-amber-600" : "bg-rose-50 border-rose-100 text-rose-600")
+                                    unit.waitLevel === 'low' ? "bg-green-50 border-green-100 text-green-600" : (unit.waitLevel === 'medium' ? "bg-amber-50 border-amber-100 text-amber-600" : (unit.waitLevel === 'critical' ? "bg-red-50 border-red-100 text-red-600" : "bg-rose-50 border-rose-100 text-rose-600"))
                                  )}>
                                     <Hospital className="w-7 h-7" />
                                  </div>
                                  <div className="space-y-0.5">
-                                    <h4 className="text-sm font-black text-text-main uppercase leading-tight group-hover:text-rose-500 transition-colors">{clinic.name}</h4>
+                                    <h4 className="text-sm font-black text-text-main uppercase leading-tight group-hover:text-rose-500 transition-colors">{unit.name}</h4>
                                     <p className="text-[9px] font-bold text-text-muted uppercase tracking-widest flex items-center gap-1.5">
                                        <MapPin className="w-3 h-3 text-rose-500" />
-                                       {clinic.address.split('-')[0]}
+                                       {unit.address.split('-')[0]}
                                     </p>
                                  </div>
                               </div>
                               <div className="text-right">
-                                 <p className="text-xl font-black text-text-main tabular-nums leading-none">{clinic.waitTime}</p>
-                                  <p className="text-[8px] font-black text-text-muted uppercase tracking-widest opacity-60">Filas: {clinicQueues[idx]}p</p>
+                                 <p className="text-xl font-black text-text-main tabular-nums leading-none">{unit.waitTime}</p>
+                                 <p className="text-[8px] font-black text-text-muted uppercase tracking-widest opacity-60">{unit.type.toUpperCase()}</p>
                               </div>
                            </div>
-                        ))}
+                          ))
+                        )}
                      </div>
                   </motion.div>
                ) : activeTab === 'portal' ? (
@@ -334,63 +328,59 @@ export default function SaudePage() {
          </div>
 
          {/* Unit Overlay Detail Card */}
-         <AnimatePresence>
-            {selectedClinic && (
-               <motion.div 
-                  initial={{ opacity: 0, y: 100, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 100, scale: 0.9 }}
-                  className="absolute bottom-8 left-8 right-8 md:right-auto md:w-[420px] z-20"
-               >
-                  <div className="bg-white p-8 rounded-[3rem] border-2 border-rose-500 shadow-2xl space-y-6 relative overflow-hidden group">
-                     <div className="flex justify-between items-start relative z-10">
-                        <div className="space-y-1">
-                           <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">Unidade Oficial</span>
-                           <h4 className="text-2xl font-black text-text-main uppercase tracking-tighter leading-none">{selectedClinic.name}</h4>
-                           <div className="flex items-center gap-1.5 text-[10px] font-bold text-text-muted">
-                              <MapPin className="w-3 h-3 text-rose-500" />
-                              {selectedClinic.address}
+          <AnimatePresence>
+             {selectedClinic && (
+                <motion.div 
+                   initial={{ opacity: 0, y: 100, scale: 0.9 }}
+                   animate={{ opacity: 1, y: 0, scale: 1 }}
+                   exit={{ opacity: 0, y: 100, scale: 0.9 }}
+                   className="absolute bottom-8 left-8 right-8 md:right-auto md:w-[420px] z-20"
+                >
+                   <div className="bg-white p-8 rounded-[3rem] border-2 border-rose-500 shadow-2xl space-y-6 relative overflow-hidden group">
+                      <div className="flex justify-between items-start relative z-10">
+                         <div className="space-y-1">
+                            <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">{selectedClinic.type.toUpperCase()}</span>
+                            <h4 className="text-2xl font-black text-text-main uppercase tracking-tighter leading-none">{selectedClinic.name}</h4>
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-text-muted">
+                               <MapPin className="w-3 h-3 text-rose-500" />
+                               {selectedClinic.address}
+                            </div>
+                         </div>
+                         <div className={cn(
+                            "px-4 py-2 rounded-2xl text-[10px] font-black shadow-lg",
+                            selectedClinic.waitLevel === 'low' ? "bg-green-500 text-white" : (selectedClinic.waitLevel === 'medium' ? "bg-amber-500 text-white" : (selectedClinic.waitLevel === 'critical' ? "bg-red-500 text-white" : "bg-rose-500 text-white"))
+                         )}>
+                            {selectedClinic.waitTime}
+                         </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3 relative z-10">
+                         {selectedClinic.specialties.slice(0, 2).map((spec) => (
+                           <div key={spec} className="bg-surface p-3 rounded-2xl border border-border">
+                              <p className="text-[8px] font-black text-text-muted uppercase tracking-widest mb-1">{spec}</p>
+                              <p className="text-xs font-black text-text-main">Disponível</p>
                            </div>
-                        </div>
-                        <div className={cn(
-                           "px-4 py-2 rounded-2xl text-[10px] font-black shadow-lg",
-                           selectedClinic.status === 'low' ? "bg-green-500 text-white" : (selectedClinic.status === 'medium' ? "bg-amber-500 text-white" : "bg-rose-500 text-white")
-                        )}>
-                           {selectedClinic.waitTime}
-                        </div>
-                     </div>
+                         ))}
+                      </div>
 
-                     <div className="grid grid-cols-2 gap-3 relative z-10">
-                        <div className="bg-surface p-3 rounded-2xl border border-border">
-                           <p className="text-[8px] font-black text-text-muted uppercase tracking-widest mb-1">Clínico Geral</p>
-                           <p className="text-xs font-black text-text-main">3 pessoas na fila</p>
-                        </div>
-                        <div className="bg-surface p-3 rounded-2xl border border-border">
-                           <p className="text-[8px] font-black text-text-muted uppercase tracking-widest mb-1">Pediatria</p>
-                           <p className="text-xs font-black text-text-main">Vazio agora</p>
-                        </div>
-                     </div>
+                      <div className="flex gap-4 relative z-10">
+                         <button 
+                            onClick={() => setSelectedClinic(null)}
+                            className="px-6 py-4 bg-surface border-2 border-border rounded-2xl text-[9px] font-black uppercase tracking-widest text-text-muted hover:border-rose-500/30 transition-all font-ui font-bold"
+                         >
+                            Fechar
+                         </button>
+                         <button className="flex-grow bg-rose-500 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-rose-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3">
+                            Como Chegar
+                            <ArrowRight className="w-4 h-4" />
+                         </button>
+                      </div>
 
-                     <div className="flex gap-4 relative z-10">
-                        <button 
-                           onClick={() => setSelectedClinic(null)}
-                           className="px-6 py-4 bg-surface border-2 border-border rounded-2xl text-[9px] font-black uppercase tracking-widest text-text-muted hover:border-rose-500/30 transition-all font-ui font-bold"
-                        >
-                           Fechar
-                        </button>
-                        <button 
-                           className="flex-grow bg-rose-500 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-rose-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3"
-                        >
-                           Como Chegar
-                           <ArrowRight className="w-4 h-4" />
-                        </button>
-                     </div>
-
-                     <Hospital className="absolute -right-6 -bottom-6 w-32 h-32 opacity-5 rotate-12 group-hover:scale-110 transition-transform" />
-                  </div>
-               </motion.div>
-            )}
-         </AnimatePresence>
+                      <Hospital className="absolute -right-6 -bottom-6 w-32 h-32 opacity-5 rotate-12 group-hover:scale-110 transition-transform" />
+                   </div>
+                </motion.div>
+             )}
+          </AnimatePresence>
 
       </section>
 

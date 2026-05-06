@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   User, 
   Settings, 
@@ -21,7 +21,8 @@ import {
   Share2,
   Lock,
   Download,
-  Fingerprint
+  Fingerprint,
+  Loader2
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAuth } from '@/lib/auth-context';
@@ -29,24 +30,75 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useToast } from '@/lib/toast-context';
 import ProfileSettingsPanel from '@/components/ProfileSettingsPanel';
+import ActivityHistory from '@/features/perfil/ActivityHistory';
+import { getUserProfile } from '@/services/users.service';
+import { getReportsByUser } from '@/services/reports.service';
+import { getDemandsByUser } from '@/services/demands.service';
+import { getAppointmentsByUser } from '@/services/appointments.service';
+import { uploadAvatar } from '@/services/storage.service';
+import type { UserProfile } from '@/types';
 
 export default function PerfilPage() {
   const { user, logout, login } = useAuth();
   const { toast } = useToast();
-  const [settingsMode, setSettingsMode] = React.useState<'edit' | 'preferences' | null>(null);
+  const [settingsMode, setSettingsMode] = useState<'edit' | 'preferences' | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [reportsCount, setReportsCount] = useState(0);
+  const [demandsCount, setDemandsCount] = useState(0);
+  const [appointmentsCount, setAppointmentsCount] = useState(0);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    setStatsLoading(true);
+    Promise.all([
+      getUserProfile(user.uid),
+      getReportsByUser(user.uid),
+      getDemandsByUser(user.uid),
+      getAppointmentsByUser(user.uid),
+    ]).then(([prof, reports, demands, appointments]) => {
+      setProfile(prof);
+      setReportsCount(reports.length);
+      setDemandsCount(demands.length);
+      setAppointmentsCount(appointments.length);
+    }).catch(() => {
+      toast('Erro ao carregar dados do perfil', 'error');
+    }).finally(() => {
+      setStatsLoading(false);
+    });
+  }, [user]);
+
+  const handleAvatarUpload = async (file: File) => {
+    if (!user) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast('A imagem deve ter no máximo 2MB', 'error');
+      return;
+    }
+    setUploading(true);
+    try {
+      await uploadAvatar(user.uid, file);
+      toast('Foto atualizada!', 'success');
+    } catch {
+      toast('Erro ao enviar foto.', 'error');
+    }
+    setUploading(false);
+  };
+
+  const citizenshipLevel = (() => {
+    const pts = profile?.points ?? 0;
+    if (pts >= 500) return { label: 'Ouro', pct: 100 };
+    if (pts >= 200) return { label: 'Prata', pct: (pts / 500) * 100 };
+    if (pts >= 50) return { label: 'Bronze', pct: (pts / 200) * 100 };
+    return { label: 'Iniciante', pct: (pts / 50) * 100 };
+  })();
 
   const stats = [
-    { label: 'Relatos', value: '12', icon: MessageSquare, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { label: 'Votos', value: '45', icon: Gavel, color: 'text-primary', bg: 'bg-primary/5' },
-    { label: 'Apoios', value: '08', icon: TrendingUp, color: 'text-green-500', bg: 'bg-green-50' },
-    { label: 'Conquistas', value: '04', icon: Award, color: 'text-orange-500', bg: 'bg-orange-50' },
-  ];
-
-  const activities = [
-    { id: 1, type: 'vote', title: 'Votou na Lei do Bairro Seguro', date: 'Há 2 horas', status: 'Computado' },
-    { id: 2, type: 'report', title: 'Relato de Iluminação Pública', date: 'Ontem', status: 'Em Análise' },
-    { id: 3, type: 'petition', title: 'Assinou a petição Ciclovia Já', date: 'Há 2 dias', status: 'Assinado' },
-    { id: 4, type: 'profile', title: 'Atualizou foto de perfil', date: 'Há 1 semana', status: 'Sucesso' },
+    { label: 'Relatos', value: reportsCount, icon: MessageSquare, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { label: 'Demandas', value: demandsCount, icon: Gavel, color: 'text-primary', bg: 'bg-primary/5' },
+    { label: 'Consultas', value: appointmentsCount, icon: TrendingUp, color: 'text-green-500', bg: 'bg-green-50' },
+    { label: 'Pontos', value: profile?.points ?? 0, icon: Award, color: 'text-orange-500', bg: 'bg-orange-50' },
   ];
 
   if (!user) {
@@ -81,14 +133,28 @@ export default function PerfilPage() {
               <div className="relative">
                  <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] bg-surface border-4 border-white shadow-2xl overflow-hidden relative group/avatar">
                     <Image 
-                      src={user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.displayName}`} 
+                      src={profile?.photoURL || user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.displayName}`} 
                       alt={user.displayName || 'Usuário'} 
                       fill
                       className="object-cover group-hover/avatar:scale-110 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                       <Camera className="w-8 h-8 text-white" />
-                    </div>
+                    <button
+                      onClick={() => avatarInputRef.current?.click()}
+                      disabled={uploading}
+                      className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                    >
+                       {uploading ? <Loader2 className="w-8 h-8 text-white animate-spin" /> : <Camera className="w-8 h-8 text-white" />}
+                    </button>
+                    <input
+                      ref={avatarInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleAvatarUpload(file);
+                      }}
+                    />
                  </div>
                  <div className="absolute -bottom-2 -right-2 bg-primary text-white p-2 rounded-xl shadow-lg border-2 border-white shrink-0">
                     <ShieldCheck className="w-5 h-5" />
@@ -121,12 +187,12 @@ export default function PerfilPage() {
               <div className="w-full pt-8 border-t border-border/50">
                  <div className="flex items-center justify-between mb-3 px-1">
                     <span className="text-[10px] font-black text-text-muted uppercase tracking-widest">Cidadania</span>
-                    <span className="text-[10px] font-black text-primary uppercase tracking-widest">Ouro</span>
+                    <span className="text-[10px] font-black text-primary uppercase tracking-widest">{citizenshipLevel.label}</span>
                  </div>
                  <div className="w-full h-3 bg-surface rounded-full border border-border overflow-hidden p-0.5 shadow-inner">
                     <motion.div 
                       initial={{ width: 0 }}
-                      animate={{ width: '75%' }}
+                      animate={{ width: `${citizenshipLevel.pct}%` }}
                       transition={{ duration: 1, ease: 'easeOut' }}
                       className="h-full bg-primary rounded-full shadow-lg"
                     />
@@ -146,7 +212,7 @@ export default function PerfilPage() {
            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {stats.map((s, idx) => (
                 <motion.div 
-                  key={idx}
+                  key={s.label}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: idx * 0.1 }}
@@ -156,7 +222,9 @@ export default function PerfilPage() {
                       <s.icon className={cn("w-6 h-6", s.color)} />
                    </div>
                    <div className="space-y-0.5">
-                      <span className="block text-3xl font-black tracking-tighter text-text-main">{s.value}</span>
+                      <span className="block text-3xl font-black tracking-tighter text-text-main">
+                        {statsLoading ? <Loader2 className="w-6 h-6 animate-spin text-text-muted" /> : s.value}
+                      </span>
                       <span className="text-[9px] font-black text-text-muted uppercase tracking-[0.2em]">{s.label}</span>
                    </div>
                 </motion.div>
@@ -170,37 +238,8 @@ export default function PerfilPage() {
                     <Clock className="w-6 h-6 text-primary" />
                     Histórico Recente
                  </h3>
-                 <button className="text-[10px] font-black text-primary uppercase tracking-[0.2em] py-2 px-4 hover:bg-primary/5 rounded-lg transition-colors">
-                    Ver Tudo
-                 </button>
               </div>
-
-              <div className="space-y-4">
-                 {activities.map((act) => (
-                   <motion.div 
-                     key={act.id}
-                     whileHover={{ x: 4 }}
-                     className="flex items-center gap-6 p-5 rounded-2xl border-2 border-border hover:border-primary/30 hover:bg-surface/30 transition-all group"
-                   >
-                     <div className="w-12 h-12 bg-surface border-2 border-border rounded-xl flex items-center justify-center shrink-0 group-hover:rotate-6 transition-transform">
-                        {act.type === 'vote' && <Gavel className="w-5 h-5 text-primary" />}
-                        {act.type === 'report' && <MessageSquare className="w-5 h-5 text-blue-500" />}
-                        {act.type === 'petition' && <FileText className="w-5 h-5 text-green-500" />}
-                        {act.type === 'profile' && <Edit3 className="w-5 h-5 text-orange-500" />}
-                     </div>
-                     <div className="flex-grow space-y-0.5">
-                        <p className="text-sm font-black text-text-main uppercase tracking-tight">{act.title}</p>
-                        <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{act.date}</p>
-                     </div>
-                     <div className="flex items-center gap-4">
-                        <span className="hidden md:inline-block text-[9px] font-black text-green-600 bg-green-50 border border-green-200 px-3 py-1 rounded-full uppercase tracking-tighter shadow-sm">
-                           {act.status}
-                        </span>
-                        <ChevronRight className="w-4 h-4 text-text-muted/30 group-hover:text-primary transition-colors" />
-                     </div>
-                   </motion.div>
-                 ))}
-              </div>
+              <ActivityHistory />
            </div>
 
            {/* Digital Documents Section */}
