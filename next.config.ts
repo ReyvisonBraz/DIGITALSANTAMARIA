@@ -6,14 +6,13 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   turbopack: {},
-  // Allow access to remote image placeholder.
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'picsum.photos',
         port: '',
-        pathname: '/**', // This allows any path under the hostname
+        pathname: '/**',
       },
       {
         protocol: 'https',
@@ -53,12 +52,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-output: 'standalone',
+  output: 'standalone',
   transpilePackages: ['motion'],
-};
-    }
-    return config;
-  },
 };
 
 export default nextConfig;
