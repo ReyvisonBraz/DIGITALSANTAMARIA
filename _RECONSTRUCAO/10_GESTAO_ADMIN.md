@@ -22,6 +22,7 @@ Arquivos alterados:
 
 - Gestao deixou de listar `reports` e passou a listar `demands`.
 - Acesso permitido para `admin` e `clerk`.
+- Usuarios `admin` e `clerk` agora veem um atalho "Gestao" no topo em telas desktop.
 - Painel mostra metricas:
   - Total.
   - Pendentes.

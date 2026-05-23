@@ -24,7 +24,8 @@ import {
   Search, Bell, User as UserIcon, Menu, MapPin, Store,
   Users, Briefcase, Heart, MessageSquare, Vote, FileText,
   DollarSign, Navigation, School, Calendar, Sun, Type,
-  Minus, Plus, RotateCcw, Moon, Grid, X, ChevronDown, Monitor, Command, Sparkles
+  Minus, Plus, RotateCcw, Moon, Grid, X, ChevronDown, Monitor, Command, Sparkles,
+  ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
@@ -44,7 +45,7 @@ import { useKeyboardShortcut } from '@/lib/hooks/use-keyboard-shortcut';
 const log = createLogger('TopAppBar');
 
 export default function TopAppBar() {
-  const { user, login } = useAuth();
+  const { user, userRole, login } = useAuth();
   const { toast } = useToast();
   const {
     toggleHighContrast, increaseFontSize, decreaseFontSize,
@@ -170,6 +171,16 @@ export default function TopAppBar() {
 
             {/* ── Seção Direita: Acessibilidade, Notificações, Perfil */}
             <div className="flex items-center gap-1 md:gap-3 shrink-0">
+              {(userRole === 'admin' || userRole === 'clerk') && (
+                <Link
+                  href="/gestao"
+                  className="hidden md:inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-primary transition hover:bg-primary hover:text-white"
+                  aria-label="Abrir painel de gestão"
+                >
+                  <ShieldCheck className="h-4 w-4" />
+                  Gestão
+                </Link>
+              )}
 
               {/* Popover de Acessibilidade */}
               <div className="relative" ref={accessibilityRef}>

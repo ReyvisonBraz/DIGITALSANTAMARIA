@@ -4,10 +4,8 @@ import {
   addDoc,
   getDoc,
   getDocs,
-  updateDoc,
   query,
   where,
-  orderBy,
   increment,
   serverTimestamp,
   runTransaction,
@@ -42,13 +40,15 @@ export async function createPetition(
 
 export async function getActivePetitions(): Promise<Petition[]> {
   const ref = collection(db, PETITIONS_COL).withConverter(petitionConverter);
-  const q = query(
-    ref,
-    where('status', '==', 'active'),
-    orderBy('createdAt', 'desc')
-  );
+  const q = query(ref, where('status', '==', 'active'));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => d.data());
+  return snap.docs
+    .map((d) => d.data())
+    .sort((a, b) => {
+      const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0;
+      const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0;
+      return bTime - aTime;
+    });
 }
 
 export async function getPetitionById(id: string): Promise<Petition | null> {
