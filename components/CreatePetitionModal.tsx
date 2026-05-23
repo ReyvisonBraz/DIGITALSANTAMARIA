@@ -19,9 +19,10 @@ const log = createLogger('CreatePetitionModal');
 interface CreatePetitionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onCreated?: () => void;
 }
 
-export default function CreatePetitionModal({ isOpen, onClose }: CreatePetitionModalProps) {
+export default function CreatePetitionModal({ isOpen, onClose, onCreated }: CreatePetitionModalProps) {
   const { user, login } = useAuth();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
@@ -55,6 +56,7 @@ export default function CreatePetitionModal({ isOpen, onClose }: CreatePetitionM
         creatorName: user.displayName || 'Cidadão',
       });
       log.info('Petition created', { title: formData.title });
+      onCreated?.();
       setShowSuccess(true);
     } catch (err) {
       log.error('Failed to create petition', {}, err);

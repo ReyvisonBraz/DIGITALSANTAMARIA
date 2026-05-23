@@ -1,23 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { 
-  ArrowLeft, 
-  CalendarDays, 
-  ShieldCheck, 
-  Share2, 
-  PenTool, 
-  TrendingUp,
-  MessageSquare,
-  Loader2
-} from 'lucide-react';
-import Image from 'next/image';
-import { useToast } from '@/lib/toast-context';
+import { ArrowLeft, CalendarDays, Loader2, Share2, ShieldCheck } from 'lucide-react';
 import SignatureButton from '@/features/peticoes/SignatureButton';
 import SignatureProgress from '@/features/peticoes/SignatureProgress';
-import { getPetitionById } from '@/services/petitions.service';
+import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
+import { getPetitionById } from '@/services/petitions.service';
 import type { Petition } from '@/types';
 
 export default function PetitionDetailPage() {
@@ -27,26 +18,31 @@ export default function PetitionDetailPage() {
   const [petition, setPetition] = useState<Petition | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadPetition = () => {
     const id = params.id as string;
     if (!id) return;
+    setLoading(true);
     getPetitionById(id)
       .then((data) => {
         if (!data) {
-          toast('Petição não encontrada', 'error');
+          toast('Petição não encontrada.', 'error');
           router.push('/peticoes');
           return;
         }
         setPetition(data);
       })
-      .catch(() => toast('Erro ao carregar petição', 'error'))
+      .catch(() => toast('Não foi possível carregar a petição.', 'error'))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadPetition();
   }, [params.id]);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-tertiary" />
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -54,150 +50,87 @@ export default function PetitionDetailPage() {
   if (!petition) return null;
 
   return (
-    <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-6 md:p-12 pb-32 gap-10">
-      
-      {/* Navigation & Header */}
-      <nav className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-        <button 
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-text-muted hover:text-primary transition-colors group px-4 py-2 border-2 border-border rounded-xl font-black text-[10px] uppercase tracking-widest bg-white"
-        >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          Voltar para Lista
-        </button>
-        
-        <div className="flex items-center gap-4">
-           <button 
-             onClick={() => {
-               navigator.clipboard.writeText(window.location.href);
-               toast('Link copiado!', 'info');
-             }}
-             className="p-3 bg-white border-2 border-border rounded-xl hover:text-primary transition-all text-text-muted"
-           >
-              <Share2 className="w-5 h-5" />
-           </button>
-           <div className="px-5 py-2.5 bg-primary/10 text-primary border-2 border-primary/20 rounded-xl font-black text-[10px] uppercase tracking-widest">
-              {petition.status === 'active' ? 'Em Andamento' : petition.status}
-           </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-background pb-24 md:pb-12">
+      <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:px-10 lg:grid-cols-[1fr_360px] lg:px-12">
+        <section className="rounded-2xl border border-border bg-white p-5 shadow-sm md:p-8">
+          <div className="mb-6 flex flex-col gap-3 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between">
+            <Link
+              href="/peticoes"
+              className="inline-flex w-fit items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted transition hover:text-primary"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar
+            </Link>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                toast('Link copiado.', 'info');
+              }}
+              className="inline-flex w-fit items-center gap-2 rounded-xl border border-border px-3 py-2 text-xs font-black uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+            >
+              <Share2 className="h-4 w-4" />
+              Compartilhar
+            </button>
+          </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        
-        {/* Left Column: Details */}
-        <div className="lg:col-span-2 space-y-12">
-          <header className="space-y-6">
-             <div className="space-y-2">
-                <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.2em]">
-                   <ShieldCheck className="w-4 h-4" />
-                   {petition.category}
-                </div>
-                <h1 className="text-4xl md:text-5xl font-black text-text-main tracking-tighter uppercase leading-[1.1]">
-                   {petition.title}
-                </h1>
-             </div>
-             
-             <div className="flex flex-wrap items-center gap-6 py-6 border-y border-border">
-                <div className="flex items-center gap-3">
-                   <div className="w-10 h-10 rounded-full bg-surface border-2 border-border flex items-center justify-center font-black text-sm uppercase text-primary">
-                     {petition.creatorName.charAt(0)}
-                   </div>
-                   <div>
-                      <p className="text-[8px] font-black text-text-muted uppercase tracking-widest">Autor da Proposta</p>
-                      <p className="text-xs font-black text-text-main">{petition.creatorName}</p>
-                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                   <div className="w-10 h-10 rounded-xl bg-surface border-2 border-border flex items-center justify-center text-text-muted">
-                      <CalendarDays className="w-5 h-5" />
-                   </div>
-                   <div>
-                      <p className="text-[8px] font-black text-text-muted uppercase tracking-widest">Publicado em</p>
-                      <p className="text-xs font-black text-text-main">{formatDate(petition.createdAt)}</p>
-                   </div>
-                </div>
-             </div>
-          </header>
+          <div className="space-y-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-primary">
+                {petition.category}
+              </span>
+              <span className="inline-flex items-center gap-2 text-xs font-bold text-text-muted">
+                <CalendarDays className="h-4 w-4" />
+                {formatDate(petition.createdAt)}
+              </span>
+            </div>
 
-          {/* Description */}
-          <section className="space-y-8">
-             {petition.coverImageURL && (
-             <div className="relative w-full aspect-[21/9] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white">
-                <Image 
-                  src={petition.coverImageURL} 
-                  alt={petition.title} 
-                  fill 
-                  className="object-cover"
-                />
-             </div>
-             )}
-             
-             <div>
-                <h3 className="text-xl font-black text-text-main uppercase tracking-tight flex items-center gap-3">
-                  <PenTool className="w-5 h-5 text-primary" />
-                  Manifesto Cidadão
-                </h3>
-                <div className="text-lg font-ui text-text-muted font-medium leading-relaxed mt-4 whitespace-pre-line">
-                   {petition.description}
-                </div>
-             </div>
-          </section>
+            <h1 className="text-3xl font-black leading-tight tracking-normal text-text-main md:text-5xl">
+              {petition.title}
+            </h1>
 
-          {/* Supporters Section */}
-          <section className="space-y-6 pt-6">
-             <h3 className="text-xl font-black text-text-main uppercase tracking-tight flex items-center gap-3">
-               <MessageSquare className="w-5 h-5 text-primary" />
-               Apoio da Comunidade
-             </h3>
-             <p className="text-sm font-ui text-text-muted">
-               {petition.signaturesCount} cidadãos já apoiaram esta causa.
-             </p>
-          </section>
-        </div>
+            <p className="text-sm font-bold text-text-muted">
+              Proposta por {petition.creatorName}
+            </p>
 
-        {/* Right Column: Actions & Progress */}
-        <div className="lg:col-span-1">
-           <div className="sticky top-32 space-y-6">
-              <div className="bg-white p-8 md:p-10 rounded-[3.5rem] border-2 border-border border-b-[12px] border-b-primary shadow-2xl space-y-8">
-                 <div className="space-y-2">
-                    <SignatureProgress current={petition.signaturesCount} goal={petition.goal} />
-                 </div>
+            <div className="rounded-2xl border border-border bg-surface p-5 text-base font-medium leading-7 text-text-muted">
+              {petition.description}
+            </div>
 
-                 <div className="space-y-4">
-                    <SignatureButton
-                      petitionId={petition.id}
-                      petitionTitle={petition.title}
-                      onSign={() => {
-                        getPetitionById(petition.id).then(setPetition);
-                      }}
-                      className="w-full justify-center"
-                    />
-                 </div>
-
-                 <div className="pt-6 border-t border-border/50">
-                    <div className="flex items-start gap-3">
-                       <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
-                       <div className="space-y-1">
-                          <p className="text-[10px] font-black text-text-main uppercase tracking-tight">Assinatura Certificada</p>
-                          <p className="text-[8px] font-medium text-text-muted font-ui">Sua identidade é validada via DigitalID para garantir a integridade da consulta pública.</p>
-                       </div>
-                    </div>
-                 </div>
+            {petition.officialReply && (
+              <div className="rounded-2xl border border-green-200 bg-green-50 p-5">
+                <p className="text-xs font-black uppercase tracking-widest text-green-700">
+                  Resposta oficial
+                </p>
+                <p className="mt-2 text-sm font-medium leading-6 text-green-900">
+                  {petition.officialReply}
+                </p>
               </div>
+            )}
+          </div>
+        </section>
 
-              {petition.officialReply && (
-              <div className="bg-text-main p-8 rounded-[3rem] text-white space-y-4 shadow-xl">
-                 <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary">Resposta Oficial</h4>
-                 <p className="text-sm font-medium font-ui opacity-80 leading-relaxed">
-                    {petition.officialReply}
-                 </p>
-              </div>
-              )}
-           </div>
-        </div>
-      </div>
+        <aside className="space-y-4">
+          <div className="rounded-2xl border border-border bg-white p-5 shadow-sm lg:sticky lg:top-28">
+            <SignatureProgress current={petition.signaturesCount} goal={petition.goal} />
 
+            <div className="mt-5">
+              <SignatureButton
+                petitionId={petition.id}
+                petitionTitle={petition.title}
+                onSign={loadPetition}
+                className="w-full"
+              />
+            </div>
+
+            <div className="mt-5 flex items-start gap-3 rounded-xl bg-surface p-4">
+              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+              <p className="text-sm font-medium leading-6 text-text-muted">
+                A assinatura exige login para evitar duplicidade e preservar a integridade da consulta.
+              </p>
+            </div>
+          </div>
+        </aside>
+      </main>
     </div>
   );
 }

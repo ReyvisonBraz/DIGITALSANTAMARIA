@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 import { ToastProvider } from '@/lib/toast-context';
@@ -10,18 +9,6 @@ import BottomNavBar from '@/components/BottomNavBar';
 import RootLayoutLogger from './root-layout-logger';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import InstallPrompt from '@/components/InstallPrompt';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const outfit = Outfit({
-  subsets: ['latin'],
-  variable: '--font-outfit',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: {
@@ -40,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={`${inter.variable} ${outfit.variable}`}>
+    <html lang="pt-BR" suppressHydrationWarning>
       <body className="antialiased min-h-screen bg-background text-text-main font-display pt-[env(safe-area-inset-top,0px)]">
         <AccessibilityProvider>
           <AuthProvider>

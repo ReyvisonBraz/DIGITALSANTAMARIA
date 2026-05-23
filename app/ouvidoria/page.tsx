@@ -1,269 +1,124 @@
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  ShieldCheck, 
-  Send, 
-  HelpCircle, 
-  FileText, 
-  MessageSquare, 
-  Phone, 
-  Mail,
-  CheckCircle2,
-  Search,
-  Clock,
-  Activity,
-  Award,
-  Radio,
-  MapPin,
-  Fingerprint,
-  Layers
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { cn } from '@/lib/utils';
-import { useToast } from '@/lib/toast-context';
-import Modal from '@/components/ui/Modal';
-import { createLogger } from '@/lib/logger';
+import { useState } from 'react';
+import { CheckCircle2, FileText, MessageSquare, Phone, SearchCheck, ShieldCheck } from 'lucide-react';
 import DemandForm from '@/features/ouvidoria/DemandForm';
 import ProtocolSearch from '@/features/ouvidoria/ProtocolSearch';
-import { generateDemandProtocolId } from '@/lib/utils/protocol';
-
-const log = createLogger('OuvidoriaPage');
-
-
 
 export default function OuvidoriaPage() {
-  const [viewMode, setViewMode] = useState<'create' | 'search'>('create');
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [protocolNumber, setProtocolNumber] = useState('');
+  const [activeTab, setActiveTab] = useState<'create' | 'search'>('create');
+  const [createdProtocol, setCreatedProtocol] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 md:p-12 pb-32 gap-12 bg-background">
-      
-      {/* High-Fidelity Hero Section */}
-      <section className="relative overflow-hidden rounded-[4rem] md:rounded-[5.5rem] bg-text-main text-white p-12 md:p-20 shadow-4xl flex flex-col md:flex-row items-center justify-between border-4 border-white/10 group">
-         <div className="relative z-10 max-w-3xl text-center md:text-left space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest border border-white/10 backdrop-blur-md">
-               <ShieldCheck className="w-4 h-4 text-primary" />
-               Canal de Resposta Tática Governamental
+    <div className="min-h-screen bg-background pb-24 md:pb-12">
+      <section className="border-b border-border bg-white">
+        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:grid-cols-[1fr_0.8fr] md:px-10 md:py-12 lg:px-12">
+          <div className="space-y-5">
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-primary">
+              <ShieldCheck className="h-4 w-4" />
+              Canal oficial
             </div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.85] tracking-tighter uppercase">
-               Ouvidoria <br/> <span className="text-primary">Ativa.</span>
-            </h1>
-            <p className="text-lg md:text-2xl font-ui font-medium opacity-80 max-w-2xl leading-relaxed border-l-4 border-primary/30 pl-8">
-               Sua voz possui força de lei digital. Solicite, denuncie ou elogie a gestão pública através do canal integrado ao seu DigitalID para resposta garantida.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center md:justify-start pt-4">
-               <button 
-                   onClick={() => setViewMode('create')}
-                  className={cn(
-                    "px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-3xl transition-all active:scale-95 flex items-center justify-center gap-4",
-                    viewMode === 'create' ? "bg-primary text-white" : "bg-white/10 text-white border-2 border-white/20 backdrop-blur"
-                  )}
-               >
-                  <Send className="w-5 h-5" />
-                  Manifestar
-               </button>
-               <button 
-                  onClick={() => setViewMode('search')}
-                  className={cn(
-                    "px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-3xl transition-all active:scale-95 flex items-center justify-center gap-4",
-                    viewMode === 'search' ? "bg-primary text-white" : "bg-white/10 text-white border-2 border-white/20 backdrop-blur"
-                  )}
-               >
-                  <Search className="w-5 h-5" />
-                  Consultar Protocolo
-               </button>
+            <div className="space-y-3">
+              <h1 className="text-3xl font-black leading-tight tracking-normal text-text-main sm:text-4xl lg:text-5xl">
+                Ouvidoria e solicitações
+              </h1>
+              <p className="max-w-2xl text-base font-medium leading-7 text-text-muted">
+                Abra uma solicitação, registre uma manifestação ou consulte o andamento
+                pelo número de protocolo.
+              </p>
             </div>
-         </div>
-         <div className="relative mt-16 md:mt-0 hidden xl:block">
-            <div className="w-[400px] h-[400px] bg-white/5 rounded-full absolute -inset-16 animate-pulse border-2 border-white/10" />
-            <div className="relative z-10 w-80 h-80 flex flex-col items-center justify-center text-center p-10 bg-white/5 backdrop-blur-3xl rounded-[4rem] border border-white/10 shadow-inner group-hover:rotate-6 transition-transform duration-[2s]">
-               <Activity className="w-16 h-16 text-primary mb-6 animate-pulse" />
-               <p className="text-3xl font-black tracking-tighter leading-none mb-2">94%</p>
-               <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Taxa de Resolução Global</p>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                onClick={() => setActiveTab('create')}
+                className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-black uppercase tracking-widest transition ${
+                  activeTab === 'create'
+                    ? 'bg-primary text-white'
+                    : 'border border-border bg-white text-text-main hover:border-primary hover:text-primary'
+                }`}
+              >
+                <MessageSquare className="h-4 w-4" />
+                Abrir solicitação
+              </button>
+              <button
+                onClick={() => setActiveTab('search')}
+                className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-black uppercase tracking-widest transition ${
+                  activeTab === 'search'
+                    ? 'bg-primary text-white'
+                    : 'border border-border bg-white text-text-main hover:border-primary hover:text-primary'
+                }`}
+              >
+                <SearchCheck className="h-4 w-4" />
+                Consultar protocolo
+              </button>
             </div>
-         </div>
-         <MessageSquare className="absolute -left-12 -bottom-12 w-80 h-80 opacity-[0.03] text-white -rotate-12 pointer-events-none" />
+          </div>
+
+          <aside className="rounded-2xl border border-border bg-surface p-5">
+            <h2 className="text-lg font-black tracking-normal text-text-main">Antes de começar</h2>
+            <div className="mt-4 space-y-3">
+              <div className="flex gap-3 rounded-xl bg-white p-4">
+                <FileText className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <p className="text-sm font-medium leading-6 text-text-muted">
+                  Informe o máximo de detalhes possível para facilitar o atendimento.
+                </p>
+              </div>
+              <div className="flex gap-3 rounded-xl bg-white p-4">
+                <Phone className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <p className="text-sm font-medium leading-6 text-text-muted">
+                  Para atendimento emergencial, procure também os canais presenciais ou telefônicos do município.
+                </p>
+              </div>
+            </div>
+          </aside>
+        </div>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        
-        {/* Support Tools & Stats (Side) */}
-        <div className="lg:col-span-4 space-y-10 order-2 lg:order-1">
-           <div className="bg-white p-10 rounded-[3.5rem] border-2 border-border shadow-sm space-y-10 group overflow-hidden relative">
-              <div className="space-y-2">
-                 <h3 className="text-2xl font-black text-text-main uppercase tracking-tighter flex items-center gap-4 leading-none">
-                    <Radio className="w-6 h-6 text-primary" />
-                    Radar Distrital
-                 </h3>
-                 <p className="text-xs font-ui font-medium text-text-muted opacity-60">Status de demandas no seu bairro hoje.</p>
+      <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:px-10 lg:grid-cols-[1fr_0.35fr] lg:px-12">
+        <section className="rounded-2xl border border-border bg-white p-5 shadow-sm md:p-6">
+          <div className="mb-5 border-b border-border pb-5">
+            <p className="text-xs font-black uppercase tracking-widest text-primary">
+              {activeTab === 'create' ? 'Novo protocolo' : 'Acompanhamento'}
+            </p>
+            <h2 className="mt-1 text-2xl font-black tracking-normal text-text-main">
+              {activeTab === 'create' ? 'Abrir solicitação' : 'Consultar protocolo'}
+            </h2>
+          </div>
+
+          {createdProtocol && activeTab === 'create' && (
+            <div className="mb-5 rounded-xl border border-green-200 bg-green-50 p-4 text-green-900">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
+                <div>
+                  <p className="text-sm font-black">Solicitação protocolada com sucesso.</p>
+                  <p className="mt-1 break-all font-mono text-lg font-black text-green-800">{createdProtocol}</p>
+                </div>
               </div>
-              
-              <div className="space-y-6">
-                 <div className="flex items-center justify-between p-5 bg-surface rounded-3xl border border-border">
-                    <div className="flex items-center gap-3">
-                       <MapPin size={18} className="text-primary" />
-                       <span className="text-[10px] font-black uppercase tracking-widest text-text-main">Setor Sul</span>
-                    </div>
-                    <span className="text-xs font-black text-rose-500 uppercase">Alta Demanda</span>
-                 </div>
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100 flex flex-col items-center text-center gap-1">
-                       <span className="text-2xl font-black text-orange-600 leading-none">42</span>
-                       <span className="text-[8px] font-black uppercase tracking-widest opacity-60">Abertos</span>
-                    </div>
-                    <div className="p-4 bg-green-50 rounded-2xl border border-green-100 flex flex-col items-center text-center gap-1">
-                       <span className="text-2xl font-black text-green-600 leading-none">128</span>
-                       <span className="text-[8px] font-black uppercase tracking-widest opacity-60">Resolvidos</span>
-                    </div>
-                 </div>
-              </div>
-              <HelpCircle className="absolute -right-6 -bottom-6 w-32 h-32 opacity-[0.02] text-primary rotate-12" />
-           </div>
-
-           <div className="bg-white p-10 rounded-[3.5rem] border-2 border-border shadow-sm space-y-8">
-              <h3 className="text-xl font-black text-text-main uppercase tracking-tighter flex items-center gap-4 leading-none">
-                 <Phone size={24} className="text-primary" />
-                 Conexão Direta
-              </h3>
-              
-              <div className="space-y-6">
-                 <div className="flex items-center gap-5 group cursor-pointer">
-                    <div className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center border-2 border-border group-hover:bg-primary/5 group-hover:border-primary transition-all shadow-inner">
-                       <Phone className="w-6 h-6 text-primary" />
-                    </div>
-                    <div className="space-y-0.5">
-                       <p className="text-[10px] font-black text-text-muted uppercase tracking-widest opacity-60 leading-none">Canal de Voz Gratuito</p>
-                       <p className="text-base font-black text-text-main group-hover:text-primary transition-colors leading-none uppercase">156 (Ramal 9)</p>
-                    </div>
-                 </div>
-
-                 <div className="flex items-center gap-5 group cursor-pointer">
-                    <div className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center border-2 border-border group-hover:bg-primary/5 group-hover:border-primary transition-all shadow-inner">
-                       <Mail className="w-6 h-6 text-primary" />
-                    </div>
-                    <div className="space-y-0.5">
-                       <p className="text-[10px] font-black text-text-muted uppercase tracking-widest opacity-60 leading-none">Correio Digital</p>
-                       <p className="text-base font-black text-text-main group-hover:text-primary transition-colors leading-none uppercase">ouvidoria@santamaria.pa.gov.br</p>
-                    </div>
-                 </div>
-              </div>
-
-              <div className="p-6 bg-text-main rounded-3xl text-white space-y-4 relative overflow-hidden group shadow-2xl">
-                 <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Amparo Legal</p>
-                 <p className="text-xs font-ui font-medium opacity-80 leading-relaxed relative z-10">
-                    Sua manifestação é protegida pela Lei de Transparência 12.527/11. Resposta mandatória em até 20 dias úteis.
-                 </p>
-                 <ShieldCheck className="absolute -right-6 -bottom-6 w-24 h-24 opacity-10 group-hover:scale-110 transition-transform" />
-              </div>
-           </div>
-        </div>
-
-        {/* Form Post / Search Dashboard (Main) */}
-        <div className="lg:col-span-8 order-1 lg:order-2">
-         <AnimatePresence mode="wait">
-              {viewMode === 'create' ? (
-                <motion.div
-                  key="create"
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -30 }}
-                  className="bg-white p-8 md:p-14 rounded-[4rem] md:rounded-[5.5rem] border-2 border-border border-b-[20px] border-b-primary shadow-4xl space-y-10 relative overflow-hidden"
-                >
-                  <div className="border-b border-border pb-8">
-                    <h2 className="text-3xl font-black text-text-main tracking-tighter uppercase leading-none">
-                      Nova Manifestação
-                    </h2>
-                    <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest opacity-60 mt-2">
-                      Registre sua solicitação junto à prefeitura
-                    </p>
-                  </div>
-                  <DemandForm onSuccess={() => {
-                    setProtocolNumber(generateDemandProtocolId());
-                    setShowSuccess(true);
-                  }} />
-                  <FileText className="absolute -left-12 -bottom-12 w-96 h-96 opacity-[0.01] pointer-events-none -rotate-12" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="search"
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 30 }}
-                >
-                  <ProtocolSearch />
-                </motion.div>
-              )}
-            </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Success Modal: High Fidelity Confirmation */}
-      <Modal 
-        isOpen={showSuccess} 
-        onClose={() => setShowSuccess(false)}
-        title="Protocolo Integrado ao Sistema"
-      >
-        <div className="space-y-10 p-8 text-center bg-white relative overflow-hidden rounded-[3rem]">
-           <div className="w-24 h-24 bg-green-500 text-white rounded-[2rem] flex items-center justify-center mx-auto shadow-4xl border-4 border-white group-hover:rotate-12 transition-transform">
-              <CheckCircle2 className="w-12 h-12" />
-           </div>
-           
-           <div className="space-y-3">
-              <h3 className="text-3xl font-black text-text-main uppercase tracking-tighter leading-none">Voz Protocolada!</h3>
-              <p className="text-base font-ui font-medium text-text-muted leading-relaxed max-w-sm mx-auto opacity-70">
-                Sua manifestação foi integrada ao barramento municipal via DigitalID. O número abaixo é sua chave de acesso único.
-              </p>
-           </div>
-
-           <div className="bg-surface p-10 rounded-[3rem] border-4 border-border border-dashed font-mono text-4xl font-black text-primary tracking-widest shadow-inner relative overflow-hidden group">
-              {protocolNumber}
-              <motion.div 
-                 initial={{ left: '-100%' }}
-                 animate={{ left: '100%' }}
-                 transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
-                 className="absolute inset-y-0 w-20 bg-gradient-to-r from-transparent via-white/50 to-transparent skew-x-12"
-              />
-           </div>
-
-           <div className="space-y-6">
-              <div className="p-6 bg-blue-50 text-blue-700 rounded-[2rem] border-2 border-blue-100 flex items-center gap-5 text-left group">
-                 <HelpCircle className="w-8 h-8 shrink-0 text-blue-500 group-hover:scale-110 transition-transform" />
-                 <p className="text-xs font-black uppercase leading-relaxed tracking-tight group-hover:text-blue-800 transition-colors">Acompanhe a evolução em sua Central de Notificações. A resposta estima-se em fluxo prioritário.</p>
-              </div>
-              
-              <button 
-                onClick={() => setShowSuccess(false)}
-                className="w-full bg-text-main text-white py-6 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] shadow-3xl hover:bg-primary transition-all active:scale-95"
-              >
-                Retornar ao Painel
-              </button>
-           </div>
-           
-           <Award className="absolute -right-12 -top-12 w-48 h-48 opacity-[0.03] text-primary rotate-12" />
-        </div>
-      </Modal>
-
-      {/* Support CTA */}
-      <div className="px-10 py-10 bg-surface rounded-[4rem] border-2 border-border border-dashed flex flex-col md:flex-row items-center justify-between gap-10 group">
-         <div className="flex items-center gap-8">
-            <div className="w-20 h-20 bg-white rounded-[2rem] flex items-center justify-center text-primary shadow-inner border border-border shrink-0 group-hover:rotate-12 transition-transform duration-500">
-               <Fingerprint size={36} />
             </div>
-            <div className="space-y-1">
-               <h4 className="text-xl font-black text-text-main uppercase leading-none">Protocolo DigitalID de Segurança</h4>
-               <p className="text-xs font-ui font-medium text-text-muted max-w-lg">
-                  Toda manifestação é auditada e criptografada, garantindo que o seu histórico cívico seja preservado e respeitado por todas as instâncias governamentais.
-               </p>
-            </div>
-         </div>
-         <div className="flex items-center gap-4 px-6 py-4 bg-white rounded-2xl border-2 border-border shadow-sm">
-            <ShieldCheck className="text-green-500" size={20} />
-            <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">Conexão Segura AES-256</span>
-         </div>
-      </div>
+          )}
 
+          {activeTab === 'create' ? (
+            <DemandForm onSuccess={(protocolId) => setCreatedProtocol(protocolId)} />
+          ) : (
+            <ProtocolSearch />
+          )}
+        </section>
+
+        <aside className="space-y-4">
+          <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+            <p className="text-xs font-black uppercase tracking-widest text-text-muted">Prazo de resposta</p>
+            <p className="mt-2 text-2xl font-black text-text-main">Até 20 dias úteis</p>
+            <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
+              O prazo pode variar conforme a complexidade e o setor responsável.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-border bg-text-main p-5 text-white shadow-sm">
+            <p className="text-xs font-black uppercase tracking-widest text-primary-light">Painel do Cidadão</p>
+            <p className="mt-2 text-sm font-medium leading-6 text-white/70">
+              Solicitações vinculadas ao login poderão aparecer no histórico do cidadão.
+            </p>
+          </div>
+        </aside>
+      </main>
     </div>
   );
 }

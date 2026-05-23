@@ -2,64 +2,105 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function isSignedIn() { return request.auth != null; }
-    function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
-    function incoming() { return request.resource.data; }
-    function existing() { return resource.data; }
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function adminDoc() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isStaff() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
+        adminDoc().data.role in ['admin', 'clerk'];
+    }
+
     function isAdmin() {
       return isSignedIn() &&
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
+        adminDoc().data.role == 'admin';
+    }
+
+    function validDemandCreate() {
+      return incoming().status == 'pending'
+        && incoming().consent == true
+        && incoming().isAnonymous is bool
+        && (
+          (incoming().isAnonymous == true && incoming().authorId == '')
+          || (incoming().isAnonymous == false && incoming().authorId == request.auth.uid)
+        );
+    }
+
+    function validPetitionSignatureUpdate() {
+      return isSignedIn()
+        && incoming().diff(existing()).changedKeys().hasOnly(['signaturesCount', 'updatedAt'])
+        && incoming().signaturesCount == existing().signaturesCount + 1;
     }
 
     match /{document=**} {
       allow read, write: if false;
     }
 
-    // Users
     match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId) && incoming().role == 'citizen';
-      allow update: if (isOwner(userId) && incoming().role == existing().role && incoming().uid == existing().uid) || isAdmin();
+      allow read: if isOwner(userId) || isStaff();
+      allow create: if isOwner(userId)
+        && incoming().uid == userId
+        && incoming().role == 'citizen';
+      allow update: if (
+          isOwner(userId)
+          && incoming().uid == existing().uid
+          && incoming().role == existing().role
+        ) || isStaff();
     }
 
-    // Admins
     match /admins/{uid} {
-      allow read: if isAdmin();
-      allow write: if isAdmin()
-        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+      allow read: if isStaff();
+      allow create, update, delete: if isAdmin();
     }
 
-    // Reports
     match /reports/{reportId} {
-      allow read: if isOwner(resource.data.reporterId) || isAdmin();
+      allow read: if isOwner(resource.data.reporterId) || isStaff();
       allow list: if isSignedIn();
       allow create: if isSignedIn()
         && incoming().reporterId == request.auth.uid
         && incoming().status == 'pending';
-      allow update: if isAdmin();
+      allow update: if isStaff();
     }
 
-    // Demands (Ouvidoria)
     match /demands/{demandId} {
-      allow read: if isOwner(resource.data.authorId) || isAdmin();
-      allow create: if isSignedIn()
-        && incoming().authorId == request.auth.uid
-        && incoming().status == 'pending'
-        && incoming().consent == true;
-      allow update: if isAdmin();
+      allow read: if isStaff()
+        || isOwner(resource.data.authorId)
+        || resource.data.isAnonymous == true;
+      allow create: if isSignedIn() && validDemandCreate();
+      allow update: if isStaff();
+      allow delete: if isAdmin();
     }
 
-    // Petitions
     match /petitions/{petitionId} {
       allow read: if true;
       allow create: if isSignedIn()
         && incoming().creatorId == request.auth.uid
         && incoming().signaturesCount == 0
         && incoming().status == 'active';
-      allow update: if isOwner(resource.data.creatorId) || isAdmin();
+      allow update: if isOwner(resource.data.creatorId)
+        || isStaff()
+        || validPetitionSignatureUpdate();
+      allow delete: if isAdmin();
     }
 
-    // Petition Signatures
     match /petition_signatures/{sigId} {
       allow read: if true;
       allow create: if isSignedIn()
@@ -68,45 +109,41 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Appointments
     match /appointments/{appointmentId} {
-      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow read: if isOwner(resource.data.userId) || isStaff();
       allow create: if isSignedIn()
         && incoming().userId == request.auth.uid
         && incoming().status == 'scheduled';
-      allow update: if (isOwner(resource.data.userId) && incoming().status == 'cancelled') || isAdmin();
+      allow update: if (isOwner(resource.data.userId) && incoming().status == 'cancelled') || isStaff();
     }
 
-    // Health Units
     match /health_units/{unitId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isStaff();
     }
 
-    // Jobs
     match /jobs/{jobId} {
       allow read: if true;
       allow create: if isSignedIn()
         && incoming().employerId == request.auth.uid;
-      allow update: if isOwner(resource.data.employerId) || isAdmin();
+      allow update: if isOwner(resource.data.employerId) || isStaff();
+      allow delete: if isAdmin();
     }
 
-    // Job Applications
     match /job_applications/{appId} {
-      allow read: if isOwner(resource.data.applicantId) || isAdmin();
+      allow read: if isOwner(resource.data.applicantId) || isStaff();
       allow create: if isSignedIn()
         && incoming().applicantId == request.auth.uid
         && incoming().status == 'applied';
-      allow update: if isAdmin();
+      allow update: if isStaff();
     }
 
-    // Emergency Alerts
     match /emergency_alerts/{alertId} {
-      allow read: if isAdmin();
+      allow read: if isStaff();
       allow create: if isSignedIn()
         && incoming().userId == request.auth.uid
         && incoming().status == 'active';
-      allow update: if isAdmin();
+      allow update: if isStaff();
     }
   }
 }

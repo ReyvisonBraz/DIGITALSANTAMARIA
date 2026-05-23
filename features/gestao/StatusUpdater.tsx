@@ -1,54 +1,96 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
-import { updateReportStatus } from '@/services/reports.service';
+import { Loader2, Save } from 'lucide-react';
+import { updateDemandStatus } from '@/services/demands.service';
 import { useToast } from '@/lib/toast-context';
-import Button from '@/components/ui/Button';
-import type { ReportStatus } from '@/types';
+import type { DemandStatus } from '@/types';
 
 interface StatusUpdaterProps {
-  reportId: string;
+  demandId: string;
   clerkId: string;
+  clerkName: string;
+  initialResponse?: string;
   onUpdate: () => void;
 }
 
-export default function StatusUpdater({ reportId, clerkId, onUpdate }: StatusUpdaterProps) {
+const statuses: { label: string; value: DemandStatus }[] = [
+  { label: 'Pendente', value: 'pending' },
+  { label: 'Em análise', value: 'analyzing' },
+  { label: 'Resolvida', value: 'solved' },
+  { label: 'Recusada', value: 'rejected' },
+];
+
+export default function StatusUpdater({
+  demandId,
+  clerkId,
+  clerkName,
+  initialResponse = '',
+  onUpdate,
+}: StatusUpdaterProps) {
   const { toast } = useToast();
+  const [status, setStatus] = useState<DemandStatus>('analyzing');
+  const [response, setResponse] = useState(initialResponse);
   const [loading, setLoading] = useState(false);
 
-  const updateStatus = async (status: ReportStatus) => {
+  const handleSave = async () => {
+    if (!response.trim() && (status === 'solved' || status === 'rejected')) {
+      toast('Informe uma resposta oficial para concluir a solicitação.', 'error');
+      return;
+    }
+
     setLoading(true);
     try {
-      await updateReportStatus(reportId, status, clerkId);
-      toast(`Relato atualizado para ${status}`, 'success');
+      await updateDemandStatus(demandId, status, {
+        clerkId,
+        clerkName,
+        response: response.trim(),
+      });
+      toast('Solicitação atualizada.', 'success');
       onUpdate();
     } catch {
-      toast('Erro ao atualizar status', 'error');
+      toast('Erro ao atualizar solicitação.', 'error');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <div className="flex gap-2">
-      <Button
-        variant="primary"
-        onClick={() => updateStatus('in_review')}
+    <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[180px_1fr]">
+        <label className="space-y-2">
+          <span className="text-xs font-black uppercase tracking-widest text-text-muted">Status</span>
+          <select
+            value={status}
+            onChange={(event) => setStatus(event.target.value as DemandStatus)}
+            className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary"
+          >
+            {statuses.map((item) => (
+              <option key={item.value} value={item.value}>{item.label}</option>
+            ))}
+          </select>
+        </label>
+
+        <label className="space-y-2">
+          <span className="text-xs font-black uppercase tracking-widest text-text-muted">Resposta oficial</span>
+          <textarea
+            value={response}
+            onChange={(event) => setResponse(event.target.value)}
+            rows={3}
+            placeholder="Escreva a resposta que o cidadão verá na consulta do protocolo."
+            className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary"
+          />
+        </label>
+      </div>
+
+      <button
+        onClick={handleSave}
         disabled={loading}
-        className="text-[9px] !px-3 !py-2"
+        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
-        {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
-        Revisar
-      </Button>
-      <Button
-        variant="danger"
-        onClick={() => updateStatus('rejected')}
-        disabled={loading}
-        className="text-[9px] !px-3 !py-2"
-      >
-        <XCircle className="w-3 h-3" />
-        Rejeitar
-      </Button>
+        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+        Salvar atualização
+      </button>
     </div>
   );
 }
