@@ -21,7 +21,10 @@ export default function PeticoesPage() {
     setLoading(true);
     getActivePetitions()
       .then(setPetitions)
-      .catch(() => toast('Não foi possível carregar as petições.', 'error'))
+      .catch((error) => {
+        console.error('[peticoes] erro ao carregar petições', error);
+        toast('Não foi possível carregar as petições.', 'error');
+      })
       .finally(() => setLoading(false));
   };
 

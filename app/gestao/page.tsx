@@ -1,9 +1,11 @@
 'use client';
 
-import { AlertCircle, FileText, Loader2, ShieldCheck } from 'lucide-react';
+import { useState } from 'react';
+import { AlertCircle, FileText, Loader2, Search, ShieldCheck } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import Skeleton from '@/components/ui/Skeleton';
 import MetricsDashboard from '@/features/gestao/MetricsDashboard';
+import PetitionsAdminPanel from '@/features/gestao/PetitionsAdminPanel';
 import StatusUpdater from '@/features/gestao/StatusUpdater';
 import { useAdminData } from '@/features/gestao/hooks/useAdminData';
 import { useAuth } from '@/lib/auth-context';
@@ -12,21 +14,37 @@ import type { DemandStatus, DemandType } from '@/types';
 
 const statusLabel: Record<DemandStatus, string> = {
   pending: 'Pendente',
-  analyzing: 'Em análise',
+  analyzing: 'Em analise',
   solved: 'Resolvida',
   rejected: 'Recusada',
 };
 
 const typeLabel: Record<DemandType, string> = {
-  reclamacao: 'Reclamação',
-  sugestao: 'Solicitação',
-  denuncia: 'Denúncia',
+  reclamacao: 'Reclamacao',
+  sugestao: 'Solicitacao',
+  denuncia: 'Denuncia',
   elogio: 'Elogio',
 };
+
+type ActiveSection = 'demands' | 'petitions';
+type DemandSort = 'newest' | 'oldest' | 'pending';
+type StatusFilter = DemandStatus | 'all';
+
+function demandTime(value: { seconds?: number } | unknown) {
+  if (value && typeof value === 'object' && 'seconds' in value && typeof value.seconds === 'number') {
+    return value.seconds * 1000;
+  }
+  return 0;
+}
 
 export default function GestaoPage() {
   const { user, userRole, loading: authLoading, login } = useAuth();
   const { demands, loading, error, refresh } = useAdminData();
+  const [activeSection, setActiveSection] = useState<ActiveSection>('demands');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [sortMode, setSortMode] = useState<DemandSort>('newest');
 
   if (authLoading) {
     return (
@@ -40,9 +58,9 @@ export default function GestaoPage() {
     return (
       <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-4 text-center">
         <AlertCircle className="h-12 w-12 text-primary" />
-        <h1 className="mt-4 text-3xl font-black tracking-normal text-text-main">Painel de Gestão</h1>
+        <h1 className="mt-4 text-3xl font-black tracking-normal text-text-main">Painel de Gestao</h1>
         <p className="mt-3 text-base font-medium leading-7 text-text-muted">
-          Entre com uma conta autorizada para acessar solicitações da Ouvidoria.
+          Entre com uma conta autorizada para acessar solicitacoes e peticoes.
         </p>
         <button
           onClick={login}
@@ -62,7 +80,7 @@ export default function GestaoPage() {
         </div>
         <h1 className="mt-5 text-3xl font-black tracking-normal text-text-main">Acesso restrito</h1>
         <p className="mt-3 text-base font-medium leading-7 text-text-muted">
-          Sua conta não tem permissão para acessar o painel administrativo.
+          Sua conta nao tem permissao para acessar o painel administrativo.
         </p>
       </div>
     );
@@ -75,85 +93,191 @@ export default function GestaoPage() {
     solved: demands.filter((demand) => demand.status === 'solved').length,
   };
 
+  const categories = Array.from(new Set(demands.map((demand) => demand.category))).sort();
+  const filteredDemands = demands
+    .filter((demand) => {
+      const search = searchTerm.trim().toLowerCase();
+      const searchable = [
+        demand.protocolId,
+        demand.subject,
+        demand.content.text,
+        demand.category,
+        statusLabel[demand.status],
+        typeLabel[demand.type],
+      ].join(' ').toLowerCase();
+
+      const matchesSearch = !search || searchable.includes(search);
+      const matchesStatus = statusFilter === 'all' || demand.status === statusFilter;
+      const matchesCategory = categoryFilter === 'all' || demand.category === categoryFilter;
+
+      return matchesSearch && matchesStatus && matchesCategory;
+    })
+    .sort((a, b) => {
+      if (sortMode === 'pending') {
+        const order: Record<DemandStatus, number> = { pending: 0, analyzing: 1, rejected: 2, solved: 3 };
+        return order[a.status] - order[b.status] || demandTime(b.createdAt) - demandTime(a.createdAt);
+      }
+      if (sortMode === 'oldest') return demandTime(a.createdAt) - demandTime(b.createdAt);
+      return demandTime(b.createdAt) - demandTime(a.createdAt);
+    });
+
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-12">
       <section className="border-b border-border bg-white">
         <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 md:px-10 lg:px-12">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-primary">
             <ShieldCheck className="h-4 w-4" />
-            Gestão municipal
+            Gestao municipal
           </div>
           <h1 className="mt-4 text-3xl font-black tracking-normal text-text-main md:text-5xl">
-            Solicitações da Ouvidoria
+            Painel de operacao
           </h1>
           <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-            Acompanhe demandas abertas pelos cidadãos, atualize status e registre respostas oficiais.
+            Acompanhe solicitacoes, responda protocolos e gerencie peticoes publicas.
           </p>
         </div>
       </section>
 
       <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-8 sm:px-6 md:px-10 lg:px-12">
-        <MetricsDashboard {...metrics} />
+        <div className="grid grid-cols-2 rounded-2xl border border-border bg-white p-1 shadow-sm">
+          <button
+            onClick={() => setActiveSection('demands')}
+            className={`rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest transition ${
+              activeSection === 'demands' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
+            }`}
+          >
+            Solicitacoes ({demands.length})
+          </button>
+          <button
+            onClick={() => setActiveSection('petitions')}
+            className={`rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest transition ${
+              activeSection === 'petitions' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
+            }`}
+          >
+            Peticoes
+          </button>
+        </div>
 
-        {loading ? (
-          <div className="space-y-4">
-            <Skeleton variant="card" />
-            <Skeleton variant="card" />
-          </div>
-        ) : error ? (
-          <EmptyState title="Erro ao carregar" description={error} />
-        ) : demands.length === 0 ? (
-          <EmptyState title="Nenhuma solicitação" description="Ainda não há solicitações registradas." />
-        ) : (
-          <div className="space-y-4">
-            {demands.map((demand) => (
-              <article key={demand.id} className="rounded-2xl border border-border bg-white p-5 shadow-sm md:p-6">
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
-                        {typeLabel[demand.type]}
-                      </span>
-                      <span className="rounded-full bg-surface px-2 py-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
-                        {statusLabel[demand.status]}
-                      </span>
-                      <span className="text-xs font-bold text-text-muted">{formatDate(demand.createdAt)}</span>
-                    </div>
-                    <h2 className="mt-3 text-xl font-black tracking-normal text-text-main">{demand.subject}</h2>
-                    <p className="mt-2 line-clamp-3 text-sm font-medium leading-6 text-text-muted">
-                      {demand.content.text}
-                    </p>
-                    <p className="mt-3 break-all font-mono text-xs font-bold text-primary">
-                      {demand.protocolId}
-                    </p>
-                  </div>
+        {activeSection === 'demands' ? (
+          <>
+            <MetricsDashboard {...metrics} />
 
-                  <div className="rounded-xl border border-border bg-surface p-4 lg:min-w-64">
-                    <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted">
-                      <FileText className="h-4 w-4 text-primary" />
-                      Cidadão
-                    </div>
-                    <p className="mt-2 text-sm font-bold text-text-main">
-                      {demand.isAnonymous ? 'Anônimo' : demand.authorName || demand.authorId || 'Identificado'}
-                    </p>
-                    <p className="mt-1 text-xs font-medium text-text-muted">
-                      Categoria: {demand.category}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5 border-t border-border pt-5">
-                  <StatusUpdater
-                    demandId={demand.id}
-                    clerkId={user.uid}
-                    clerkName={user.displayName || user.email || 'Gestor'}
-                    initialResponse={demand.adminAction?.response || ''}
-                    onUpdate={refresh}
+            <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
+              <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_180px_180px_180px]">
+                <label className="relative block">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+                  <input
+                    value={searchTerm}
+                    onChange={(event) => setSearchTerm(event.target.value)}
+                    placeholder="Buscar por protocolo, assunto, texto ou categoria"
+                    className="h-11 w-full rounded-xl border border-border bg-surface pl-10 pr-3 text-sm font-medium outline-none transition focus:border-primary"
                   />
-                </div>
-              </article>
-            ))}
-          </div>
+                </label>
+
+                <select
+                  value={statusFilter}
+                  onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
+                  className="h-11 rounded-xl border border-border bg-surface px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
+                >
+                  <option value="all">Todos status</option>
+                  <option value="pending">Pendente</option>
+                  <option value="analyzing">Em analise</option>
+                  <option value="solved">Resolvida</option>
+                  <option value="rejected">Recusada</option>
+                </select>
+
+                <select
+                  value={categoryFilter}
+                  onChange={(event) => setCategoryFilter(event.target.value)}
+                  className="h-11 rounded-xl border border-border bg-surface px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
+                >
+                  <option value="all">Todas categorias</option>
+                  {categories.map((category) => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+
+                <select
+                  value={sortMode}
+                  onChange={(event) => setSortMode(event.target.value as DemandSort)}
+                  className="h-11 rounded-xl border border-border bg-surface px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
+                >
+                  <option value="newest">Mais recentes</option>
+                  <option value="oldest">Mais antigas</option>
+                  <option value="pending">Pendentes primeiro</option>
+                </select>
+              </div>
+
+              <p className="mt-3 text-xs font-bold text-text-muted">
+                Mostrando {filteredDemands.length} de {demands.length} solicitacoes.
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="space-y-4">
+                <Skeleton variant="card" />
+                <Skeleton variant="card" />
+              </div>
+            ) : error ? (
+              <EmptyState title="Erro ao carregar" description={error} />
+            ) : demands.length === 0 ? (
+              <EmptyState title="Nenhuma solicitacao" description="Ainda nao ha solicitacoes registradas." />
+            ) : filteredDemands.length === 0 ? (
+              <EmptyState title="Nada encontrado" description="Tente limpar os filtros ou buscar outro termo." />
+            ) : (
+              <div className="space-y-4">
+                {filteredDemands.map((demand) => (
+                  <article key={demand.id} className="rounded-2xl border border-border bg-white p-5 shadow-sm md:p-6">
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
+                            {typeLabel[demand.type]}
+                          </span>
+                          <span className="rounded-full bg-surface px-2 py-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                            {statusLabel[demand.status]}
+                          </span>
+                          <span className="text-xs font-bold text-text-muted">{formatDate(demand.createdAt)}</span>
+                        </div>
+                        <h2 className="mt-3 text-xl font-black tracking-normal text-text-main">{demand.subject}</h2>
+                        <p className="mt-2 line-clamp-3 text-sm font-medium leading-6 text-text-muted">
+                          {demand.content.text}
+                        </p>
+                        <p className="mt-3 break-all font-mono text-xs font-bold text-primary">
+                          {demand.protocolId}
+                        </p>
+                      </div>
+
+                      <div className="rounded-xl border border-border bg-surface p-4 lg:min-w-64">
+                        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted">
+                          <FileText className="h-4 w-4 text-primary" />
+                          Cidadao
+                        </div>
+                        <p className="mt-2 text-sm font-bold text-text-main">
+                          {demand.isAnonymous ? 'Anonimo' : demand.authorName || demand.authorId || 'Identificado'}
+                        </p>
+                        <p className="mt-1 text-xs font-medium text-text-muted">
+                          Categoria: {demand.category}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 border-t border-border pt-5">
+                      <StatusUpdater
+                        demandId={demand.id}
+                        clerkId={user.uid}
+                        clerkName={user.displayName || user.email || 'Gestor'}
+                        initialResponse={demand.adminAction?.response || ''}
+                        onUpdate={refresh}
+                      />
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <PetitionsAdminPanel />
         )}
       </main>
     </div>

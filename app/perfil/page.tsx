@@ -1,35 +1,40 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
   ArrowRight,
+  Building2,
   ClipboardList,
   FileText,
   Loader2,
   LogOut,
   MessageSquare,
+  PenLine,
+  Settings,
   ShieldCheck,
   UserRound,
 } from 'lucide-react';
+import ProfileSettingsPanel from '@/components/ProfileSettingsPanel';
+import ActivityHistory from '@/features/perfil/ActivityHistory';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
-import ActivityHistory from '@/features/perfil/ActivityHistory';
 import { getDemandsByUser } from '@/services/demands.service';
 import { getReportsByUser } from '@/services/reports.service';
 import { getUserProfile } from '@/services/users.service';
 import type { UserProfile } from '@/types';
 
 export default function PerfilPage() {
-  const { user, login, logout } = useAuth();
+  const { user, userRole, login, logout } = useAuth();
   const { toast } = useToast();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [demandsCount, setDemandsCount] = useState(0);
   const [reportsCount, setReportsCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [settingsMode, setSettingsMode] = useState<'edit' | 'preferences' | null>(null);
 
-  useEffect(() => {
+  const loadPanel = useCallback(() => {
     if (!user) {
       setLoading(false);
       return;
@@ -46,16 +51,21 @@ export default function PerfilPage() {
         setDemandsCount(demands.length);
         setReportsCount(reports.length);
       })
-      .catch(() => toast('Não foi possível carregar o painel agora.', 'error'))
+      .catch(() => toast('Nao foi possivel carregar o painel agora.', 'error'))
       .finally(() => setLoading(false));
   }, [toast, user]);
 
-  const displayName = profile?.displayName || user?.displayName || 'Cidadão';
+  useEffect(() => {
+    loadPanel();
+  }, [loadPanel]);
+
+  const displayName = profile?.displayName || user?.displayName || 'Cidadao';
   const email = profile?.email || user?.email || '';
   const photoURL = profile?.photoURL || user?.photoURL || null;
+  const isStaff = userRole === 'admin' || userRole === 'clerk';
 
   const stats = useMemo(() => [
-    { label: 'Solicitações', value: demandsCount, icon: ClipboardList },
+    { label: 'Solicitacoes', value: demandsCount, icon: ClipboardList },
     { label: 'Relatos', value: reportsCount, icon: MessageSquare },
     { label: 'Pontos', value: profile?.points ?? 0, icon: ShieldCheck },
   ], [demandsCount, profile?.points, reportsCount]);
@@ -67,10 +77,10 @@ export default function PerfilPage() {
           <UserRound className="h-8 w-8" />
         </div>
         <h1 className="mt-6 text-3xl font-black tracking-normal text-text-main">
-          Painel do Cidadão
+          Painel do Cidadao
         </h1>
         <p className="mt-3 text-base font-medium leading-7 text-text-muted">
-          Entre com sua conta Google para acompanhar seus protocolos, dados básicos e atividades no portal.
+          Entre com sua conta Google para acompanhar protocolos, dados basicos e atividades no portal.
         </p>
         <button
           onClick={login}
@@ -97,7 +107,7 @@ export default function PerfilPage() {
           </div>
 
           <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-widest text-primary">Painel do Cidadão</p>
+            <p className="text-xs font-black uppercase tracking-widest text-primary">Painel do Cidadao</p>
             <h1 className="mt-1 truncate text-3xl font-black tracking-normal text-text-main md:text-4xl">
               {displayName}
             </h1>
@@ -105,17 +115,24 @@ export default function PerfilPage() {
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row md:flex-col lg:flex-row">
+            <button
+              onClick={() => setSettingsMode('edit')}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+            >
+              <PenLine className="h-4 w-4" />
+              Editar perfil
+            </button>
             <Link
               href="/ouvidoria"
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark"
             >
-              Abrir solicitação
+              Abrir solicitacao
               <ArrowRight className="h-4 w-4" />
             </Link>
             <button
               onClick={() => {
                 logout();
-                toast('Sessão encerrada com sucesso.', 'info');
+                toast('Sessao encerrada com sucesso.', 'info');
               }}
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-text-main transition hover:border-rose-300 hover:text-rose-600"
             >
@@ -145,7 +162,7 @@ export default function PerfilPage() {
           <div className="rounded-2xl border border-border bg-surface p-5 md:p-6">
             <div className="mb-5 flex flex-col gap-2 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="text-xs font-black uppercase tracking-widest text-primary">Histórico</p>
+                <p className="text-xs font-black uppercase tracking-widest text-primary">Historico</p>
                 <h2 className="mt-1 text-2xl font-black tracking-normal text-text-main">Meus protocolos</h2>
               </div>
               <Link href="/ouvidoria" className="text-xs font-black uppercase tracking-widest text-primary">
@@ -157,11 +174,58 @@ export default function PerfilPage() {
         </section>
 
         <aside className="space-y-4">
+          {isStaff && (
+            <div className="rounded-2xl border border-primary/20 bg-white p-5 shadow-sm">
+              <p className="text-xs font-black uppercase tracking-widest text-primary">Acesso administrativo</p>
+              <div className="mt-4 grid grid-cols-1 gap-2">
+                <Link
+                  href="/gestao"
+                  className="inline-flex min-h-11 items-center justify-between rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <Building2 className="h-4 w-4" />
+                    Gestao
+                  </span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/peticoes"
+                  className="inline-flex min-h-11 items-center justify-between rounded-xl border border-border bg-surface px-4 py-2 text-xs font-black uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Peticoes
+                  </span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/ouvidoria"
+                  className="inline-flex min-h-11 items-center justify-between rounded-xl border border-border bg-surface px-4 py-2 text-xs font-black uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    Solicitacoes
+                  </span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          )}
+
           <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
-            <p className="text-xs font-black uppercase tracking-widest text-text-muted">Dados básicos</p>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-black uppercase tracking-widest text-text-muted">Dados basicos</p>
+              <button
+                onClick={() => setSettingsMode('edit')}
+                className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-[10px] font-black uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+              >
+                <Settings className="h-3.5 w-3.5" />
+                Editar
+              </button>
+            </div>
             <div className="mt-4 space-y-3 text-sm font-medium text-text-muted">
-              <p><span className="font-black text-text-main">Bairro:</span> {profile?.neighborhood || 'Não informado'}</p>
-              <p><span className="font-black text-text-main">Telefone:</span> {profile?.phone || 'Não informado'}</p>
+              <p><span className="font-black text-text-main">Bairro:</span> {profile?.neighborhood || 'Nao informado'}</p>
+              <p><span className="font-black text-text-main">Telefone:</span> {profile?.phone || 'Nao informado'}</p>
               <p><span className="font-black text-text-main">Perfil:</span> {profile?.role || 'citizen'}</p>
             </div>
           </div>
@@ -170,11 +234,20 @@ export default function PerfilPage() {
             <FileText className="h-6 w-6 text-primary-light" />
             <h2 className="mt-3 text-lg font-black tracking-normal">Como usar o painel</h2>
             <p className="mt-2 text-sm font-medium leading-6 text-white/70">
-              Solicitações abertas com login aparecem aqui automaticamente. Solicitações anônimas podem ser acompanhadas pelo número de protocolo.
+              Solicitacoes abertas com login aparecem aqui automaticamente. Solicitacoes anonimas podem ser acompanhadas pelo numero de protocolo.
             </p>
           </div>
         </aside>
       </main>
+
+      <ProfileSettingsPanel
+        isOpen={!!settingsMode}
+        onClose={() => {
+          setSettingsMode(null);
+          loadPanel();
+        }}
+        mode={settingsMode === 'preferences' ? 'preferences' : 'edit'}
+      />
     </div>
   );
 }

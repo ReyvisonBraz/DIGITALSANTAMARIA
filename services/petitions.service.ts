@@ -4,6 +4,7 @@ import {
   addDoc,
   getDoc,
   getDocs,
+  updateDoc,
   query,
   where,
   increment,
@@ -12,7 +13,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { petitionConverter } from '@/lib/firebase/converters';
-import type { Petition, CreatePetitionInput } from '@/types';
+import type { Petition, CreatePetitionInput, PetitionStatus } from '@/types';
 
 const PETITIONS_COL = 'petitions';
 const SIGNATURES_COL = 'petition_signatures';
@@ -51,10 +52,37 @@ export async function getActivePetitions(): Promise<Petition[]> {
     });
 }
 
+export async function getAllPetitions(): Promise<Petition[]> {
+  const ref = collection(db, PETITIONS_COL).withConverter(petitionConverter);
+  const snap = await getDocs(ref);
+  return snap.docs
+    .map((d) => d.data())
+    .sort((a, b) => {
+      const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0;
+      const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0;
+      return bTime - aTime;
+    });
+}
+
 export async function getPetitionById(id: string): Promise<Petition | null> {
   const ref = doc(db, PETITIONS_COL, id).withConverter(petitionConverter);
   const snap = await getDoc(ref);
   return snap.exists() ? snap.data() : null;
+}
+
+export async function updatePetitionAdmin(
+  id: string,
+  input: {
+    status: PetitionStatus;
+    officialReply?: string | null;
+  }
+): Promise<void> {
+  const ref = doc(db, PETITIONS_COL, id);
+  await updateDoc(ref, {
+    status: input.status,
+    officialReply: input.officialReply || null,
+    updatedAt: serverTimestamp(),
+  });
 }
 
 export async function signPetition(petitionId: string, userId: string, userName: string): Promise<void> {

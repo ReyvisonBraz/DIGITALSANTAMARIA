@@ -23,6 +23,18 @@ Arquivos alterados:
 - Gestao deixou de listar `reports` e passou a listar `demands`.
 - Acesso permitido para `admin` e `clerk`.
 - Usuarios `admin` e `clerk` agora veem um atalho "Gestao" no topo em telas desktop.
+- Painel agora tem abas:
+  - Solicitacoes.
+  - Peticoes.
+- Solicitacoes agora possuem:
+  - busca por protocolo, assunto, texto ou categoria;
+  - filtro por status;
+  - filtro por categoria;
+  - ordenacao por mais recentes, mais antigas ou pendentes primeiro.
+- Peticoes agora possuem:
+  - busca por titulo, autor, categoria ou descricao;
+  - filtro por status;
+  - ordenacao por mais recentes, mais antigas ou mais assinaturas.
 - Painel mostra metricas:
   - Total.
   - Pendentes.

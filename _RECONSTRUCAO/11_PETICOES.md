@@ -43,7 +43,7 @@ Arquivos alterados:
 - Validar regras Firestore em ambiente real.
 - Decidir se toda peticao criada fica ativa imediatamente ou se exige aprovacao.
 - Mostrar peticoes criadas/assinadas no Painel do Cidadao.
-- Adicionar painel admin para fechar/baixar peticoes no futuro.
+- Painel admin de peticoes criado em `/gestao`, com status e resposta oficial.
 
 ## Validacao
 
