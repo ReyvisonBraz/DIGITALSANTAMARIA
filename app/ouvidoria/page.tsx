@@ -12,7 +12,7 @@ export default function OuvidoriaPage() {
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-12">
       <section className="border-b border-border bg-white">
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:grid-cols-[1fr_0.8fr] md:px-10 md:py-12 lg:px-12">
+        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-4 py-7 sm:px-6 md:grid-cols-[1fr_0.8fr] md:px-10 md:py-10 lg:px-12">
           <div className="space-y-5">
             <div className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-primary">
               <ShieldCheck className="h-4 w-4" />
@@ -20,14 +20,14 @@ export default function OuvidoriaPage() {
             </div>
             <div className="space-y-3">
               <h1 className="text-3xl font-black leading-tight tracking-normal text-text-main sm:text-4xl lg:text-5xl">
-                Ouvidoria e solicitações
+                Ouvidoria e solicitacoes
               </h1>
               <p className="max-w-2xl text-base font-medium leading-7 text-text-muted">
-                Abra uma solicitação, registre uma manifestação ou consulte o andamento
-                pelo número de protocolo.
+                Abra uma solicitacao, registre uma manifestacao ou consulte o andamento
+                pelo numero de protocolo.
               </p>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="grid grid-cols-1 gap-3 sm:flex sm:flex-wrap">
               <button
                 onClick={() => setActiveTab('create')}
                 className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-black uppercase tracking-widest transition ${
@@ -37,7 +37,7 @@ export default function OuvidoriaPage() {
                 }`}
               >
                 <MessageSquare className="h-4 w-4" />
-                Abrir solicitação
+                Abrir solicitacao
               </button>
               <button
                 onClick={() => setActiveTab('search')}
@@ -53,19 +53,19 @@ export default function OuvidoriaPage() {
             </div>
           </div>
 
-          <aside className="rounded-2xl border border-border bg-surface p-5">
-            <h2 className="text-lg font-black tracking-normal text-text-main">Antes de começar</h2>
+          <aside className="rounded-xl border border-border bg-surface p-4 md:p-5">
+            <h2 className="text-lg font-black tracking-normal text-text-main">Antes de comecar</h2>
             <div className="mt-4 space-y-3">
               <div className="flex gap-3 rounded-xl bg-white p-4">
                 <FileText className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <p className="text-sm font-medium leading-6 text-text-muted">
-                  Informe o máximo de detalhes possível para facilitar o atendimento.
+                  Informe o maximo de detalhes possivel para facilitar o atendimento.
                 </p>
               </div>
               <div className="flex gap-3 rounded-xl bg-white p-4">
                 <Phone className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                 <p className="text-sm font-medium leading-6 text-text-muted">
-                  Para atendimento emergencial, procure também os canais presenciais ou telefônicos do município.
+                  Para emergencia, procure tambem os canais presenciais ou telefonicos do municipio.
                 </p>
               </div>
             </div>
@@ -73,14 +73,14 @@ export default function OuvidoriaPage() {
         </div>
       </section>
 
-      <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:px-10 lg:grid-cols-[1fr_0.35fr] lg:px-12">
-        <section className="rounded-2xl border border-border bg-white p-5 shadow-sm md:p-6">
+      <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-4 py-7 sm:px-6 md:px-10 lg:grid-cols-[1fr_0.35fr] lg:px-12">
+        <section className="rounded-xl border border-border bg-white p-4 shadow-sm md:p-6">
           <div className="mb-5 border-b border-border pb-5">
             <p className="text-xs font-black uppercase tracking-widest text-primary">
               {activeTab === 'create' ? 'Novo protocolo' : 'Acompanhamento'}
             </p>
             <h2 className="mt-1 text-2xl font-black tracking-normal text-text-main">
-              {activeTab === 'create' ? 'Abrir solicitação' : 'Consultar protocolo'}
+              {activeTab === 'create' ? 'Abrir solicitacao' : 'Consultar protocolo'}
             </h2>
           </div>
 
@@ -89,8 +89,8 @@ export default function OuvidoriaPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
                 <div>
-                  <p className="text-sm font-black">Solicitação protocolada com sucesso.</p>
-                  <p className="mt-1 break-all font-mono text-lg font-black text-green-800">{createdProtocol}</p>
+                  <p className="text-sm font-black">Solicitacao protocolada com sucesso.</p>
+                  <p className="mt-1 break-all font-mono text-base font-black text-green-800 sm:text-lg">{createdProtocol}</p>
                 </div>
               </div>
             </div>
@@ -104,17 +104,17 @@ export default function OuvidoriaPage() {
         </section>
 
         <aside className="space-y-4">
-          <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+          <div className="rounded-xl border border-border bg-white p-5 shadow-sm">
             <p className="text-xs font-black uppercase tracking-widest text-text-muted">Prazo de resposta</p>
-            <p className="mt-2 text-2xl font-black text-text-main">Até 20 dias úteis</p>
+            <p className="mt-2 text-2xl font-black text-text-main">Ate 20 dias uteis</p>
             <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-              O prazo pode variar conforme a complexidade e o setor responsável.
+              O prazo pode variar conforme a complexidade e o setor responsavel.
             </p>
           </div>
-          <div className="rounded-2xl border border-border bg-text-main p-5 text-white shadow-sm">
-            <p className="text-xs font-black uppercase tracking-widest text-primary-light">Painel do Cidadão</p>
+          <div className="rounded-xl border border-border bg-text-main p-5 text-white shadow-sm">
+            <p className="text-xs font-black uppercase tracking-widest text-primary-light">Painel do Cidadao</p>
             <p className="mt-2 text-sm font-medium leading-6 text-white/70">
-              Solicitações vinculadas ao login poderão aparecer no histórico do cidadão.
+              Solicitacoes vinculadas ao login aparecem no historico do cidadao.
             </p>
           </div>
         </aside>

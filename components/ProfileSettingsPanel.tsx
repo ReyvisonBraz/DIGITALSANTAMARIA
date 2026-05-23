@@ -1,12 +1,20 @@
 'use client';
 
-import React from 'react';
-import { Bell, Palette, Globe, Shield, ChevronRight, Building2 } from 'lucide-react';
+import Link from 'next/link';
+import {
+  Bell,
+  Building2,
+  ChevronRight,
+  ClipboardList,
+  FileText,
+  Globe,
+  Palette,
+  Shield,
+} from 'lucide-react';
 import SidePanel from '@/components/ui/SidePanel';
-import { useAuth } from '@/lib/auth-context';
 import AvatarUpload from '@/features/perfil/AvatarUpload';
 import EditProfileForm from '@/features/perfil/EditProfileForm';
-import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
 
 interface ProfileSettingsPanelProps {
   isOpen: boolean;
@@ -15,11 +23,12 @@ interface ProfileSettingsPanelProps {
 }
 
 export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileSettingsPanelProps) {
-  const { user, userRole } = useAuth();
+  const { userRole } = useAuth();
+  const isStaff = userRole === 'admin' || userRole === 'clerk';
 
   return (
-    <SidePanel isOpen={isOpen} onClose={onClose} title={mode === 'edit' ? 'Editar Perfil' : 'Preferências'}>
-      <div className="p-6 space-y-10 pb-32">
+    <SidePanel isOpen={isOpen} onClose={onClose} title={mode === 'edit' ? 'Editar perfil' : 'Preferencias'}>
+      <div className="space-y-8 p-4 pb-32 sm:p-6">
         {mode === 'edit' ? (
           <div className="space-y-8">
             <AvatarUpload />
@@ -28,43 +37,62 @@ export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileS
         ) : (
           <div className="space-y-4">
             {[
-              { icon: Bell, label: 'Notificações', desc: 'Alertas de zeladoria e novidades.' },
+              { icon: Bell, label: 'Notificacoes', desc: 'Alertas de zeladoria e novidades.' },
               { icon: Palette, label: 'Acessibilidade', desc: 'Modo alto contraste e fontes.' },
-              { icon: Globe, label: 'Idioma & Região', desc: 'Português (Brasil).' },
-              { icon: Shield, label: 'Privacidade', desc: 'Dados e permissões de conta.' },
-            ].map((pref, idx) => (
-              <button key={idx} className="w-full flex items-center justify-between p-6 bg-white border-2 border-border rounded-2xl hover:border-primary transition-all group">
-                <div className="flex items-center gap-4 text-left">
-                  <div className="p-3 bg-surface border border-border rounded-xl group-hover:text-primary transition-colors">
-                    <pref.icon className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-black text-text-main uppercase tracking-tight leading-none mb-1">{pref.label}</h4>
-                    <p className="text-[10px] font-medium text-text-muted font-ui">{pref.desc}</p>
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-text-muted opacity-40" />
+              { icon: Globe, label: 'Idioma e regiao', desc: 'Portugues (Brasil).' },
+              { icon: Shield, label: 'Privacidade', desc: 'Dados e permissoes de conta.' },
+            ].map((pref) => (
+              <button
+                key={pref.label}
+                className="group flex w-full items-center justify-between rounded-xl border border-border bg-white p-4 transition hover:border-primary sm:p-5"
+              >
+                <span className="flex items-center gap-4 text-left">
+                  <span className="rounded-lg border border-border bg-surface p-3 transition group-hover:text-primary">
+                    <pref.icon className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block text-sm font-black uppercase leading-none tracking-normal text-text-main">
+                      {pref.label}
+                    </span>
+                    <span className="mt-1 block text-xs font-medium text-text-muted">{pref.desc}</span>
+                  </span>
+                </span>
+                <ChevronRight className="h-4 w-4 text-text-muted/40" />
               </button>
             ))}
           </div>
         )}
 
-        {(userRole === 'admin' || userRole === 'clerk') && (
-          <div className="pt-8 border-t-2 border-border border-dashed">
-            <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-4 text-center">Acesso Administrativo</p>
-            <Link href="/gestao" onClick={onClose}
-              className="flex items-center justify-between p-5 bg-text-main text-white rounded-3xl border-2 border-white/10 hover:scale-[1.02] active:scale-95 transition-all shadow-xl group">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
-                  <Building2 className="w-5 h-5" />
-                </div>
-                <div className="text-left">
-                  <p className="text-xs font-black uppercase tracking-tight">Painel de Gestão</p>
-                  <p className="text-[10px] opacity-60 font-medium font-ui">Gerenciar demandas da cidade</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-white/30" />
-            </Link>
+        {isStaff && (
+          <div className="border-t border-dashed border-border pt-6">
+            <p className="mb-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">
+              Acesso administrativo
+            </p>
+            <div className="grid gap-2">
+              {[
+                { href: '/gestao', label: 'Painel de gestao', desc: 'Responder protocolos', icon: Building2 },
+                { href: '/peticoes', label: 'Peticoes', desc: 'Ver pagina publica', icon: FileText },
+                { href: '/ouvidoria', label: 'Solicitacoes', desc: 'Abrir ou consultar', icon: ClipboardList },
+              ].map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={onClose}
+                  className="group flex items-center justify-between rounded-xl border border-border bg-white p-4 text-text-main transition hover:border-primary hover:text-primary"
+                >
+                  <span className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <item.icon className="h-5 w-5" />
+                    </span>
+                    <span className="text-left">
+                      <span className="block text-xs font-black uppercase tracking-widest">{item.label}</span>
+                      <span className="block text-xs font-medium text-text-muted">{item.desc}</span>
+                    </span>
+                  </span>
+                  <ChevronRight className="h-5 w-5 text-text-muted/40 transition group-hover:text-primary" />
+                </Link>
+              ))}
+            </div>
           </div>
         )}
       </div>

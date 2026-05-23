@@ -54,7 +54,7 @@ function PetitionAdminCard({ petition, onSaved }: { petition: Petition; onSaved:
   };
 
   return (
-    <article className="rounded-2xl border border-border bg-white p-5 shadow-sm md:p-6">
+    <article className="rounded-xl border border-border bg-white p-5 shadow-sm md:p-6">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -71,7 +71,7 @@ function PetitionAdminCard({ petition, onSaved }: { petition: Petition; onSaved:
             {petition.description}
           </p>
           <p className="mt-3 text-xs font-bold text-text-muted">
-            Autor: {petition.creatorName} · {petition.signaturesCount}/{petition.goal} assinaturas
+            Autor: {petition.creatorName} | {petition.signaturesCount}/{petition.goal} assinaturas
           </p>
         </div>
 
@@ -175,7 +175,7 @@ export default function PetitionsAdminPanel() {
 
   if (petitions.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-border bg-white p-8 text-center">
+      <div className="rounded-xl border border-dashed border-border bg-white p-8 text-center">
         <FileText className="mx-auto h-10 w-10 text-primary" />
         <h2 className="mt-4 text-xl font-black text-text-main">Nenhuma peticao criada</h2>
         <p className="mt-2 text-sm font-medium text-text-muted">
@@ -187,7 +187,7 @@ export default function PetitionsAdminPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
+      <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_180px_180px]">
           <label className="relative block">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
@@ -226,7 +226,7 @@ export default function PetitionsAdminPanel() {
       </div>
 
       {filteredPetitions.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border bg-white p-8 text-center">
+        <div className="rounded-xl border border-dashed border-border bg-white p-8 text-center">
           <FileText className="mx-auto h-10 w-10 text-primary" />
           <h2 className="mt-4 text-xl font-black text-text-main">Nada encontrado</h2>
           <p className="mt-2 text-sm font-medium text-text-muted">

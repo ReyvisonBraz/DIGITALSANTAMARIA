@@ -17,6 +17,9 @@ Arquivos alterados:
 
 - `app/perfil/page.tsx`
 - `features/perfil/ActivityHistory.tsx`
+- `components/ProfileSettingsPanel.tsx`
+- `features/perfil/EditProfileForm.tsx`
+- `services/users.service.ts`
 
 ## Mudancas principais
 
@@ -27,9 +30,11 @@ Arquivos alterados:
   - dados basicos;
   - contadores;
   - historico de protocolos;
+  - edicao simples de perfil;
   - botao para abrir solicitacao;
   - botao para sair.
 - O historico agora destaca protocolos de `demands`.
+- Admin/clerk ve atalhos para Gestao, Peticoes e Solicitacoes.
 
 ## Dados usados
 
@@ -39,7 +44,6 @@ Arquivos alterados:
 
 ## Pendencias
 
-- Criar edicao simples de perfil novamente, se necessario.
 - Definir se `/painel` sera criado no futuro.
 - Melhorar filtros do historico.
 - Mostrar peticoes assinadas/criadas.

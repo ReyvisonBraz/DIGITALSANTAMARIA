@@ -22,8 +22,8 @@ export default function PeticoesPage() {
     getActivePetitions()
       .then(setPetitions)
       .catch((error) => {
-        console.error('[peticoes] erro ao carregar petições', error);
-        toast('Não foi possível carregar as petições.', 'error');
+        console.error('[peticoes] erro ao carregar peticoes', error);
+        toast('Nao foi possivel carregar as peticoes.', 'error');
       })
       .finally(() => setLoading(false));
   };
@@ -43,17 +43,17 @@ export default function PeticoesPage() {
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-12">
       <section className="border-b border-border bg-white">
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:grid-cols-[1fr_auto] md:items-end md:px-10 md:py-12 lg:px-12">
+        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-4 py-7 sm:px-6 md:grid-cols-[1fr_auto] md:items-end md:px-10 md:py-10 lg:px-12">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-primary">
               <Users className="h-4 w-4" />
-              Participação cidadã
+              Participacao cidada
             </div>
             <h1 className="mt-4 text-3xl font-black tracking-normal text-text-main md:text-5xl">
-              Petições públicas
+              Peticoes publicas
             </h1>
             <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-              Apoie causas abertas pela comunidade ou proponha uma nova petição para mobilizar a cidade.
+              Apoie causas abertas pela comunidade ou proponha uma nova peticao para mobilizar a cidade.
             </p>
           </div>
 
@@ -62,19 +62,19 @@ export default function PeticoesPage() {
             className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-black uppercase tracking-widest text-white transition hover:bg-primary-dark"
           >
             <Plus className="h-4 w-4" />
-            Nova petição
+            Nova peticao
           </button>
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-8 sm:px-6 md:px-10 lg:px-12">
-        <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
+      <main className="mx-auto w-full max-w-7xl space-y-5 px-4 py-7 sm:px-6 md:px-10 lg:px-12">
+        <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
           <label className="relative block">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Buscar por título, categoria ou descrição"
+              placeholder="Buscar por titulo, categoria ou descricao"
               className="h-12 w-full rounded-xl border border-border bg-surface pl-10 pr-3 text-sm font-medium text-text-main outline-none transition focus:border-primary"
             />
           </label>
@@ -85,17 +85,17 @@ export default function PeticoesPage() {
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : filteredPetitions.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-white p-8 text-center">
+          <div className="rounded-xl border border-dashed border-border bg-white p-8 text-center">
             <FileText className="mx-auto h-10 w-10 text-primary" />
-            <h2 className="mt-4 text-xl font-black text-text-main">Nenhuma petição encontrada</h2>
+            <h2 className="mt-4 text-xl font-black text-text-main">Nenhuma peticao encontrada</h2>
             <p className="mt-2 text-sm font-medium text-text-muted">
-              Crie uma nova petição ou tente outro termo de busca.
+              Crie uma nova peticao ou tente outro termo de busca.
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {filteredPetitions.map((petition) => (
-              <article key={petition.id} className="flex flex-col rounded-2xl border border-border bg-white p-5 shadow-sm">
+              <article key={petition.id} className="flex flex-col rounded-xl border border-border bg-white p-5 shadow-sm">
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-primary">

@@ -26,6 +26,7 @@ Arquivos alterados:
 - Painel agora tem abas:
   - Solicitacoes.
   - Peticoes.
+  - Usuarios.
 - Solicitacoes agora possuem:
   - busca por protocolo, assunto, texto ou categoria;
   - filtro por status;
@@ -35,6 +36,10 @@ Arquivos alterados:
   - busca por titulo, autor, categoria ou descricao;
   - filtro por status;
   - ordenacao por mais recentes, mais antigas ou mais assinaturas.
+- Usuarios agora possuem:
+  - busca por nome, email, UID, telefone ou bairro;
+  - edicao basica de nome, telefone e bairro;
+  - exibicao de UID, email, perfil e pontos.
 - Painel mostra metricas:
   - Total.
   - Pendentes.
@@ -51,14 +56,16 @@ Arquivos alterados:
 - Gestor pode:
   - alterar status;
   - registrar resposta oficial.
+- Gestor tambem pode:
+  - atualizar dados basicos de usuarios.
 
 ## Pendencias
 
 - Confirmar regras Firestore em ambiente real.
 - Definir como criar documentos em `admins`.
 - Decidir se `clerk` pode gerenciar todos os setores ou apenas departamento.
-- Adicionar filtros por status/categoria.
 - Validar visualmente mobile e desktop.
+- Implementar gestao segura de roles/admins em etapa separada.
 
 ## Validacao
 

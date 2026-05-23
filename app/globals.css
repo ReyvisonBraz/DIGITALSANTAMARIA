@@ -61,7 +61,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
-    letter-spacing: -0.015em;
+    letter-spacing: 0;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
   }
 
@@ -80,14 +80,14 @@
   /* Tipografia responsiva para mobile */
   @media (max-width: 768px) {
     body {
-      letter-spacing: -0.005em;
+      letter-spacing: 0;
     }
   }
 
   /* Hierarquia de headings com font-display */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display), var(--font-sans), sans-serif;
-    @apply font-bold leading-tight tracking-tight;
+    @apply font-bold leading-tight tracking-normal;
   }
 
   h1 { @apply text-3xl md:text-5xl font-extrabold; }
@@ -97,7 +97,7 @@
 
   /* Classes utilitárias para nomes e sub-títulos */
   .text-name {
-    @apply font-semibold tracking-tight;
+    @apply font-semibold tracking-normal;
     color: var(--color-text-main);
   }
 

@@ -13,7 +13,7 @@ Estas rotas devem funcionar primeiro de verdade.
 | `/` | Home publica/portal da cidade | Publica | Refatorar para portal publico |
 | `/perfil` | Painel do Cidadao inicial | Logada | Pode virar `/painel` depois |
 | `/ouvidoria` | Abrir solicitacao/manifestacao e consultar protocolo | Publica ou semi-logada | Definir com `/relatar` |
-| `/relatar` | Relatar problema urbano | Publica ou semi-logada | Definir se unifica com `/ouvidoria` |
+| `/relatar` | Atalho legado para solicitacao | Redireciona | Redirecionar para `/ouvidoria` |
 | `/gestao` | Painel administrativo | Logada/admin | Trocar qualquer regra hardcoded por role |
 | `/peticoes` | Lista/criacao de peticoes | Publica + acoes logadas | Manter no MVP |
 | `/peticoes/[id]` | Detalhe e assinatura de peticao | Publica + assinatura logada | Manter no MVP |
@@ -82,7 +82,7 @@ Opcao recomendada para MVP:
 
 - A Home chama "Abrir solicitacao" e leva para `/ouvidoria`.
 - Dentro de `/ouvidoria`, o usuario escolhe tipo/categoria, inclusive "Problema urbano".
-- `/relatar` pode virar atalho ou ser redirecionado depois.
+- `/relatar` vira atalho legado e redireciona para `/ouvidoria`.
 
 ## 6. Implicacao para o menu
 
@@ -117,3 +117,9 @@ Alteracoes:
   - Consultar protocolo.
   - Peticoes.
   - Painel do Cidadao.
+
+## 8. Atualizacao aplicada em 2026-05-23
+
+- `app/relatar/page.tsx` agora redireciona para `/ouvidoria`.
+- Isso evita dois fluxos diferentes de protocolo (`reports` e `demands`) competindo no MVP.
+- A entrada oficial para abrir ou consultar solicitacao passa a ser `/ouvidoria`.

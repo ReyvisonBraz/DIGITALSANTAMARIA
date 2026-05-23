@@ -16,7 +16,7 @@ interface StatusUpdaterProps {
 
 const statuses: { label: string; value: DemandStatus }[] = [
   { label: 'Pendente', value: 'pending' },
-  { label: 'Em análise', value: 'analyzing' },
+  { label: 'Em analise', value: 'analyzing' },
   { label: 'Resolvida', value: 'solved' },
   { label: 'Recusada', value: 'rejected' },
 ];
@@ -35,7 +35,7 @@ export default function StatusUpdater({
 
   const handleSave = async () => {
     if (!response.trim() && (status === 'solved' || status === 'rejected')) {
-      toast('Informe uma resposta oficial para concluir a solicitação.', 'error');
+      toast('Informe uma resposta oficial para concluir a solicitacao.', 'error');
       return;
     }
 
@@ -46,10 +46,10 @@ export default function StatusUpdater({
         clerkName,
         response: response.trim(),
       });
-      toast('Solicitação atualizada.', 'success');
+      toast('Solicitacao atualizada.', 'success');
       onUpdate();
     } catch {
-      toast('Erro ao atualizar solicitação.', 'error');
+      toast('Erro ao atualizar solicitacao.', 'error');
     } finally {
       setLoading(false);
     }
@@ -77,7 +77,7 @@ export default function StatusUpdater({
             value={response}
             onChange={(event) => setResponse(event.target.value)}
             rows={3}
-            placeholder="Escreva a resposta que o cidadão verá na consulta do protocolo."
+            placeholder="Escreva a resposta que o cidadao vera na consulta do protocolo."
             className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary"
           />
         </label>
@@ -89,7 +89,7 @@ export default function StatusUpdater({
         className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-        Salvar atualização
+        Salvar atualizacao
       </button>
     </div>
   );

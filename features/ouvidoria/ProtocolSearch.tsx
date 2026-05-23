@@ -9,15 +9,15 @@ import type { Demand, DemandStatus, DemandType } from '@/types';
 
 const statusLabel: Record<DemandStatus, string> = {
   pending: 'Pendente',
-  analyzing: 'Em análise',
+  analyzing: 'Em analise',
   solved: 'Resolvida',
   rejected: 'Recusada',
 };
 
 const typeLabel: Record<DemandType, string> = {
-  reclamacao: 'Reclamação',
-  sugestao: 'Solicitação',
-  denuncia: 'Denúncia',
+  reclamacao: 'Reclamacao',
+  sugestao: 'Solicitacao',
+  denuncia: 'Denuncia',
   elogio: 'Elogio',
 };
 
@@ -37,12 +37,12 @@ export default function ProtocolSearch() {
     try {
       const demand = await getDemandByProtocol(search);
       if (!demand) {
-        toast('Protocolo não encontrado.', 'error');
+        toast('Protocolo nao encontrado.', 'error');
         return;
       }
       setResult(demand);
     } catch {
-      toast('Não foi possível consultar o protocolo agora.', 'error');
+      toast('Nao foi possivel consultar o protocolo agora.', 'error');
     } finally {
       setLoading(false);
     }
@@ -50,9 +50,9 @@ export default function ProtocolSearch() {
 
   return (
     <div className="space-y-5">
-      <form onSubmit={handleSearch} className="rounded-2xl border border-border bg-white p-5 shadow-sm md:p-6">
+      <form onSubmit={handleSearch} className="rounded-xl border border-border bg-white p-4 shadow-sm md:p-6">
         <label className="block space-y-2">
-          <span className="text-xs font-black uppercase tracking-widest text-text-muted">Número do protocolo</span>
+          <span className="text-xs font-black uppercase tracking-widest text-text-muted">Numero do protocolo</span>
           <div className="flex flex-col gap-3 sm:flex-row">
             <input
               value={protocolId}
@@ -73,11 +73,11 @@ export default function ProtocolSearch() {
       </form>
 
       {result && (
-        <article className="rounded-2xl border border-border bg-white p-5 shadow-sm md:p-6">
+        <article className="rounded-xl border border-border bg-white p-4 shadow-sm md:p-6">
           <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-widest text-text-muted">Protocolo</p>
-              <h3 className="mt-1 break-all font-mono text-xl font-black text-primary md:text-2xl">
+              <h3 className="mt-1 break-all font-mono text-lg font-black text-primary md:text-2xl">
                 {result.protocolId}
               </h3>
             </div>
@@ -105,7 +105,7 @@ export default function ProtocolSearch() {
           <div className="mt-5 rounded-xl border border-border p-4">
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted">
               <FileText className="h-4 w-4 text-primary" />
-              Descrição
+              Descricao
             </div>
             <p className="mt-3 text-sm font-medium leading-6 text-text-muted">{result.content.text}</p>
           </div>

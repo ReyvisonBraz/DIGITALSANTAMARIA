@@ -54,3 +54,48 @@ Antes de considerar uma pagina pronta:
 Ao refatorar cada pagina do MVP, a responsividade sera revisada junto da funcionalidade.
 
 Nao vamos deixar mobile/web para uma etapa isolada no fim.
+
+## Atualizacao aplicada em 2026-05-23
+
+Arquivos revisados nesta etapa:
+
+- `app/page.tsx`
+- `app/ouvidoria/page.tsx`
+- `features/ouvidoria/DemandForm.tsx`
+- `features/ouvidoria/ProtocolSearch.tsx`
+- `app/peticoes/page.tsx`
+- `app/peticoes/[id]/page.tsx`
+- `components/CreatePetitionModal.tsx`
+- `app/gestao/page.tsx`
+- `features/gestao/StatusUpdater.tsx`
+- `features/gestao/PetitionsAdminPanel.tsx`
+- `features/gestao/MetricsDashboard.tsx`
+- `components/ProfileSettingsPanel.tsx`
+- `features/perfil/EditProfileForm.tsx`
+- `components/TopAppBar.tsx`
+- `components/BottomNavBar.tsx`
+- `components/Footer.tsx`
+- `components/SearchModal.tsx`
+- `components/NotificationsPanel.tsx`
+- `lib/constants/navigation.ts`
+- `app/globals.css`
+
+Mudancas aplicadas:
+
+- Textos visiveis foram limpos para evitar codificacao quebrada.
+- Cards principais foram reduzidos de tamanho no mobile.
+- Botoes foram mantidos com altura minima consistente.
+- Grids passaram a respeitar melhor mobile, tablet e desktop.
+- Modal de criacao de peticao ficou mais simples, com resumo antes de publicar.
+- Painel de gestao ficou mais compacto para mobile/web.
+- Painel de perfil e atalhos administrativos foram limpos.
+- Barra superior, busca, notificacoes, footer e navegacao mobile foram simplificados.
+- Textos globais de navegacao foram corrigidos.
+- Letter spacing global foi normalizado para evitar texto apertado.
+
+Validacao:
+
+- `npm.cmd run build` passou com sucesso.
+- O build confirmou Firebase `digitalsantamaria-2ced4` e banco `(default)`.
+- Busca por caracteres quebrados no MVP nao encontrou `Ã`, `Â`, `ð` ou `�`.
+- Busca por caracteres quebrados nos componentes globais tambem passou.

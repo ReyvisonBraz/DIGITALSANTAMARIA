@@ -25,13 +25,13 @@ export default function PetitionDetailPage() {
     getPetitionById(id)
       .then((data) => {
         if (!data) {
-          toast('Petição não encontrada.', 'error');
+          toast('Peticao nao encontrada.', 'error');
           router.push('/peticoes');
           return;
         }
         setPetition(data);
       })
-      .catch(() => toast('Não foi possível carregar a petição.', 'error'))
+      .catch(() => toast('Nao foi possivel carregar a peticao.', 'error'))
       .finally(() => setLoading(false));
   };
 
@@ -51,8 +51,8 @@ export default function PetitionDetailPage() {
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-12">
-      <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:px-10 lg:grid-cols-[1fr_360px] lg:px-12">
-        <section className="rounded-2xl border border-border bg-white p-5 shadow-sm md:p-8">
+      <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-4 py-7 sm:px-6 md:px-10 lg:grid-cols-[1fr_360px] lg:px-12">
+        <section className="rounded-xl border border-border bg-white p-4 shadow-sm md:p-8">
           <div className="mb-6 flex flex-col gap-3 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between">
             <Link
               href="/peticoes"
@@ -92,12 +92,12 @@ export default function PetitionDetailPage() {
               Proposta por {petition.creatorName}
             </p>
 
-            <div className="rounded-2xl border border-border bg-surface p-5 text-base font-medium leading-7 text-text-muted">
+            <div className="rounded-xl border border-border bg-surface p-5 text-base font-medium leading-7 text-text-muted">
               {petition.description}
             </div>
 
             {petition.officialReply && (
-              <div className="rounded-2xl border border-green-200 bg-green-50 p-5">
+              <div className="rounded-xl border border-green-200 bg-green-50 p-5">
                 <p className="text-xs font-black uppercase tracking-widest text-green-700">
                   Resposta oficial
                 </p>
@@ -110,7 +110,7 @@ export default function PetitionDetailPage() {
         </section>
 
         <aside className="space-y-4">
-          <div className="rounded-2xl border border-border bg-white p-5 shadow-sm lg:sticky lg:top-28">
+          <div className="rounded-xl border border-border bg-white p-5 shadow-sm lg:sticky lg:top-28">
             <SignatureProgress current={petition.signaturesCount} goal={petition.goal} />
 
             <div className="mt-5">

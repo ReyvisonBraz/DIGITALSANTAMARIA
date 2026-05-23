@@ -7,6 +7,7 @@ import Skeleton from '@/components/ui/Skeleton';
 import MetricsDashboard from '@/features/gestao/MetricsDashboard';
 import PetitionsAdminPanel from '@/features/gestao/PetitionsAdminPanel';
 import StatusUpdater from '@/features/gestao/StatusUpdater';
+import UsersAdminPanel from '@/features/gestao/UsersAdminPanel';
 import { useAdminData } from '@/features/gestao/hooks/useAdminData';
 import { useAuth } from '@/lib/auth-context';
 import { formatDate } from '@/lib/utils/formatters';
@@ -26,7 +27,7 @@ const typeLabel: Record<DemandType, string> = {
   elogio: 'Elogio',
 };
 
-type ActiveSection = 'demands' | 'petitions';
+type ActiveSection = 'demands' | 'petitions' | 'users';
 type DemandSort = 'newest' | 'oldest' | 'pending';
 type StatusFilter = DemandStatus | 'all';
 
@@ -124,7 +125,7 @@ export default function GestaoPage() {
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-12">
       <section className="border-b border-border bg-white">
-        <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 md:px-10 lg:px-12">
+        <div className="mx-auto w-full max-w-7xl px-4 py-7 sm:px-6 md:px-10 md:py-10 lg:px-12">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-primary">
             <ShieldCheck className="h-4 w-4" />
             Gestao municipal
@@ -133,13 +134,13 @@ export default function GestaoPage() {
             Painel de operacao
           </h1>
           <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-            Acompanhe solicitacoes, responda protocolos e gerencie peticoes publicas.
+            Acompanhe solicitacoes, responda protocolos, gerencie peticoes e atualize dados de usuarios.
           </p>
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-8 sm:px-6 md:px-10 lg:px-12">
-        <div className="grid grid-cols-2 rounded-2xl border border-border bg-white p-1 shadow-sm">
+      <main className="mx-auto w-full max-w-7xl space-y-5 px-4 py-7 sm:px-6 md:px-10 lg:px-12">
+        <div className="grid grid-cols-3 rounded-xl border border-border bg-white p-1 shadow-sm">
           <button
             onClick={() => setActiveSection('demands')}
             className={`rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest transition ${
@@ -156,13 +157,21 @@ export default function GestaoPage() {
           >
             Peticoes
           </button>
+          <button
+            onClick={() => setActiveSection('users')}
+            className={`rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest transition ${
+              activeSection === 'users' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
+            }`}
+          >
+            Usuarios
+          </button>
         </div>
 
         {activeSection === 'demands' ? (
           <>
             <MetricsDashboard {...metrics} />
 
-            <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
+            <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
               <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_180px_180px_180px]">
                 <label className="relative block">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
@@ -227,7 +236,7 @@ export default function GestaoPage() {
             ) : (
               <div className="space-y-4">
                 {filteredDemands.map((demand) => (
-                  <article key={demand.id} className="rounded-2xl border border-border bg-white p-5 shadow-sm md:p-6">
+                  <article key={demand.id} className="rounded-xl border border-border bg-white p-5 shadow-sm md:p-6">
                     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
@@ -276,8 +285,10 @@ export default function GestaoPage() {
               </div>
             )}
           </>
-        ) : (
+        ) : activeSection === 'petitions' ? (
           <PetitionsAdminPanel />
+        ) : (
+          <UsersAdminPanel />
         )}
       </main>
     </div>

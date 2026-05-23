@@ -2,10 +2,15 @@
 
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { 
-  Megaphone, FileText, ShieldCheck, Send, 
-  CheckCircle2, ChevronRight, Image as ImageIcon, 
-  ArrowLeft, Upload, Target, Loader2
+import {
+  ArrowLeft,
+  CheckCircle2,
+  ChevronRight,
+  Loader2,
+  Megaphone,
+  Send,
+  ShieldCheck,
+  Target,
 } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import { useToast } from '@/lib/toast-context';
@@ -22,6 +27,8 @@ interface CreatePetitionModalProps {
   onCreated?: () => void;
 }
 
+const categories = ['Infraestrutura', 'Seguranca', 'Cultura', 'Saude', 'Meio Ambiente'];
+
 export default function CreatePetitionModal({ isOpen, onClose, onCreated }: CreatePetitionModalProps) {
   const { user, login } = useAuth();
   const { toast } = useToast();
@@ -31,252 +38,247 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
   const [formData, setFormData] = useState({
     title: '',
     category: 'Infraestrutura',
-    goal: '5000',
+    goal: '500',
     description: '',
-    hasImage: false,
   });
 
-  const nextStep = () => setStep(prev => prev + 1);
-  const prevStep = () => setStep(prev => prev - 1);
+  const resetAndClose = () => {
+    setShowSuccess(false);
+    setStep(1);
+    setFormData({
+      title: '',
+      category: 'Infraestrutura',
+      goal: '500',
+      description: '',
+    });
+    onClose();
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const nextStep = () => setStep((prev) => prev + 1);
+  const prevStep = () => setStep((prev) => prev - 1);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (!user) {
       await login();
       return;
     }
+
+    if (!formData.title.trim() || !formData.description.trim()) {
+      toast('Preencha titulo e descricao.', 'error');
+      return;
+    }
+
     setLoading(true);
     try {
       await createPetition({
-        title: formData.title,
+        title: formData.title.trim(),
         category: formData.category,
-        goal: parseInt(formData.goal) || 1000,
-        description: formData.description,
+        goal: parseInt(formData.goal, 10) || 500,
+        description: formData.description.trim(),
         creatorId: user.uid,
-        creatorName: user.displayName || 'Cidadão',
+        creatorName: user.displayName || 'Cidadao',
       });
       log.info('Petition created', { title: formData.title });
       onCreated?.();
       setShowSuccess(true);
     } catch (err) {
       log.error('Failed to create petition', {}, err);
-      toast('Erro ao criar petição.', 'error');
+      toast('Erro ao criar peticao.', 'error');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const renderStep = () => {
-    switch(step) {
+    switch (step) {
       case 1:
         return (
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="space-y-6"
-          >
-            <div className="space-y-2">
-               <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Título da Causa</label>
-               <input 
-                 className="w-full bg-surface border-2 border-border p-4 rounded-xl font-bold focus:border-primary outline-none transition-all shadow-inner" 
-                 placeholder="Ex: Reforma da Praça Central" 
-                 value={formData.title}
-                 onChange={(e) => setFormData({...formData, title: e.target.value})}
-                 required 
-               />
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
+            <label className="block space-y-2">
+              <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">Titulo da causa</span>
+              <input
+                className="w-full rounded-xl border border-border bg-surface p-4 font-bold shadow-inner outline-none transition focus:border-primary"
+                placeholder="Ex: Reforma da Praca Central"
+                value={formData.title}
+                onChange={(event) => setFormData({ ...formData, title: event.target.value })}
+                required
+              />
+            </label>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <label className="block space-y-2">
+                <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">Categoria</span>
+                <select
+                  className="h-12 w-full rounded-xl border border-border bg-surface px-3 font-bold shadow-inner outline-none transition focus:border-primary"
+                  value={formData.category}
+                  onChange={(event) => setFormData({ ...formData, category: event.target.value })}
+                >
+                  {categories.map((category) => (
+                    <option key={category}>{category}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block space-y-2">
+                <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">Meta desejada</span>
+                <span className="relative block">
+                  <input
+                    type="number"
+                    min="1"
+                    className="h-12 w-full rounded-xl border border-border bg-surface p-4 pl-12 font-bold shadow-inner outline-none transition focus:border-primary"
+                    placeholder="500"
+                    value={formData.goal}
+                    onChange={(event) => setFormData({ ...formData, goal: event.target.value })}
+                  />
+                  <Target className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted opacity-50" />
+                </span>
+              </label>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Categoria</label>
-                  <select 
-                    className="w-full bg-surface border-2 border-border p-4 rounded-xl font-bold focus:border-primary outline-none transition-all shadow-inner appearance-none"
-                    value={formData.category}
-                    onChange={(e) => setFormData({...formData, category: e.target.value})}
-                  >
-                     <option>Infraestrutura</option>
-                     <option>Segurança</option>
-                     <option>Cultura</option>
-                     <option>Saúde</option>
-                     <option>Meio Ambiente</option>
-                  </select>
-               </div>
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Meta Desejada</label>
-                  <div className="relative">
-                    <input 
-                      type="number" 
-                      className="w-full bg-surface border-2 border-border p-4 pl-12 rounded-xl font-bold focus:border-primary outline-none transition-all shadow-inner" 
-                      placeholder="5000" 
-                      value={formData.goal}
-                      onChange={(e) => setFormData({...formData, goal: e.target.value})}
-                    />
-                    <Target className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted opacity-40" />
-                  </div>
-               </div>
-            </div>
-
-            <button 
+            <button
+              type="button"
               onClick={nextStep}
-              disabled={!formData.title}
-              className="w-full btn-tactile bg-text-main text-white py-5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 disabled:opacity-50"
+              disabled={!formData.title.trim()}
+              className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-text-main px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-sm transition disabled:opacity-50"
             >
-              Próxima Etapa
-              <ChevronRight className="w-4 h-4" />
+              Proxima etapa
+              <ChevronRight className="h-4 w-4" />
             </button>
           </motion.div>
         );
       case 2:
         return (
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="space-y-6"
-          >
-            <div className="space-y-2">
-               <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">O Manifesto (Seu Texto)</label>
-               <textarea 
-                 rows={6}
-                 className="w-full bg-surface border-2 border-border p-4 rounded-xl font-bold focus:border-primary outline-none transition-all shadow-inner resize-none font-ui" 
-                 placeholder="Descreva detalhadamente sua proposta e como ela ajudará a comunidade..."
-                 value={formData.description}
-                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                 required
-               />
-            </div>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
+            <label className="block space-y-2">
+              <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">Descricao da proposta</span>
+              <textarea
+                rows={7}
+                className="w-full resize-none rounded-xl border border-border bg-surface p-4 font-medium leading-6 shadow-inner outline-none transition focus:border-primary"
+                placeholder="Descreva sua proposta e como ela ajudara a comunidade."
+                value={formData.description}
+                onChange={(event) => setFormData({ ...formData, description: event.target.value })}
+                required
+              />
+            </label>
 
-            <div className="flex gap-4">
-               <button 
+            <div className="flex gap-3">
+              <button
+                type="button"
                 onClick={prevStep}
-                className="w-20 btn-tactile bg-surface border-2 border-border text-text-muted p-4 rounded-xl flex items-center justify-center"
-               >
-                  <ArrowLeft className="w-5 h-5" />
-               </button>
-               <button 
-                 onClick={nextStep}
-                 disabled={!formData.description}
-                 className="flex-1 btn-tactile bg-text-main text-white py-5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 disabled:opacity-50"
-               >
-                 Adicionar Mídia
-                 <ChevronRight className="w-4 h-4" />
-               </button>
+                className="inline-flex min-h-12 w-16 items-center justify-center rounded-xl border border-border bg-surface text-text-muted"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                onClick={nextStep}
+                disabled={!formData.description.trim()}
+                className="inline-flex min-h-12 flex-1 items-center justify-center gap-3 rounded-xl bg-text-main px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-sm transition disabled:opacity-50"
+              >
+                Revisar
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </motion.div>
         );
       case 3:
         return (
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="space-y-6"
-          >
-            <div className="space-y-2">
-               <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-1">Evidências (Opcional)</label>
-               <div 
-                 onClick={() => setFormData({...formData, hasImage: true})}
-                 className={cn(
-                   "w-full h-40 rounded-2xl border-4 border-dashed flex flex-col items-center justify-center gap-3 cursor-pointer transition-all",
-                   formData.hasImage ? "border-green-500 bg-green-50 text-green-600" : "border-border bg-surface text-text-muted hover:border-primary hover:text-primary"
-                 )}
-               >
-                  {formData.hasImage ? (
-                    <>
-                      <ImageIcon className="w-10 h-10" />
-                      <span className="text-xs font-black uppercase">Imagem Carregada!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="w-10 h-10" />
-                      <div className="text-center">
-                        <span className="block text-xs font-black uppercase">Clique para Carregar</span>
-                        <span className="block text-[8px] font-bold opacity-50 uppercase tracking-widest">JPG, PNG até 5MB</span>
-                      </div>
-                    </>
-                  )}
-               </div>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
+            <div className="rounded-xl border border-border bg-surface p-4">
+              <p className="text-xs font-black uppercase tracking-widest text-text-muted">Resumo</p>
+              <h3 className="mt-2 text-lg font-black text-text-main">{formData.title}</h3>
+              <p className="mt-2 text-sm font-medium leading-6 text-text-muted">{formData.description}</p>
+              <p className="mt-3 text-xs font-bold text-text-muted">
+                Categoria: {formData.category} | Meta: {parseInt(formData.goal, 10) || 500} assinaturas
+              </p>
             </div>
 
-            <div className="p-4 bg-primary/5 rounded-2xl border-2 border-primary/10 border-dashed flex items-start gap-3">
-               <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-               <p className="text-[10px] text-primary/70 font-ui font-bold leading-tight">
-                 Ao publicar, você assume a responsabilidade pela veracidade dos fatos narrados.
-               </p>
+            <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
+              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+              <p className="text-sm font-medium leading-6 text-primary/80">
+                Ao publicar, voce assume responsabilidade pela veracidade das informacoes.
+              </p>
             </div>
 
-            <div className="flex gap-4">
-               <button 
+            <div className="flex gap-3">
+              <button
+                type="button"
                 onClick={prevStep}
-                className="w-20 btn-tactile bg-surface border-2 border-border text-text-muted p-4 rounded-xl flex items-center justify-center"
-               >
-                  <ArrowLeft className="w-5 h-5" />
-               </button>
-                <button 
-                  onClick={handleSubmit}
-                  disabled={loading}
-                  className="flex-1 btn-tactile bg-primary text-white py-5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 disabled:opacity-50"
-                >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                  {loading ? 'Publicando...' : 'Publicar Causa'}
-                </button>
+                className="inline-flex min-h-12 w-16 items-center justify-center rounded-xl border border-border bg-surface text-text-muted"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={loading}
+                className="inline-flex min-h-12 flex-1 items-center justify-center gap-3 rounded-xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-sm transition hover:bg-primary-dark disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {loading ? 'Publicando...' : 'Publicar causa'}
+              </button>
             </div>
           </motion.div>
         );
+      default:
+        return null;
     }
   };
 
   return (
     <>
-    <Modal
-      isOpen={isOpen && !showSuccess}
-      onClose={onClose}
-      title="Propor Nova Causa"
-    >
-      <div className="space-y-8 p-2">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
-           <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                 <Megaphone className="w-6 h-6" />
+      <Modal isOpen={isOpen && !showSuccess} onClose={onClose} title="Propor nova causa">
+        <div className="space-y-6 p-2">
+          <div className="flex flex-col justify-between gap-4 border-b border-border pb-5 sm:flex-row sm:items-center">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Megaphone className="h-6 w-6" />
               </div>
               <div>
-                 <h3 className="text-xl font-black text-text-main tracking-tight uppercase leading-none">Manifesto Cidadão</h3>
-                 <p className="text-xs font-medium text-text-muted font-ui">Mobilize sua comunidade hoje.</p>
+                <h3 className="text-lg font-black uppercase leading-none tracking-normal text-text-main">
+                  Manifesto cidadao
+                </h3>
+                <p className="mt-1 text-xs font-medium text-text-muted">Mobilize sua comunidade.</p>
               </div>
-           </div>
-           
-           <div className="flex gap-1">
-              {[1, 2, 3].map((s) => (
-                <div key={s} className={cn(
-                  "h-1.5 rounded-full transition-all duration-500",
-                  s === step ? "w-8 bg-primary" : (s < step ? "w-4 bg-green-500" : "w-4 bg-border")
-                )} />
+            </div>
+
+            <div className="flex gap-1">
+              {[1, 2, 3].map((item) => (
+                <div
+                  key={item}
+                  className={cn(
+                    'h-1.5 rounded-full transition-all duration-500',
+                    item === step ? 'w-8 bg-primary' : item < step ? 'w-4 bg-green-500' : 'w-4 bg-border'
+                  )}
+                />
               ))}
-           </div>
+            </div>
+          </div>
+
+          {renderStep()}
         </div>
+      </Modal>
 
-        {renderStep()}
-      </div>
-    </Modal>
-
-    <Modal 
-       isOpen={showSuccess} 
-       onClose={() => { setShowSuccess(false); onClose(); }} 
-       title="Petição em Análise"
-    >
-       <div className="space-y-8 p-4 text-center">
-          <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center border-2 border-primary/20 mx-auto">
-             <CheckCircle2 className="w-10 h-10" />
+      <Modal isOpen={showSuccess} onClose={resetAndClose} title="Peticao publicada">
+        <div className="space-y-6 p-4 text-center">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary">
+            <CheckCircle2 className="h-10 w-10" />
           </div>
           <div className="space-y-2">
-             <h3 className="text-2xl font-black text-text-main uppercase tracking-tighter">Proposta Recebida!</h3>
-             <p className="text-sm font-medium text-text-muted font-ui">Seu manifesto foi enviado para a Procuradoria Municipal. Você receberá um e-mail quando a petição estiver disponível para assinaturas.</p>
+            <h3 className="text-2xl font-black uppercase tracking-normal text-text-main">Proposta recebida</h3>
+            <p className="text-sm font-medium leading-6 text-text-muted">
+              Sua peticao foi publicada e ja pode receber assinaturas.
+            </p>
           </div>
-          <button 
-             onClick={() => { setShowSuccess(false); onClose(); }}
-             className="w-full btn-tactile bg-primary text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest"
+          <button
+            onClick={resetAndClose}
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white"
           >
-             Voltar para Petições
+            Voltar para peticoes
           </button>
-       </div>
-    </Modal>
+        </div>
+      </Modal>
     </>
   );
 }

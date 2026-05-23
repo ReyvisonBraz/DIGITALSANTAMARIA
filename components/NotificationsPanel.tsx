@@ -1,170 +1,112 @@
-/**
- * @module NotificationsPanel
- * @description Painel lateral de notificações do usuário.
- *
- * Abre como SidePanel (slide da direita) e lista notificações
- * agrupadas por estado de leitura. Cada notificação tem tipo
- * semântico (info, success, alert, update) que determina cor e ícone.
- *
- * @example
- * ```tsx
- * <NotificationsPanel isOpen={isOpen} onClose={() => setIsOpen(false)} />
- * ```
- */
-
 'use client';
 
-import React, { useEffect } from 'react';
-import { Bell, Info, ShieldCheck, MessageSquare, Heart, Vote, X, Clock } from 'lucide-react';
+import { useEffect } from 'react';
+import { Clock, Heart, MessageSquare, Vote } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { motion } from 'motion/react';
-import { cn } from '@/lib/utils';
 import SidePanel from '@/components/ui/SidePanel';
 import { createLogger } from '@/lib/logger';
+import { cn } from '@/lib/utils';
 
 const log = createLogger('NotificationsPanel');
 
-// ─── Tipos ──────────────────────────────────────────────────────────
+type NotificationType = 'success' | 'alert' | 'update';
 
-/** Tipos semânticos de notificação */
-type NotificationType = 'info' | 'success' | 'alert' | 'update';
-
-/** Estrutura de uma notificação */
 interface Notification {
-  /** Identificador único */
   id: string;
-  /** Título da notificação */
   title: string;
-  /** Corpo da mensagem */
   message: string;
-  /** Tipo semântico que determina cor e estilo */
   type: NotificationType;
-  /** Tempo relativo (ex: "2 horas atrás") */
   time: string;
-  /** Ícone representativo */
   icon: LucideIcon;
-  /** Se a notificação ainda não foi lida */
   unread: boolean;
 }
 
-// ─── Dados mockados ─────────────────────────────────────────────────
-
-/** Notificações de exemplo (substituir por dados reais do Firestore) */
-const MOCK_NOTIFICATIONS: readonly Notification[] = [
+const notifications: readonly Notification[] = [
   {
     id: '1',
-    title: 'Relato em Análise',
-    message: 'Seu relato sobre o buraco na Av. Principal foi recebido pela Secretaria de Obras.',
+    title: 'Solicitacao em analise',
+    message: 'Uma solicitacao enviada ao municipio foi recebida pela equipe responsavel.',
     type: 'update',
-    time: '2 horas atrás',
+    time: '2 horas atras',
     icon: MessageSquare,
-    unread: true
+    unread: true,
   },
   {
     id: '2',
-    title: 'Voto Computado',
-    message: 'Parabéns! Sua participação no Projeto de Lei 204/2026 foi registrada com sucesso.',
+    title: 'Participacao registrada',
+    message: 'Sua participacao foi registrada com sucesso no portal.',
     type: 'success',
-    time: '5 horas atrás',
+    time: '5 horas atras',
     icon: Vote,
-    unread: false
+    unread: false,
   },
   {
     id: '3',
-    title: 'Campanha de Vacinação',
-    message: 'Novas doses disponíveis na Unidade de Saúde Central amanhã das 08h às 17h.',
+    title: 'Aviso de saude',
+    message: 'Novos comunicados de atendimento podem aparecer aqui.',
     type: 'alert',
-    time: 'Há 1 dia',
+    time: 'Ha 1 dia',
     icon: Heart,
-    unread: true
-  }
+    unread: true,
+  },
 ] as const;
 
-/** Mapeamento de tipo de notificação para classes CSS */
-const TYPE_STYLES: Record<NotificationType, string> = {
+const styles: Record<NotificationType, string> = {
   success: 'bg-green-50 border-green-200 text-green-600',
   alert: 'bg-rose-50 border-rose-200 text-rose-600',
   update: 'bg-blue-50 border-blue-200 text-blue-600',
-  info: 'bg-surface border-border text-primary',
 };
 
-// ─── Props ──────────────────────────────────────────────────────────
-
 interface NotificationsPanelProps {
-  /** Se `true`, o painel está visível */
   isOpen: boolean;
-  /** Callback para fechar o painel */
   onClose: () => void;
 }
 
-// ─── Componente ─────────────────────────────────────────────────────
-
 export default function NotificationsPanel({ isOpen, onClose }: NotificationsPanelProps) {
-  /** Loga abertura do painel */
   useEffect(() => {
     if (isOpen) log.info('Notifications panel opened');
   }, [isOpen]);
 
   return (
-    <SidePanel
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Notificações"
-    >
-      <div className="p-4 space-y-4">
-        {MOCK_NOTIFICATIONS.map((notif) => (
+    <SidePanel isOpen={isOpen} onClose={onClose} title="Notificacoes">
+      <div className="space-y-3 p-4">
+        {notifications.map((notification) => (
           <motion.div
-            key={notif.id}
-            initial={{ opacity: 0, x: 20 }}
+            key={notification.id}
+            initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             className={cn(
-              "p-5 rounded-2xl border-2 transition-all relative overflow-hidden group hover:shadow-lg",
-              notif.unread
-                ? "bg-white border-primary/20 shadow-sm"
-                : "bg-surface border-border"
+              'relative overflow-hidden rounded-xl border p-4 transition',
+              notification.unread ? 'border-primary/20 bg-white shadow-sm' : 'border-border bg-surface'
             )}
             role="article"
-            aria-label={`Notificação: ${notif.title}`}
+            aria-label={`Notificacao: ${notification.title}`}
           >
-            {/* Badge de não lido */}
-            {notif.unread && (
-              <div className="absolute top-0 right-0 w-8 h-8 bg-primary/10 flex items-center justify-center rounded-bl-xl border-l border-b border-primary/10">
-                <div className="w-2 h-2 bg-primary rounded-full" aria-label="Não lida" />
-              </div>
+            {notification.unread && (
+              <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-primary" aria-label="Nao lida" />
             )}
 
-            <div className="flex gap-4">
-              {/* Ícone com cor semântica */}
-              <div className={cn(
-                "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border-2",
-                TYPE_STYLES[notif.type]
-              )}>
-                <notif.icon className="w-6 h-6" />
+            <div className="flex gap-3">
+              <div className={cn('flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border', styles[notification.type])}>
+                <notification.icon className="h-5 w-5" />
               </div>
-
-              {/* Conteúdo textual */}
-              <div className="space-y-1">
-                <h4 className="text-sm font-black text-text-main uppercase tracking-tight">{notif.title}</h4>
-                <p className="text-xs font-ui font-medium text-text-muted leading-relaxed">
-                  {notif.message}
-                </p>
-                <div className="flex items-center gap-1.5 text-[9px] font-black text-text-muted uppercase tracking-widest pt-2">
-                  <Clock className="w-3 h-3" aria-hidden="true" />
-                  <time>{notif.time}</time>
+              <div className="min-w-0">
+                <h4 className="text-sm font-black uppercase tracking-normal text-text-main">{notification.title}</h4>
+                <p className="mt-1 text-xs font-medium leading-5 text-text-muted">{notification.message}</p>
+                <div className="mt-2 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                  <Clock className="h-3 w-3" />
+                  <time>{notification.time}</time>
                 </div>
               </div>
             </div>
           </motion.div>
         ))}
 
-        {/* Ação para marcar todas como lidas */}
-        <div className="pt-10 text-center">
-            <button
-              className="text-[10px] font-black text-primary uppercase tracking-[0.3em] hover:underline transition-all"
-              aria-label="Marcar todas as notificações como lidas"
-            >
-                Marcar todas como lidas
-            </button>
+        <div className="pt-4 text-center">
+          <button className="text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:underline">
+            Marcar todas como lidas
+          </button>
         </div>
       </div>
     </SidePanel>
