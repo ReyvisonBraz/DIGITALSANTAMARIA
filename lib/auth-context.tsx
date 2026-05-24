@@ -61,11 +61,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  * Se não encontrado, retorna 'citizen' como padrão.
  */
 function fetchUserRole(uid: string): Promise<UserRole> {
-  return getDoc(doc(db, 'admins', uid)).then((snap) => {
-    if (!snap.exists()) return 'citizen' as UserRole;
-    const data = snap.data();
-    return (data.role === 'admin' || data.role === 'clerk' ? data.role : 'citizen') as UserRole;
-  });
+  return getDoc(doc(db, 'admins', uid))
+    .then((snap) => {
+      if (!snap.exists()) return 'citizen' as UserRole;
+      const data = snap.data();
+      return (data.role === 'admin' || data.role === 'clerk' ? data.role : 'citizen') as UserRole;
+    })
+    .catch((error: unknown) => {
+      const err = error as { code?: string };
+      if (err.code === 'permission-denied') {
+        return 'citizen' as UserRole;
+      }
+      throw error;
+    });
 }
 
 /**

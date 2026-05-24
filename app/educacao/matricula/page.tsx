@@ -85,7 +85,7 @@ export default function MatriculaPage() {
     }
     setSubmitting(true);
     try {
-      await createEnrollment({
+      const enrollmentProtocol = await createEnrollment({
         userId: user.uid,
         parentName: formData.parentName,
         parentCpf: formData.parentCpf,
@@ -95,12 +95,13 @@ export default function MatriculaPage() {
         cep: formData.cep,
         schoolPreference: formData.schoolPreference,
       });
-      setProtocol(formData.parentCpf.replace(/\D/g, '').slice(0, 6));
+      setProtocol(enrollmentProtocol);
       setSubmitted(true);
     } catch {
       toast('Erro ao enviar solicitação. Tente novamente.', 'error');
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   return (
@@ -281,7 +282,7 @@ export default function MatriculaPage() {
                                 <ClipboardList className="w-6 h-6 text-primary" />
                                 <div className="text-left">
                                    <p className="text-[9px] font-black text-text-muted uppercase tracking-widest">Protocolo</p>
-                                   <p className="text-xl font-black text-text-main tracking-wider font-mono">MAT-{protocol}</p>
+                                   <p className="text-xl font-black text-text-main tracking-wider font-mono">{protocol}</p>
                                 </div>
                              </div>
                           </div>

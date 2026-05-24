@@ -50,9 +50,9 @@ export default function PetitionDetailPage() {
   if (!petition) return null;
 
   return (
-    <div className="min-h-screen bg-background pb-24 md:pb-12">
+    <div className="page-shell">
       <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-4 py-7 sm:px-6 md:px-10 lg:grid-cols-[1fr_360px] lg:px-12">
-        <section className="rounded-xl border border-border bg-white p-4 shadow-sm md:p-8">
+        <section className="glass-panel p-4 md:p-8">
           <div className="mb-6 flex flex-col gap-3 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between">
             <Link
               href="/peticoes"
@@ -92,7 +92,7 @@ export default function PetitionDetailPage() {
               Proposta por {petition.creatorName}
             </p>
 
-            <div className="rounded-xl border border-border bg-surface p-5 text-base font-medium leading-7 text-text-muted">
+            <div className="rounded-xl border border-border bg-white/70 p-5 text-base font-medium leading-7 text-text-muted shadow-inner">
               {petition.description}
             </div>
 
@@ -110,7 +110,7 @@ export default function PetitionDetailPage() {
         </section>
 
         <aside className="space-y-4">
-          <div className="rounded-xl border border-border bg-white p-5 shadow-sm lg:sticky lg:top-28">
+          <div className="glass-panel p-5 lg:sticky lg:top-28">
             <SignatureProgress current={petition.signaturesCount} goal={petition.goal} />
 
             <div className="mt-5">

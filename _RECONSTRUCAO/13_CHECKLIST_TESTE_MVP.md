@@ -107,3 +107,17 @@ Resultado esperado:
 - Revisar visualmente em navegador real apos `npm.cmd run dev`.
 - Testar visualmente o painel lateral de edicao de perfil no mobile.
 - Limpar ou arquivar modulos fora do MVP.
+
+## Atualizacao em 2026-05-24
+
+- [x] `npm.cmd run build` passou apos ajustes.
+- [x] `/gestao` deixou de consultar dados administrativos antes de confirmar role `admin` ou `clerk`.
+- [x] Login de cidadao comum nao trata falta de documento em `admins` como erro.
+- [x] Assinatura de peticao agora tambem atualiza `updatedAt`.
+- [x] Botao de assinatura duplicada nao fica mais preso em loading.
+- [x] Matricula exibe o protocolo real retornado pelo Firestore service.
+- [x] `firestore.rules` ganhou regra para `enrollments`.
+- [x] Smoke test HTTP em `127.0.0.1:3010`: `/`, `/ouvidoria`, `/perfil`, `/gestao`, `/peticoes`, `/educacao/matricula` e `/relatar` responderam `200`.
+- [x] Primeira rodada visual aplicada: design system global, navegacao web/mobile, Home, Ouvidoria, Peticoes, Perfil, Gestao e cards internos do MVP.
+- [x] Novo smoke test HTTP em `127.0.0.1:3010`: rotas principais do MVP continuaram respondendo `200`.
+- [ ] Teste visual no navegador ficou pendente porque o browser interno da sessao nao estava disponivel.

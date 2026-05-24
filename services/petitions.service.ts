@@ -107,6 +107,7 @@ export async function signPetition(petitionId: string, userId: string, userName:
     });
     transaction.update(petitionRef, {
       signaturesCount: increment(1),
+      updatedAt: serverTimestamp(),
     });
   });
 }

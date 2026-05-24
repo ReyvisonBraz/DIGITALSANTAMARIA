@@ -12,7 +12,8 @@ const COLLECTION = 'enrollments';
 export async function createEnrollment(
   input: CreateEnrollmentInput & { userId: string }
 ): Promise<string> {
-  const docRef = await addDoc(collection(db, COLLECTION), {
+  const protocol = generateProtocolId('MAT');
+  await addDoc(collection(db, COLLECTION), {
     userId: input.userId,
     parentName: input.parentName,
     parentCpf: input.parentCpf,
@@ -22,9 +23,9 @@ export async function createEnrollment(
     cep: input.cep,
     schoolPreference: input.schoolPreference,
     status: 'pending',
-    protocol: generateProtocolId('MAT'),
+    protocol,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
-  return docRef.id;
+  return protocol;
 }

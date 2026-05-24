@@ -122,6 +122,14 @@ service cloud.firestore {
       allow write: if isStaff();
     }
 
+    match /enrollments/{enrollmentId} {
+      allow read: if isOwner(resource.data.userId) || isStaff();
+      allow create: if isSignedIn()
+        && incoming().userId == request.auth.uid
+        && incoming().status == 'pending';
+      allow update, delete: if isStaff();
+    }
+
     match /jobs/{jobId} {
       allow read: if true;
       allow create: if isSignedIn()

@@ -90,13 +90,13 @@ export default function TopAppBar() {
           initial={{ y: -80 }}
           animate={{ y: 0 }}
           className={cn(
-            'flex w-full max-w-7xl items-center justify-between border border-border bg-white/95 px-3 shadow-sm backdrop-blur-xl transition-all duration-300 md:px-8',
+            'flex w-full max-w-7xl items-center justify-between border border-white/70 bg-white/80 px-3 shadow-[0_18px_60px_rgba(15,23,42,0.10)] backdrop-blur-2xl transition-all duration-300 md:px-8',
             scrolled ? 'h-14 rounded-xl md:h-16 md:rounded-2xl' : 'h-16 rounded-none md:h-18 md:rounded-2xl'
           )}
         >
           <div className="flex min-w-0 items-center gap-2 md:gap-4">
             <Link href="/" className="group flex shrink-0 items-center gap-2" aria-label="Ir para pagina inicial">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-900 text-sm font-black uppercase text-white transition group-hover:bg-primary">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dark text-sm font-black uppercase text-white shadow-[0_12px_24px_rgba(11,111,211,0.24)] transition group-hover:scale-105">
                 SM
               </div>
               <div className="hidden min-w-0 flex-col sm:flex">
@@ -107,7 +107,7 @@ export default function TopAppBar() {
 
             <button
               onClick={() => setIsExplorerOpen(true)}
-              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-border bg-surface-container px-3 text-xs font-black uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-border bg-white/70 px-3 text-xs font-black uppercase tracking-widest text-text-main shadow-sm transition hover:border-primary hover:bg-primary/10 hover:text-primary"
               aria-label="Abrir menu de servicos"
             >
               <Grid className="h-4 w-4 text-primary" />
@@ -118,7 +118,7 @@ export default function TopAppBar() {
           <div className="hidden flex-1 justify-center px-4 lg:flex">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="flex h-10 w-full max-w-md items-center justify-between rounded-xl border border-border bg-surface-container px-4 text-text-muted shadow-inner transition hover:border-primary"
+              className="flex h-10 w-full max-w-md items-center justify-between rounded-xl border border-border bg-white/70 px-4 text-text-muted shadow-inner transition hover:border-primary hover:bg-white"
               aria-label="Abrir busca global"
             >
               <span className="flex min-w-0 items-center gap-3">
@@ -146,7 +146,7 @@ export default function TopAppBar() {
 
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white text-text-muted transition hover:border-primary hover:text-primary lg:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white/80 text-text-muted shadow-sm transition hover:border-primary hover:text-primary lg:hidden"
               aria-label="Abrir busca"
             >
               <Search className="h-4 w-4" />
@@ -157,7 +157,7 @@ export default function TopAppBar() {
                 onClick={() => setIsAccessibilityOpen((value) => !value)}
                 className={cn(
                   'relative inline-flex h-10 w-10 items-center justify-center rounded-xl border transition',
-                  isAccessibilityOpen ? 'border-primary bg-primary text-white' : 'border-border bg-white text-text-muted hover:border-primary hover:text-primary'
+                  isAccessibilityOpen ? 'border-primary bg-primary text-white shadow-[0_12px_24px_rgba(11,111,211,0.18)]' : 'border-border bg-white/80 text-text-muted shadow-sm hover:border-primary hover:text-primary'
                 )}
                 aria-label="Menu de acessibilidade"
                 aria-expanded={isAccessibilityOpen}
@@ -226,7 +226,7 @@ export default function TopAppBar() {
 
             <button
               onClick={() => setIsNotificationsOpen(true)}
-              className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface-container text-text-muted transition hover:border-primary hover:text-primary"
+              className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white/80 text-text-muted shadow-sm transition hover:border-primary hover:text-primary"
               aria-label="Abrir notificacoes"
             >
               <Bell className="h-4 w-4" />
@@ -246,7 +246,7 @@ export default function TopAppBar() {
             ) : (
               <button
                 onClick={login}
-                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-text-main px-3 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-primary"
+                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-text-main px-3 text-[10px] font-black uppercase tracking-widest text-white shadow-[0_12px_24px_rgba(15,23,42,0.18)] transition hover:bg-primary"
                 aria-label="Entrar com conta Google"
               >
                 <span className="hidden sm:inline">Entrar</span>

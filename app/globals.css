@@ -15,25 +15,25 @@
 
 @theme {
   /* Cores primárias */
-  --color-primary: #1173D4;
-  --color-primary-dark: #004788;
-  --color-primary-light: #D5E3FF;
+  --color-primary: #0B6FD3;
+  --color-primary-dark: #073E78;
+  --color-primary-light: #DCEBFF;
 
   /* Superfícies */
-  --color-surface: #F9F9FF;
-  --color-surface-container: #ECEDF6;
-  --color-background: #F8FAFC;
+  --color-surface: #F8FAFD;
+  --color-surface-container: #EEF3FA;
+  --color-background: #F4F8FC;
 
   /* Texto */
-  --color-text-main: #181C22;
-  --color-text-muted: #414752;
+  --color-text-main: #111827;
+  --color-text-muted: #475569;
 
   /* Bordas */
-  --color-border: #C1C6D4;
+  --color-border: #D5DCE8;
 
   /* Acentos semânticos */
-  --color-accent-danger: #BA1A1A;
-  --color-tertiary: #934400;
+  --color-accent-danger: #D92D20;
+  --color-tertiary: #0E9F6E;
 
   /* Tipografia — Variáveis injetadas pelo Next.js Google Fonts */
   --font-display: var(--font-outfit, 'Outfit', sans-serif);
@@ -55,7 +55,10 @@
   }
 
   body {
-    background-color: var(--color-background, #F8FAFC);
+    background:
+      radial-gradient(circle at 12% 0%, rgba(11, 111, 211, 0.12), transparent 32rem),
+      radial-gradient(circle at 86% 10%, rgba(14, 159, 110, 0.10), transparent 30rem),
+      linear-gradient(180deg, #f7fbff 0%, var(--color-background, #F4F8FC) 48%, #eef5fb 100%);
     color: var(--color-text-main);
     font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -63,6 +66,7 @@
     line-height: 1.5;
     letter-spacing: 0;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+    min-height: 100vh;
   }
 
   /* Modo alto contraste (ativado via AccessibilityProvider) */
@@ -110,11 +114,125 @@
   .deco-fade {
     @apply opacity-20 scale-90 transition-transform duration-500;
   }
+
+  ::selection {
+    background: rgba(11, 111, 211, 0.18);
+    color: var(--color-text-main);
+  }
 }
 
 /* ─── Components Layer ───────────────────────────────────────────── */
 
 @layer components {
+  .page-shell {
+    @apply relative min-h-screen overflow-hidden pb-24 md:pb-12;
+  }
+
+  .page-shell::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgba(17, 24, 39, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(17, 24, 39, 0.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.42), transparent 70%);
+  }
+
+  .hero-panel {
+    @apply relative overflow-hidden border border-white/70 bg-white/80 shadow-[0_24px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl;
+    border-radius: 1.75rem;
+  }
+
+  .hero-panel::after {
+    content: "";
+    position: absolute;
+    inset: auto -18% -45% auto;
+    width: 36rem;
+    height: 36rem;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(11,111,211,0.16), transparent 62%);
+    pointer-events: none;
+  }
+
+  .glass-panel {
+    @apply border border-white/70 bg-white/75 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur-xl;
+    border-radius: 1.25rem;
+  }
+
+  .civic-card {
+    @apply relative overflow-hidden border border-white/70 bg-white/90 shadow-[0_10px_34px_rgba(15,23,42,0.07)] transition-all duration-300;
+    border-radius: 1.25rem;
+  }
+
+  .civic-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,0.72), transparent 42%);
+    opacity: 0;
+    transition: opacity 220ms ease;
+  }
+
+  .civic-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(11,111,211,0.28);
+    box-shadow: 0 18px 48px rgba(15,23,42,0.12);
+  }
+
+  .civic-card:hover::before {
+    opacity: 1;
+  }
+
+  .soft-chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-primary;
+  }
+
+  .action-button {
+    @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-5 py-3 text-sm font-black uppercase tracking-widest transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .action-button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+    transition: transform 650ms ease;
+  }
+
+  .action-button:hover::after {
+    transform: translateX(120%);
+  }
+
+  .action-button-primary {
+    @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-xl bg-primary px-5 py-3 text-sm font-black uppercase tracking-widest text-white shadow-[0_14px_30px_rgba(11,111,211,0.24)] transition-all duration-300 hover:bg-primary-dark active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .action-button-secondary {
+    @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-xl border border-border bg-white/90 px-5 py-3 text-sm font-black uppercase tracking-widest text-text-main shadow-sm transition-all duration-300 hover:border-primary hover:text-primary active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .section-title {
+    @apply text-2xl font-black tracking-normal text-text-main md:text-4xl;
+  }
+
+  .smart-scroll {
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .smart-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .smart-scroll > * {
+    scroll-snap-align: start;
+  }
+
   /* Card com feedback tátil (borda inferior interativa) */
   .tactile-card {
     background-color: white;
@@ -172,4 +290,28 @@
 
 .animate-slow-spin {
   animation: slow-spin 20s linear infinite;
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-float-in {
+  animation: float-in 520ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
 }

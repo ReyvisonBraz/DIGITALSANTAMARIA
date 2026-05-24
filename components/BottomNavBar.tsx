@@ -24,7 +24,7 @@ export default function BottomNavBar({ className }: BottomNavBarProps) {
   return (
     <nav
       className={cn(
-        'fixed bottom-0 left-0 right-0 z-50 h-[72px] border-t border-border bg-white shadow-[0_-4px_12px_rgba(0,0,0,0.06)] md:hidden',
+        'fixed bottom-3 left-3 right-3 z-50 h-[72px] rounded-2xl border border-white/70 bg-white/90 shadow-[0_-10px_40px_rgba(15,23,42,0.14)] backdrop-blur-2xl md:hidden',
         className
       )}
       aria-label="Navegacao principal mobile"
@@ -42,7 +42,13 @@ export default function BottomNavBar({ className }: BottomNavBarProps) {
               )}
               aria-current={isActive ? 'page' : undefined}
             >
-              <motion.span whileTap={{ scale: 0.9 }} className="flex flex-col items-center gap-1">
+              <motion.span
+                whileTap={{ scale: 0.9 }}
+                className={cn(
+                  'flex min-h-14 min-w-14 flex-col items-center justify-center gap-1 rounded-xl transition',
+                  isActive && 'bg-primary/10'
+                )}
+              >
                 <item.icon className={cn('h-5 w-5 transition', isActive && 'scale-110')} strokeWidth={isActive ? 2.5 : 2} />
                 <span className="max-w-full truncate text-[10px] font-bold leading-none">{item.label}</span>
               </motion.span>

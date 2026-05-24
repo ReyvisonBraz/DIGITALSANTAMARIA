@@ -45,8 +45,9 @@ export default function ApplicationModal({ isOpen, onClose, jobId, jobTitle }: A
       toast('Candidatura enviada com sucesso!', 'success');
     } catch (err) {
       toast('Erro ao se candidatar.', 'error');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

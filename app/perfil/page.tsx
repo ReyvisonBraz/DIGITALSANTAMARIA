@@ -84,7 +84,7 @@ export default function PerfilPage() {
         </p>
         <button
           onClick={login}
-          className="mt-6 inline-flex min-h-12 items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-black uppercase tracking-widest text-white transition hover:bg-primary-dark"
+          className="action-button-primary mt-6"
         >
           Entrar no painel
         </button>
@@ -93,9 +93,9 @@ export default function PerfilPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24 md:pb-12">
-      <section className="border-b border-border bg-white">
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:grid-cols-[auto_1fr_auto] md:items-center md:px-10 md:py-10 lg:px-12">
+    <div className="page-shell">
+      <section className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 md:px-10 lg:px-12">
+        <div className="hero-panel grid grid-cols-1 gap-6 p-5 sm:p-7 md:grid-cols-[auto_1fr_auto] md:items-center md:p-8">
           <div className="relative h-20 w-20 overflow-hidden rounded-2xl border border-border bg-surface">
             {photoURL ? (
               <Image src={photoURL} alt={displayName} fill className="object-cover" />
@@ -117,14 +117,14 @@ export default function PerfilPage() {
           <div className="flex flex-col gap-2 sm:flex-row md:flex-col lg:flex-row">
             <button
               onClick={() => setSettingsMode('edit')}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+              className="action-button-secondary min-h-11 px-4 py-2 text-xs"
             >
               <PenLine className="h-4 w-4" />
               Editar perfil
             </button>
             <Link
               href="/ouvidoria"
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark"
+              className="action-button-primary min-h-11 px-4 py-2 text-xs"
             >
               Abrir solicitacao
               <ArrowRight className="h-4 w-4" />
@@ -134,7 +134,7 @@ export default function PerfilPage() {
                 logout();
                 toast('Sessao encerrada com sucesso.', 'info');
               }}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-text-main transition hover:border-rose-300 hover:text-rose-600"
+              className="action-button-secondary min-h-11 px-4 py-2 text-xs hover:border-rose-300 hover:text-rose-600"
             >
               <LogOut className="h-4 w-4" />
               Sair
@@ -147,7 +147,7 @@ export default function PerfilPage() {
         <section className="space-y-6">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {stats.map((stat) => (
-              <div key={stat.label} className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+              <div key={stat.label} className="civic-card p-5">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <stat.icon className="h-5 w-5" />
                 </div>
@@ -159,7 +159,7 @@ export default function PerfilPage() {
             ))}
           </div>
 
-          <div className="rounded-2xl border border-border bg-surface p-5 md:p-6">
+          <div className="glass-panel p-5 md:p-6">
             <div className="mb-5 flex flex-col gap-2 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-xs font-black uppercase tracking-widest text-primary">Historico</p>
@@ -175,12 +175,12 @@ export default function PerfilPage() {
 
         <aside className="space-y-4">
           {isStaff && (
-            <div className="rounded-2xl border border-primary/20 bg-white p-5 shadow-sm">
+            <div className="civic-card border-primary/20 p-5">
               <p className="text-xs font-black uppercase tracking-widest text-primary">Acesso administrativo</p>
               <div className="mt-4 grid grid-cols-1 gap-2">
                 <Link
                   href="/gestao"
-                  className="inline-flex min-h-11 items-center justify-between rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark"
+                  className="action-button-primary min-h-11 justify-between px-4 py-2 text-xs"
                 >
                   <span className="inline-flex items-center gap-2">
                     <Building2 className="h-4 w-4" />
@@ -212,7 +212,7 @@ export default function PerfilPage() {
             </div>
           )}
 
-          <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+          <div className="civic-card p-5">
             <div className="flex items-center justify-between gap-3">
               <p className="text-xs font-black uppercase tracking-widest text-text-muted">Dados basicos</p>
               <button

@@ -44,7 +44,7 @@ export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileS
             ].map((pref) => (
               <button
                 key={pref.label}
-                className="group flex w-full items-center justify-between rounded-xl border border-border bg-white p-4 transition hover:border-primary sm:p-5"
+                className="civic-card group flex w-full items-center justify-between p-4 sm:p-5"
               >
                 <span className="flex items-center gap-4 text-left">
                   <span className="rounded-lg border border-border bg-surface p-3 transition group-hover:text-primary">
@@ -78,7 +78,7 @@ export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileS
                   key={item.href}
                   href={item.href}
                   onClick={onClose}
-                  className="group flex items-center justify-between rounded-xl border border-border bg-white p-4 text-text-main transition hover:border-primary hover:text-primary"
+                  className="civic-card group flex items-center justify-between p-4 text-text-main hover:text-primary"
                 >
                   <span className="flex items-center gap-3">
                     <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">

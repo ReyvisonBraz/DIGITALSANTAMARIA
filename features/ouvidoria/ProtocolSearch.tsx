@@ -50,7 +50,7 @@ export default function ProtocolSearch() {
 
   return (
     <div className="space-y-5">
-      <form onSubmit={handleSearch} className="rounded-xl border border-border bg-white p-4 shadow-sm md:p-6">
+      <form onSubmit={handleSearch} className="civic-card p-4 md:p-6">
         <label className="block space-y-2">
           <span className="text-xs font-black uppercase tracking-widest text-text-muted">Numero do protocolo</span>
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -73,7 +73,7 @@ export default function ProtocolSearch() {
       </form>
 
       {result && (
-        <article className="rounded-xl border border-border bg-white p-4 shadow-sm md:p-6">
+        <article className="civic-card p-4 md:p-6">
           <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-widest text-text-muted">Protocolo</p>

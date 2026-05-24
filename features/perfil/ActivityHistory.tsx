@@ -95,7 +95,7 @@ export default function ActivityHistory() {
       {activities.slice(0, 8).map((item) => (
         <div
           key={`${item.type}-${item.id}`}
-          className="grid grid-cols-[auto_1fr] gap-3 rounded-xl border border-border bg-white p-4 shadow-sm sm:grid-cols-[auto_1fr_auto]"
+          className="civic-card grid grid-cols-[auto_1fr] gap-3 p-4 sm:grid-cols-[auto_1fr_auto]"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <item.icon className="h-5 w-5" />

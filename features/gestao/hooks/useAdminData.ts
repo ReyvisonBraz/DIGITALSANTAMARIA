@@ -11,23 +11,30 @@ interface AdminData {
   refresh: () => Promise<void>;
 }
 
-export function useAdminData(): AdminData {
+export function useAdminData(enabled = true): AdminData {
   const [demands, setDemands] = useState<Demand[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
+    if (!enabled) {
+      setDemands([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
       const data = await getAllDemands();
       setDemands(data);
     } catch {
-      setError('Erro ao carregar solicitações.');
+      setError('Erro ao carregar solicitacoes.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [enabled]);
 
   useEffect(() => {
     refresh();

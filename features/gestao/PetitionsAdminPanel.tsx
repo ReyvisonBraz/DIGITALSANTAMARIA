@@ -54,7 +54,7 @@ function PetitionAdminCard({ petition, onSaved }: { petition: Petition; onSaved:
   };
 
   return (
-    <article className="rounded-xl border border-border bg-white p-5 shadow-sm md:p-6">
+    <article className="civic-card p-5 md:p-6">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -84,7 +84,7 @@ function PetitionAdminCard({ petition, onSaved }: { petition: Petition; onSaved:
         </Link>
       </div>
 
-      <div className="mt-5 space-y-3 rounded-xl border border-border bg-surface p-4">
+      <div className="relative z-10 mt-5 space-y-3 rounded-xl border border-border bg-white/70 p-4 shadow-inner">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[180px_1fr]">
           <label className="space-y-2">
             <span className="text-xs font-black uppercase tracking-widest text-text-muted">Status</span>
@@ -187,7 +187,7 @@ export default function PetitionsAdminPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
+      <div className="glass-panel p-4">
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_180px_180px]">
           <label className="relative block">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />

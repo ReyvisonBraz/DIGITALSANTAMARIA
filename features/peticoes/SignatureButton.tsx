@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { signPetition, hasUserSigned } from '@/services/petitions.service';
 import { useToast } from '@/lib/toast-context';
+import { hasUserSigned, signPetition } from '@/services/petitions.service';
 
 interface SignatureButtonProps {
   petitionId: string;
@@ -23,33 +23,36 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
       await login();
       return;
     }
+
     setLoading(true);
     try {
       const alreadySigned = await hasUserSigned(petitionId, user.uid);
       if (alreadySigned) {
-        toast('Você já assinou esta petição!', 'error');
+        toast('Voce ja assinou esta peticao!', 'error');
         return;
       }
-      await signPetition(petitionId, user.uid, user.displayName || 'Cidadão');
+
+      await signPetition(petitionId, user.uid, user.displayName || 'Cidadao');
       toast(`Assinatura registrada em "${petitionTitle}"!`, 'success');
       onSign();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao assinar';
       toast(message, 'error');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
     <button
       onClick={handleSign}
       disabled={loading}
-      className={`px-10 py-4 bg-tertiary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-tertiary/20 hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 ${className || ''}`}
+      className={`flex items-center justify-center gap-2 rounded-xl bg-tertiary px-10 py-4 text-[10px] font-black uppercase tracking-widest text-white shadow-xl shadow-tertiary/20 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 ${className || ''}`}
     >
       {loading ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
+        <Loader2 className="h-4 w-4 animate-spin" />
       ) : (
-        <CheckCircle2 className="w-4 h-4" />
+        <CheckCircle2 className="h-4 w-4" />
       )}
       {loading ? 'Assinando...' : 'Assinar Agora'}
     </button>
