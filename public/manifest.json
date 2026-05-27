@@ -1,11 +1,11 @@
 {
-  "name": "Digital Santa Maria",
-  "short_name": "Santa Maria",
-  "description": "Plataforma inteligente de governança digital e serviços municipais para Santa Maria do Pará - PA.",
+  "name": "Conecta Santa Maria",
+  "short_name": "Conecta SM",
+  "description": "Conecta Santa Maria — o portal do cidadão de Santa Maria do Pará. Serviços, protocolos e participação em um só lugar.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#1e3a5f",
+  "background_color": "#F6EEE2",
+  "theme_color": "#B5462E",
   "orientation": "portrait-primary",
   "icons": [
     {

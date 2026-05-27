@@ -3,21 +3,18 @@ import { Home, SearchX } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-        <SearchX className="w-8 h-8 text-gray-400" />
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+      <div className="mb-5 grid h-20 w-20 place-items-center rounded-3xl bg-primary/10">
+        <SearchX className="h-9 w-9 text-primary" />
       </div>
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+      <h1 className="text-3xl font-semibold tracking-tight text-text-main" style={{ fontFamily: 'var(--font-display)' }}>
         Página não encontrada
       </h1>
-      <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-md">
+      <p className="mt-3 max-w-md font-medium text-text-muted">
         A página que você procura não existe ou foi movida.
       </p>
-      <Link
-        href="/"
-        className="mt-6 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors"
-      >
-        <Home className="w-4 h-4" />
+      <Link href="/" className="action-button-primary mt-7">
+        <Home className="h-4 w-4" />
         Voltar ao início
       </Link>
     </div>

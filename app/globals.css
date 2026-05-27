@@ -1,12 +1,16 @@
 /**
  * @module globals.css
- * @description Design system e estilos globais do Digital Santa Maria.
+ * @description Design system "Conecta Santa Maria".
+ *
+ * Direção visual: Terracota Tropical
+ *   terracota (primária) · verde-musgo (secundária) · dourado (acento) · creme (fundo)
+ * Tipografia: Fraunces (display, editorial) + Plus Jakarta Sans (texto)
  *
  * Estrutura:
- * 1. @theme - Tokens de design (cores, tipografia)
- * 2. @layer base - Reset, tipografia global, acessibilidade
- * 3. @layer components - Padrões reutilizáveis (tactile cards, buttons)
- * 4. Utilities - Scrollbar hiding, animations
+ *   1. @theme       — tokens de design (cores, tipografia)
+ *   2. @layer base  — reset, tipografia global, acessibilidade
+ *   3. @layer components — padrões reutilizáveis (cards, botões, painéis)
+ *   4. Utilities    — animações, scroll, helpers de movimento
  */
 
 @import "tailwindcss";
@@ -14,94 +18,109 @@
 /* ─── Design Tokens ──────────────────────────────────────────────── */
 
 @theme {
-  /* Cores primárias */
-  --color-primary: #0B6FD3;
-  --color-primary-dark: #073E78;
-  --color-primary-light: #DCEBFF;
+  /* Primária — Terracota */
+  --color-primary: #B5462E;
+  --color-primary-dark: #8B3320;
+  --color-primary-light: #F3E3DC;
 
-  /* Superfícies */
-  --color-surface: #F8FAFD;
-  --color-surface-container: #EEF3FA;
-  --color-background: #F4F8FC;
+  /* Secundária — Verde-musgo */
+  --color-secondary: #3A5A40;
+  --color-secondary-dark: #2C4431;
+  --color-secondary-light: #E4EBE3;
 
-  /* Texto */
-  --color-text-main: #111827;
-  --color-text-muted: #475569;
+  /* Acento — Dourado */
+  --color-accent: #D89A3F;
+  --color-accent-dark: #B97E28;
+
+  /* Compat: tertiary mapeado para o verde-musgo (usos legados) */
+  --color-tertiary: #3A5A40;
+
+  /* Superfícies — Creme */
+  --color-surface: #FFFFFF;
+  --color-surface-container: #FBF6EE;
+  --color-background: #F6EEE2;
+
+  /* Texto — Marrom quente */
+  --color-text-main: #2E2019;
+  --color-text-muted: #6E5C50;
 
   /* Bordas */
-  --color-border: #D5DCE8;
+  --color-border: #E7DCCC;
 
-  /* Acentos semânticos */
-  --color-accent-danger: #D92D20;
-  --color-tertiary: #0E9F6E;
+  /* Semânticos */
+  --color-accent-danger: #C0392B;
+  --color-accent-success: #3A5A40;
 
-  /* Tipografia — Variáveis injetadas pelo Next.js Google Fonts */
-  --font-display: var(--font-outfit, 'Outfit', sans-serif);
-  --font-sans: var(--font-inter, 'Inter', system-ui, sans-serif);
+  /* Tipografia */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Sombras assinatura */
+  --shadow-soft: 0 10px 34px rgba(74, 38, 24, 0.08);
+  --shadow-lift: 0 22px 50px rgba(74, 38, 24, 0.14);
 }
 
 /* ─── Base Layer ─────────────────────────────────────────────────── */
 
 @layer base {
-  /* Variáveis CSS de acessibilidade (controladas pelo AccessibilityProvider) */
   :root {
     --base-font-size: 16px;
     --layout-scale: 1;
+    /* Tom ambiente controlado pelo scroll (ScrollAmbience) */
+    --ambient-1: rgba(181, 70, 46, 0.10);
+    --ambient-2: rgba(58, 90, 64, 0.09);
   }
 
   html {
     font-size: var(--base-font-size);
     transition: font-size 0.2s ease-in-out;
+    scroll-behavior: smooth;
   }
 
   body {
     background:
-      radial-gradient(circle at 12% 0%, rgba(11, 111, 211, 0.12), transparent 32rem),
-      radial-gradient(circle at 86% 10%, rgba(14, 159, 110, 0.10), transparent 30rem),
-      linear-gradient(180deg, #f7fbff 0%, var(--color-background, #F4F8FC) 48%, #eef5fb 100%);
+      radial-gradient(circle at 14% -2%, var(--ambient-1), transparent 34rem),
+      radial-gradient(circle at 88% 8%, var(--ambient-2), transparent 32rem),
+      linear-gradient(180deg, #FBF6EE 0%, var(--color-background, #F6EEE2) 52%, #F1E6D6 100%);
+    background-attachment: fixed;
     color: var(--color-text-main);
-    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    line-height: 1.5;
-    letter-spacing: 0;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+    line-height: 1.55;
+    letter-spacing: -0.005em;
     min-height: 100vh;
+    transition: --ambient-1 0.6s ease, --ambient-2 0.6s ease;
   }
 
-  /* Modo alto contraste (ativado via AccessibilityProvider) */
+  /* Modo alto contraste */
   body.high-contrast {
     --color-surface: #000000;
     --color-surface-container: #0A0A0A;
     --color-text-main: #FFFFFF;
     --color-text-muted: #E5E7EB;
     --color-border: #4B5563;
-    --color-primary: #4ADE80;
+    --color-primary: #FBBF6E;
     --color-primary-dark: #FFFFFF;
-    --color-primary-light: #064E3B;
+    --color-primary-light: #3A1F12;
+    --color-accent: #FBBF6E;
   }
 
-  /* Tipografia responsiva para mobile */
-  @media (max-width: 768px) {
-    body {
-      letter-spacing: 0;
-    }
-  }
-
-  /* Hierarquia de headings com font-display */
+  /* Tipografia editorial */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display), var(--font-sans), sans-serif;
-    @apply font-bold leading-tight tracking-normal;
+    font-family: var(--font-display);
+    @apply font-semibold leading-[1.05];
+    letter-spacing: -0.02em;
+    color: var(--color-text-main);
   }
 
-  h1 { @apply text-3xl md:text-5xl font-extrabold; }
-  h2 { @apply text-2xl md:text-4xl font-bold; }
-  h3 { @apply text-xl md:text-2xl font-semibold; }
-  h4 { @apply text-lg md:text-xl font-semibold; }
+  h1 { @apply text-4xl md:text-6xl font-semibold; }
+  h2 { @apply text-3xl md:text-5xl font-semibold; }
+  h3 { @apply text-2xl md:text-3xl font-semibold; }
+  h4 { @apply text-xl md:text-2xl font-medium; }
 
-  /* Classes utilitárias para nomes e sub-títulos */
   .text-name {
-    @apply font-semibold tracking-normal;
+    @apply font-semibold;
     color: var(--color-text-main);
   }
 
@@ -110,24 +129,34 @@
     color: var(--color-text-muted);
   }
 
-  /* Ícones decorativos (reduz opacidade para não competir com conteúdo) */
   .deco-fade {
     @apply opacity-20 scale-90 transition-transform duration-500;
   }
 
   ::selection {
-    background: rgba(11, 111, 211, 0.18);
+    background: rgba(181, 70, 46, 0.20);
     color: var(--color-text-main);
   }
+
+  /* Scrollbar discreta */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(110, 92, 80, 0.30);
+    border-radius: 99px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(110, 92, 80, 0.5); background-clip: content-box; }
 }
 
 /* ─── Components Layer ───────────────────────────────────────────── */
 
 @layer components {
   .page-shell {
-    @apply relative min-h-screen overflow-hidden pb-24 md:pb-12;
+    @apply relative min-h-screen overflow-hidden pb-28 md:pb-16;
   }
 
+  /* Grade sutil de fundo */
   .page-shell::before {
     content: "";
     position: fixed;
@@ -135,36 +164,44 @@
     pointer-events: none;
     z-index: -1;
     background-image:
-      linear-gradient(rgba(17, 24, 39, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(17, 24, 39, 0.035) 1px, transparent 1px);
-    background-size: 44px 44px;
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.42), transparent 70%);
+      linear-gradient(rgba(46, 32, 25, 0.030) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(46, 32, 25, 0.030) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.40), transparent 72%);
   }
 
+  /* ── Painéis ── */
   .hero-panel {
-    @apply relative overflow-hidden border border-white/70 bg-white/80 shadow-[0_24px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl;
-    border-radius: 1.75rem;
+    @apply relative overflow-hidden border bg-white/85 backdrop-blur-xl;
+    border-color: rgba(231, 220, 204, 0.9);
+    box-shadow: 0 30px 80px rgba(74, 38, 24, 0.12);
+    border-radius: 2rem;
   }
 
   .hero-panel::after {
     content: "";
     position: absolute;
-    inset: auto -18% -45% auto;
-    width: 36rem;
-    height: 36rem;
+    inset: auto -16% -42% auto;
+    width: 34rem;
+    height: 34rem;
     border-radius: 9999px;
-    background: radial-gradient(circle, rgba(11,111,211,0.16), transparent 62%);
+    background: radial-gradient(circle, rgba(181, 70, 46, 0.16), transparent 64%);
     pointer-events: none;
   }
 
   .glass-panel {
-    @apply border border-white/70 bg-white/75 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur-xl;
-    border-radius: 1.25rem;
+    @apply border bg-white/80 backdrop-blur-xl;
+    border-color: rgba(231, 220, 204, 0.9);
+    box-shadow: var(--shadow-soft);
+    border-radius: 1.4rem;
   }
 
+  /* ── Card cívico ── */
   .civic-card {
-    @apply relative overflow-hidden border border-white/70 bg-white/90 shadow-[0_10px_34px_rgba(15,23,42,0.07)] transition-all duration-300;
-    border-radius: 1.25rem;
+    @apply relative overflow-hidden border bg-white/92 transition-all duration-300;
+    border-color: rgba(231, 220, 204, 0.95);
+    box-shadow: var(--shadow-soft);
+    border-radius: 1.4rem;
   }
 
   .civic-card::before {
@@ -172,142 +209,219 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(135deg, rgba(255,255,255,0.72), transparent 42%);
+    background: linear-gradient(135deg, rgba(255, 247, 238, 0.85), transparent 46%);
     opacity: 0;
-    transition: opacity 220ms ease;
+    transition: opacity 240ms ease;
   }
 
   .civic-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(11,111,211,0.28);
-    box-shadow: 0 18px 48px rgba(15,23,42,0.12);
+    transform: translateY(-4px);
+    border-color: rgba(181, 70, 46, 0.32);
+    box-shadow: var(--shadow-lift);
   }
 
-  .civic-card:hover::before {
-    opacity: 1;
-  }
+  .civic-card:hover::before { opacity: 1; }
 
+  /* ── Eyebrow / chip ── */
   .soft-chip {
-    @apply inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-primary;
+    @apply inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em];
+    border-color: rgba(181, 70, 46, 0.22);
+    background: rgba(181, 70, 46, 0.08);
+    color: var(--color-primary);
   }
 
+  .eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-[0.22em];
+    color: var(--color-primary);
+  }
+
+  /* ── Botões ── */
   .action-button {
-    @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-5 py-3 text-sm font-black uppercase tracking-widest transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+    @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-2xl px-6 py-3 text-sm font-bold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .action-button::after {
     content: "";
     position: absolute;
     inset: 0;
-    transform: translateX(-120%);
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
-    transition: transform 650ms ease;
+    transform: translateX(-130%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent);
+    transition: transform 700ms ease;
   }
 
-  .action-button:hover::after {
-    transform: translateX(120%);
-  }
+  .action-button:hover::after { transform: translateX(130%); }
 
   .action-button-primary {
-    @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-xl bg-primary px-5 py-3 text-sm font-black uppercase tracking-widest text-white shadow-[0_14px_30px_rgba(11,111,211,0.24)] transition-all duration-300 hover:bg-primary-dark active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+    @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-2xl px-6 py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    box-shadow: 0 16px 32px rgba(181, 70, 46, 0.28);
   }
 
+  .action-button-primary:hover {
+    box-shadow: 0 22px 44px rgba(181, 70, 46, 0.36);
+    transform: translateY(-2px);
+  }
+
+  .action-button-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-130%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent);
+    transition: transform 700ms ease;
+  }
+
+  .action-button-primary:hover::after { transform: translateX(130%); }
+
   .action-button-secondary {
-    @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-xl border border-border bg-white/90 px-5 py-3 text-sm font-black uppercase tracking-widest text-text-main shadow-sm transition-all duration-300 hover:border-primary hover:text-primary active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+    @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-2xl border bg-white/85 px-6 py-3 text-sm font-bold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+    border-color: var(--color-border);
+    color: var(--color-text-main);
+    box-shadow: 0 2px 8px rgba(74, 38, 24, 0.05);
+  }
+
+  .action-button-secondary:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-2px);
   }
 
   .section-title {
-    @apply text-2xl font-black tracking-normal text-text-main md:text-4xl;
+    @apply text-3xl md:text-5xl font-semibold tracking-tight;
+    font-family: var(--font-display);
+    color: var(--color-text-main);
   }
 
+  /* Texto com gradiente da marca */
+  .text-gradient {
+    background: linear-gradient(120deg, var(--color-primary), var(--color-accent) 70%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Scroll horizontal com snap */
   .smart-scroll {
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
   }
+  .smart-scroll::-webkit-scrollbar { display: none; }
+  .smart-scroll > * { scroll-snap-align: start; }
 
-  .smart-scroll::-webkit-scrollbar {
-    display: none;
-  }
-
-  .smart-scroll > * {
-    scroll-snap-align: start;
-  }
-
-  /* Card com feedback tátil (borda inferior interativa) */
+  /* Card tátil (compat) */
   .tactile-card {
     background-color: white;
-    border-bottom: 2px solid #1173D4;
-    border-radius: 0.5rem;
+    border-bottom: 2px solid var(--color-primary);
+    border-radius: 1rem;
     padding: 1.5rem;
-    transition: all 200ms ease-in-out;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 220ms ease-in-out;
+    box-shadow: var(--shadow-soft);
   }
-
   .tactile-card:hover {
     border-bottom-width: 4px;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
   }
+  .tactile-card:active { transform: translateY(0); border-bottom-width: 2px; }
 
-  .tactile-card:active {
-    transform: translateY(0);
-    border-bottom-width: 2px;
-  }
-
-  /* Botão com feedback tátil */
   .btn-tactile {
-    @apply relative inline-flex items-center justify-center font-bold transition-all active:scale-95 px-6 py-3 rounded-lg;
+    @apply relative inline-flex items-center justify-center font-semibold transition-all active:scale-95 px-6 py-3 rounded-2xl;
     border-bottom: 2px solid transparent;
   }
-
   .btn-primary-tactile {
-    @apply bg-primary text-white;
-    border-bottom-color: #004788;
+    @apply text-white;
+    background: var(--color-primary);
+    border-bottom-color: var(--color-primary-dark);
   }
-
-  .btn-primary-tactile:hover {
-    @apply bg-primary-dark;
-    border-bottom-width: 4px;
-  }
+  .btn-primary-tactile:hover { background: var(--color-primary-dark); border-bottom-width: 4px; }
 }
 
-/* ─── Utilities ──────────────────────────────────────────────────── */
+/* ─── Utilities & Movimento ──────────────────────────────────────── */
 
-/* Esconde scrollbar mantendo funcionalidade de scroll */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Propriedade animável para transição de cor ambiente no scroll */
+@property --ambient-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(181, 70, 46, 0.10);
 }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+@property --ambient-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(58, 90, 64, 0.09);
 }
 
-/* Animação de rotação lenta para ícones decorativos */
 @keyframes slow-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
-
-.animate-slow-spin {
-  animation: slow-spin 20s linear infinite;
-}
+.animate-slow-spin { animation: slow-spin 26s linear infinite; }
 
 @keyframes float-in {
-  from {
-    opacity: 0;
-    transform: translateY(18px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-float-in { animation: float-in 620ms cubic-bezier(.2,.8,.2,1) both; }
+
+/* Brilho suave pulsante para emblemas/logo */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.06); }
+}
+.animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
+
+/* Flutuação vertical sutil */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-floaty { animation: floaty 6s ease-in-out infinite; }
+
+/* Marquee — texto que se move */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 32s linear infinite;
+  will-change: transform;
+}
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 
-.animate-float-in {
-  animation: float-in 520ms cubic-bezier(.2,.8,.2,1) both;
+/* Gradiente animado de fundo (heros escuros) */
+@keyframes drift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
+.animate-drift {
+  background-size: 220% 220%;
+  animation: drift 18s ease infinite;
+}
+
+/* Sublinhado animado para links */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 100%; height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s cubic-bezier(.2,.8,.2,1);
+}
+.link-underline:hover::after { transform: scaleX(1); transform-origin: left; }
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;

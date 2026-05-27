@@ -18,19 +18,19 @@ export default function Button({
 }: ButtonProps) {
   const variants: Record<string, string> = {
     primary:
-      'bg-primary text-white shadow-[0_14px_30px_rgba(11,111,211,0.22)] hover:bg-primary-dark',
+      'bg-gradient-to-br from-primary to-primary-dark text-white shadow-[0_14px_30px_rgba(181,70,46,0.26)] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(181,70,46,0.34)]',
     secondary:
-      'border border-border bg-white/90 text-text-main shadow-sm hover:border-primary hover:text-primary',
+      'border border-border bg-white/90 text-text-main shadow-sm hover:-translate-y-0.5 hover:border-primary hover:text-primary',
     ghost:
       'text-text-muted hover:bg-primary/10 hover:text-primary',
     danger:
-      'bg-accent-danger text-white shadow-[0_14px_30px_rgba(217,45,32,0.18)] hover:brightness-95',
+      'bg-accent-danger text-white shadow-[0_14px_30px_rgba(192,57,43,0.20)] hover:brightness-95',
   };
 
   return (
     <button
       className={cn(
-        'relative inline-flex min-h-11 items-center justify-center gap-2 overflow-hidden rounded-xl px-4 py-2 text-sm font-black transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50',
+        'relative inline-flex min-h-11 items-center justify-center gap-2 overflow-hidden rounded-2xl px-5 py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50',
         variants[variant],
         className
       )}

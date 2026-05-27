@@ -53,7 +53,7 @@ export default function ContentCard({
       whileHover={{ y: -2 }}
       onClick={onClick}
       className={cn(
-        'bg-white rounded-[2rem] border-2 border-border shadow-sm hover:shadow-xl hover:border-primary/30 transition-all group cursor-pointer overflow-hidden',
+        'bg-white rounded-[1.4rem] border border-border shadow-[0_10px_34px_rgba(74,38,24,0.07)] hover:shadow-[0_22px_50px_rgba(74,38,24,0.14)] hover:border-primary/30 transition-all duration-300 group cursor-pointer overflow-hidden',
         className,
       )}
     >
@@ -61,9 +61,9 @@ export default function ContentCard({
       {imageURL && (
         <div className="relative w-full h-48 overflow-hidden">
           <Image src={imageURL} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
           {badge && (
-            <span className={cn('absolute top-4 left-4 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest', badge.color)}>
+            <span className={cn('absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.12em]', badge.color)}>
               {badge.text}
             </span>
           )}
@@ -75,12 +75,12 @@ export default function ContentCard({
         {/* Badge + Status */}
         <div className="flex items-center gap-2 flex-wrap">
           {!imageURL && badge && (
-            <span className={cn('px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest', badge.color)}>
+            <span className={cn('px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.12em]', badge.color)}>
               {badge.text}
             </span>
           )}
           {status && (
-            <span className={cn('px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest',
+            <span className={cn('px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.12em]',
               statusColor || 'bg-primary/10 text-primary border border-primary/20')}>
               {status}
             </span>
@@ -88,17 +88,17 @@ export default function ContentCard({
         </div>
 
         {/* Título */}
-        <h3 className="text-lg font-black text-text-main uppercase tracking-tight leading-tight group-hover:text-primary transition-colors">
+        <h3 className="text-xl font-semibold text-text-main tracking-tight leading-snug group-hover:text-primary transition-colors" style={{ fontFamily: 'var(--font-display)' }}>
           {title}
         </h3>
 
         {/* Descrição */}
-        <p className="text-xs font-medium text-text-muted leading-relaxed line-clamp-2">
+        <p className="text-sm font-medium text-text-muted leading-relaxed line-clamp-2">
           {description}
         </p>
 
         {/* Metadados */}
-        <div className="flex flex-wrap items-center gap-3 pt-2 text-[10px] font-bold text-text-muted uppercase tracking-widest">
+        <div className="flex flex-wrap items-center gap-3 pt-2 text-[11px] font-semibold text-text-muted uppercase tracking-[0.08em]">
           {date && (
             <span className="flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-primary" />
@@ -127,11 +127,11 @@ export default function ContentCard({
 
         {/* Stats */}
         {stats && stats.length > 0 && (
-          <div className="grid grid-cols-2 gap-2 pt-3 border-t border-border/50">
+          <div className="grid grid-cols-2 gap-2 pt-3 border-t border-border/60">
             {stats.map((s, i) => (
               <div key={i} className="text-center">
-                <span className="block text-lg font-black text-text-main">{s.value}</span>
-                <span className="text-[8px] font-black text-text-muted uppercase tracking-widest">{s.label}</span>
+                <span className="block text-xl font-semibold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>{s.value}</span>
+                <span className="text-[10px] font-semibold text-text-muted uppercase tracking-[0.1em]">{s.label}</span>
               </div>
             ))}
           </div>

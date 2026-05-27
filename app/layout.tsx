@@ -9,16 +9,17 @@ import BottomNavBar from '@/components/BottomNavBar';
 import RootLayoutLogger from './root-layout-logger';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import InstallPrompt from '@/components/InstallPrompt';
+import ScrollAmbience from '@/components/ScrollAmbience';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Digital Santa Maria | Santa Maria do Pará - PA',
-    template: '%s | Digital Santa Maria',
+    default: 'Conecta Santa Maria | Santa Maria do Pará - PA',
+    template: '%s | Conecta Santa Maria',
   },
-  description: 'Plataforma inteligente de governança digital e serviços municipais para Santa Maria do Pará - PA.',
+  description: 'Conecta Santa Maria — o portal do cidadão de Santa Maria do Pará. Solicite serviços, acompanhe protocolos e participe das decisões da cidade.',
   manifest: '/manifest.json',
   other: {
-    'theme-color': '#1e3a5f',
+    'theme-color': '#B5462E',
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'black-translucent',
     'format-detection': 'telephone=no',
@@ -28,11 +29,20 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className="antialiased min-h-screen bg-background text-text-main font-display pt-[env(safe-area-inset-top,0px)]">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="antialiased min-h-screen bg-background text-text-main pt-[env(safe-area-inset-top,0px)]">
         <AccessibilityProvider>
           <AuthProvider>
             <ToastProvider>
               <ErrorBoundary>
+                <ScrollAmbience />
                 <TopAppBar />
                 <main className="relative pt-20 md:pt-24">{children}</main>
                 <Footer />

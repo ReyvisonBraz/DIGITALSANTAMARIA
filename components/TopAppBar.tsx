@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import SearchModal from '@/components/SearchModal';
 import NotificationsPanel from '@/components/NotificationsPanel';
+import Logo from '@/components/Logo';
 import { NAV_LINKS } from '@/lib/constants';
 import { useAccessibility } from '@/lib/accessibility-context';
 import { useAuth } from '@/lib/auth-context';
@@ -95,23 +96,22 @@ export default function TopAppBar() {
           )}
         >
           <div className="flex min-w-0 items-center gap-2 md:gap-4">
-            <Link href="/" className="group flex shrink-0 items-center gap-2" aria-label="Ir para pagina inicial">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-dark text-sm font-black uppercase text-white shadow-[0_12px_24px_rgba(11,111,211,0.24)] transition group-hover:scale-105">
-                SM
-              </div>
-              <div className="hidden min-w-0 flex-col sm:flex">
-                <span className="text-xs font-black uppercase leading-none text-text-main">Digital</span>
-                <span className="text-[10px] font-bold uppercase leading-none tracking-widest text-text-muted">Santa Maria</span>
-              </div>
+            <Link
+              href="/"
+              className="group flex shrink-0 items-center transition-transform duration-300 hover:scale-[1.02]"
+              aria-label="Ir para a pagina inicial"
+            >
+              <Logo size={40} withWordmark className="hidden sm:inline-flex" />
+              <Logo size={38} withWordmark={false} className="sm:hidden" />
             </Link>
 
             <button
               onClick={() => setIsExplorerOpen(true)}
-              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-border bg-white/70 px-3 text-xs font-black uppercase tracking-widest text-text-main shadow-sm transition hover:border-primary hover:bg-primary/10 hover:text-primary"
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-2xl border border-border bg-white/70 px-3.5 text-xs font-semibold tracking-wide text-text-main shadow-sm transition hover:border-primary hover:bg-primary/10 hover:text-primary"
               aria-label="Abrir menu de servicos"
             >
               <Grid className="h-4 w-4 text-primary" />
-              <span className="hidden lg:inline">Servicos</span>
+              <span className="hidden lg:inline">Serviços</span>
             </button>
           </div>
 
@@ -136,11 +136,11 @@ export default function TopAppBar() {
             {isStaff && (
               <Link
                 href="/gestao"
-                className="hidden min-h-10 items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/10 px-3 text-[10px] font-black uppercase tracking-widest text-primary transition hover:bg-primary hover:text-white md:inline-flex"
+                className="hidden min-h-10 items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-primary/10 px-3.5 text-[11px] font-bold uppercase tracking-[0.16em] text-primary transition hover:bg-primary hover:text-white md:inline-flex"
                 aria-label="Abrir painel de gestao"
               >
                 <ShieldCheck className="h-4 w-4" />
-                Gestao
+                Gestão
               </Link>
             )}
 
@@ -271,8 +271,8 @@ export default function TopAppBar() {
             <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-primary-light">Portal do Cidadao</p>
-                  <h2 className="mt-2 text-3xl font-black uppercase tracking-normal md:text-5xl">Mapa de servicos</h2>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">Portal do cidadão</p>
+                  <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-5xl">Mapa de serviços</h2>
                 </div>
                 <button
                   onClick={() => setIsExplorerOpen(false)}
@@ -289,14 +289,14 @@ export default function TopAppBar() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setIsExplorerOpen(false)}
-                    className="group flex min-h-32 flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-primary hover:bg-white/10"
+                    className="group flex min-h-32 flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-accent hover:bg-white/10"
                   >
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-primary-light transition group-hover:bg-primary group-hover:text-white">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-accent transition group-hover:bg-accent group-hover:text-text-main">
                       <link.icon className="h-5 w-5" />
                     </span>
                     <span>
-                      <span className="block text-xs font-black uppercase tracking-widest text-white">{link.label}</span>
-                      <span className="mt-1 block text-[10px] font-bold uppercase tracking-widest text-white/40">{link.category}</span>
+                      <span className="block text-sm font-semibold text-white" style={{ fontFamily: 'var(--font-display)' }}>{link.label}</span>
+                      <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">{link.category}</span>
                     </span>
                   </Link>
                 ))}
