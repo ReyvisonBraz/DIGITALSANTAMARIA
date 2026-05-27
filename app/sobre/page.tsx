@@ -128,7 +128,7 @@ export default function SobrePage() {
       </section>
 
       {/* Footer CTA */}
-      <section className="bg-gradient-to-br from-primary-dark via-primary to-secondary-dark p-12 md:p-20 rounded-[3rem] text-white flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden shadow-[0_26px_70px_rgba(14,58,140,0.30)] animate-drift">
+      <section className="bg-gradient-to-br from-primary-dark via-primary to-primary-dark p-12 md:p-20 rounded-[3rem] text-white flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden shadow-[0_26px_70px_rgba(14,58,140,0.30)] animate-drift">
          <div className="relative z-10 space-y-6 max-w-xl">
             <h2 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>Participe da construção</h2>
             <p className="text-lg opacity-85 font-medium leading-relaxed">O portal evolui com base no que os cidadãos enviam pela Ouvidoria. Sua voz molda a próxima versão.</p>
@@ -147,6 +147,7 @@ export default function SobrePage() {
                </button>
             </div>
          </div>
+         <div aria-hidden className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-secondary/25 blur-3xl" />
          <Code2 className="absolute -right-10 -top-10 w-64 h-64 opacity-10 rotate-12 animate-floaty" />
       </section>
 

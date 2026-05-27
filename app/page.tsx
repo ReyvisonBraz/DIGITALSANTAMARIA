@@ -195,8 +195,10 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2, ease }}
               className="glass-panel p-4 sm:p-5"
             >
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-dark via-primary to-secondary-dark p-6 text-white shadow-[0_22px_50px_rgba(14,58,140,0.34)]">
-                <div className="flex items-start justify-between gap-4">
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-dark to-primary p-6 text-white shadow-[0_22px_50px_rgba(14,58,140,0.34)]">
+                {/* Brilho ciano sutil para profundidade (não compõe gradiente duro) */}
+                <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-secondary/30 blur-3xl" />
+                <div className="relative z-10 flex items-start justify-between gap-4">
                   <div>
                     <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
                       Atendimento digital

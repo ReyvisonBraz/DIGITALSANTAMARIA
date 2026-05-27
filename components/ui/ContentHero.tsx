@@ -36,13 +36,13 @@ export default function ContentHero({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
       className={cn(
-        'relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] bg-gradient-to-br from-secondary-dark via-secondary to-secondary-dark p-8 text-white shadow-[0_26px_70px_rgba(17,132,188,0.30)] animate-drift md:p-14',
+        'relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] bg-gradient-to-br from-primary-dark via-primary to-primary-dark p-8 text-white shadow-[0_26px_70px_rgba(14,58,140,0.30)] animate-drift md:p-14',
         className,
       )}
     >
       {/* glows ambiente */}
       <div aria-hidden className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-primary/25 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-secondary/30 blur-3xl" />
 
       <div className="relative z-10 max-w-3xl space-y-5">
         <motion.div
