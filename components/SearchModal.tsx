@@ -109,7 +109,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="absolute inset-0 bg-text-main/40 backdrop-blur-md"
+            className="absolute inset-0 bg-primary-dark/30 backdrop-blur-md"
             aria-hidden="true"
           />
 

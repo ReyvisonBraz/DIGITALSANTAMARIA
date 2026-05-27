@@ -231,7 +231,7 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-text-main p-5 text-white shadow-sm">
+          <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary to-primary-dark p-5 text-white shadow-[0_8px_24px_rgba(26,86,196,0.22)]">
             <FileText className="h-6 w-6 text-primary-light" />
             <h2 className="mt-3 text-lg font-semibold tracking-normal">Como usar o painel</h2>
             <p className="mt-2 text-sm font-medium leading-6 text-white/70">

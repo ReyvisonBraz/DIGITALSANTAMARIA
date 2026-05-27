@@ -76,11 +76,11 @@ export default function EducacaoPage() {
       <section className="relative overflow-hidden rounded-[3.5rem] md:rounded-[5rem] bg-blue-600 text-white p-10 md:p-16 lg:p-24 shadow-4xl flex flex-col md:flex-row items-center justify-between border-4 border-white/10 group">
          <div className="relative z-10 max-w-3xl text-center md:text-left space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] border border-white/20 backdrop-blur-sm">
-               <Award className="w-4 h-4 text-amber-300" />
+               <Award className="w-4 h-4 text-accent" />
                Excelência pública municipal
             </div>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.95] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
-               Educação que <span className="text-amber-300">transforma</span>
+               Educação que <span className="text-accent">transforma</span>
             </h1>
             <p className="text-lg md:text-2xl font-medium opacity-90 max-w-2xl leading-relaxed border-l-2 border-white/30 pl-8">
                A jornada acadêmica do seu filho em um só lugar — do ensino fundamental à mentoria profissional, com matrícula e acompanhamento online.
@@ -189,7 +189,7 @@ export default function EducacaoPage() {
                              </div>
                           </div>
                           <div className="absolute bottom-6 right-6">
-                             <div className="bg-text-main text-white p-4 rounded-3xl border border-white/20 backdrop-blur shadow-2xl flex items-center gap-3">
+                             <div className="bg-gradient-to-br from-primary to-primary-dark text-white p-4 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-3">
                                 <Target className="w-5 h-5 text-blue-600" />
                                 <div className="text-right">
                                    <p className="text-[8px] font-semibold uppercase tracking-widest opacity-60">IDEB</p>
@@ -243,7 +243,7 @@ export default function EducacaoPage() {
             >
                {/* Quick Student Status Panel */}
                <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="bg-text-main p-8 rounded-[4rem] text-white space-y-6 relative overflow-hidden group shadow-3xl">
+                  <div className="bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[4rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">
                      <div className="relative z-10 flex flex-col gap-6">
                         <div className="flex items-center gap-4">
                            <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 backdrop-blur shadow-inner">
@@ -270,7 +270,7 @@ export default function EducacaoPage() {
 
                   <div className="bg-white p-8 rounded-[4rem] border-2 border-border shadow-sm flex flex-col justify-between group hover:border-blue-600 transition-all">
                      <div className="flex items-center justify-between">
-                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 border border-amber-300">
+                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 border border-border">
                            <Utensils size={28} />
                         </div>
                         <span className="text-[9px] font-semibold text-green-500 uppercase tracking-widest flex items-center gap-1.5 leading-none">
@@ -287,7 +287,7 @@ export default function EducacaoPage() {
 
                   <div className="bg-white p-8 rounded-[4rem] border-2 border-border shadow-sm flex flex-col justify-between group hover:border-blue-600 transition-all">
                      <div className="flex items-center justify-between">
-                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 border border-amber-300">
+                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 border border-border">
                            <Bus size={28} />
                         </div>
                         <div className="text-right">
@@ -312,7 +312,7 @@ export default function EducacaoPage() {
                            Acesse documentações oficiais, solicite transferências ou baixe kits escolares digitais diretamente aqui.
                         </p>
                      </div>
-                     <button className="bg-text-main text-white px-10 py-5 rounded-[2rem] font-semibold text-sm shadow-2xl hover:bg-blue-600 transition-all flex items-center gap-4 group/btn">
+                     <button className="bg-primary text-white px-10 py-5 rounded-[2rem] font-semibold text-sm shadow-2xl hover:bg-blue-600 transition-all flex items-center gap-4 group/btn">
                         Ir à ouvidoria
                         <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1.5 transition-transform" />
                      </button>
@@ -353,7 +353,7 @@ export default function EducacaoPage() {
                      
                      <div className="p-6 bg-white/10 rounded-3xl border border-white/20 space-y-4">
                         <div className="flex items-center gap-3">
-                           <Users size={20} className="text-amber-300" />
+                           <Users size={20} className="text-accent" />
                            <span className="text-xs font-semibold uppercase tracking-widest">425 Mentores Ativos</span>
                         </div>
                         <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
@@ -390,7 +390,7 @@ export default function EducacaoPage() {
                   </div>
                   <button 
                      onClick={() => toast('Sincronizando acervo digital para seu dispositivo...', 'info')}
-                     className="bg-text-main text-white px-14 py-6 rounded-[2.5rem] font-semibold text-xs uppercase tracking-[0.2em] shadow-4xl flex items-center gap-4 hover:bg-blue-600 transition-all group/btn"
+                     className="bg-primary text-white px-14 py-6 rounded-[2.5rem] font-semibold text-xs uppercase tracking-[0.2em] shadow-4xl flex items-center gap-4 hover:bg-blue-600 transition-all group/btn"
                   >
                      Acessar Acervo
                      <ArrowRight className="w-6 h-6 group-hover/btn:translate-x-1.5 transition-transform" />

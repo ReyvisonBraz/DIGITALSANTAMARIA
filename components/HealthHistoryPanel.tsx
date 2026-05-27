@@ -27,14 +27,14 @@ export default function HealthHistoryPanel({ isOpen, onClose }: HealthHistoryPan
   return (
     <SidePanel isOpen={isOpen} onClose={onClose} title="Meu Histórico de Saúde">
       <div className="p-8 space-y-10 pb-32">
-        <div className="bg-text-main p-8 rounded-[3.5rem] text-white space-y-6 relative overflow-hidden shadow-2xl group">
+        <div className="bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[3.5rem] text-white space-y-6 relative overflow-hidden shadow-[0_20px_50px_rgba(26,86,196,0.28)] group">
           <div className="relative z-10 flex flex-col gap-6">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 backdrop-blur shadow-inner">
                 <ClipboardList className="w-8 h-8 text-primary" />
               </div>
               <div className="space-y-0.5">
-                <h4 className="text-[10px] font-semibold text-primary uppercase tracking-widest">Acesso Restrito</h4>
+                <h4 className="text-[10px] font-semibold text-accent uppercase tracking-widest">Acesso Restrito</h4>
                 <p className="text-2xl font-semibold tracking-tighter leading-none uppercase">Prontuário <br/> Digital.</p>
               </div>
             </div>

@@ -92,7 +92,7 @@ export default function SobrePage() {
             title: 'Cidadania Ativa',
             desc: 'Empoderar o cidadão para que ele seja o fiscal e o propositor da sua própria rua.',
             icon: Users,
-            color: 'bg-text-main'
+            color: 'bg-primary'
           }
         ].map((item, idx) => (
           <div key={idx} className="bg-white p-10 rounded-[3rem] border-2 border-border hover:border-primary transition-all group shadow-sm flex flex-col gap-6">

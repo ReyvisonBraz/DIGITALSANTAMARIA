@@ -16,7 +16,7 @@ export default function GlobalStatsModal({ isOpen, onClose }: GlobalStatsModalPr
     { label: 'Obras em Dia', value: '94%', icon: CheckCircle2, color: 'text-green-500' },
     { label: 'Escolas Municipais', value: '15', icon: School, color: 'text-blue-500' },
     { label: 'Consultas/Mês', value: '2.800', icon: Stethoscope, color: 'text-tertiary' },
-    { label: 'Empresas Locais', value: '456', icon: Store, color: 'text-orange-500' },
+    { label: 'Empresas Locais', value: '456', icon: Store, color: 'text-secondary' },
     { label: 'Participação PLs', value: '4.500', icon: Vote, color: 'text-primary' },
   ];
 

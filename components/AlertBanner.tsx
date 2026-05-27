@@ -62,7 +62,7 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
             initial={{ y: 50, opacity: 0, scale: 0.9 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 50, opacity: 0, scale: 0.9 }}
-            className="pointer-events-auto bg-text-main text-white p-6 rounded-[2rem] border-2 border-border shadow-2xl relative overflow-hidden"
+            className="pointer-events-auto bg-gradient-to-br from-primary-dark to-primary text-white p-6 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden"
           >
             {/* Background Accent */}
             <div className="absolute top-0 left-0 w-full h-2 bg-accent-danger" />
@@ -77,14 +77,14 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
               <div className="flex items-center gap-1">
                 <button 
                   onClick={() => setIsMinimized(true)}
-                  className="p-1.5 hover:bg-slate-800 rounded-lg transition-colors text-slate-500 hover:text-white"
+                  className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/50 hover:text-white"
                   title="Minimizar"
                 >
                   <ChevronDown className="w-4 h-4" />
                 </button>
-                <button 
+                <button
                   onClick={handleDismiss}
-                  className="p-1.5 hover:bg-slate-800 rounded-lg transition-colors text-slate-500 hover:text-white"
+                  className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/50 hover:text-white"
                   title="Fechar"
                 >
                   <X className="w-4 h-4" />
@@ -92,7 +92,7 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
               </div>
             </div>
 
-            <p className="font-medium text-sm md:text-base leading-relaxed text-slate-200 mb-6">
+            <p className="font-medium text-sm md:text-base leading-relaxed text-white/80 mb-6">
               {message}
             </p>
 

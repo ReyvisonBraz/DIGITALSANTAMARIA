@@ -140,7 +140,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
               type="button"
               onClick={nextStep}
               disabled={!formData.title.trim()}
-              className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-text-main px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white shadow-sm transition disabled:opacity-50"
+              className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-primary px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white shadow-sm transition hover:bg-primary-dark disabled:opacity-50"
             >
               Proxima etapa
               <ChevronRight className="h-4 w-4" />
@@ -174,7 +174,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
                 type="button"
                 onClick={nextStep}
                 disabled={!formData.description.trim()}
-                className="inline-flex min-h-12 flex-1 items-center justify-center gap-3 rounded-xl bg-text-main px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white shadow-sm transition disabled:opacity-50"
+                className="inline-flex min-h-12 flex-1 items-center justify-center gap-3 rounded-xl bg-primary px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white shadow-sm transition hover:bg-primary-dark disabled:opacity-50"
               >
                 Revisar
                 <ChevronRight className="h-4 w-4" />

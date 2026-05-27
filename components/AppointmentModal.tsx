@@ -110,7 +110,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose }) 
             <p className="text-text-muted font-ui font-medium mb-8">
               Agendamento realizado para <strong className="text-text-main">{formData.date} às {formData.time}</strong>.
             </p>
-            <button onClick={handleClose} className="w-full btn-tactile bg-text-main text-white py-4 rounded-xl font-semibold uppercase text-xs tracking-widest shadow-lg">
+            <button onClick={handleClose} className="w-full btn-tactile bg-primary text-white py-4 rounded-xl font-semibold uppercase text-xs tracking-widest shadow-lg">
               Voltar
             </button>
           </motion.div>

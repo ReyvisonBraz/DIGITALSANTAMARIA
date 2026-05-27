@@ -246,7 +246,7 @@ export default function TopAppBar() {
             ) : (
               <button
                 onClick={login}
-                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-text-main px-3 text-[10px] font-semibold uppercase tracking-widest text-white shadow-[0_12px_24px_rgba(15,23,42,0.18)] transition hover:bg-primary"
+                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-3 text-[10px] font-semibold uppercase tracking-widest text-white shadow-[0_12px_24px_rgba(26,86,196,0.22)] transition hover:bg-primary-dark"
                 aria-label="Entrar com conta Google"
               >
                 <span className="hidden sm:inline">Entrar</span>

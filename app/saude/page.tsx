@@ -161,7 +161,7 @@ export default function SaudePage() {
                      animate={{ opacity: 1, x: 0 }}
                      className="space-y-6"
                   >
-                     <div className="bg-text-main p-8 rounded-[3rem] text-white space-y-6 relative overflow-hidden group shadow-2xl">
+                     <div className="bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[3rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">
                         <div className="relative z-10 flex flex-col h-full justify-between gap-6">
                            <div className="space-y-1">
                               <h3 className="text-3xl font-semibold leading-[1.02] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Minha saúde</h3>
@@ -289,7 +289,7 @@ export default function SaudePage() {
             </div>
 
             <div className="absolute top-1/4 left-2/3 group cursor-pointer">
-               <div className="bg-text-main text-white p-4 rounded-full shadow-2xl border-4 border-white">
+               <div className="bg-primary text-white p-4 rounded-full shadow-2xl border-4 border-white">
                   <Hospital className="w-6 h-6" />
                </div>
                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-white p-3 rounded-2xl shadow-2xl border-2 border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
