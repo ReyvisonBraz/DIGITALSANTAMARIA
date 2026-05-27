@@ -90,7 +90,6 @@
     line-height: 1.55;
     letter-spacing: -0.005em;
     min-height: 100vh;
-    transition: --ambient-1 0.6s ease, --ambient-2 0.6s ease;
   }
 
   /* Modo alto contraste */
