@@ -73,14 +73,14 @@ export default function EducacaoPage() {
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 md:p-12 pb-32 gap-12 bg-background">
       
       {/* Academy Hero Section */}
-      <section className="relative overflow-hidden rounded-[3.5rem] md:rounded-[5rem] bg-orange-600 text-white p-10 md:p-16 lg:p-24 shadow-4xl flex flex-col md:flex-row items-center justify-between border-4 border-white/10 group">
+      <section className="relative overflow-hidden rounded-[3.5rem] md:rounded-[5rem] bg-blue-600 text-white p-10 md:p-16 lg:p-24 shadow-4xl flex flex-col md:flex-row items-center justify-between border-4 border-white/10 group">
          <div className="relative z-10 max-w-3xl text-center md:text-left space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] border border-white/20 backdrop-blur-sm">
-               <Award className="w-4 h-4 text-orange-200" />
+               <Award className="w-4 h-4 text-amber-300" />
                Excelência pública municipal
             </div>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.95] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
-               Educação que <span className="text-orange-200 italic">transforma</span>
+               Educação que <span className="text-amber-300 italic">transforma</span>
             </h1>
             <p className="text-lg md:text-2xl font-medium opacity-90 max-w-2xl leading-relaxed border-l-2 border-white/30 pl-8">
                A jornada acadêmica do seu filho em um só lugar — do ensino fundamental à mentoria profissional, com matrícula e acompanhamento online.
@@ -88,13 +88,13 @@ export default function EducacaoPage() {
             <div className="flex flex-wrap gap-4 justify-center md:justify-start pt-4">
                <button
                  onClick={() => toast('Iniciando matrícula digital...', 'success')}
-                 className="bg-white text-orange-600 px-10 py-4 rounded-2xl font-semibold text-sm shadow-xl hover:scale-105 active:scale-95 transition-all shrink-0"
+                 className="bg-white text-blue-600 px-10 py-4 rounded-2xl font-semibold text-sm shadow-xl hover:scale-105 active:scale-95 transition-all shrink-0"
                >
                   Matrícula online
                </button>
                <button
                  onClick={() => toast('Acessando o portal do aluno...', 'info')}
-                 className="bg-orange-700/50 text-white border border-white/20 px-9 py-4 rounded-2xl font-semibold text-sm shadow-lg hover:bg-orange-700 transition-all shrink-0"
+                 className="bg-blue-700/50 text-white border border-white/20 px-9 py-4 rounded-2xl font-semibold text-sm shadow-lg hover:bg-blue-700 transition-all shrink-0"
                >
                   Portal do aluno
                </button>
@@ -121,7 +121,7 @@ export default function EducacaoPage() {
                   onClick={() => setActiveTab(tab)}
                   className={cn(
                      "flex-1 md:flex-none flex items-center gap-3 px-8 py-4 rounded-[2rem] font-semibold text-[10px] uppercase tracking-widest transition-all relative overflow-hidden",
-                     activeTab === tab ? "bg-white text-orange-600 shadow-xl border border-orange-600/10" : "text-text-muted hover:text-text-main"
+                     activeTab === tab ? "bg-white text-blue-600 shadow-xl border border-blue-600/10" : "text-text-muted hover:text-text-main"
                   )}
                >
                   {tab === 'academy' && <Library className="w-4 h-4" />}
@@ -137,7 +137,7 @@ export default function EducacaoPage() {
                <p className="text-xs font-semibold text-green-500 uppercase">100% Operacional</p>
             </div>
             <div className="w-1.5 h-10 bg-border/50 rounded-full" />
-            <Users className="w-6 h-6 text-orange-600 opacity-50" />
+            <Users className="w-6 h-6 text-blue-600 opacity-50" />
          </div>
       </div>
 
@@ -152,17 +152,17 @@ export default function EducacaoPage() {
             >
                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10">
                   <div className="space-y-3">
-                     <h2 className="text-3xl md:text-5xl font-semibold text-text-main tracking-tight leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>Nossa <span className="text-orange-600 italic">rede</span></h2>
+                     <h2 className="text-3xl md:text-5xl font-semibold text-text-main tracking-tight leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>Nossa <span className="text-blue-600 italic">rede</span></h2>
                      <p className="text-text-muted font-medium text-lg opacity-80 max-w-xl leading-relaxed">
                         Unidades de ensino municipais avaliadas e integradas em um só painel de acompanhamento.
                      </p>
                   </div>
                   <div className="relative w-full lg:w-[450px] group">
-                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-text-muted group-focus-within:text-orange-600 transition-colors" />
+                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-text-muted group-focus-within:text-blue-600 transition-colors" />
                      <input 
                         type="text" 
                         placeholder="Buscar unidade por geolocalização ou nome..." 
-                        className="w-full bg-surface border-2 border-border p-6 pl-16 rounded-[2rem] outline-none focus:border-orange-600 transition-all font-semibold placeholder:opacity-40 shadow-inner"
+                        className="w-full bg-surface border-2 border-border p-6 pl-16 rounded-[2rem] outline-none focus:border-blue-600 transition-all font-semibold placeholder:opacity-40 shadow-inner"
                      />
                   </div>
                </div>
@@ -172,7 +172,7 @@ export default function EducacaoPage() {
                     <motion.article 
                       key={school.id}
                       whileHover={{ y: -10 }}
-                      className="bg-white rounded-[4rem] border-2 border-border shadow-sm overflow-hidden group hover:border-orange-600 transition-all flex flex-col relative"
+                      className="bg-white rounded-[4rem] border-2 border-border shadow-sm overflow-hidden group hover:border-blue-600 transition-all flex flex-col relative"
                     >
                        <div className="relative h-64 overflow-hidden">
                           <Image 
@@ -184,13 +184,13 @@ export default function EducacaoPage() {
                           />
                           <div className="absolute top-8 left-8">
                              <div className="px-5 py-2.5 bg-white/95 rounded-full text-[10px] font-semibold uppercase tracking-widest shadow-2xl border-2 border-border flex items-center gap-2">
-                                <div className={cn("w-2 h-2 rounded-full animate-pulse", school.status === 'Vagas Abertas' ? 'bg-green-500' : 'bg-orange-600')} />
+                                <div className={cn("w-2 h-2 rounded-full animate-pulse", school.status === 'Vagas Abertas' ? 'bg-green-500' : 'bg-blue-600')} />
                                 {school.status}
                              </div>
                           </div>
                           <div className="absolute bottom-6 right-6">
                              <div className="bg-text-main text-white p-4 rounded-3xl border border-white/20 backdrop-blur shadow-2xl flex items-center gap-3">
-                                <Target className="w-5 h-5 text-orange-500" />
+                                <Target className="w-5 h-5 text-blue-600" />
                                 <div className="text-right">
                                    <p className="text-[8px] font-semibold uppercase tracking-widest opacity-60">IDEB</p>
                                    <p className="text-base font-semibold tabular-nums leading-none">{school.ideb}</p>
@@ -202,26 +202,26 @@ export default function EducacaoPage() {
                        <div className="p-10 space-y-8 flex-grow flex flex-col">
                           <div className="space-y-4">
                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-surface rounded-xl flex items-center justify-center text-orange-600 border border-border">
+                                <div className="w-10 h-10 bg-surface rounded-xl flex items-center justify-center text-blue-600 border border-border">
                                    <School className="w-5 h-5" />
                                 </div>
                                 <span className="text-[10px] font-semibold text-text-muted uppercase tracking-widest leading-none">{school.type}</span>
                              </div>
-                             <h3 className="text-2xl font-semibold text-text-main tracking-tight leading-snug group-hover:text-orange-600 transition-colors" style={{ fontFamily: 'var(--font-display)' }}>{school.name}</h3>
-                             <p className="text-sm font-medium text-text-muted flex items-center gap-3 leading-relaxed border-l-2 border-orange-500/20 pl-4">
+                             <h3 className="text-2xl font-semibold text-text-main tracking-tight leading-snug group-hover:text-blue-600 transition-colors" style={{ fontFamily: 'var(--font-display)' }}>{school.name}</h3>
+                             <p className="text-sm font-medium text-text-muted flex items-center gap-3 leading-relaxed border-l-2 border-blue-600/20 pl-4">
                                 {school.address}
                              </p>
                           </div>
 
                           <div className="pt-8 mt-auto border-t border-border flex items-center justify-between">
                              <div className="flex items-center gap-2">
-                                <Star className="w-5 h-5 text-orange-500 fill-orange-500" />
+                                <Star className="w-5 h-5 text-blue-600 fill-blue-600" />
                                 <span className="text-xl font-semibold text-text-main tabular-nums">{school.rating}</span>
                                 <span className="text-[9px] font-semibold text-text-muted uppercase tracking-widest ml-2">Avaliação Parental</span>
                              </div>
                              <button 
                                onClick={() => setSelectedSchool(school)}
-                               className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center text-orange-600 hover:bg-orange-600 hover:text-white transition-all shadow-Tactile active:scale-90 group/btn"
+                               className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-Tactile active:scale-90 group/btn"
                              >
                                 <ChevronRight className="w-8 h-8 group-hover/btn:translate-x-1.5 transition-transform" />
                              </button>
@@ -247,7 +247,7 @@ export default function EducacaoPage() {
                      <div className="relative z-10 flex flex-col gap-6">
                         <div className="flex items-center gap-4">
                            <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 backdrop-blur shadow-inner">
-                              <Users className="w-7 h-7 text-orange-500" />
+                              <Users className="w-7 h-7 text-blue-600" />
                            </div>
                            <div className="space-y-0.5">
                               <h4 className="text-[11px] font-bold uppercase tracking-[0.16em] opacity-60">Aluno conectado</h4>
@@ -268,9 +268,9 @@ export default function EducacaoPage() {
                      <Star className="absolute -right-10 -bottom-10 w-48 h-48 opacity-[0.03] rotate-12" />
                   </div>
 
-                  <div className="bg-white p-8 rounded-[4rem] border-2 border-border shadow-sm flex flex-col justify-between group hover:border-orange-500 transition-all">
+                  <div className="bg-white p-8 rounded-[4rem] border-2 border-border shadow-sm flex flex-col justify-between group hover:border-blue-600 transition-all">
                      <div className="flex items-center justify-between">
-                        <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 border border-orange-200">
+                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 border border-amber-300">
                            <Utensils size={28} />
                         </div>
                         <span className="text-[9px] font-semibold text-green-500 uppercase tracking-widest flex items-center gap-1.5 leading-none">
@@ -282,24 +282,24 @@ export default function EducacaoPage() {
                         <h4 className="text-xl font-semibold text-text-main leading-tight tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Alimentação escolar</h4>
                         <p className="text-xs font-medium text-text-muted leading-relaxed">Cardápio: feijoada light, salada mix e suco</p>
                      </div>
-                     <button className="text-[10px] font-semibold text-orange-600 uppercase tracking-widest hover:underline text-left">Ver Cardápio Completo</button>
+                     <button className="text-[10px] font-semibold text-blue-600 uppercase tracking-widest hover:underline text-left">Ver Cardápio Completo</button>
                   </div>
 
-                  <div className="bg-white p-8 rounded-[4rem] border-2 border-border shadow-sm flex flex-col justify-between group hover:border-orange-500 transition-all">
+                  <div className="bg-white p-8 rounded-[4rem] border-2 border-border shadow-sm flex flex-col justify-between group hover:border-blue-600 transition-all">
                      <div className="flex items-center justify-between">
-                        <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 border border-orange-200">
+                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 border border-amber-300">
                            <Bus size={28} />
                         </div>
                         <div className="text-right">
                            <p className="text-xl font-semibold text-text-main leading-none tabular-nums">08:15</p>
-                           <p className="text-[8px] font-semibold text-orange-600 uppercase tracking-widest">Chegada Ônibus</p>
+                           <p className="text-[8px] font-semibold text-blue-600 uppercase tracking-widest">Chegada Ônibus</p>
                         </div>
                      </div>
                      <div className="space-y-1">
                         <h4 className="text-xl font-semibold text-text-main leading-tight tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Transporte escolar</h4>
                         <p className="text-xs font-medium text-text-muted leading-relaxed">Linha #04 está cruzando a Av. Central.</p>
                      </div>
-                     <button className="text-[10px] font-semibold text-orange-600 uppercase tracking-widest hover:underline text-left">Rastrear em Tempo Real</button>
+                     <button className="text-[10px] font-semibold text-blue-600 uppercase tracking-widest hover:underline text-left">Rastrear em Tempo Real</button>
                   </div>
                </div>
 
@@ -312,7 +312,7 @@ export default function EducacaoPage() {
                            Acesse documentações oficiais, solicite transferências ou baixe kits escolares digitais diretamente aqui.
                         </p>
                      </div>
-                     <button className="bg-text-main text-white px-10 py-5 rounded-[2rem] font-semibold text-sm shadow-2xl hover:bg-orange-600 transition-all flex items-center gap-4 group/btn">
+                     <button className="bg-text-main text-white px-10 py-5 rounded-[2rem] font-semibold text-sm shadow-2xl hover:bg-blue-600 transition-all flex items-center gap-4 group/btn">
                         Ir à ouvidoria
                         <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1.5 transition-transform" />
                      </button>
@@ -325,12 +325,12 @@ export default function EducacaoPage() {
                         { label: 'Cursos Extras', desc: 'Aulas de programação e artes no Setor de Apoio.', icon: Sparkles },
                         { label: 'Manual Pedagógico', desc: 'Diretrizes curriculares do ano letivo vigente.', icon: BookOpen }
                      ].map((item, i) => (
-                        <div key={i} className="bg-white p-8 rounded-[3rem] border-2 border-border shadow-sm hover:border-orange-600 transition-all group/item flex gap-6 items-center">
-                           <div className="w-16 h-16 rounded-[1.5rem] bg-surface flex items-center justify-center text-orange-600 border-2 border-border group-hover/item:scale-110 transition-transform shadow-inner">
+                        <div key={i} className="bg-white p-8 rounded-[3rem] border-2 border-border shadow-sm hover:border-blue-600 transition-all group/item flex gap-6 items-center">
+                           <div className="w-16 h-16 rounded-[1.5rem] bg-surface flex items-center justify-center text-blue-600 border-2 border-border group-hover/item:scale-110 transition-transform shadow-inner">
                               <item.icon size={24} />
                            </div>
                            <div className="space-y-0.5">
-                              <h4 className="text-lg font-semibold text-text-main tracking-tight group-hover/item:text-orange-600 transition-colors leading-snug" style={{ fontFamily: 'var(--font-display)' }}>{item.label}</h4>
+                              <h4 className="text-lg font-semibold text-text-main tracking-tight group-hover/item:text-blue-600 transition-colors leading-snug" style={{ fontFamily: 'var(--font-display)' }}>{item.label}</h4>
                               <p className="text-xs font-medium text-text-muted opacity-70 leading-relaxed">{item.desc}</p>
                            </div>
                         </div>
@@ -341,7 +341,7 @@ export default function EducacaoPage() {
                </div>
 
                {/* Right Promotion Card */}
-               <div className="lg:col-span-4 bg-orange-600 p-10 rounded-[4rem] text-white space-y-10 relative overflow-hidden group shadow-4xl border-2 border-white/5">
+               <div className="lg:col-span-4 bg-blue-600 p-10 rounded-[4rem] text-white space-y-10 relative overflow-hidden group shadow-4xl border-2 border-white/5">
                   <div className="relative z-10 space-y-8">
                      <div className="flex items-center gap-4">
                         <div className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur shadow-inner">
@@ -353,7 +353,7 @@ export default function EducacaoPage() {
                      
                      <div className="p-6 bg-white/10 rounded-3xl border border-white/20 space-y-4">
                         <div className="flex items-center gap-3">
-                           <Users size={20} className="text-orange-200" />
+                           <Users size={20} className="text-amber-300" />
                            <span className="text-xs font-semibold uppercase tracking-widest">425 Mentores Ativos</span>
                         </div>
                         <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
@@ -361,7 +361,7 @@ export default function EducacaoPage() {
                         </div>
                      </div>
 
-                     <button className="w-full py-5 bg-white text-orange-600 rounded-[2rem] font-semibold text-xs uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all shadow-3xl">Quero Participar</button>
+                     <button className="w-full py-5 bg-white text-blue-600 rounded-[2rem] font-semibold text-xs uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all shadow-3xl">Quero Participar</button>
                   </div>
                   <Target className="absolute -right-12 -top-12 w-64 h-64 opacity-[0.05] rotate-12" />
                </div>
@@ -378,11 +378,11 @@ export default function EducacaoPage() {
             >
                <div className="bg-surface p-12 md:p-20 rounded-[5rem] border-2 border-border border-dashed flex flex-col lg:flex-row items-center justify-between gap-12 relative overflow-hidden group shadow-inner">
                   <div className="flex flex-col md:flex-row items-center gap-10 relative z-10 text-center md:text-left">
-                     <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-[2.5rem] flex items-center justify-center text-orange-600 border-4 border-border shadow-4xl shrink-0 group-hover:rotate-12 transition-transform">
+                     <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-[2.5rem] flex items-center justify-center text-blue-600 border-4 border-border shadow-4xl shrink-0 group-hover:rotate-12 transition-transform">
                         <Library className="w-12 h-12 md:w-16 md:h-16" />
                      </div>
                      <div className="space-y-4">
-                        <h4 className="text-4xl md:text-6xl font-semibold text-text-main tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>Biblioteca <span className="text-orange-600 italic">universal</span></h4>
+                        <h4 className="text-4xl md:text-6xl font-semibold text-text-main tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>Biblioteca <span className="text-blue-600 italic">universal</span></h4>
                         <p className="text-lg md:text-xl font-medium text-text-muted max-w-2xl leading-relaxed opacity-75">
                            Acesso direto a mais de 50.000 títulos digitais e acervos históricos do município, gratuitos para todos os cidadãos.
                         </p>
@@ -390,12 +390,12 @@ export default function EducacaoPage() {
                   </div>
                   <button 
                      onClick={() => toast('Sincronizando acervo digital para seu dispositivo...', 'info')}
-                     className="bg-text-main text-white px-14 py-6 rounded-[2.5rem] font-semibold text-xs uppercase tracking-[0.2em] shadow-4xl flex items-center gap-4 hover:bg-orange-600 transition-all group/btn"
+                     className="bg-text-main text-white px-14 py-6 rounded-[2.5rem] font-semibold text-xs uppercase tracking-[0.2em] shadow-4xl flex items-center gap-4 hover:bg-blue-600 transition-all group/btn"
                   >
                      Acessar Acervo
                      <ArrowRight className="w-6 h-6 group-hover/btn:translate-x-1.5 transition-transform" />
                   </button>
-                  <Sparkles className="absolute -right-16 -bottom-16 w-96 h-96 opacity-[0.03] text-orange-600 animate-slow-spin" />
+                  <Sparkles className="absolute -right-16 -bottom-16 w-96 h-96 opacity-[0.03] text-blue-600 animate-slow-spin" />
                </div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -405,13 +405,13 @@ export default function EducacaoPage() {
                      { label: 'Audiobooks', meta: 'Acessibilidade Total', icon: Users },
                      { label: 'Multimídia', meta: 'Acervo Histórico', icon: Library }
                   ].map((item, i) => (
-                     <div key={i} className="bg-white p-8 rounded-[3.5rem] border-2 border-border shadow-sm hover:border-orange-500 transition-all group flex flex-col items-center text-center gap-6">
-                        <div className="w-20 h-20 bg-surface rounded-[1.8rem] flex items-center justify-center text-orange-600 border-2 border-border group-hover:scale-110 transition-transform shadow-inner">
+                     <div key={i} className="bg-white p-8 rounded-[3.5rem] border-2 border-border shadow-sm hover:border-blue-600 transition-all group flex flex-col items-center text-center gap-6">
+                        <div className="w-20 h-20 bg-surface rounded-[1.8rem] flex items-center justify-center text-blue-600 border-2 border-border group-hover:scale-110 transition-transform shadow-inner">
                            <item.icon size={32} />
                         </div>
                         <div className="space-y-1">
                            <h5 className="text-base font-semibold text-text-main leading-snug tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>{item.label}</h5>
-                           <p className="text-[10px] font-bold text-orange-600 uppercase tracking-[0.14em]">{item.meta}</p>
+                           <p className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.14em]">{item.meta}</p>
                         </div>
                      </div>
                   ))}
@@ -440,7 +440,7 @@ export default function EducacaoPage() {
              <div className="grid grid-cols-2 gap-4">
                 <div className="p-6 bg-surface rounded-3xl border-2 border-border flex flex-col gap-4">
                    <div className="flex items-center gap-3">
-                      <Target className="w-5 h-5 text-orange-500" />
+                      <Target className="w-5 h-5 text-blue-600" />
                       <span className="text-[10px] font-semibold uppercase text-text-muted tracking-widest">Performance IDEB</span>
                    </div>
                    <div className="flex items-baseline gap-2">
@@ -450,11 +450,11 @@ export default function EducacaoPage() {
                 </div>
                 <div className="p-6 bg-surface rounded-3xl border-2 border-border flex flex-col gap-4">
                    <div className="flex items-center gap-3">
-                      <Users className="w-5 h-5 text-orange-500" />
+                      <Users className="w-5 h-5 text-blue-600" />
                       <span className="text-[10px] font-semibold uppercase text-text-muted tracking-widest">Status de Vagas</span>
                    </div>
                    <div className="flex items-baseline gap-2">
-                      <span className={cn("text-xl font-semibold uppercase leading-none", selectedSchool.status === 'Vagas Abertas' ? 'text-green-600' : 'text-orange-600')}>
+                      <span className={cn("text-xl font-semibold uppercase leading-none", selectedSchool.status === 'Vagas Abertas' ? 'text-green-600' : 'text-blue-600')}>
                          {selectedSchool.status}
                       </span>
                    </div>
@@ -463,7 +463,7 @@ export default function EducacaoPage() {
 
              <div className="space-y-4">
                 <div className="p-6 bg-white border-2 border-border rounded-3xl flex items-center gap-5">
-                   <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 border border-orange-100">
+                   <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 border border-blue-100">
                       <MapPin size={24} />
                    </div>
                    <div>
@@ -472,7 +472,7 @@ export default function EducacaoPage() {
                    </div>
                 </div>
                 <div className="p-6 bg-white border-2 border-border rounded-3xl flex items-center gap-5">
-                   <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 border border-orange-100">
+                   <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 border border-blue-100">
                       <Clock size={24} />
                    </div>
                    <div>
@@ -485,7 +485,7 @@ export default function EducacaoPage() {
              <div className="flex flex-col gap-4 pt-6">
                 <button 
                   onClick={() => toast('Solicitação de transferência gerada com sucesso.', 'success')}
-                  className="w-full bg-orange-600 text-white py-5 rounded-3xl font-semibold text-sm shadow-2xl hover:bg-orange-700 active:scale-95 transition-all flex items-center justify-center gap-4"
+                  className="w-full bg-blue-600 text-white py-5 rounded-3xl font-semibold text-sm shadow-2xl hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-4"
                 >
                    Solicitar transferência
                    <ArrowRight size={20} />

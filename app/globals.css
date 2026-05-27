@@ -2,8 +2,9 @@
  * @module globals.css
  * @description Design system "Conecta Santa Maria".
  *
- * Direção visual: Terracota Tropical
- *   terracota (primária) · verde-musgo (secundária) · dourado (acento) · creme (fundo)
+ * Direção visual: Identidade oficial de Santa Maria do Pará
+ *   azul institucional (primária) · azul-ciano (secundária) · amarelo-ouro (acento) · branco/azul-claro (fundo)
+ *   verde e vermelho do brasão como detalhes semânticos
  * Tipografia: Fraunces (display, editorial) + Plus Jakarta Sans (texto)
  *
  * Estrutura:
@@ -18,46 +19,46 @@
 /* ─── Design Tokens ──────────────────────────────────────────────── */
 
 @theme {
-  /* Primária — Terracota */
-  --color-primary: #B5462E;
-  --color-primary-dark: #8B3320;
-  --color-primary-light: #F3E3DC;
+  /* Primária — Azul institucional */
+  --color-primary: #1A56C4;
+  --color-primary-dark: #0E3A8C;
+  --color-primary-light: #DCE8FB;
 
-  /* Secundária — Verde-musgo */
-  --color-secondary: #3A5A40;
-  --color-secondary-dark: #2C4431;
-  --color-secondary-light: #E4EBE3;
+  /* Secundária — Azul-ciano */
+  --color-secondary: #16A6E0;
+  --color-secondary-dark: #1184BC;
+  --color-secondary-light: #DAF1FC;
 
-  /* Acento — Dourado */
-  --color-accent: #D89A3F;
-  --color-accent-dark: #B97E28;
+  /* Acento — Amarelo-ouro */
+  --color-accent: #FBC02D;
+  --color-accent-dark: #E0A413;
 
-  /* Compat: tertiary mapeado para o verde-musgo (usos legados) */
-  --color-tertiary: #3A5A40;
+  /* Compat: tertiary mapeado para o ciano (usos legados) */
+  --color-tertiary: #16A6E0;
 
-  /* Superfícies — Creme */
+  /* Superfícies — Branco / azul-claro */
   --color-surface: #FFFFFF;
-  --color-surface-container: #FBF6EE;
-  --color-background: #F6EEE2;
+  --color-surface-container: #F4F8FE;
+  --color-background: #EEF4FC;
 
-  /* Texto — Marrom quente */
-  --color-text-main: #2E2019;
-  --color-text-muted: #6E5C50;
+  /* Texto — Azul-marinho profundo */
+  --color-text-main: #14224A;
+  --color-text-muted: #5A6B8C;
 
   /* Bordas */
-  --color-border: #E7DCCC;
+  --color-border: #DCE5F2;
 
-  /* Semânticos */
-  --color-accent-danger: #C0392B;
-  --color-accent-success: #3A5A40;
+  /* Semânticos — verde e vermelho do brasão */
+  --color-accent-danger: #E23B3B;
+  --color-accent-success: #2E9E5B;
 
   /* Tipografia */
   --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   /* Sombras assinatura */
-  --shadow-soft: 0 10px 34px rgba(74, 38, 24, 0.08);
-  --shadow-lift: 0 22px 50px rgba(74, 38, 24, 0.14);
+  --shadow-soft: 0 10px 34px rgba(20, 34, 74, 0.08);
+  --shadow-lift: 0 22px 50px rgba(20, 34, 74, 0.14);
 }
 
 /* ─── Base Layer ─────────────────────────────────────────────────── */
@@ -67,8 +68,8 @@
     --base-font-size: 16px;
     --layout-scale: 1;
     /* Tom ambiente controlado pelo scroll (ScrollAmbience) */
-    --ambient-1: rgba(181, 70, 46, 0.10);
-    --ambient-2: rgba(58, 90, 64, 0.09);
+    --ambient-1: rgba(26, 86, 196, 0.12);
+    --ambient-2: rgba(22, 166, 224, 0.10);
   }
 
   html {
@@ -81,7 +82,7 @@
     background:
       radial-gradient(circle at 14% -2%, var(--ambient-1), transparent 34rem),
       radial-gradient(circle at 88% 8%, var(--ambient-2), transparent 32rem),
-      linear-gradient(180deg, #FBF6EE 0%, var(--color-background, #F6EEE2) 52%, #F1E6D6 100%);
+      linear-gradient(180deg, #F7FAFF 0%, var(--color-background, #EEF4FC) 52%, #E6EEFA 100%);
     background-attachment: fixed;
     color: var(--color-text-main);
     font-family: var(--font-sans);
@@ -99,10 +100,10 @@
     --color-text-main: #FFFFFF;
     --color-text-muted: #E5E7EB;
     --color-border: #4B5563;
-    --color-primary: #FBBF6E;
+    --color-primary: #8FBEFF;
     --color-primary-dark: #FFFFFF;
-    --color-primary-light: #3A1F12;
-    --color-accent: #FBBF6E;
+    --color-primary-light: #0A1730;
+    --color-accent: #FFD451;
   }
 
   /* Tipografia editorial */
@@ -133,7 +134,7 @@
   }
 
   ::selection {
-    background: rgba(181, 70, 46, 0.20);
+    background: rgba(26, 86, 196, 0.20);
     color: var(--color-text-main);
   }
 
@@ -163,8 +164,8 @@
     pointer-events: none;
     z-index: -1;
     background-image:
-      linear-gradient(rgba(46, 32, 25, 0.030) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(46, 32, 25, 0.030) 1px, transparent 1px);
+      linear-gradient(rgba(20, 34, 74, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(20, 34, 74, 0.03) 1px, transparent 1px);
     background-size: 46px 46px;
     mask-image: linear-gradient(to bottom, rgba(0,0,0,0.40), transparent 72%);
   }
@@ -172,8 +173,8 @@
   /* ── Painéis ── */
   .hero-panel {
     @apply relative overflow-hidden border bg-white/85 backdrop-blur-xl;
-    border-color: rgba(231, 220, 204, 0.9);
-    box-shadow: 0 30px 80px rgba(74, 38, 24, 0.12);
+    border-color: rgba(220, 229, 242, 0.9);
+    box-shadow: 0 30px 80px rgba(20, 34, 74, 0.12);
     border-radius: 2rem;
   }
 
@@ -184,13 +185,13 @@
     width: 34rem;
     height: 34rem;
     border-radius: 9999px;
-    background: radial-gradient(circle, rgba(181, 70, 46, 0.16), transparent 64%);
+    background: radial-gradient(circle, rgba(26, 86, 196, 0.16), transparent 64%);
     pointer-events: none;
   }
 
   .glass-panel {
     @apply border bg-white/80 backdrop-blur-xl;
-    border-color: rgba(231, 220, 204, 0.9);
+    border-color: rgba(220, 229, 242, 0.9);
     box-shadow: var(--shadow-soft);
     border-radius: 1.4rem;
   }
@@ -198,7 +199,7 @@
   /* ── Card cívico ── */
   .civic-card {
     @apply relative overflow-hidden border bg-white/92 transition-all duration-300;
-    border-color: rgba(231, 220, 204, 0.95);
+    border-color: rgba(220, 229, 242, 0.95);
     box-shadow: var(--shadow-soft);
     border-radius: 1.4rem;
   }
@@ -208,14 +209,14 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(135deg, rgba(255, 247, 238, 0.85), transparent 46%);
+    background: linear-gradient(135deg, rgba(240, 246, 255, 0.9), transparent 46%);
     opacity: 0;
     transition: opacity 240ms ease;
   }
 
   .civic-card:hover {
     transform: translateY(-4px);
-    border-color: rgba(181, 70, 46, 0.32);
+    border-color: rgba(26, 86, 196, 0.32);
     box-shadow: var(--shadow-lift);
   }
 
@@ -224,8 +225,8 @@
   /* ── Eyebrow / chip ── */
   .soft-chip {
     @apply inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em];
-    border-color: rgba(181, 70, 46, 0.22);
-    background: rgba(181, 70, 46, 0.08);
+    border-color: rgba(26, 86, 196, 0.22);
+    background: rgba(26, 86, 196, 0.08);
     color: var(--color-primary);
   }
 
@@ -253,11 +254,11 @@
   .action-button-primary {
     @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-2xl px-6 py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
     background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-    box-shadow: 0 16px 32px rgba(181, 70, 46, 0.28);
+    box-shadow: 0 16px 32px rgba(26, 86, 196, 0.28);
   }
 
   .action-button-primary:hover {
-    box-shadow: 0 22px 44px rgba(181, 70, 46, 0.36);
+    box-shadow: 0 22px 44px rgba(26, 86, 196, 0.36);
     transform: translateY(-2px);
   }
 
@@ -276,7 +277,7 @@
     @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-2xl border bg-white/85 px-6 py-3 text-sm font-bold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
     border-color: var(--color-border);
     color: var(--color-text-main);
-    box-shadow: 0 2px 8px rgba(74, 38, 24, 0.05);
+    box-shadow: 0 2px 8px rgba(20, 34, 74, 0.05);
   }
 
   .action-button-secondary:hover {
@@ -293,7 +294,7 @@
 
   /* Texto com gradiente da marca */
   .text-gradient {
-    background: linear-gradient(120deg, var(--color-primary), var(--color-accent) 70%);
+    background: linear-gradient(120deg, var(--color-primary), var(--color-secondary) 78%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -344,7 +345,7 @@
 @property --ambient-1 {
   syntax: "<color>";
   inherits: true;
-  initial-value: rgba(181, 70, 46, 0.10);
+  initial-value: rgba(26, 86, 196, 0.10);
 }
 @property --ambient-2 {
   syntax: "<color>";

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Paleta — Conecta Santa Maria do Pará</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --primary:#1A56C4; --primary-dark:#0E3A8C; --primary-light:#DCE8FB;
+    --secondary:#16A6E0; --secondary-dark:#1184BC; --secondary-light:#DAF1FC;
+    --accent:#FBC02D; --accent-dark:#E0A413;
+    --text:#14224A; --muted:#5A6B8C; --border:#DCE5F2;
+    --bg:#EEF4FC; --success:#2E9E5B; --danger:#E23B3B;
+    --display:'Fraunces',Georgia,serif; --sans:'Plus Jakarta Sans',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:var(--sans); color:var(--text); letter-spacing:-.005em;
+    background:
+      radial-gradient(circle at 14% -2%, rgba(26,86,196,.12), transparent 34rem),
+      radial-gradient(circle at 88% 8%, rgba(22,166,224,.10), transparent 32rem),
+      linear-gradient(180deg,#F7FAFF 0%,#EEF4FC 52%,#E6EEFA 100%);
+    background-attachment:fixed; min-height:100vh; padding:40px 20px 80px;
+  }
+  .wrap{max-width:1040px;margin:0 auto}
+  h1,h2,h3,h4{font-family:var(--display);font-weight:600;letter-spacing:-.02em;margin:0}
+  .eyebrow{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.18em;color:var(--primary)}
+  .sec{margin-top:42px}
+  .sec>.eyebrow{margin-bottom:14px;display:block}
+
+  /* Swatches */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+  .sw{border-radius:18px;border:1px solid var(--border);overflow:hidden;background:#fff;box-shadow:0 10px 34px rgba(20,34,74,.08)}
+  .sw .chip{height:84px}
+  .sw .meta{padding:10px 12px}
+  .sw .name{font-weight:700;font-size:13px}
+  .sw .hex{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;text-transform:uppercase}
+
+  /* Hero */
+  .hero{position:relative;overflow:hidden;border-radius:28px;border:1px solid rgba(220,229,242,.9);
+    background:rgba(255,255,255,.85);backdrop-filter:blur(18px);box-shadow:0 30px 80px rgba(20,34,74,.12);padding:40px}
+  .hero::after{content:"";position:absolute;inset:auto -16% -42% auto;width:34rem;height:34rem;border-radius:9999px;
+    background:radial-gradient(circle,rgba(26,86,196,.16),transparent 64%)}
+  .hero .pill{display:inline-flex;align-items:center;gap:8px;background:var(--primary-light);color:var(--primary);
+    border:1px solid rgba(26,86,196,.2);border-radius:999px;padding:7px 14px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.16em}
+  .hero h1{font-size:clamp(36px,6vw,68px);line-height:1.02;margin:18px 0 14px;position:relative;z-index:1}
+  .grad{background:linear-gradient(120deg,var(--primary),var(--secondary) 78%);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+  .hero p{max-width:560px;color:var(--muted);font-weight:500;font-size:17px;line-height:1.6;margin:0 0 22px;position:relative;z-index:1}
+
+  /* Buttons */
+  .btns{display:flex;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+  .btn{border:0;cursor:pointer;border-radius:14px;padding:13px 22px;font-family:var(--sans);font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px}
+  .btn-primary{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:0 16px 32px rgba(26,86,196,.28)}
+  .btn-gold{color:var(--primary-dark);background:linear-gradient(135deg,var(--accent),var(--accent-dark));box-shadow:0 16px 32px rgba(224,164,19,.30)}
+  .btn-ghost{background:#fff;border:1px solid var(--border);color:var(--text)}
+
+  /* Service grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+  .card{border-radius:22px;border:1px solid var(--border);background:#fff;padding:20px;box-shadow:0 10px 34px rgba(20,34,74,.07);transition:.25s}
+  .card:hover{transform:translateY(-4px);box-shadow:0 22px 50px rgba(20,34,74,.14);border-color:rgba(26,86,196,.3)}
+  .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:22px;margin-bottom:14px}
+  .card .lbl{font-weight:700;font-size:15px}
+  .card .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .t-sky{background:linear-gradient(135deg,#e0f2fe,#fff)} .i-sky{background:#DAF1FC;color:#1184BC}
+  .t-blue{background:linear-gradient(135deg,#dbeafe,#fff)} .i-blue{background:#DCE8FB;color:#1A56C4}
+  .t-green{background:linear-gradient(135deg,#d1fae5,#fff)} .i-green{background:#d1fae5;color:#2E9E5B}
+  .t-gold{background:linear-gradient(135deg,#fef3c7,#fff)} .i-gold{background:#fef3c7;color:#B5860C}
+  .t-indigo{background:linear-gradient(135deg,#e0e7ff,#fff)} .i-indigo{background:#e0e7ff;color:#4f46e5}
+  .t-cyan{background:linear-gradient(135deg,#cffafe,#fff)} .i-cyan{background:#cffafe;color:#0e7490}
+
+  /* CTA */
+  .cta{position:relative;overflow:hidden;border-radius:28px;color:#fff;padding:44px;
+    background:linear-gradient(135deg,var(--primary-dark),var(--primary) 55%,var(--secondary-dark));box-shadow:0 26px 70px rgba(14,58,140,.34)}
+  .cta h2{font-size:34px;margin-bottom:10px}
+  .cta p{opacity:.9;max-width:520px;font-weight:500;margin:0 0 20px}
+  .emblem{position:absolute;right:-10px;top:-10px;opacity:.14}
+
+  .note{margin-top:46px;padding:18px 20px;border-radius:16px;background:var(--secondary-light);border:1px solid rgba(22,166,224,.3);color:var(--primary-dark);font-size:13px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <span class="eyebrow">Identidade · Santa Maria do Pará</span>
+  <h1 style="font-size:40px;margin-top:6px">Nova paleta do portal</h1>
+  <p style="color:var(--muted);max-width:620px;font-weight:500">Azul institucional + azul-ciano + amarelo-ouro, com verde e vermelho do brasão como detalhes. Mesmo as fontes e componentes do site real.</p>
+
+  <div class="sec">
+    <span class="eyebrow">Cores</span>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#1A56C4"></div><div class="meta"><div class="name">Azul institucional</div><div class="hex">#1A56C4</div></div></div>
+      <div class="sw"><div class="chip" style="background:#0E3A8C"></div><div class="meta"><div class="name">Azul-marinho</div><div class="hex">#0E3A8C</div></div></div>
+      <div class="sw"><div class="chip" style="background:#16A6E0"></div><div class="meta"><div class="name">Azul-ciano</div><div class="hex">#16A6E0</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FBC02D"></div><div class="meta"><div class="name">Amarelo-ouro</div><div class="hex">#FBC02D</div></div></div>
+      <div class="sw"><div class="chip" style="background:#2E9E5B"></div><div class="meta"><div class="name">Verde (brasão)</div><div class="hex">#2E9E5B</div></div></div>
+      <div class="sw"><div class="chip" style="background:#E23B3B"></div><div class="meta"><div class="name">Vermelho (brasão)</div><div class="hex">#E23B3B</div></div></div>
+      <div class="sw"><div class="chip" style="background:#EEF4FC"></div><div class="meta"><div class="name">Fundo claro</div><div class="hex">#EEF4FC</div></div></div>
+      <div class="sw"><div class="chip" style="background:#14224A"></div><div class="meta"><div class="name">Texto</div><div class="hex">#14224A</div></div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <span class="eyebrow">Hero + botões</span>
+    <div class="hero">
+      <span class="pill">◆ Portal do cidadão</span>
+      <h1>Sua cidade <span class="grad">na palma da mão</span></h1>
+      <p>Solicite serviços, acompanhe protocolos e participe das decisões de Santa Maria do Pará — tudo em um só lugar.</p>
+      <div class="btns">
+        <button class="btn btn-primary">Abrir solicitação →</button>
+        <button class="btn btn-gold">Destaque em ouro</button>
+        <button class="btn btn-ghost">Consultar protocolo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <span class="eyebrow">Grade de serviços</span>
+    <div class="grid">
+      <div class="card"><div class="ic i-sky t-sky">♡</div><div class="lbl">Saúde</div><div class="sub">Ciano</div></div>
+      <div class="card"><div class="ic i-blue">🎓</div><div class="lbl">Educação</div><div class="sub">Azul + ouro</div></div>
+      <div class="card"><div class="ic i-green">💼</div><div class="lbl">Empregos</div><div class="sub">Verde</div></div>
+      <div class="card"><div class="ic i-gold">🏛</div><div class="lbl">Tributos</div><div class="sub">Ouro</div></div>
+      <div class="card"><div class="ic i-indigo">📅</div><div class="lbl">Eventos</div><div class="sub">Índigo</div></div>
+      <div class="card"><div class="ic i-cyan">🔔</div><div class="lbl">Serviços</div><div class="sub">Ciano</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <span class="eyebrow">Faixa de chamada</span>
+    <div class="cta">
+      <svg class="emblem" width="220" height="220" viewBox="0 0 40 40" fill="none">
+        <path d="M28 8.4 A 14 14 0 1 0 28 31.6" stroke="#fff" stroke-width="4.6" stroke-linecap="round"/>
+        <path d="M20 20 L29.5 9.2" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="20" cy="20" r="3.5" fill="#fff"/>
+        <circle cx="30" cy="8.4" r="4.4" fill="#FBC02D"/>
+      </svg>
+      <h2>Participe da construção</h2>
+      <p>O portal evolui com o que os cidadãos enviam pela Ouvidoria. Sua voz molda a próxima versão.</p>
+      <button class="btn" style="background:#fff;color:var(--primary-dark);font-weight:700">Enviar feedback</button>
+    </div>
+  </div>
+
+  <div class="note">Observação: amarelo aparece só como acento (chips, botões de destaque, o nó do emblema, faixas) — nunca como fundo grande, para não cansar a leitura. Azul domina; verde/vermelho são detalhes do brasão.</div>
+
+</div>
+</body>
+</html>

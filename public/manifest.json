@@ -4,8 +4,8 @@
   "description": "Conecta Santa Maria — o portal do cidadão de Santa Maria do Pará. Serviços, protocolos e participação em um só lugar.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F6EEE2",
-  "theme_color": "#B5462E",
+  "background_color": "#EEF4FC",
+  "theme_color": "#1A56C4",
   "orientation": "portrait-primary",
   "icons": [
     {

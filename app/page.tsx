@@ -55,12 +55,12 @@ const primaryActions = [
 ] as const;
 
 const serviceHighlights = [
-  { label: 'Saúde', href: '/saude', icon: HeartPulse, tone: 'from-rose-100/70' },
-  { label: 'Educação', href: '/educacao', icon: GraduationCap, tone: 'from-amber-100/70' },
+  { label: 'Saúde', href: '/saude', icon: HeartPulse, tone: 'from-sky-100/80' },
+  { label: 'Educação', href: '/educacao', icon: GraduationCap, tone: 'from-blue-100/80' },
   { label: 'Empregos', href: '/empregos', icon: Briefcase, tone: 'from-emerald-100/70' },
-  { label: 'Tributos', href: '/tributos', icon: Landmark, tone: 'from-orange-100/70' },
-  { label: 'Eventos', href: '/eventos', icon: CalendarDays, tone: 'from-stone-100/80' },
-  { label: 'Serviços', href: '/servicos', icon: Bell, tone: 'from-yellow-100/70' },
+  { label: 'Tributos', href: '/tributos', icon: Landmark, tone: 'from-amber-100/80' },
+  { label: 'Eventos', href: '/eventos', icon: CalendarDays, tone: 'from-indigo-100/70' },
+  { label: 'Serviços', href: '/servicos', icon: Bell, tone: 'from-cyan-100/80' },
 ] as const;
 
 const processSteps = [
@@ -173,7 +173,7 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
               className="glass-panel p-4 sm:p-5"
             >
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-secondary-dark via-secondary to-secondary-dark p-6 text-white shadow-[0_22px_50px_rgba(44,68,49,0.30)] animate-drift">
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-secondary-dark via-secondary to-secondary-dark p-6 text-white shadow-[0_22px_50px_rgba(17,132,188,0.32)] animate-drift">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
@@ -326,7 +326,7 @@ export default function Home() {
 
         {/* ───────────── Petições (CTA) ───────────── */}
         <Reveal>
-          <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary-dark via-primary to-secondary-dark p-7 text-white shadow-[0_26px_70px_rgba(139,51,32,0.30)] animate-drift md:p-10">
+          <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary-dark via-primary to-secondary-dark p-7 text-white shadow-[0_26px_70px_rgba(14,58,140,0.34)] animate-drift md:p-10">
             <LogoMark size={220} className="animate-floaty pointer-events-none absolute -right-12 -bottom-16 opacity-[0.08]" />
             <div className="relative z-10 grid grid-cols-1 gap-6 md:grid-cols-[1fr_auto] md:items-center">
               <div>

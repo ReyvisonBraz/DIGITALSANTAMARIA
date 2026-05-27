@@ -53,7 +53,7 @@ export default function ContentCard({
       whileHover={{ y: -2 }}
       onClick={onClick}
       className={cn(
-        'bg-white rounded-[1.4rem] border border-border shadow-[0_10px_34px_rgba(74,38,24,0.07)] hover:shadow-[0_22px_50px_rgba(74,38,24,0.14)] hover:border-primary/30 transition-all duration-300 group cursor-pointer overflow-hidden',
+        'bg-white rounded-[1.4rem] border border-border shadow-[0_10px_34px_rgba(20,34,74,0.07)] hover:shadow-[0_22px_50px_rgba(20,34,74,0.14)] hover:border-primary/30 transition-all duration-300 group cursor-pointer overflow-hidden',
         className,
       )}
     >

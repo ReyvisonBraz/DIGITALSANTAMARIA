@@ -91,7 +91,7 @@ export default function TopAppBar() {
           initial={{ y: -80 }}
           animate={{ y: 0 }}
           className={cn(
-            'flex w-full max-w-7xl items-center justify-between border border-white/70 bg-white/80 px-3 shadow-[0_18px_60px_rgba(74,38,24,0.12)] backdrop-blur-2xl transition-all duration-300 md:px-8',
+            'flex w-full max-w-7xl items-center justify-between border border-white/70 bg-white/80 px-3 shadow-[0_18px_60px_rgba(20,34,74,0.12)] backdrop-blur-2xl transition-all duration-300 md:px-8',
             scrolled ? 'h-14 rounded-2xl md:h-16' : 'h-16 rounded-none md:h-18 md:rounded-2xl'
           )}
         >
@@ -157,7 +157,7 @@ export default function TopAppBar() {
                 onClick={() => setIsAccessibilityOpen((value) => !value)}
                 className={cn(
                   'relative inline-flex h-10 w-10 items-center justify-center rounded-xl border transition',
-                  isAccessibilityOpen ? 'border-primary bg-primary text-white shadow-[0_12px_24px_rgba(181,70,46,0.22)]' : 'border-border bg-white/80 text-text-muted shadow-sm hover:border-primary hover:text-primary'
+                  isAccessibilityOpen ? 'border-primary bg-primary text-white shadow-[0_12px_24px_rgba(26,86,196,0.22)]' : 'border-border bg-white/80 text-text-muted shadow-sm hover:border-primary hover:text-primary'
                 )}
                 aria-label="Menu de acessibilidade"
                 aria-expanded={isAccessibilityOpen}

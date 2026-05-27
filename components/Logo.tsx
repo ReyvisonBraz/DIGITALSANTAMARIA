@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils';
 /**
  * Logo — marca "Conecta Santa Maria".
  *
- * Emblema de conexão: um arco terracota (a cidade que acolhe) envolve
- * o cidadão (ponto central, verde-musgo), ligado por um traço a um nó
+ * Emblema de conexão: um arco azul (a cidade que acolhe) envolve
+ * o cidadão (ponto central, ciano), ligado por um traço a um nó
  * dourado (os serviços / a gestão). Lê-se como um "C" de Conecta.
  */
 
@@ -83,14 +83,14 @@ export default function Logo({
   return (
     <span className={cn('inline-flex items-center gap-3', className)}>
       <span
-        className="grid place-items-center shadow-[0_10px_24px_rgba(181,70,46,0.30)]"
+        className="grid place-items-center shadow-[0_10px_24px_rgba(26,86,196,0.30)]"
         style={{
           width: size,
           height: size,
           borderRadius: radius,
           background:
             'linear-gradient(140deg, var(--color-surface), var(--color-primary-light))',
-          border: '1px solid rgba(181,70,46,0.18)',
+          border: '1px solid rgba(26,86,196,0.18)',
         }}
       >
         <LogoMark size={Math.round(size * 0.7)} animated={animated} />

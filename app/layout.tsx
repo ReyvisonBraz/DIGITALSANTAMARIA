@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   description: 'Conecta Santa Maria — o portal do cidadão de Santa Maria do Pará. Solicite serviços, acompanhe protocolos e participe das decisões da cidade.',
   manifest: '/manifest.json',
   other: {
-    'theme-color': '#B5462E',
+    'theme-color': '#1A56C4',
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'black-translucent',
     'format-detection': 'telephone=no',

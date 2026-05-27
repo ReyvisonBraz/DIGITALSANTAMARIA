@@ -36,7 +36,7 @@ export default function ContentHero({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
       className={cn(
-        'relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] bg-gradient-to-br from-secondary-dark via-secondary to-secondary-dark p-8 text-white shadow-[0_26px_70px_rgba(44,68,49,0.30)] animate-drift md:p-14',
+        'relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] bg-gradient-to-br from-secondary-dark via-secondary to-secondary-dark p-8 text-white shadow-[0_26px_70px_rgba(17,132,188,0.30)] animate-drift md:p-14',
         className,
       )}
     >

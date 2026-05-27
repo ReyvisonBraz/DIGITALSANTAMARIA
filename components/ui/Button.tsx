@@ -18,7 +18,7 @@ export default function Button({
 }: ButtonProps) {
   const variants: Record<string, string> = {
     primary:
-      'bg-gradient-to-br from-primary to-primary-dark text-white shadow-[0_14px_30px_rgba(181,70,46,0.26)] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(181,70,46,0.34)]',
+      'bg-gradient-to-br from-primary to-primary-dark text-white shadow-[0_14px_30px_rgba(26,86,196,0.26)] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(26,86,196,0.34)]',
     secondary:
       'border border-border bg-white/90 text-text-main shadow-sm hover:-translate-y-0.5 hover:border-primary hover:text-primary',
     ghost:
