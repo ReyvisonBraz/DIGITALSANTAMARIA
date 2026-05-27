@@ -61,11 +61,11 @@ export default function SaudePage() {
          
          <div className="p-6 md:p-8 space-y-6 border-b-2 border-border bg-white sticky top-0 z-20">
             <div className="space-y-1">
-               <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/10 text-rose-500 rounded-full text-[9px] font-semibold uppercase tracking-widest border border-rose-500/20">
-                  <Activity className="w-3 h-3" />
-                  Saúde Conectada
+               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-rose-500/10 text-rose-500 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] border border-rose-500/20">
+                  <Activity className="w-3.5 h-3.5" />
+                  Atenção à saúde
                </div>
-               <h1 className="text-3xl font-semibold text-text-main tracking-tighter uppercase leading-none">Digital <br/> <span className="text-rose-500">Saúde.</span></h1>
+               <h1 className="text-4xl font-semibold text-text-main tracking-tight leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>Saúde <span className="text-rose-500 italic">conectada</span></h1>
             </div>
 
             <div className="flex p-1.5 bg-surface rounded-2xl border-2 border-border shadow-inner">
@@ -164,8 +164,8 @@ export default function SaudePage() {
                      <div className="bg-text-main p-8 rounded-[3rem] text-white space-y-6 relative overflow-hidden group shadow-2xl">
                         <div className="relative z-10 flex flex-col h-full justify-between gap-6">
                            <div className="space-y-1">
-                              <h3 className="text-2xl font-semibold uppercase leading-none">Minha <br/> Saúde.</h3>
-                              <p className="text-xs opacity-60 font-ui font-medium">Histórico completo de atendimentos e laudos técnicos disponíves para download.</p>
+                              <h3 className="text-3xl font-semibold leading-[1.02] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Minha saúde</h3>
+                              <p className="text-sm opacity-70 font-medium leading-relaxed">Histórico completo de atendimentos e laudos técnicos disponíveis para download.</p>
                            </div>
                            <button 
                               onClick={() => setHistoryOpen(true)}
@@ -247,8 +247,8 @@ export default function SaudePage() {
 
                      <div className="bg-rose-500 p-8 rounded-[3rem] text-white space-y-6 relative overflow-hidden group">
                         <div className="relative z-10 flex flex-col gap-4">
-                           <h3 className="text-xl font-semibold uppercase leading-none">Receita <br/> Digital.</h3>
-                           <p className="text-xs opacity-80 font-ui font-medium">Sincronize suas receitas assinadas digitalmente para retirada rápida em qualquer UBS.</p>
+                           <h3 className="text-2xl font-semibold leading-[1.02] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Receita digital</h3>
+                           <p className="text-sm opacity-85 font-medium leading-relaxed">Sincronize suas receitas assinadas digitalmente para retirada rápida em qualquer UBS.</p>
                            <button 
                               onClick={() => toast('Abrindo scanner de receitas digitais...', 'info')}
                               className="w-full py-4 bg-white text-rose-500 rounded-2xl font-semibold text-[9px] uppercase tracking-widest shadow-xl flex items-center justify-center gap-3"
@@ -340,7 +340,7 @@ export default function SaudePage() {
                       <div className="flex justify-between items-start relative z-10">
                          <div className="space-y-1">
                             <span className="text-[9px] font-semibold text-rose-500 uppercase tracking-widest">{selectedClinic.type.toUpperCase()}</span>
-                            <h4 className="text-2xl font-semibold text-text-main uppercase tracking-tighter leading-none">{selectedClinic.name}</h4>
+                            <h4 className="text-2xl font-semibold text-text-main tracking-tight leading-[1.05]" style={{ fontFamily: 'var(--font-display)' }}>{selectedClinic.name}</h4>
                             <div className="flex items-center gap-1.5 text-[10px] font-bold text-text-muted">
                                <MapPin className="w-3 h-3 text-rose-500" />
                                {selectedClinic.address}

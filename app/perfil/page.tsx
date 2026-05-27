@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import ProfileSettingsPanel from '@/components/ProfileSettingsPanel';
 import ActivityHistory from '@/features/perfil/ActivityHistory';
+import Counter from '@/components/ui/Counter';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
 import { getDemandsByUser } from '@/services/demands.service';
@@ -148,13 +149,13 @@ export default function PerfilPage() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {stats.map((stat) => (
               <div key={stat.label} className="civic-card p-5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <div className="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-primary">
                   <stat.icon className="h-5 w-5" />
                 </div>
-                <p className="mt-4 text-3xl font-semibold text-text-main">
-                  {loading ? <Loader2 className="h-6 w-6 animate-spin text-primary" /> : stat.value}
+                <p className="mt-4 text-3xl font-semibold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>
+                  {loading ? <Loader2 className="h-6 w-6 animate-spin text-primary" /> : <Counter value={stat.value} />}
                 </p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-text-muted">{stat.label}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-text-muted">{stat.label}</p>
               </div>
             ))}
           </div>

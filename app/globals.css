@@ -379,6 +379,13 @@
 }
 .animate-floaty { animation: floaty 6s ease-in-out infinite; }
 
+/* Quique lento (marcadores de mapa) */
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-bounce-slow { animation: bounce-slow 2.8s ease-in-out infinite; }
+
 /* Marquee — texto que se move */
 @keyframes marquee {
   from { transform: translateX(0); }

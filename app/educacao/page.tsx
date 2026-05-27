@@ -75,28 +75,28 @@ export default function EducacaoPage() {
       {/* Academy Hero Section */}
       <section className="relative overflow-hidden rounded-[3.5rem] md:rounded-[5rem] bg-orange-600 text-white p-10 md:p-16 lg:p-24 shadow-4xl flex flex-col md:flex-row items-center justify-between border-4 border-white/10 group">
          <div className="relative z-10 max-w-3xl text-center md:text-left space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 rounded-full text-[9px] md:text-[10px] font-semibold uppercase tracking-widest border border-white/20 backdrop-blur-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] border border-white/20 backdrop-blur-sm">
                <Award className="w-4 h-4 text-orange-200" />
-               Excelência Pública Municipal
+               Excelência pública municipal
             </div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.85] tracking-tighter uppercase">
-               Digital <br/> <span className="text-orange-200">Academy.</span>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.95] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
+               Educação que <span className="text-orange-200 italic">transforma</span>
             </h1>
-            <p className="text-lg md:text-2xl font-ui font-medium opacity-90 max-w-2xl leading-relaxed border-l-4 border-white/20 pl-8">
-               A educação como motor de transformação cívica. O hub digital para a jornada acadêmica do seu filho, do ensino fundamental à mentoria profissional.
+            <p className="text-lg md:text-2xl font-medium opacity-90 max-w-2xl leading-relaxed border-l-2 border-white/30 pl-8">
+               A jornada acadêmica do seu filho em um só lugar — do ensino fundamental à mentoria profissional, com matrícula e acompanhamento online.
             </p>
-            <div className="flex flex-wrap gap-5 justify-center md:justify-start pt-4">
-               <button 
-                 onClick={() => toast('Iniciando matrícula digital garantida pelo DigitalID...', 'success')}
-                 className="bg-white text-orange-600 px-12 py-5 rounded-2xl font-semibold text-xs md:text-sm uppercase tracking-[0.2em] shadow-3xl hover:scale-105 active:scale-95 transition-all shrink-0"
+            <div className="flex flex-wrap gap-4 justify-center md:justify-start pt-4">
+               <button
+                 onClick={() => toast('Iniciando matrícula digital...', 'success')}
+                 className="bg-white text-orange-600 px-10 py-4 rounded-2xl font-semibold text-sm shadow-xl hover:scale-105 active:scale-95 transition-all shrink-0"
                >
-                  Matrícula Online
+                  Matrícula online
                </button>
-               <button 
-                 onClick={() => toast('Acessando terminal do aluno com autenticação DigitalID...', 'info')}
-                 className="bg-orange-700/50 text-white border-2 border-white/15 px-10 py-5 rounded-2xl font-semibold text-[10px] md:text-xs uppercase tracking-[0.2em] shadow-2xl hover:bg-orange-700 transition-all shrink-0"
+               <button
+                 onClick={() => toast('Acessando o portal do aluno...', 'info')}
+                 className="bg-orange-700/50 text-white border border-white/20 px-9 py-4 rounded-2xl font-semibold text-sm shadow-lg hover:bg-orange-700 transition-all shrink-0"
                >
-                  Portal Academic
+                  Portal do aluno
                </button>
             </div>
          </div>
@@ -152,9 +152,9 @@ export default function EducacaoPage() {
             >
                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10">
                   <div className="space-y-3">
-                     <h2 className="text-3xl md:text-5xl font-semibold text-text-main tracking-tighter uppercase leading-none">Nossa <span className="text-orange-600">Rede.</span></h2>
-                     <p className="text-text-muted font-ui font-medium text-lg opacity-80 max-w-xl">
-                        Unidades de ensino municipais avaliadas e integradas ao sistema de gerenciamento central Move-Educ.
+                     <h2 className="text-3xl md:text-5xl font-semibold text-text-main tracking-tight leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>Nossa <span className="text-orange-600 italic">rede</span></h2>
+                     <p className="text-text-muted font-medium text-lg opacity-80 max-w-xl leading-relaxed">
+                        Unidades de ensino municipais avaliadas e integradas em um só painel de acompanhamento.
                      </p>
                   </div>
                   <div className="relative w-full lg:w-[450px] group">
@@ -207,8 +207,8 @@ export default function EducacaoPage() {
                                 </div>
                                 <span className="text-[10px] font-semibold text-text-muted uppercase tracking-widest leading-none">{school.type}</span>
                              </div>
-                             <h3 className="text-2xl font-semibold text-text-main tracking-tighter leading-tight uppercase group-hover:text-orange-600 transition-colors">{school.name}</h3>
-                             <p className="text-xs font-ui font-medium text-text-muted flex items-center gap-3 leading-relaxed border-l-2 border-orange-500/10 pl-4">
+                             <h3 className="text-2xl font-semibold text-text-main tracking-tight leading-snug group-hover:text-orange-600 transition-colors" style={{ fontFamily: 'var(--font-display)' }}>{school.name}</h3>
+                             <p className="text-sm font-medium text-text-muted flex items-center gap-3 leading-relaxed border-l-2 border-orange-500/20 pl-4">
                                 {school.address}
                              </p>
                           </div>
@@ -250,8 +250,8 @@ export default function EducacaoPage() {
                               <Users className="w-7 h-7 text-orange-500" />
                            </div>
                            <div className="space-y-0.5">
-                              <h4 className="text-xs font-semibold uppercase tracking-widest opacity-60">Aluno Conectado</h4>
-                              <p className="text-xl font-semibold tracking-tighter uppercase leading-none">Matheus Silva</p>
+                              <h4 className="text-[11px] font-bold uppercase tracking-[0.16em] opacity-60">Aluno conectado</h4>
+                              <p className="text-2xl font-semibold tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>Matheus Silva</p>
                            </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -279,8 +279,8 @@ export default function EducacaoPage() {
                         </span>
                      </div>
                      <div className="space-y-1">
-                        <h4 className="text-xl font-semibold text-text-main uppercase leading-none">Alimentação Escolar</h4>
-                        <p className="text-[10px] font-bold text-text-muted leading-none">Cardápio: Feijoada Light, Salada Mix e Suco</p>
+                        <h4 className="text-xl font-semibold text-text-main leading-tight tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Alimentação escolar</h4>
+                        <p className="text-xs font-medium text-text-muted leading-relaxed">Cardápio: feijoada light, salada mix e suco</p>
                      </div>
                      <button className="text-[10px] font-semibold text-orange-600 uppercase tracking-widest hover:underline text-left">Ver Cardápio Completo</button>
                   </div>
@@ -296,8 +296,8 @@ export default function EducacaoPage() {
                         </div>
                      </div>
                      <div className="space-y-1">
-                        <h4 className="text-xl font-semibold text-text-main uppercase leading-none">Move Educativo</h4>
-                        <p className="text-[10px] font-bold text-text-muted leading-none">Linha #04 está cruzando a Av. Central.</p>
+                        <h4 className="text-xl font-semibold text-text-main leading-tight tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Transporte escolar</h4>
+                        <p className="text-xs font-medium text-text-muted leading-relaxed">Linha #04 está cruzando a Av. Central.</p>
                      </div>
                      <button className="text-[10px] font-semibold text-orange-600 uppercase tracking-widest hover:underline text-left">Rastrear em Tempo Real</button>
                   </div>
@@ -307,13 +307,13 @@ export default function EducacaoPage() {
                <div className="lg:col-span-8 bg-surface p-10 md:p-14 rounded-[4rem] border-2 border-border space-y-10 border-dashed group relative overflow-hidden">
                   <div className="flex flex-col md:flex-row justify-between items-center gap-10 relative z-10">
                      <div className="space-y-4 text-center md:text-left">
-                        <h2 className="text-3xl md:text-5xl font-semibold text-text-main tracking-tighter uppercase leading-[0.9]">Portfólio de <br/> Serviços.</h2>
-                        <p className="text-lg text-text-muted font-ui font-medium leading-relaxed max-w-xl opacity-70">
+                        <h2 className="text-3xl md:text-5xl font-semibold text-text-main tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>Portfólio de serviços</h2>
+                        <p className="text-lg text-text-muted font-medium leading-relaxed max-w-xl opacity-75">
                            Acesse documentações oficiais, solicite transferências ou baixe kits escolares digitais diretamente aqui.
                         </p>
                      </div>
-                     <button className="bg-text-main text-white px-12 py-6 rounded-[2.5rem] font-semibold text-xs uppercase tracking-widest shadow-2xl hover:bg-orange-600 transition-all flex items-center gap-4 group/btn">
-                        Portal Ouvidoria
+                     <button className="bg-text-main text-white px-10 py-5 rounded-[2rem] font-semibold text-sm shadow-2xl hover:bg-orange-600 transition-all flex items-center gap-4 group/btn">
+                        Ir à ouvidoria
                         <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1.5 transition-transform" />
                      </button>
                   </div>
@@ -330,8 +330,8 @@ export default function EducacaoPage() {
                               <item.icon size={24} />
                            </div>
                            <div className="space-y-0.5">
-                              <h4 className="text-lg font-semibold text-text-main uppercase tracking-tight group-hover/item:text-orange-600 transition-colors leading-none">{item.label}</h4>
-                              <p className="text-[10px] font-bold text-text-muted opacity-60 leading-tight uppercase">{item.desc}</p>
+                              <h4 className="text-lg font-semibold text-text-main tracking-tight group-hover/item:text-orange-600 transition-colors leading-snug" style={{ fontFamily: 'var(--font-display)' }}>{item.label}</h4>
+                              <p className="text-xs font-medium text-text-muted opacity-70 leading-relaxed">{item.desc}</p>
                            </div>
                         </div>
                      ))}
@@ -347,7 +347,7 @@ export default function EducacaoPage() {
                         <div className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur shadow-inner">
                            <GraduationCap size={42} />
                         </div>
-                        <h3 className="text-2xl lg:text-3xl font-semibold uppercase tracking-tighter leading-none">Mentoria <br/> Digital.</h3>
+                        <h3 className="text-2xl lg:text-3xl font-semibold tracking-tight leading-[1.05]" style={{ fontFamily: 'var(--font-display)' }}>Mentoria digital</h3>
                      </div>
                      <p className="text-base font-ui font-medium opacity-80 leading-relaxed">Conectamos profissionais veteranos da cidade com jovens estudantes para direcionamento de carreira e cidadania.</p>
                      
@@ -382,9 +382,9 @@ export default function EducacaoPage() {
                         <Library className="w-12 h-12 md:w-16 md:h-16" />
                      </div>
                      <div className="space-y-4">
-                        <h4 className="text-4xl md:text-6xl font-semibold text-text-main uppercase tracking-tighter leading-none">Biblioteca <br/> <span className="text-orange-600">Universal.</span></h4>
-                        <p className="text-lg md:text-xl font-ui font-medium text-text-muted max-w-2xl leading-relaxed opacity-70">
-                           Acesso direto a mais de 50.000 títulos digitais e acervos históricos do município gratuitos para usuários DigitalID.
+                        <h4 className="text-4xl md:text-6xl font-semibold text-text-main tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>Biblioteca <span className="text-orange-600 italic">universal</span></h4>
+                        <p className="text-lg md:text-xl font-medium text-text-muted max-w-2xl leading-relaxed opacity-75">
+                           Acesso direto a mais de 50.000 títulos digitais e acervos históricos do município, gratuitos para todos os cidadãos.
                         </p>
                      </div>
                   </div>
@@ -410,8 +410,8 @@ export default function EducacaoPage() {
                            <item.icon size={32} />
                         </div>
                         <div className="space-y-1">
-                           <h5 className="text-base font-semibold text-text-main uppercase leading-none">{item.label}</h5>
-                           <p className="text-[10px] font-semibold text-orange-600 uppercase tracking-widest">{item.meta}</p>
+                           <h5 className="text-base font-semibold text-text-main leading-snug tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>{item.label}</h5>
+                           <p className="text-[10px] font-bold text-orange-600 uppercase tracking-[0.14em]">{item.meta}</p>
                         </div>
                      </div>
                   ))}
@@ -432,8 +432,8 @@ export default function EducacaoPage() {
                 <Image src={selectedSchool.image} alt={selectedSchool.name} fill className="object-cover group-hover:scale-110 transition-transform duration-[5s]" referrerPolicy="no-referrer" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-6 left-6 text-white">
-                   <p className="text-[10px] font-semibold uppercase tracking-widest opacity-80 mb-1">Unidade_ID: #{selectedSchool.id}</p>
-                   <h3 className="text-3xl font-semibold uppercase leading-none tracking-tighter">{selectedSchool.name}</h3>
+                   <p className="text-[10px] font-bold uppercase tracking-[0.16em] opacity-80 mb-1">Unidade #{selectedSchool.id}</p>
+                   <h3 className="text-3xl font-semibold leading-[1.05] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>{selectedSchool.name}</h3>
                 </div>
              </div>
 
@@ -484,13 +484,13 @@ export default function EducacaoPage() {
 
              <div className="flex flex-col gap-4 pt-6">
                 <button 
-                  onClick={() => toast('Solicitação de transferência gerada via DigitalID Protocol.', 'success')}
-                  className="w-full bg-orange-600 text-white py-6 rounded-3xl font-semibold text-xs md:text-sm uppercase tracking-[0.2em] shadow-3xl hover:bg-orange-700 active:scale-95 transition-all flex items-center justify-center gap-4"
+                  onClick={() => toast('Solicitação de transferência gerada com sucesso.', 'success')}
+                  className="w-full bg-orange-600 text-white py-5 rounded-3xl font-semibold text-sm shadow-2xl hover:bg-orange-700 active:scale-95 transition-all flex items-center justify-center gap-4"
                 >
-                   Solicitar Transferência
+                   Solicitar transferência
                    <ArrowRight size={20} />
                 </button>
-                <button className="text-[10px] font-semibold text-text-muted uppercase tracking-widest hover:underline">Políticas de Matrícula 2026</button>
+                <button className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.14em] hover:underline">Políticas de matrícula 2026</button>
              </div>
           </div>
         )}
