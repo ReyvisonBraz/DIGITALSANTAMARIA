@@ -96,7 +96,7 @@ export default function HealthHistoryPanel({ isOpen, onClose }: HealthHistoryPan
             <h4 className="text-sm font-semibold text-text-main uppercase leading-tight">Privacidade & Proteção de Dados</h4>
           </div>
           <p className="text-xs font-ui font-medium text-text-muted leading-relaxed relative z-10">
-            Seu prontuário é protegido por criptografia de ponta a ponta integrada ao DigitalID.
+            Seu prontuário é protegido por criptografia de ponta a ponta.
           </p>
         </div>
       </div>

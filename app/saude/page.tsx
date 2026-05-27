@@ -183,8 +183,8 @@ export default function SaudePage() {
                               <Syringe className="w-8 h-8" />
                            </div>
                            <div className="space-y-0.5">
-                              <h4 className="text-[10px] font-semibold text-text-main uppercase tracking-widest">DigitalVax ID</h4>
-                              <p className="text-xs font-bold text-text-muted uppercase italic">Carteira de Vacinação Digital</p>
+                              <h4 className="text-sm font-semibold text-text-main tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Carteira de vacinação</h4>
+                              <p className="text-[11px] font-bold text-text-muted uppercase tracking-[0.12em]">Versão digital</p>
                            </div>
                         </div>
                         <div className="flex flex-col items-center gap-4 py-4 bg-surface rounded-3xl border-2 border-border shadow-inner relative group">

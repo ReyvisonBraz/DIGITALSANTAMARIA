@@ -37,25 +37,24 @@ export default function SobrePage() {
       {/* Header Section */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-8 order-2 lg:order-1">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] font-semibold uppercase tracking-widest border border-primary/20">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary rounded-full text-[11px] font-bold uppercase tracking-[0.18em] border border-primary/20">
             <Info className="w-4 h-4" />
             Edição 2026
           </div>
-          <h1 className="text-5xl md:text-7xl font-semibold text-text-main tracking-tighter uppercase leading-none">
-            Conectando <br /> 
-            <span className="text-primary">Pessoas e Cidade.</span>
+          <h1 className="text-5xl md:text-7xl font-semibold text-text-main tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>
+            Conectando <span className="text-gradient italic">pessoas e cidade</span>
           </h1>
-          <p className="text-lg md:text-xl font-medium text-text-muted font-ui leading-relaxed">
-            O Digital Santa Maria é a plataforma oficial de serviços inteligentes para Santa Maria do Pará - PA, focada em transparência absoluta, participação ativa e eficiência na zeladoria municipal.
+          <p className="text-lg md:text-xl font-medium text-text-muted leading-relaxed">
+            O Conecta Santa Maria é o portal oficial do cidadão de Santa Maria do Pará — feito para transparência, participação ativa e eficiência nos serviços municipais.
           </p>
           <div className="flex flex-wrap gap-4 pt-4">
-             <div className="flex items-center gap-2 bg-surface px-6 py-4 rounded-2xl border-2 border-border">
+             <div className="flex items-center gap-2 bg-surface px-6 py-4 rounded-2xl border border-border">
                 <BarChart3 className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-text-main uppercase">100% Open Data</span>
+                <span className="text-sm font-semibold text-text-main">100% dados abertos</span>
              </div>
-             <div className="flex items-center gap-2 bg-surface px-6 py-4 rounded-2xl border-2 border-border">
-                <ShieldCheck className="w-5 h-5 text-green-500" />
-                <span className="text-sm font-semibold text-text-main uppercase">LGPD Compliant</span>
+             <div className="flex items-center gap-2 bg-surface px-6 py-4 rounded-2xl border border-border">
+                <ShieldCheck className="w-5 h-5 text-secondary" />
+                <span className="text-sm font-semibold text-text-main">Conforme a LGPD</span>
              </div>
           </div>
         </div>
@@ -100,8 +99,8 @@ export default function SobrePage() {
             <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform", item.color)}>
               <item.icon className="w-8 h-8" />
             </div>
-            <h3 className="text-2xl font-semibold text-text-main tracking-tight uppercase">{item.title}</h3>
-            <p className="text-sm font-ui font-medium text-text-muted leading-relaxed opacity-80">{item.desc}</p>
+            <h3 className="text-2xl font-semibold text-text-main tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>{item.title}</h3>
+            <p className="text-sm font-medium text-text-muted leading-relaxed opacity-80">{item.desc}</p>
           </div>
         ))}
       </section>
@@ -109,8 +108,8 @@ export default function SobrePage() {
       {/* Departments */}
       <section className="space-y-12">
         <div className="text-center space-y-2">
-           <h2 className="text-3xl font-semibold text-text-main tracking-tighter uppercase">Quem cuida do Portal?</h2>
-           <p className="text-text-muted font-ui">O esforço conjunto de diversas secretarias federais e municipais.</p>
+           <h2 className="text-3xl md:text-4xl font-semibold text-text-main tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Quem cuida do portal?</h2>
+           <p className="text-text-muted font-medium">O esforço conjunto de diversas secretarias municipais.</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -120,8 +119,8 @@ export default function SobrePage() {
                   <t.icon className="w-6 h-6" />
                </div>
                <div>
-                  <h4 className="text-sm font-semibold text-text-main uppercase tracking-tight">{t.name}</h4>
-                  <p className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em]">{t.role}</p>
+                  <h4 className="text-base font-semibold text-text-main tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>{t.name}</h4>
+                  <p className="text-[10px] font-bold text-text-muted uppercase tracking-[0.18em] mt-0.5">{t.role}</p>
                </div>
             </div>
           ))}
@@ -129,26 +128,26 @@ export default function SobrePage() {
       </section>
 
       {/* Footer CTA */}
-      <section className="bg-primary p-12 md:p-20 rounded-[4rem] text-white flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden shadow-3xl">
+      <section className="bg-gradient-to-br from-primary-dark via-primary to-secondary-dark p-12 md:p-20 rounded-[3rem] text-white flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden shadow-[0_26px_70px_rgba(139,51,32,0.30)] animate-drift">
          <div className="relative z-10 space-y-6 max-w-xl">
-            <h2 className="text-4xl md:text-6xl font-semibold tracking-tighter uppercase leading-none">Participe da Construção.</h2>
-            <p className="text-lg opacity-80 font-ui font-medium">O portal é atualizado semanalmente com base no feedback enviado pelos cidadãos através da Ouvidoria.</p>
-            <div className="flex gap-4">
-               <button 
+            <h2 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>Participe da construção</h2>
+            <p className="text-lg opacity-85 font-medium leading-relaxed">O portal evolui com base no que os cidadãos enviam pela Ouvidoria. Sua voz molda a próxima versão.</p>
+            <div className="flex flex-wrap gap-4">
+               <button
                 onClick={() => router.push('/ouvidoria')}
-                className="bg-white text-primary px-8 py-4 rounded-xl font-semibold text-xs uppercase tracking-widest shadow-xl hover:translate-y-[-2px] transition-all active:scale-95"
+                className="bg-white text-primary-dark px-8 py-4 rounded-2xl font-semibold text-sm shadow-xl hover:-translate-y-0.5 transition-all active:scale-95"
                >
-                  Enviar Feedback
+                  Enviar feedback
                </button>
-               <button 
-                onClick={() => toast('Redirecionando para o Portal de Transparência & APIs Municipais...', 'info')}
-                className="bg-transparent border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-xs uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95"
+               <button
+                onClick={() => toast('Abrindo o portal de transparência municipal...', 'info')}
+                className="bg-transparent border border-white/30 text-white px-8 py-4 rounded-2xl font-semibold text-sm hover:bg-white/10 transition-all active:scale-95"
                >
-                  Documentação API
+                  Transparência
                </button>
             </div>
          </div>
-         <Code2 className="absolute -right-10 -top-10 w-64 h-64 opacity-10 rotate-12" />
+         <Code2 className="absolute -right-10 -top-10 w-64 h-64 opacity-10 rotate-12 animate-floaty" />
       </section>
 
     </div>

@@ -162,7 +162,7 @@ export default function MatriculaPage() {
             >
                 {currentStep === 1 && (
                    <div className="space-y-6">
-                      <h3 className="text-2xl font-semibold text-text-main uppercase border-b-2 border-border pb-4">Dados do Responsável</h3>
+                      <h3 className="text-2xl font-semibold text-text-main border-b border-border pb-4">Dados do Responsável</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                          <div className="space-y-2">
                             <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">Nome Completo</label>
@@ -190,7 +190,7 @@ export default function MatriculaPage() {
 
                 {currentStep === 2 && (
                    <div className="space-y-6">
-                      <h3 className="text-2xl font-semibold text-text-main uppercase border-b-2 border-border pb-4">Dados do Aluno(a)</h3>
+                      <h3 className="text-2xl font-semibold text-text-main border-b border-border pb-4">Dados do Aluno(a)</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                          <div className="space-y-2">
                             <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">Nome da Criança/Jovem</label>
@@ -217,7 +217,7 @@ export default function MatriculaPage() {
 
                 {currentStep === 3 && (
                    <div className="space-y-6">
-                      <h3 className="text-2xl font-semibold text-text-main uppercase border-b-2 border-border pb-4">Endereço de Residência</h3>
+                      <h3 className="text-2xl font-semibold text-text-main border-b border-border pb-4">Endereço de Residência</h3>
                       <div className="space-y-4">
                          <div className="space-y-2">
                             <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">CEP</label>
@@ -246,7 +246,7 @@ export default function MatriculaPage() {
 
                 {currentStep === 4 && (
                    <div className="space-y-6">
-                      <h3 className="text-2xl font-semibold text-text-main uppercase border-b-2 border-border pb-4">Unidade Pretendida</h3>
+                      <h3 className="text-2xl font-semibold text-text-main border-b border-border pb-4">Unidade Pretendida</h3>
                       <div className="grid grid-cols-1 gap-4">
                          {schools.map(school => (
                            <button 
@@ -272,7 +272,7 @@ export default function MatriculaPage() {
                              <CheckCircle2 className="w-10 h-10" />
                           </div>
                           <div className="space-y-2">
-                             <h3 className="text-3xl font-semibold text-text-main uppercase tracking-tighter">Solicitação Enviada!</h3>
+                             <h3 className="text-3xl font-semibold text-text-main tracking-tight">Solicitação Enviada!</h3>
                              <p className="text-sm font-ui font-medium text-text-muted max-w-sm mx-auto">
                                 Sua solicitação de matrícula foi registrada na Secretaria de Educação.
                              </p>
@@ -299,7 +299,7 @@ export default function MatriculaPage() {
                              <CheckCircle2 className="w-10 h-10" />
                           </div>
                           <div className="space-y-2">
-                             <h3 className="text-3xl font-semibold text-text-main uppercase tracking-tighter">Quase lá!</h3>
+                             <h3 className="text-3xl font-semibold text-text-main tracking-tight">Quase lá!</h3>
                              <p className="text-sm font-ui font-medium text-text-muted max-w-sm mx-auto">
                                 Ao clicar em finalizar, sua solicitação será enviada para a central de vagas da Secretaria de Educação.
                              </p>

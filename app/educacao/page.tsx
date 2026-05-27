@@ -321,7 +321,7 @@ export default function EducacaoPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
                      {[
                         { label: 'Passe Livre Digital', desc: 'Emissão de QR Code para transporte gratuito.', icon: Zap },
-                        { label: 'Matrícula 2026', desc: 'Renovação automática via DigitalID em 1-clique.', icon: FileText },
+                        { label: 'Matrícula 2026', desc: 'Renovação automática em 1 clique.', icon: FileText },
                         { label: 'Cursos Extras', desc: 'Aulas de programação e artes no Setor de Apoio.', icon: Sparkles },
                         { label: 'Manual Pedagógico', desc: 'Diretrizes curriculares do ano letivo vigente.', icon: BookOpen }
                      ].map((item, i) => (

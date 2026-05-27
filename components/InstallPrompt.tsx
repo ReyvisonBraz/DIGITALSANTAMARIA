@@ -87,7 +87,7 @@ export default function InstallPrompt() {
               Instale o App
             </p>
             <p className="text-xs text-text-muted mt-0.5">
-              Instale o Digital Santa Maria na tela inicial do seu dispositivo para acesso mais rápido.
+              Instale o Conecta Santa Maria na tela inicial do seu dispositivo para acesso mais rápido.
             </p>
 
             {/* Ações */}

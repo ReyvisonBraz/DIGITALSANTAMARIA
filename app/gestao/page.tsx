@@ -129,13 +129,13 @@ export default function GestaoPage() {
         <div className="hero-panel p-5 sm:p-7 md:p-9">
           <div className="soft-chip">
             <ShieldCheck className="h-4 w-4" />
-            Gestao municipal
+            Gestão municipal
           </div>
-          <h1 className="mt-4 text-3xl font-semibold tracking-normal text-text-main md:text-5xl">
-            Painel de operacao
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-text-main md:text-5xl" style={{ fontFamily: 'var(--font-display)' }}>
+            Painel de <span className="text-gradient italic">operação</span>
           </h1>
           <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-            Acompanhe solicitacoes, responda protocolos, gerencie peticoes e atualize dados de usuarios.
+            Acompanhe solicitações, responda protocolos, gerencie petições e atualize dados de usuários.
           </p>
         </div>
       </section>

@@ -41,14 +41,14 @@ export default function EmpregosPage() {
       <section className="space-y-8">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <div className="space-y-4 max-w-3xl text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-[9px] md:text-[10px] font-semibold uppercase tracking-widest border border-primary/20">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-primary/10 text-primary rounded-full text-[11px] font-bold uppercase tracking-[0.18em] border border-primary/20">
               <Briefcase className="w-4 h-4" />
-              Banco de Oportunidades
+              Banco de oportunidades
             </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold text-text-main tracking-tighter uppercase leading-[0.9]">
-              Banco de <br /> <span className="text-primary">Talentos.</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold text-text-main tracking-tight leading-[0.98]" style={{ fontFamily: 'var(--font-display)' }}>
+              Banco de <span className="text-gradient italic">talentos</span>
             </h1>
-            <p className="text-base md:text-xl font-medium text-text-muted font-ui leading-relaxed">
+            <p className="text-base md:text-xl font-medium text-text-muted leading-relaxed">
               Conectamos os melhores profissionais às vagas reais do município.
             </p>
           </div>
@@ -90,8 +90,8 @@ export default function EmpregosPage() {
               </div>
             </div>
             <div className="space-y-1 mb-4">
-              <h3 className="text-2xl font-semibold text-text-main uppercase leading-none">{job.title}</h3>
-              <p className="text-[10px] font-semibold text-primary uppercase">{job.employerName}</p>
+              <h3 className="text-2xl font-semibold text-text-main leading-snug tracking-tight group-hover:text-primary transition-colors" style={{ fontFamily: 'var(--font-display)' }}>{job.title}</h3>
+              <p className="text-[11px] font-bold text-primary uppercase tracking-[0.12em]">{job.employerName}</p>
             </div>
             <div className="flex flex-wrap gap-2 mb-6">
               {job.tags.map((tag) => (
