@@ -340,20 +340,26 @@ export default function Home() {
 
         {/* ───────────── Petições (CTA) ───────────── */}
         <Reveal>
-          <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary-dark via-primary to-secondary-dark p-7 text-white shadow-[0_26px_70px_rgba(14,58,140,0.34)] md:p-12">
-            <LogoMark size={240} className="animate-floaty pointer-events-none absolute -right-12 -bottom-16 opacity-[0.08]" />
-            <span className="font-script pointer-events-none absolute right-8 top-6 hidden text-4xl text-accent/40 md:block">do Pará</span>
+          <section className="relative overflow-hidden rounded-[2rem] border border-primary/20 bg-white p-7 md:p-12">
+            {/* Glow azul suave no canto */}
+            <div className="pointer-events-none absolute -top-20 -right-20 h-72 w-72 rounded-full bg-primary/8 blur-3xl" />
+            {/* Barra de destaque lateral */}
+            <div className="absolute left-0 top-6 bottom-6 w-1 rounded-r-full bg-gradient-to-b from-primary to-secondary" />
             <div className="relative z-10 grid grid-cols-1 gap-6 md:grid-cols-[1fr_auto] md:items-center">
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">Participação cidadã</p>
-                <h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-[2.6rem] md:leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>
-                  Sua voz vira pauta da cidade.
+                <span className="soft-chip mb-4 inline-flex">
+                  <MessageSquare className="h-3.5 w-3.5" />
+                  Participação cidadã
+                </span>
+                <h2 className="mt-1 text-3xl font-extrabold tracking-tight text-text-main md:text-[2.6rem] md:leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>
+                  Sua voz vira{' '}
+                  <span className="text-gradient">pauta da cidade.</span>
                 </h2>
-                <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-white/80">
+                <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-text-muted">
                   Causas abertas pela comunidade ganham meta, contador de assinaturas e espaço para resposta oficial da gestão.
                 </p>
               </div>
-              <Link href="/peticoes" className="action-button group bg-white text-primary-dark hover:bg-accent hover:text-primary-dark">
+              <Link href="/peticoes" className="action-button-primary group shrink-0">
                 Ver petições
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>

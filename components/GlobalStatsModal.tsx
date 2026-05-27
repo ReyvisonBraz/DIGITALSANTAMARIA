@@ -42,7 +42,7 @@ export default function GlobalStatsModal({ isOpen, onClose }: GlobalStatsModalPr
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-center space-y-2"
+              className="bg-surface-container p-5 rounded-2xl border border-border text-center space-y-2"
             >
               <stat.icon className={`w-5 h-5 mx-auto ${stat.color} opacity-80`} />
               <div className="space-y-0.5">
@@ -53,14 +53,15 @@ export default function GlobalStatsModal({ isOpen, onClose }: GlobalStatsModalPr
           ))}
         </div>
 
-        <div className="bg-slate-900 p-6 rounded-3xl text-white relative overflow-hidden group shadow-lg">
+        <div className="bg-gradient-to-br from-primary to-primary-dark p-6 rounded-3xl text-white relative overflow-hidden shadow-[0_12px_32px_rgba(26,86,196,0.28)]">
+           <div className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-white/5 blur-2xl" />
            <div className="relative z-10 flex gap-4 items-center">
-              <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center backdrop-blur-md border border-white/10 shadow-inner">
-                 <Zap className="w-6 h-6 text-amber-400" />
+              <div className="w-12 h-12 bg-white/15 rounded-xl flex items-center justify-center border border-white/20">
+                 <Zap className="w-6 h-6 text-accent" />
               </div>
               <div className="space-y-0.5">
                  <h4 className="text-base font-bold tracking-tight leading-none uppercase">Eficiência</h4>
-                 <p className="text-[11px] font-medium opacity-60">Estamos a 5% de atingir a meta de 95% de zeladoria resolvida!</p>
+                 <p className="text-[11px] font-medium text-white/70">Estamos a 5% de atingir a meta de 95% de zeladoria resolvida!</p>
               </div>
            </div>
            <Award className="deco-fade absolute -right-6 -bottom-6 w-24 h-24 text-white pointer-events-none" />
@@ -68,7 +69,7 @@ export default function GlobalStatsModal({ isOpen, onClose }: GlobalStatsModalPr
 
         <button 
           onClick={onClose}
-          className="w-full py-4 bg-white border border-border text-text-muted rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm active:scale-[0.98]"
+          className="w-full py-4 bg-white border border-border text-text-muted rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-surface-container hover:border-primary/30 hover:text-primary transition-all shadow-sm active:scale-[0.98]"
         >
           Fechar Painel
         </button>
