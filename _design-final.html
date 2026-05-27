@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Conecta Santa Maria — resultado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#B5462E;--primary-dark:#8B3320;--primary-light:#F3E3DC;
+    --secondary:#3A5A40;--secondary-dark:#2C4431;--accent:#D89A3F;
+    --surface:#fff;--bg:#F6EEE2;--ink:#2E2019;--muted:#6E5C50;--line:#E7DCCC;
+    --display:'Fraunces',Georgia,serif;--sans:'Plus Jakarta Sans',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans);color:var(--ink);background:
+    radial-gradient(circle at 14% -2%,rgba(181,70,46,.12),transparent 34rem),
+    radial-gradient(circle at 88% 8%,rgba(58,90,64,.10),transparent 32rem),
+    linear-gradient(180deg,#FBF6EE,var(--bg) 52%,#F1E6D6);-webkit-font-smoothing:antialiased;line-height:1.55}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+  h1,h2,h3,h4{font-family:var(--display);font-weight:600;letter-spacing:-.02em;line-height:1.05}
+  .eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.22em;color:var(--primary)}
+
+  /* topbar */
+  .top{position:sticky;top:0;z-index:10;display:flex;justify-content:center;padding:14px 18px}
+  .topin{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1180px;background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.7);box-shadow:0 18px 60px rgba(74,38,24,.12);backdrop-filter:blur(18px);border-radius:18px;padding:10px 18px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .mark{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(140deg,#fff,var(--primary-light));border:1px solid rgba(181,70,46,.18);box-shadow:0 10px 24px rgba(181,70,46,.30)}
+  .brand .a{font-family:var(--display);font-weight:600;font-size:15px;line-height:1}
+  .brand .b{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.26em;color:var(--primary);margin-top:3px}
+  .topnav{display:flex;gap:8px}
+  .pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:14px;padding:9px 14px;font-size:12px;font-weight:600;color:var(--ink)}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden;border:1px solid rgba(231,220,204,.9);background:rgba(255,255,255,.85);box-shadow:0 30px 80px rgba(74,38,24,.12);backdrop-filter:blur(18px);border-radius:32px;display:grid;grid-template-columns:1.08fr .92fr;gap:32px;padding:48px;margin-top:24px}
+  @media(max-width:760px){.hero{grid-template-columns:1fr;padding:26px;border-radius:24px}}
+  .hero::after{content:"";position:absolute;right:-16%;bottom:-42%;width:34rem;height:34rem;border-radius:50%;background:radial-gradient(circle,rgba(181,70,46,.16),transparent 64%);pointer-events:none}
+  .chip{display:inline-flex;align-items:center;gap:8px;border-radius:999px;border:1px solid rgba(181,70,46,.22);background:rgba(181,70,46,.08);color:var(--primary);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.18em;padding:7px 14px;width:fit-content}
+  .hero h1{font-size:clamp(40px,6vw,72px);margin:18px 0 16px}
+  .grad{background:linear-gradient(120deg,var(--primary),var(--accent) 70%);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+  .lead{color:var(--muted);font-size:18px;font-weight:500;max-width:42ch}
+  .btns{display:flex;gap:12px;margin:26px 0;flex-wrap:wrap}
+  .btn{border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:14px;padding:14px 24px;border-radius:16px;display:inline-flex;align-items:center;gap:9px;transition:.25s}
+  .btn-p{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-dark));box-shadow:0 16px 32px rgba(181,70,46,.28)}
+  .btn-p:hover{transform:translateY(-2px);box-shadow:0 22px 44px rgba(181,70,46,.36)}
+  .btn-s{background:rgba(255,255,255,.85);border:1px solid var(--line);color:var(--ink)}
+  .btn-s:hover{transform:translateY(-2px);border-color:var(--primary);color:var(--primary)}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:430px;border-top:1px solid rgba(231,220,204,.7);padding-top:22px}
+  .stats .v{font-family:var(--display);font-weight:600;font-size:30px;color:var(--primary)}
+  .stats .l{font-size:11px;font-weight:600;color:var(--muted);margin-top:3px}
+
+  /* hero panel */
+  .panel{background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:22px;padding:18px}
+  .greenbox{position:relative;overflow:hidden;border-radius:24px;padding:24px;color:#fff;background:linear-gradient(135deg,var(--secondary-dark),var(--secondary),var(--secondary-dark))}
+  .greenbox .pk{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:var(--accent)}
+  .greenbox h3{color:#fff;font-size:22px;margin-top:6px}
+  .step{display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.1);border-radius:16px;padding:12px;margin-top:10px}
+  .step .n{width:32px;height:32px;border-radius:11px;background:var(--accent);color:var(--secondary-dark);font-weight:700;display:grid;place-items:center;flex:none}
+  .step span.t{font-weight:600;font-size:14px}
+  .mini{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .mini div{border:1px solid var(--line);background:rgba(255,255,255,.8);border-radius:16px;padding:12px;text-align:center}
+  .mini .mv{font-family:var(--display);font-weight:600}
+  .mini .ml{font-size:10px;font-weight:600;color:var(--muted);margin-top:2px}
+
+  /* marquee */
+  .marquee{position:relative;overflow:hidden;border-top:1px solid rgba(231,220,204,.7);border-bottom:1px solid rgba(231,220,204,.7);background:rgba(255,255,255,.4);padding:16px 0;margin-top:38px;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+  .mtrack{display:flex;gap:32px;width:max-content;animation:mq 28s linear infinite;white-space:nowrap}
+  @keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .mtrack span{display:flex;align-items:center;gap:32px;font-family:var(--display);font-size:19px;font-weight:500;color:var(--muted)}
+  .mtrack i{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block}
+
+  /* sections */
+  section.blk{padding:60px 0}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+  .head h2{font-size:clamp(30px,4vw,52px)}
+  .head p{color:var(--muted);max-width:36ch;font-size:14px;font-weight:500}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  @media(max-width:860px){.cards{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.cards{grid-template-columns:1fr}}
+  .card{position:relative;overflow:hidden;background:rgba(255,255,255,.92);border:1px solid rgba(231,220,204,.95);border-radius:22px;box-shadow:0 10px 34px rgba(74,38,24,.07);padding:24px;transition:.3s;min-height:210px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
+  .card:hover{transform:translateY(-4px);border-color:rgba(181,70,46,.32);box-shadow:0 22px 50px rgba(74,38,24,.14)}
+  .card .ico{width:48px;height:48px;border-radius:16px;background:rgba(181,70,46,.1);color:var(--primary);display:grid;place-items:center;transition:.3s}
+  .card:hover .ico{background:var(--primary);color:#fff;transform:scale(1.1)}
+  .card h4{font-size:20px;margin:16px 0 6px}
+  .card p{font-size:13.5px;color:var(--muted)}
+  .card .lk{margin-top:18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--primary);display:inline-flex;gap:6px;align-items:center}
+
+  /* cta */
+  .cta{position:relative;overflow:hidden;border-radius:32px;padding:48px;color:#fff;background:linear-gradient(135deg,var(--primary-dark),var(--primary),var(--secondary-dark));box-shadow:0 26px 70px rgba(139,51,32,.3);display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+  @media(max-width:680px){.cta{grid-template-columns:1fr;padding:30px}}
+  .cta h2{color:#fff;font-size:clamp(28px,3.6vw,40px)}
+  .cta .pk{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.22em;color:var(--accent)}
+  .cta p{color:rgba(255,255,255,.78);font-size:14px;font-weight:500;margin-top:10px;max-width:54ch}
+  .cta .btn-w{background:#fff;color:var(--primary-dark)}
+
+  footer{border-top:1px solid var(--line);background:rgba(255,255,255,.7);margin-top:50px;padding:40px 0}
+  .fin{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
+  footer p{color:var(--muted);font-size:13px;font-weight:500;margin-top:10px;max-width:40ch}
+  .note{text-align:center;color:var(--muted);font-size:12px;padding:24px;font-weight:500}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="markgrad"></linearGradient>
+</defs></svg>
+
+<!-- TOP BAR -->
+<div class="top"><div class="topin">
+  <div class="brand">
+    <span class="mark">
+      <svg width="28" height="28" viewBox="0 0 40 40" fill="none"><path d="M28 8.4 A 14 14 0 1 0 28 31.6" stroke="#B5462E" stroke-width="4.6" stroke-linecap="round" fill="none"/><path d="M20 20 L29.5 9.2" stroke="#3A5A40" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="20" r="3.5" fill="#3A5A40"/><circle cx="30" cy="8.4" r="4.4" fill="#D89A3F"/></svg>
+    </span>
+    <span><div class="a">Conecta</div><div class="b">Santa Maria</div></span>
+  </div>
+  <div class="topnav">
+    <span class="pill">▦ Serviços</span>
+    <span class="pill">🔍 Buscar…</span>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <div class="chip">◍ Santa Maria do Pará</div>
+      <h1>Sua cidade,<br><span class="grad">conectada</span> a você.</h1>
+      <p class="lead">Solicite serviços, consulte protocolos, participe de petições e acompanhe Santa Maria do Pará com mais clareza — tudo em um só lugar.</p>
+      <div class="btns">
+        <button class="btn btn-p">Abrir solicitação →</button>
+        <button class="btn btn-s">Painel do Cidadão</button>
+      </div>
+      <div class="stats">
+        <div><div class="v">24h</div><div class="l">Canais sempre abertos</div></div>
+        <div><div class="v">14</div><div class="l">Áreas de serviço</div></div>
+        <div><div class="v">100%</div><div class="l">Digital e gratuito</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="greenbox">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+          <div><div class="pk">Atendimento digital</div><h3>Comece pelo protocolo</h3></div>
+          <span style="width:48px;height:48px;border-radius:16px;background:rgba(255,255,255,.1);display:grid;place-items:center">
+            <svg width="28" height="28" viewBox="0 0 40 40" fill="none"><path d="M28 8.4 A 14 14 0 1 0 28 31.6" stroke="#fff" stroke-width="4.6" stroke-linecap="round" fill="none"/><path d="M20 20 L29.5 9.2" stroke="#9BBF9F" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="20" r="3.5" fill="#fff"/><circle cx="30" cy="8.4" r="4.4" fill="#D89A3F"/></svg>
+          </span>
+        </div>
+        <div class="step"><span class="n">1</span><span class="t">Descreva a necessidade</span></div>
+        <div class="step"><span class="n">2</span><span class="t">Receba um protocolo</span></div>
+        <div class="step"><span class="n">3</span><span class="t">Acompanhe a resposta</span></div>
+      </div>
+      <div class="mini">
+        <div><div class="mv">Seguro</div><div class="ml">Login Google</div></div>
+        <div><div class="mv">Rápido</div><div class="ml">Fluxos reais</div></div>
+        <div><div class="mv">Aberto</div><div class="ml">24 horas</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee"><div class="mtrack">
+  <span>Saúde<i></i>Educação<i></i>Tributos<i></i>Mobilidade<i></i>Empregos<i></i>Eventos<i></i>Comércio<i></i>Comunidade<i></i>Petições<i></i>Ouvidoria<i></i>Meio Ambiente<i></i>Segurança<i></i></span>
+  <span>Saúde<i></i>Educação<i></i>Tributos<i></i>Mobilidade<i></i>Empregos<i></i>Eventos<i></i>Comércio<i></i>Comunidade<i></i>Petições<i></i>Ouvidoria<i></i>Meio Ambiente<i></i>Segurança<i></i></span>
+</div></div>
+
+<div class="wrap">
+  <!-- ACTIONS -->
+  <section class="blk">
+    <div class="head">
+      <div><div class="eyebrow">Acesso rápido</div><h2 style="margin-top:8px">O que você precisa fazer?</h2></div>
+      <p>Os caminhos centrais ficam destacados e funcionam em fluxo direto, para cidadão e gestão.</p>
+    </div>
+    <div class="cards">
+      <div class="card"><div><div class="ico"><svg width="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h4>Abrir solicitação</h4><p>Registre pedidos, reclamações, denúncias, sugestões ou problemas urbanos.</p></div><span class="lk">Começar →</span></div>
+      <div class="card"><div><div class="ico"><svg width="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div><h4>Consultar protocolo</h4><p>Acompanhe o andamento de uma solicitação enviada ao município.</p></div><span class="lk">Consultar →</span></div>
+      <div class="card"><div><div class="ico"><svg width="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><h4>Petições</h4><p>Apoie causas abertas e acompanhe respostas oficiais da gestão.</p></div><span class="lk">Participar →</span></div>
+      <div class="card"><div><div class="ico"><svg width="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h4>Painel do Cidadão</h4><p>Veja seu histórico, dados básicos, protocolos e atividades.</p></div><span class="lk">Entrar →</span></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="blk" style="padding-top:0">
+    <div class="cta">
+      <div>
+        <div class="pk">Participação cidadã</div>
+        <h2>Petições transformam demandas em pautas visíveis.</h2>
+        <p>Causas abertas pela comunidade ganham meta, contador de assinaturas e espaço para resposta oficial.</p>
+      </div>
+      <button class="btn btn-w">Ver petições →</button>
+    </div>
+  </section>
+</div>
+
+<footer><div class="wrap fin">
+  <div>
+    <div class="brand">
+      <span class="mark"><svg width="26" height="26" viewBox="0 0 40 40" fill="none"><path d="M28 8.4 A 14 14 0 1 0 28 31.6" stroke="#B5462E" stroke-width="4.6" stroke-linecap="round" fill="none"/><path d="M20 20 L29.5 9.2" stroke="#3A5A40" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="20" r="3.5" fill="#3A5A40"/><circle cx="30" cy="8.4" r="4.4" fill="#D89A3F"/></svg></span>
+      <span><div class="a">Conecta</div><div class="b">Santa Maria</div></span>
+    </div>
+    <p>© 2026 Conecta Santa Maria — portal do cidadão e serviços municipais de Santa Maria do Pará.</p>
+  </div>
+  <div style="display:flex;gap:8px">
+    <span class="pill">Sobre</span><span class="pill">Privacidade</span><span class="pill">Contato</span>
+  </div>
+</div></footer>
+
+<div class="note">Snapshot estático do resultado. No app real, ao rolar a página o fundo migra suavemente entre terracota → dourado → musgo, os blocos sobem com fade, os números contam e o painel verde faz parallax.</div>
+</body>
+</html>
