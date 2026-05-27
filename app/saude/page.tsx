@@ -105,7 +105,7 @@ export default function SaudePage() {
                      <div className="space-y-4">
                         <div className="flex items-center justify-between px-2">
                            <h3 className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">Tempos de Espera (Live)</h3>
-                           <div className="flex items-center gap-1.5 text-[8px] font-semibold text-green-500 animate-pulse">
+                           <div className="flex items-center gap-1.5 text-[8px] font-semibold text-green-500">
                               <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
                               VERIFICADO
                            </div>
@@ -198,7 +198,7 @@ export default function SaudePage() {
                            />
                            <div className="text-center space-y-1">
                               <span className="text-[8px] font-semibold text-sky-500 uppercase flex items-center justify-center gap-1.5 font-mono">
-                                 <div className="w-1.5 h-1.5 bg-sky-500 rounded-full animate-pulse" />
+                                 <div className="w-1.5 h-1.5 bg-sky-500 rounded-full" />
                                  ASSINATURA DIGITAL ATIVA
                               </span>
                            </div>
@@ -289,7 +289,7 @@ export default function SaudePage() {
             </div>
 
             <div className="absolute top-1/4 left-2/3 group cursor-pointer">
-               <div className="bg-text-main text-white p-4 rounded-full shadow-2xl border-4 border-white animate-pulse">
+               <div className="bg-text-main text-white p-4 rounded-full shadow-2xl border-4 border-white">
                   <Hospital className="w-6 h-6" />
                </div>
                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-white p-3 rounded-2xl shadow-2xl border-2 border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">

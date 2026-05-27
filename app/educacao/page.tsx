@@ -101,7 +101,7 @@ export default function EducacaoPage() {
             </div>
          </div>
          <div className="relative mt-16 md:mt-0 hidden xl:block">
-            <div className="w-[450px] h-[450px] bg-white/5 rounded-full absolute -inset-20 animate-pulse border-2 border-white/10" />
+            <div className="w-[450px] h-[450px] bg-white/5 rounded-full absolute -inset-20 animate-floaty border-2 border-white/10" />
             <div className="w-96 h-96 relative z-10 rotate-12 group-hover:rotate-0 transition-all duration-1000">
                <BookOpen className="w-full h-full opacity-10" />
                <div className="absolute inset-0 flex items-center justify-center">
@@ -184,7 +184,7 @@ export default function EducacaoPage() {
                           />
                           <div className="absolute top-8 left-8">
                              <div className="px-5 py-2.5 bg-white/95 rounded-full text-[10px] font-semibold uppercase tracking-widest shadow-2xl border-2 border-border flex items-center gap-2">
-                                <div className={cn("w-2 h-2 rounded-full animate-pulse", school.status === 'Vagas Abertas' ? 'bg-green-500' : 'bg-blue-600')} />
+                                <div className={cn("w-2 h-2 rounded-full", school.status === 'Vagas Abertas' ? 'bg-green-500' : 'bg-blue-600')} />
                                 {school.status}
                              </div>
                           </div>
@@ -274,7 +274,7 @@ export default function EducacaoPage() {
                            <Utensils size={28} />
                         </div>
                         <span className="text-[9px] font-semibold text-green-500 uppercase tracking-widest flex items-center gap-1.5 leading-none">
-                           <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                           <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
                            Servindo Agora
                         </span>
                      </div>

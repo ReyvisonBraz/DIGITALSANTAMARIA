@@ -22,6 +22,7 @@ import {
 import { LogoMark } from '@/components/Logo';
 import Reveal, { RevealGroup, RevealItem } from '@/components/ui/Reveal';
 import Counter from '@/components/ui/Counter';
+import TextReveal from '@/components/ui/TextReveal';
 
 const primaryActions = [
   {
@@ -75,16 +76,14 @@ const stats = [
   { value: 100, suffix: '%', label: 'Digital e gratuito' },
 ] as const;
 
-const marqueeWords = [
-  'Saúde', 'Educação', 'Tributos', 'Mobilidade', 'Empregos', 'Eventos',
-  'Comércio', 'Comunidade', 'Petições', 'Ouvidoria', 'Meio Ambiente', 'Segurança',
-];
+const ease = [0.16, 1, 0.3, 1] as const;
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
-  const yPanel = useTransform(scrollY, [0, 500], [0, -42]);
-  const yBlob = useTransform(scrollY, [0, 500], [0, 70]);
+  const yPanel = useTransform(scrollY, [0, 500], [0, -46]);
+  const yBlob = useTransform(scrollY, [0, 500], [0, 80]);
+  const yBlob2 = useTransform(scrollY, [0, 600], [0, -60]);
   const rotateMark = useTransform(scrollY, [0, 600], [0, 24]);
 
   return (
@@ -92,11 +91,16 @@ export default function Home() {
       {/* ───────────── Hero ───────────── */}
       <section className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 md:px-10 lg:px-12">
         <div ref={heroRef} className="hero-panel grid grid-cols-1 gap-8 p-5 sm:p-7 md:grid-cols-[1.08fr_0.92fr] md:p-9 lg:p-12">
-          {/* Blob decorativo com parallax */}
+          {/* Camadas decorativas com parallax */}
           <motion.div
             aria-hidden
             style={{ y: yBlob }}
-            className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-accent/25 to-transparent blur-2xl"
+            className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br from-secondary/25 to-transparent blur-3xl"
+          />
+          <motion.div
+            aria-hidden
+            style={{ y: yBlob2 }}
+            className="pointer-events-none absolute -right-10 top-1/3 h-56 w-56 rounded-full bg-gradient-to-br from-accent/25 to-transparent blur-3xl"
           />
 
           <div className="relative z-10 flex flex-col justify-center gap-7">
@@ -110,22 +114,40 @@ export default function Home() {
               Santa Maria do Pará
             </motion.div>
 
-            <div className="max-w-3xl space-y-5">
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
-                className="text-5xl font-semibold leading-[0.98] tracking-tight text-text-main sm:text-6xl lg:text-7xl"
+            <div className="max-w-3xl">
+              <h1
+                className="text-[2.7rem] font-extrabold leading-[0.95] tracking-[-0.03em] text-text-main sm:text-6xl lg:text-7xl"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                Sua cidade,{' '}
-                <span className="text-gradient">conectada</span> a você.
-              </motion.h1>
+                <motion.span
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, ease }}
+                  className="block"
+                >
+                  Sua cidade
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.1, ease }}
+                  className="font-script text-[1.35em] font-bold leading-[0.8] text-gradient"
+                >
+                  conectada
+                </motion.span>{' '}
+                <motion.span
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.18, ease }}
+                >
+                  a você.
+                </motion.span>
+              </h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.12 }}
-                className="max-w-2xl text-base font-medium leading-7 text-text-muted sm:text-lg"
+                transition={{ duration: 0.7, delay: 0.26 }}
+                className="mt-5 max-w-2xl text-base font-medium leading-7 text-text-muted sm:text-lg"
               >
                 Solicite serviços, consulte protocolos, participe de petições e
                 acompanhe Santa Maria do Pará com mais clareza — tudo em um só lugar.
@@ -135,7 +157,7 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.24 }}
+              transition={{ duration: 0.6, delay: 0.34 }}
               className="grid grid-cols-1 gap-3 sm:flex sm:flex-wrap"
             >
               <Link href="/ouvidoria" className="action-button-primary group">
@@ -151,12 +173,12 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
               className="grid max-w-md grid-cols-3 gap-4 border-t border-border/70 pt-6"
             >
               {stats.map((s) => (
                 <div key={s.label}>
-                  <p className="text-3xl font-semibold text-primary" style={{ fontFamily: 'var(--font-display)' }}>
+                  <p className="text-3xl font-extrabold text-primary" style={{ fontFamily: 'var(--font-display)' }}>
                     <Counter value={s.value} suffix={s.suffix} />
                   </p>
                   <p className="mt-1 text-[11px] font-semibold leading-tight text-text-muted">{s.label}</p>
@@ -170,16 +192,16 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, scale: 0.96, y: 24 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
+              transition={{ duration: 0.7, delay: 0.2, ease }}
               className="glass-panel p-4 sm:p-5"
             >
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-secondary-dark via-secondary to-secondary-dark p-6 text-white shadow-[0_22px_50px_rgba(17,132,188,0.32)] animate-drift">
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-dark via-primary to-secondary-dark p-6 text-white shadow-[0_22px_50px_rgba(14,58,140,0.34)]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
                       Atendimento digital
                     </p>
-                    <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                    <h2 className="mt-2 text-2xl font-bold tracking-tight text-white" style={{ fontFamily: 'var(--font-display)' }}>
                       Comece pelo protocolo
                     </h2>
                   </div>
@@ -198,12 +220,13 @@ export default function Home() {
                       initial={{ opacity: 0, x: 16 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5, delay: 0.5 + index * 0.12 }}
-                      className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm"
+                      className="group/step flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm transition-colors hover:bg-white/20"
                     >
-                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-accent text-sm font-bold text-secondary-dark">
+                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-accent text-sm font-extrabold text-primary-dark">
                         {index + 1}
                       </span>
                       <span className="text-sm font-semibold text-white/90">{step}</span>
+                      <ArrowRight className="ml-auto h-4 w-4 text-white/40 transition-transform group-hover/step:translate-x-1 group-hover/step:text-white" />
                     </motion.div>
                   ))}
                 </div>
@@ -215,8 +238,8 @@ export default function Home() {
                   ['Rápido', 'Fluxos reais'],
                   ['Aberto', '24 horas'],
                 ].map(([value, label]) => (
-                  <div key={label} className="rounded-2xl border border-border bg-white/80 p-3 text-center">
-                    <p className="text-sm font-semibold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>{value}</p>
+                  <div key={label} className="rounded-2xl border border-border bg-white/80 p-3 text-center transition-colors hover:border-primary/40">
+                    <p className="text-sm font-bold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>{value}</p>
                     <p className="mt-1 text-[10px] font-semibold leading-tight text-text-muted">{label}</p>
                   </div>
                 ))}
@@ -226,48 +249,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ───────────── Marquee de áreas ───────────── */}
-      <div className="relative mt-10 select-none border-y border-border/70 bg-white/40 py-4 marquee-mask">
-        <div className="flex w-max animate-marquee gap-8 whitespace-nowrap will-change-transform">
-          {[...marqueeWords, ...marqueeWords].map((word, i) => (
-            <span key={i} className="flex items-center gap-8 text-lg font-medium text-text-muted" style={{ fontFamily: 'var(--font-display)' }}>
-              {word}
-              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <main className="mx-auto w-full max-w-7xl space-y-16 px-4 py-12 sm:px-6 md:px-10 md:py-16 lg:px-12">
+      <main className="mx-auto w-full max-w-7xl space-y-16 px-4 py-14 sm:px-6 md:px-10 md:py-20 lg:px-12">
         {/* ───────────── Ações principais ───────────── */}
-        <section className="space-y-7" aria-labelledby="acoes-principais">
-          <Reveal>
-            <div className="grid gap-3 sm:grid-cols-[1fr_0.8fr] sm:items-end">
-              <div>
-                <p className="eyebrow">Acesso rápido</p>
-                <h2 id="acoes-principais" className="section-title mt-2">
-                  O que você precisa fazer?
-                </h2>
-              </div>
+        <section className="space-y-8" aria-labelledby="acoes-principais">
+          <div className="grid gap-3 sm:grid-cols-[1fr_0.8fr] sm:items-end">
+            <div>
+              <Reveal><p className="eyebrow">Acesso rápido</p></Reveal>
+              <h2 id="acoes-principais" className="section-title mt-2">
+                <TextReveal text="O que você precisa fazer?" highlight={['fazer?']} />
+              </h2>
+            </div>
+            <Reveal delay={0.1}>
               <p className="text-sm font-medium leading-6 text-text-muted">
                 Os caminhos centrais ficam destacados e funcionam em fluxo direto, para cidadão e gestão.
               </p>
-            </div>
-          </Reveal>
+            </Reveal>
+          </div>
 
           <RevealGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {primaryActions.map((action) => (
               <RevealItem key={action.title}>
                 <Link
                   href={action.href}
-                  className="civic-card group flex h-full min-h-56 flex-col justify-between p-6"
+                  className="civic-card group relative flex h-full min-h-56 flex-col justify-between overflow-hidden p-6"
                 >
+                  {/* Faixa de cor que sobe no hover */}
+                  <span className="pointer-events-none absolute inset-x-0 bottom-0 h-0 bg-gradient-to-t from-primary/8 to-transparent transition-all duration-500 group-hover:h-full" />
                   <div className="relative z-10 space-y-4">
                     <div className="grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary transition duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-white">
                       <action.icon className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold tracking-tight text-text-main" style={{ fontFamily: 'var(--font-display)' }}>
+                      <h3 className="text-xl font-bold tracking-tight text-text-main" style={{ fontFamily: 'var(--font-display)' }}>
                         {action.title}
                       </h3>
                       <p className="mt-2 text-sm font-medium leading-6 text-text-muted">{action.description}</p>
@@ -291,8 +304,8 @@ export default function Home() {
                 <Sparkles className="h-6 w-6" />
               </div>
               <p className="eyebrow mt-5">Portal público</p>
-              <h2 id="servicos" className="mt-2 text-2xl font-semibold tracking-tight text-text-main md:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>
-                Serviços municipais em um só lugar
+              <h2 id="servicos" className="mt-2 text-2xl font-bold tracking-tight text-text-main md:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>
+                <TextReveal text="Serviços municipais em um só lugar" highlight={['lugar']} />
               </h2>
               <p className="mt-3 text-sm font-medium leading-6 text-text-muted">
                 Solicitação, protocolo, painel e petições no centro da experiência.
@@ -312,11 +325,12 @@ export default function Home() {
                   href={service.href}
                   className={`civic-card group flex min-h-40 min-w-44 flex-col justify-between bg-gradient-to-br ${service.tone} to-white p-5`}
                 >
-                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/70 text-primary shadow-sm transition group-hover:scale-110">
+                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/70 text-primary shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:scale-110">
                     <service.icon className="h-5 w-5" />
                   </div>
-                  <span className="relative z-10 text-lg font-semibold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>
+                  <span className="relative z-10 inline-flex items-center justify-between text-lg font-bold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>
                     {service.label}
+                    <ArrowRight className="h-4 w-4 text-primary opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100" />
                   </span>
                 </Link>
               </RevealItem>
@@ -326,21 +340,22 @@ export default function Home() {
 
         {/* ───────────── Petições (CTA) ───────────── */}
         <Reveal>
-          <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary-dark via-primary to-secondary-dark p-7 text-white shadow-[0_26px_70px_rgba(14,58,140,0.34)] animate-drift md:p-10">
-            <LogoMark size={220} className="animate-floaty pointer-events-none absolute -right-12 -bottom-16 opacity-[0.08]" />
+          <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary-dark via-primary to-secondary-dark p-7 text-white shadow-[0_26px_70px_rgba(14,58,140,0.34)] md:p-12">
+            <LogoMark size={240} className="animate-floaty pointer-events-none absolute -right-12 -bottom-16 opacity-[0.08]" />
+            <span className="font-script pointer-events-none absolute right-8 top-6 hidden text-4xl text-accent/40 md:block">do Pará</span>
             <div className="relative z-10 grid grid-cols-1 gap-6 md:grid-cols-[1fr_auto] md:items-center">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">Participação cidadã</p>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl" style={{ fontFamily: 'var(--font-display)' }}>
-                  Petições transformam demandas em pautas visíveis.
+                <h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-[2.6rem] md:leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>
+                  Sua voz vira pauta da cidade.
                 </h2>
-                <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-white/75">
-                  Causas abertas pela comunidade ganham meta, contador de assinaturas e espaço para resposta oficial.
+                <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-white/80">
+                  Causas abertas pela comunidade ganham meta, contador de assinaturas e espaço para resposta oficial da gestão.
                 </p>
               </div>
-              <Link href="/peticoes" className="action-button bg-white text-primary-dark hover:bg-accent hover:text-secondary-dark">
+              <Link href="/peticoes" className="action-button group bg-white text-primary-dark hover:bg-accent hover:text-primary-dark">
                 Ver petições
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
           </section>
