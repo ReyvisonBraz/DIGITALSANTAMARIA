@@ -65,7 +65,7 @@ export default function SaudePage() {
                   <Activity className="w-3.5 h-3.5" />
                   Atenção à saúde
                </div>
-               <h1 className="text-4xl font-semibold text-text-main tracking-tight leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>Saúde <span className="text-sky-500 italic">conectada</span></h1>
+               <h1 className="text-4xl font-semibold text-text-main tracking-tight leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>Saúde <span className="text-sky-500">conectada</span></h1>
             </div>
 
             <div className="flex p-1.5 bg-surface rounded-2xl border-2 border-border shadow-inner">

@@ -52,9 +52,10 @@
   --color-accent-danger: #E23B3B;
   --color-accent-success: #2E9E5B;
 
-  /* Tipografia */
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  /* Tipografia — Poppins (display, marca) + Plus Jakarta (corpo) + Dancing Script (floreio) */
+  --font-display: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-script: 'Dancing Script', 'Brush Script MT', cursive;
 
   /* Sombras assinatura */
   --shadow-soft: 0 10px 34px rgba(20, 34, 74, 0.08);
@@ -106,18 +107,25 @@
     --color-accent: #FFD451;
   }
 
-  /* Tipografia editorial */
+  /* Tipografia — títulos Poppins (marca da cidade) */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
-    @apply font-semibold leading-[1.05];
-    letter-spacing: -0.02em;
+    @apply font-bold leading-[1.05];
+    letter-spacing: -0.03em;
     color: var(--color-text-main);
   }
 
-  h1 { @apply text-4xl md:text-6xl font-semibold; }
-  h2 { @apply text-3xl md:text-5xl font-semibold; }
-  h3 { @apply text-2xl md:text-3xl font-semibold; }
-  h4 { @apply text-xl md:text-2xl font-medium; }
+  h1 { @apply text-4xl md:text-6xl font-extrabold; }
+  h2 { @apply text-3xl md:text-5xl font-bold; }
+  h3 { @apply text-2xl md:text-3xl font-bold; }
+  h4 { @apply text-xl md:text-2xl font-semibold; }
+
+  /* Floreio manuscrito (uso decorativo mínimo) */
+  .font-script {
+    font-family: var(--font-script);
+    font-weight: 700;
+    letter-spacing: 0;
+  }
 
   .text-name {
     @apply font-semibold;

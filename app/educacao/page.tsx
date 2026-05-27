@@ -80,7 +80,7 @@ export default function EducacaoPage() {
                Excelência pública municipal
             </div>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold leading-[0.95] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
-               Educação que <span className="text-amber-300 italic">transforma</span>
+               Educação que <span className="text-amber-300">transforma</span>
             </h1>
             <p className="text-lg md:text-2xl font-medium opacity-90 max-w-2xl leading-relaxed border-l-2 border-white/30 pl-8">
                A jornada acadêmica do seu filho em um só lugar — do ensino fundamental à mentoria profissional, com matrícula e acompanhamento online.
@@ -152,7 +152,7 @@ export default function EducacaoPage() {
             >
                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10">
                   <div className="space-y-3">
-                     <h2 className="text-3xl md:text-5xl font-semibold text-text-main tracking-tight leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>Nossa <span className="text-blue-600 italic">rede</span></h2>
+                     <h2 className="text-3xl md:text-5xl font-semibold text-text-main tracking-tight leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>Nossa <span className="text-blue-600">rede</span></h2>
                      <p className="text-text-muted font-medium text-lg opacity-80 max-w-xl leading-relaxed">
                         Unidades de ensino municipais avaliadas e integradas em um só painel de acompanhamento.
                      </p>
@@ -382,7 +382,7 @@ export default function EducacaoPage() {
                         <Library className="w-12 h-12 md:w-16 md:h-16" />
                      </div>
                      <div className="space-y-4">
-                        <h4 className="text-4xl md:text-6xl font-semibold text-text-main tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>Biblioteca <span className="text-blue-600 italic">universal</span></h4>
+                        <h4 className="text-4xl md:text-6xl font-semibold text-text-main tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>Biblioteca <span className="text-blue-600">universal</span></h4>
                         <p className="text-lg md:text-xl font-medium text-text-muted max-w-2xl leading-relaxed opacity-75">
                            Acesso direto a mais de 50.000 títulos digitais e acervos históricos do município, gratuitos para todos os cidadãos.
                         </p>

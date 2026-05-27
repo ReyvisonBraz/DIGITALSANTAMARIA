@@ -28,7 +28,7 @@ export default function LegalPage() {
         </div>
         <div className="space-y-2">
           <h1 className="text-4xl md:text-6xl font-semibold text-text-main tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>
-            Centro <span className="text-secondary italic">legal</span>
+            Centro <span className="text-secondary">legal</span>
           </h1>
           <p className="text-[11px] font-bold text-text-muted uppercase tracking-[0.24em]">Conformidade e segurança de dados</p>
         </div>

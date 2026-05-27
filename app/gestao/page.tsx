@@ -132,7 +132,7 @@ export default function GestaoPage() {
             Gestão municipal
           </div>
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-text-main md:text-5xl" style={{ fontFamily: 'var(--font-display)' }}>
-            Painel de <span className="text-gradient italic">operação</span>
+            Painel de <span className="text-gradient">operação</span>
           </h1>
           <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
             Acompanhe solicitações, responda protocolos, gerencie petições e atualize dados de usuários.

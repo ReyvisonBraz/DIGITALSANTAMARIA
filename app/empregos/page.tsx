@@ -46,7 +46,7 @@ export default function EmpregosPage() {
               Banco de oportunidades
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold text-text-main tracking-tight leading-[0.98]" style={{ fontFamily: 'var(--font-display)' }}>
-              Banco de <span className="text-gradient italic">talentos</span>
+              Banco de <span className="text-gradient">talentos</span>
             </h1>
             <p className="text-base md:text-xl font-medium text-text-muted leading-relaxed">
               Conectamos os melhores profissionais às vagas reais do município.

@@ -42,7 +42,7 @@ export default function SobrePage() {
             Edição 2026
           </div>
           <h1 className="text-5xl md:text-7xl font-semibold text-text-main tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>
-            Conectando <span className="text-gradient italic">pessoas e cidade</span>
+            Conectando <span className="text-gradient">pessoas e cidade</span>
           </h1>
           <p className="text-lg md:text-xl font-medium text-text-muted leading-relaxed">
             O Conecta Santa Maria é o portal oficial do cidadão de Santa Maria do Pará — feito para transparência, participação ativa e eficiência nos serviços municipais.

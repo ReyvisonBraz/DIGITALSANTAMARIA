@@ -119,7 +119,7 @@ export default function Home() {
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 Sua cidade,{' '}
-                <span className="text-gradient italic">conectada</span> a você.
+                <span className="text-gradient">conectada</span> a você.
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
