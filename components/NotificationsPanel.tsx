@@ -92,9 +92,9 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
                 <notification.icon className="h-5 w-5" />
               </div>
               <div className="min-w-0">
-                <h4 className="text-sm font-black uppercase tracking-normal text-text-main">{notification.title}</h4>
+                <h4 className="text-sm font-semibold uppercase tracking-normal text-text-main">{notification.title}</h4>
                 <p className="mt-1 text-xs font-medium leading-5 text-text-muted">{notification.message}</p>
-                <div className="mt-2 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                <div className="mt-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
                   <Clock className="h-3 w-3" />
                   <time>{notification.time}</time>
                 </div>
@@ -104,7 +104,7 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
         ))}
 
         <div className="pt-4 text-center">
-          <button className="text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:underline">
+          <button className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary hover:underline">
             Marcar todas como lidas
           </button>
         </div>

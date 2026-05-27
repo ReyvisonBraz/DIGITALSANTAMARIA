@@ -20,7 +20,7 @@ export default function OuvidoriaPage() {
             </div>
 
             <div className="max-w-3xl space-y-3 animate-float-in">
-              <h1 className="text-3xl font-black leading-tight tracking-normal text-text-main sm:text-5xl lg:text-6xl">
+              <h1 className="text-3xl font-semibold leading-tight tracking-normal text-text-main sm:text-5xl lg:text-6xl">
                 Ouvidoria e solicitacoes
               </h1>
               <p className="max-w-2xl text-base font-medium leading-7 text-text-muted">
@@ -47,7 +47,7 @@ export default function OuvidoriaPage() {
           </div>
 
           <aside className="relative z-10 glass-panel p-4 md:p-5">
-            <h2 className="text-lg font-black tracking-normal text-text-main">Antes de comecar</h2>
+            <h2 className="text-lg font-semibold tracking-normal text-text-main">Antes de comecar</h2>
             <div className="mt-4 space-y-3">
               {[
                 {
@@ -76,10 +76,10 @@ export default function OuvidoriaPage() {
       <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-4 py-7 sm:px-6 md:px-10 lg:grid-cols-[1fr_0.35fr] lg:px-12">
         <section className="glass-panel p-4 md:p-6">
           <div className="mb-5 border-b border-border pb-5">
-            <p className="text-xs font-black uppercase tracking-widest text-primary">
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">
               {activeTab === 'create' ? 'Novo protocolo' : 'Acompanhamento'}
             </p>
-            <h2 className="mt-1 text-2xl font-black tracking-normal text-text-main">
+            <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">
               {activeTab === 'create' ? 'Abrir solicitacao' : 'Consultar protocolo'}
             </h2>
           </div>
@@ -89,8 +89,8 @@ export default function OuvidoriaPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
                 <div>
-                  <p className="text-sm font-black">Solicitacao protocolada com sucesso.</p>
-                  <p className="mt-1 break-all font-mono text-base font-black text-green-800 sm:text-lg">
+                  <p className="text-sm font-semibold">Solicitacao protocolada com sucesso.</p>
+                  <p className="mt-1 break-all font-mono text-base font-semibold text-green-800 sm:text-lg">
                     {createdProtocol}
                   </p>
                 </div>
@@ -107,14 +107,14 @@ export default function OuvidoriaPage() {
 
         <aside className="space-y-4">
           <div className="civic-card p-5">
-            <p className="relative z-10 text-xs font-black uppercase tracking-widest text-text-muted">Prazo de resposta</p>
-            <p className="relative z-10 mt-2 text-3xl font-black text-text-main">Ate 20 dias uteis</p>
+            <p className="relative z-10 text-xs font-semibold uppercase tracking-widest text-text-muted">Prazo de resposta</p>
+            <p className="relative z-10 mt-2 text-3xl font-semibold text-text-main">Ate 20 dias uteis</p>
             <p className="relative z-10 mt-2 text-sm font-medium leading-6 text-text-muted">
               O prazo pode variar conforme a complexidade e o setor responsavel.
             </p>
           </div>
           <div className="rounded-[1.25rem] bg-gradient-to-br from-text-main to-primary-dark p-5 text-white shadow-[0_18px_48px_rgba(15,23,42,0.16)]">
-            <p className="text-xs font-black uppercase tracking-widest text-primary-light">Painel do Cidadao</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary-light">Painel do Cidadao</p>
             <p className="mt-2 text-sm font-medium leading-6 text-white/75">
               Solicitacoes feitas com login aparecem automaticamente no historico.
             </p>

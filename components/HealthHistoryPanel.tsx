@@ -34,8 +34,8 @@ export default function HealthHistoryPanel({ isOpen, onClose }: HealthHistoryPan
                 <ClipboardList className="w-8 h-8 text-primary" />
               </div>
               <div className="space-y-0.5">
-                <h4 className="text-[10px] font-black text-primary uppercase tracking-widest">Acesso Restrito</h4>
-                <p className="text-2xl font-black tracking-tighter leading-none uppercase">Prontuário <br/> Digital.</p>
+                <h4 className="text-[10px] font-semibold text-primary uppercase tracking-widest">Acesso Restrito</h4>
+                <p className="text-2xl font-semibold tracking-tighter leading-none uppercase">Prontuário <br/> Digital.</p>
               </div>
             </div>
           </div>
@@ -43,7 +43,7 @@ export default function HealthHistoryPanel({ isOpen, onClose }: HealthHistoryPan
         </div>
 
         <div className="flex items-center justify-between px-2">
-          <h3 className="text-xs font-black text-text-main uppercase tracking-widest flex items-center gap-2">
+          <h3 className="text-xs font-semibold text-text-main uppercase tracking-widest flex items-center gap-2">
             <Clock className="w-4 h-4 text-primary" />
             Consultas
           </h3>
@@ -53,7 +53,7 @@ export default function HealthHistoryPanel({ isOpen, onClose }: HealthHistoryPan
           <div className="absolute left-[31px] top-4 bottom-4 w-[2px] bg-border/50" />
 
           {appointments.length === 0 ? (
-            <p className="text-center text-text-muted text-xs font-black uppercase tracking-widest py-10">Nenhum agendamento encontrado</p>
+            <p className="text-center text-text-muted text-xs font-semibold uppercase tracking-widest py-10">Nenhum agendamento encontrado</p>
           ) : appointments.map((item, idx) => (
             <motion.div
               key={item.id}
@@ -67,16 +67,16 @@ export default function HealthHistoryPanel({ isOpen, onClose }: HealthHistoryPan
               </div>
               <div className="flex-grow bg-white p-6 rounded-[2rem] border-2 border-border shadow-sm hover:shadow-xl transition-all">
                 <div className="flex justify-between items-start mb-3">
-                  <span className="text-[8px] font-black uppercase tracking-[0.2em] opacity-40">{item.date}</span>
+                  <span className="text-[8px] font-semibold uppercase tracking-[0.2em] opacity-40">{item.date}</span>
                   <div className={cn(
-                    "px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5",
+                    "px-3 py-1 rounded-full text-[8px] font-semibold uppercase tracking-widest flex items-center gap-1.5",
                     item.status === 'completed' ? "bg-green-50 text-green-600" : "bg-primary/5 text-primary"
                   )}>
                     {item.status === 'completed' ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
                     {item.status === 'completed' ? 'Concluído' : item.status}
                   </div>
                 </div>
-                <h4 className="text-lg font-black text-text-main leading-none uppercase tracking-tight">{item.specialty}</h4>
+                <h4 className="text-lg font-semibold text-text-main leading-none uppercase tracking-tight">{item.specialty}</h4>
                 <div className="mt-4 pt-4 border-t border-border/50 flex flex-wrap gap-4">
                   <div className="flex items-center gap-2 text-[10px] font-bold text-text-muted uppercase tracking-wider">
                     <MapPin className="w-3 h-3 text-primary" />
@@ -93,7 +93,7 @@ export default function HealthHistoryPanel({ isOpen, onClose }: HealthHistoryPan
             <div className="p-3 bg-white rounded-xl shadow-inner text-tertiary">
               <AlertCircle className="w-6 h-6" />
             </div>
-            <h4 className="text-sm font-black text-text-main uppercase leading-tight">Privacidade & Proteção de Dados</h4>
+            <h4 className="text-sm font-semibold text-text-main uppercase leading-tight">Privacidade & Proteção de Dados</h4>
           </div>
           <p className="text-xs font-ui font-medium text-text-muted leading-relaxed relative z-10">
             Seu prontuário é protegido por criptografia de ponta a ponta integrada ao DigitalID.

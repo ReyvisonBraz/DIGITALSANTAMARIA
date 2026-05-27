@@ -37,11 +37,11 @@ export default function SobrePage() {
       {/* Header Section */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-8 order-2 lg:order-1">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] font-black uppercase tracking-widest border border-primary/20">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] font-semibold uppercase tracking-widest border border-primary/20">
             <Info className="w-4 h-4" />
             Edição 2026
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-text-main tracking-tighter uppercase leading-none">
+          <h1 className="text-5xl md:text-7xl font-semibold text-text-main tracking-tighter uppercase leading-none">
             Conectando <br /> 
             <span className="text-primary">Pessoas e Cidade.</span>
           </h1>
@@ -51,11 +51,11 @@ export default function SobrePage() {
           <div className="flex flex-wrap gap-4 pt-4">
              <div className="flex items-center gap-2 bg-surface px-6 py-4 rounded-2xl border-2 border-border">
                 <BarChart3 className="w-5 h-5 text-primary" />
-                <span className="text-sm font-black text-text-main uppercase">100% Open Data</span>
+                <span className="text-sm font-semibold text-text-main uppercase">100% Open Data</span>
              </div>
              <div className="flex items-center gap-2 bg-surface px-6 py-4 rounded-2xl border-2 border-border">
                 <ShieldCheck className="w-5 h-5 text-green-500" />
-                <span className="text-sm font-black text-text-main uppercase">LGPD Compliant</span>
+                <span className="text-sm font-semibold text-text-main uppercase">LGPD Compliant</span>
              </div>
           </div>
         </div>
@@ -100,7 +100,7 @@ export default function SobrePage() {
             <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform", item.color)}>
               <item.icon className="w-8 h-8" />
             </div>
-            <h3 className="text-2xl font-black text-text-main tracking-tight uppercase">{item.title}</h3>
+            <h3 className="text-2xl font-semibold text-text-main tracking-tight uppercase">{item.title}</h3>
             <p className="text-sm font-ui font-medium text-text-muted leading-relaxed opacity-80">{item.desc}</p>
           </div>
         ))}
@@ -109,7 +109,7 @@ export default function SobrePage() {
       {/* Departments */}
       <section className="space-y-12">
         <div className="text-center space-y-2">
-           <h2 className="text-3xl font-black text-text-main tracking-tighter uppercase">Quem cuida do Portal?</h2>
+           <h2 className="text-3xl font-semibold text-text-main tracking-tighter uppercase">Quem cuida do Portal?</h2>
            <p className="text-text-muted font-ui">O esforço conjunto de diversas secretarias federais e municipais.</p>
         </div>
         
@@ -120,7 +120,7 @@ export default function SobrePage() {
                   <t.icon className="w-6 h-6" />
                </div>
                <div>
-                  <h4 className="text-sm font-black text-text-main uppercase tracking-tight">{t.name}</h4>
+                  <h4 className="text-sm font-semibold text-text-main uppercase tracking-tight">{t.name}</h4>
                   <p className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em]">{t.role}</p>
                </div>
             </div>
@@ -131,18 +131,18 @@ export default function SobrePage() {
       {/* Footer CTA */}
       <section className="bg-primary p-12 md:p-20 rounded-[4rem] text-white flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden shadow-3xl">
          <div className="relative z-10 space-y-6 max-w-xl">
-            <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none">Participe da Construção.</h2>
+            <h2 className="text-4xl md:text-6xl font-semibold tracking-tighter uppercase leading-none">Participe da Construção.</h2>
             <p className="text-lg opacity-80 font-ui font-medium">O portal é atualizado semanalmente com base no feedback enviado pelos cidadãos através da Ouvidoria.</p>
             <div className="flex gap-4">
                <button 
                 onClick={() => router.push('/ouvidoria')}
-                className="bg-white text-primary px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl hover:translate-y-[-2px] transition-all active:scale-95"
+                className="bg-white text-primary px-8 py-4 rounded-xl font-semibold text-xs uppercase tracking-widest shadow-xl hover:translate-y-[-2px] transition-all active:scale-95"
                >
                   Enviar Feedback
                </button>
                <button 
                 onClick={() => toast('Redirecionando para o Portal de Transparência & APIs Municipais...', 'info')}
-                className="bg-transparent border-2 border-white/30 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95"
+                className="bg-transparent border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-xs uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95"
                >
                   Documentação API
                </button>

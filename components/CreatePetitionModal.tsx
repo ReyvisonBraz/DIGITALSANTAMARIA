@@ -96,7 +96,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
         return (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
             <label className="block space-y-2">
-              <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">Titulo da causa</span>
+              <span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">Titulo da causa</span>
               <input
                 className="w-full rounded-xl border border-border bg-surface p-4 font-bold shadow-inner outline-none transition focus:border-primary"
                 placeholder="Ex: Reforma da Praca Central"
@@ -108,7 +108,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <label className="block space-y-2">
-                <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">Categoria</span>
+                <span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">Categoria</span>
                 <select
                   className="h-12 w-full rounded-xl border border-border bg-surface px-3 font-bold shadow-inner outline-none transition focus:border-primary"
                   value={formData.category}
@@ -121,7 +121,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
               </label>
 
               <label className="block space-y-2">
-                <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">Meta desejada</span>
+                <span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">Meta desejada</span>
                 <span className="relative block">
                   <input
                     type="number"
@@ -140,7 +140,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
               type="button"
               onClick={nextStep}
               disabled={!formData.title.trim()}
-              className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-text-main px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-sm transition disabled:opacity-50"
+              className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-text-main px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white shadow-sm transition disabled:opacity-50"
             >
               Proxima etapa
               <ChevronRight className="h-4 w-4" />
@@ -151,7 +151,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
         return (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
             <label className="block space-y-2">
-              <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">Descricao da proposta</span>
+              <span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">Descricao da proposta</span>
               <textarea
                 rows={7}
                 className="w-full resize-none rounded-xl border border-border bg-surface p-4 font-medium leading-6 shadow-inner outline-none transition focus:border-primary"
@@ -174,7 +174,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
                 type="button"
                 onClick={nextStep}
                 disabled={!formData.description.trim()}
-                className="inline-flex min-h-12 flex-1 items-center justify-center gap-3 rounded-xl bg-text-main px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-sm transition disabled:opacity-50"
+                className="inline-flex min-h-12 flex-1 items-center justify-center gap-3 rounded-xl bg-text-main px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white shadow-sm transition disabled:opacity-50"
               >
                 Revisar
                 <ChevronRight className="h-4 w-4" />
@@ -186,8 +186,8 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
         return (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
             <div className="rounded-xl border border-border bg-surface p-4">
-              <p className="text-xs font-black uppercase tracking-widest text-text-muted">Resumo</p>
-              <h3 className="mt-2 text-lg font-black text-text-main">{formData.title}</h3>
+              <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">Resumo</p>
+              <h3 className="mt-2 text-lg font-semibold text-text-main">{formData.title}</h3>
               <p className="mt-2 text-sm font-medium leading-6 text-text-muted">{formData.description}</p>
               <p className="mt-3 text-xs font-bold text-text-muted">
                 Categoria: {formData.category} | Meta: {parseInt(formData.goal, 10) || 500} assinaturas
@@ -213,7 +213,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading}
-                className="inline-flex min-h-12 flex-1 items-center justify-center gap-3 rounded-xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-sm transition hover:bg-primary-dark disabled:opacity-50"
+                className="inline-flex min-h-12 flex-1 items-center justify-center gap-3 rounded-xl bg-primary px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white shadow-sm transition hover:bg-primary-dark disabled:opacity-50"
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 {loading ? 'Publicando...' : 'Publicar causa'}
@@ -236,7 +236,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
                 <Megaphone className="h-6 w-6" />
               </div>
               <div>
-                <h3 className="text-lg font-black uppercase leading-none tracking-normal text-text-main">
+                <h3 className="text-lg font-semibold uppercase leading-none tracking-normal text-text-main">
                   Manifesto cidadao
                 </h3>
                 <p className="mt-1 text-xs font-medium text-text-muted">Mobilize sua comunidade.</p>
@@ -266,14 +266,14 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
             <CheckCircle2 className="h-10 w-10" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-2xl font-black uppercase tracking-normal text-text-main">Proposta recebida</h3>
+            <h3 className="text-2xl font-semibold uppercase tracking-normal text-text-main">Proposta recebida</h3>
             <p className="text-sm font-medium leading-6 text-text-muted">
               Sua peticao foi publicada e ja pode receber assinaturas.
             </p>
           </div>
           <button
             onClick={resetAndClose}
-            className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-primary px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white"
           >
             Voltar para peticoes
           </button>

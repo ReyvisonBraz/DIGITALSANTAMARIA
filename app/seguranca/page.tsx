@@ -46,7 +46,7 @@ export default function SegurancaPage() {
               phone={item.emergencyPhone}
               extra={
                 item.is24h ? (
-                  <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[8px] font-black uppercase tracking-widest mt-2 border border-emerald-200">
+                  <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[8px] font-semibold uppercase tracking-widest mt-2 border border-emerald-200">
                     24h
                   </span>
                 ) : null

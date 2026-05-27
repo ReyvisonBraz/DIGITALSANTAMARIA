@@ -145,7 +145,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     key={filter}
                     onClick={() => setActiveFilter(filter)}
                     className={cn(
-                      'shrink-0 rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition',
+                      'shrink-0 rounded-full border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest transition',
                       activeFilter === filter
                         ? 'border-primary bg-primary text-white'
                         : 'border-border bg-surface text-text-muted hover:border-primary hover:text-primary'
@@ -165,12 +165,12 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-surface">
                     <Search className="h-7 w-7 text-text-muted" />
                   </div>
-                  <p className="mt-4 text-sm font-black uppercase tracking-widest text-text-main">Busca global</p>
+                  <p className="mt-4 text-sm font-semibold uppercase tracking-widest text-text-main">Busca global</p>
                   <p className="mt-1 text-sm font-medium text-text-muted">Digite pelo menos 2 caracteres ou escolha um filtro.</p>
                 </div>
               ) : results.length > 0 ? (
                 <div className="space-y-2">
-                  <p className="px-2 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                  <p className="px-2 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
                     {results.length} resultado{results.length !== 1 ? 's' : ''}
                   </p>
                   {results.map((result) => (
@@ -185,7 +185,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                         <result.icon className="h-5 w-5" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-black uppercase tracking-normal text-text-main">{result.title}</span>
+                        <span className="block truncate text-sm font-semibold uppercase tracking-normal text-text-main">{result.title}</span>
                         <span className="block text-[10px] font-bold uppercase tracking-widest text-primary">{result.category}</span>
                       </span>
                       <ArrowRight className="h-5 w-5 text-text-muted opacity-0 transition group-hover:opacity-100" />
@@ -194,12 +194,12 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 </div>
               ) : (
                 <div className="p-8 text-center text-text-muted">
-                  <p className="font-black">Nenhum resultado para &quot;{query}&quot;</p>
+                  <p className="font-semibold">Nenhum resultado para &quot;{query}&quot;</p>
                 </div>
               )}
             </div>
 
-            <div className="border-t border-border bg-surface-container p-3 text-[10px] font-black uppercase tracking-widest text-text-muted">
+            <div className="border-t border-border bg-surface-container p-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
               Dica: busque por protocolo, peticoes, saude ou tributos.
             </div>
           </motion.div>

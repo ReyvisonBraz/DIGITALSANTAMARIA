@@ -60,7 +60,7 @@ export default function GestaoPage() {
     return (
       <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-4 text-center">
         <AlertCircle className="h-12 w-12 text-primary" />
-        <h1 className="mt-4 text-3xl font-black tracking-normal text-text-main">Painel de Gestao</h1>
+        <h1 className="mt-4 text-3xl font-semibold tracking-normal text-text-main">Painel de Gestao</h1>
         <p className="mt-3 text-base font-medium leading-7 text-text-muted">
           Entre com uma conta autorizada para acessar solicitacoes e peticoes.
         </p>
@@ -80,7 +80,7 @@ export default function GestaoPage() {
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-600">
           <AlertCircle className="h-8 w-8" />
         </div>
-        <h1 className="mt-5 text-3xl font-black tracking-normal text-text-main">Acesso restrito</h1>
+        <h1 className="mt-5 text-3xl font-semibold tracking-normal text-text-main">Acesso restrito</h1>
         <p className="mt-3 text-base font-medium leading-7 text-text-muted">
           Sua conta nao tem permissao para acessar o painel administrativo.
         </p>
@@ -131,7 +131,7 @@ export default function GestaoPage() {
             <ShieldCheck className="h-4 w-4" />
             Gestao municipal
           </div>
-          <h1 className="mt-4 text-3xl font-black tracking-normal text-text-main md:text-5xl">
+          <h1 className="mt-4 text-3xl font-semibold tracking-normal text-text-main md:text-5xl">
             Painel de operacao
           </h1>
           <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
@@ -144,7 +144,7 @@ export default function GestaoPage() {
         <div className="glass-panel grid grid-cols-3 p-1">
           <button
             onClick={() => setActiveSection('demands')}
-            className={`rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest transition ${
+            className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
               activeSection === 'demands' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
             }`}
           >
@@ -152,7 +152,7 @@ export default function GestaoPage() {
           </button>
           <button
             onClick={() => setActiveSection('petitions')}
-            className={`rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest transition ${
+            className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
               activeSection === 'petitions' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
             }`}
           >
@@ -160,7 +160,7 @@ export default function GestaoPage() {
           </button>
           <button
             onClick={() => setActiveSection('users')}
-            className={`rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest transition ${
+            className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
               activeSection === 'users' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
             }`}
           >
@@ -241,15 +241,15 @@ export default function GestaoPage() {
                     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
+                          <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-primary">
                             {typeLabel[demand.type]}
                           </span>
-                          <span className="rounded-full bg-surface px-2 py-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                          <span className="rounded-full bg-surface px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
                             {statusLabel[demand.status]}
                           </span>
                           <span className="text-xs font-bold text-text-muted">{formatDate(demand.createdAt)}</span>
                         </div>
-                        <h2 className="mt-3 text-xl font-black tracking-normal text-text-main">{demand.subject}</h2>
+                        <h2 className="mt-3 text-xl font-semibold tracking-normal text-text-main">{demand.subject}</h2>
                         <p className="mt-2 line-clamp-3 text-sm font-medium leading-6 text-text-muted">
                           {demand.content.text}
                         </p>
@@ -259,7 +259,7 @@ export default function GestaoPage() {
                       </div>
 
                       <div className="rounded-xl border border-border bg-surface p-4 lg:min-w-64">
-                        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted">
+                        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-text-muted">
                           <FileText className="h-4 w-4 text-primary" />
                           Cidadao
                         </div>

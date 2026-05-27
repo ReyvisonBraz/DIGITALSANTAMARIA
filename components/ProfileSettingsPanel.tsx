@@ -51,7 +51,7 @@ export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileS
                     <pref.icon className="h-5 w-5" />
                   </span>
                   <span>
-                    <span className="block text-sm font-black uppercase leading-none tracking-normal text-text-main">
+                    <span className="block text-sm font-semibold uppercase leading-none tracking-normal text-text-main">
                       {pref.label}
                     </span>
                     <span className="mt-1 block text-xs font-medium text-text-muted">{pref.desc}</span>
@@ -65,7 +65,7 @@ export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileS
 
         {isStaff && (
           <div className="border-t border-dashed border-border pt-6">
-            <p className="mb-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">
+            <p className="mb-4 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted">
               Acesso administrativo
             </p>
             <div className="grid gap-2">
@@ -85,7 +85,7 @@ export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileS
                       <item.icon className="h-5 w-5" />
                     </span>
                     <span className="text-left">
-                      <span className="block text-xs font-black uppercase tracking-widest">{item.label}</span>
+                      <span className="block text-xs font-semibold uppercase tracking-widest">{item.label}</span>
                       <span className="block text-xs font-medium text-text-muted">{item.desc}</span>
                     </span>
                   </span>

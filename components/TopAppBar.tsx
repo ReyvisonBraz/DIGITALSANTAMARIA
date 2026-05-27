@@ -91,8 +91,8 @@ export default function TopAppBar() {
           initial={{ y: -80 }}
           animate={{ y: 0 }}
           className={cn(
-            'flex w-full max-w-7xl items-center justify-between border border-white/70 bg-white/80 px-3 shadow-[0_18px_60px_rgba(15,23,42,0.10)] backdrop-blur-2xl transition-all duration-300 md:px-8',
-            scrolled ? 'h-14 rounded-xl md:h-16 md:rounded-2xl' : 'h-16 rounded-none md:h-18 md:rounded-2xl'
+            'flex w-full max-w-7xl items-center justify-between border border-white/70 bg-white/80 px-3 shadow-[0_18px_60px_rgba(74,38,24,0.12)] backdrop-blur-2xl transition-all duration-300 md:px-8',
+            scrolled ? 'h-14 rounded-2xl md:h-16' : 'h-16 rounded-none md:h-18 md:rounded-2xl'
           )}
         >
           <div className="flex min-w-0 items-center gap-2 md:gap-4">
@@ -127,7 +127,7 @@ export default function TopAppBar() {
               </span>
               <span className="flex items-center gap-1 opacity-40">
                 <Command className="h-3 w-3" />
-                <span className="text-[10px] font-black">K</span>
+                <span className="text-[10px] font-semibold">K</span>
               </span>
             </button>
           </div>
@@ -157,7 +157,7 @@ export default function TopAppBar() {
                 onClick={() => setIsAccessibilityOpen((value) => !value)}
                 className={cn(
                   'relative inline-flex h-10 w-10 items-center justify-center rounded-xl border transition',
-                  isAccessibilityOpen ? 'border-primary bg-primary text-white shadow-[0_12px_24px_rgba(11,111,211,0.18)]' : 'border-border bg-white/80 text-text-muted shadow-sm hover:border-primary hover:text-primary'
+                  isAccessibilityOpen ? 'border-primary bg-primary text-white shadow-[0_12px_24px_rgba(181,70,46,0.22)]' : 'border-border bg-white/80 text-text-muted shadow-sm hover:border-primary hover:text-primary'
                 )}
                 aria-label="Menu de acessibilidade"
                 aria-expanded={isAccessibilityOpen}
@@ -176,7 +176,7 @@ export default function TopAppBar() {
                     role="menu"
                   >
                     <div className="mb-4 flex items-center justify-between">
-                      <p className="text-xs font-black uppercase tracking-widest text-text-muted">Acessibilidade</p>
+                      <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">Acessibilidade</p>
                       <button onClick={() => setIsAccessibilityOpen(false)} className="rounded-lg p-1 text-text-muted hover:bg-surface" aria-label="Fechar">
                         <X className="h-4 w-4" />
                       </button>
@@ -213,7 +213,7 @@ export default function TopAppBar() {
 
                       <button
                         onClick={resetAccessibility}
-                        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-border bg-white px-3 text-xs font-black uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
+                        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-border bg-white px-3 text-xs font-semibold uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
                       >
                         <RotateCcw className="h-4 w-4" />
                         Restaurar
@@ -246,7 +246,7 @@ export default function TopAppBar() {
             ) : (
               <button
                 onClick={login}
-                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-text-main px-3 text-[10px] font-black uppercase tracking-widest text-white shadow-[0_12px_24px_rgba(15,23,42,0.18)] transition hover:bg-primary"
+                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-text-main px-3 text-[10px] font-semibold uppercase tracking-widest text-white shadow-[0_12px_24px_rgba(15,23,42,0.18)] transition hover:bg-primary"
                 aria-label="Entrar com conta Google"
               >
                 <span className="hidden sm:inline">Entrar</span>
@@ -325,7 +325,7 @@ function ControlRow({
 }) {
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-text-muted">
+      <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-widest text-text-muted">
         <span>{label}</span>
         <span>{value}</span>
       </div>

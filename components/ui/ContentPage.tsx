@@ -58,11 +58,11 @@ export default function ContentPage({
         <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center border-2 border-rose-100">
           <AlertTriangle className="w-8 h-8" />
         </div>
-        <p className="text-sm font-black text-text-main uppercase tracking-tight">Erro ao carregar</p>
+        <p className="text-sm font-semibold text-text-main uppercase tracking-tight">Erro ao carregar</p>
         <p className="text-xs font-medium text-text-muted max-w-xs">{error}</p>
         {onRetry && (
           <button onClick={onRetry}
-            className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all">
+            className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold text-[10px] uppercase tracking-widest hover:brightness-110 transition-all">
             <RefreshCcw className="w-4 h-4" />
             Tentar Novamente
           </button>
@@ -82,7 +82,7 @@ export default function ContentPage({
         <div className="w-16 h-16 bg-surface border-2 border-border rounded-2xl flex items-center justify-center text-text-muted">
           {emptyIcon || <Inbox className="w-8 h-8" />}
         </div>
-        <p className="text-xs font-black text-text-muted uppercase tracking-widest">{emptyMessage}</p>
+        <p className="text-xs font-semibold text-text-muted uppercase tracking-widest">{emptyMessage}</p>
       </motion.div>
     );
   }

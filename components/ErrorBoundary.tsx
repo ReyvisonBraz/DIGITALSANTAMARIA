@@ -52,7 +52,7 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
           <div className="w-20 h-20 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mb-6 border-4 border-rose-100">
             <AlertTriangle className="w-10 h-10" />
           </div>
-          <h3 className="text-2xl font-black text-text-main uppercase tracking-tighter mb-2">
+          <h3 className="text-2xl font-semibold text-text-main uppercase tracking-tighter mb-2">
             Algo deu errado
           </h3>
           <p className="text-sm font-medium text-text-muted font-ui max-w-md mb-8">
@@ -63,7 +63,7 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
               this.setState({ hasError: false, error: null });
               window.location.reload();
             }}
-            className="bg-primary text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:brightness-110 transition-all active:scale-95 shadow-lg"
+            className="bg-primary text-white px-8 py-4 rounded-2xl font-semibold text-xs uppercase tracking-widest flex items-center gap-3 hover:brightness-110 transition-all active:scale-95 shadow-lg"
           >
             <RefreshCw className="w-5 h-5" />
             Recarregar Página

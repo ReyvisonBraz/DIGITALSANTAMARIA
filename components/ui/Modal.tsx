@@ -57,7 +57,7 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-border/50">
                 {title ? (
-                  <h3 className="text-xl font-black text-text-main tracking-tight">{title}</h3>
+                  <h3 className="text-xl font-semibold text-text-main tracking-tight">{title}</h3>
                 ) : (
                   <div /> // Spacer if no title
                 )}

@@ -55,7 +55,7 @@ export default function SidePanel({ isOpen, onClose, title, children, className 
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
-                {title && <h3 className="text-xl font-black text-text-main tracking-tight uppercase">{title}</h3>}
+                {title && <h3 className="text-xl font-semibold text-text-main tracking-tight uppercase">{title}</h3>}
               </div>
               <button
                 onClick={onClose}

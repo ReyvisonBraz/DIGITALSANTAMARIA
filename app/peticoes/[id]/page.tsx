@@ -56,7 +56,7 @@ export default function PetitionDetailPage() {
           <div className="mb-6 flex flex-col gap-3 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between">
             <Link
               href="/peticoes"
-              className="inline-flex w-fit items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted transition hover:text-primary"
+              className="inline-flex w-fit items-center gap-2 text-xs font-semibold uppercase tracking-widest text-text-muted transition hover:text-primary"
             >
               <ArrowLeft className="h-4 w-4" />
               Voltar
@@ -66,7 +66,7 @@ export default function PetitionDetailPage() {
                 navigator.clipboard.writeText(window.location.href);
                 toast('Link copiado.', 'info');
               }}
-              className="inline-flex w-fit items-center gap-2 rounded-xl border border-border px-3 py-2 text-xs font-black uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+              className="inline-flex w-fit items-center gap-2 rounded-xl border border-border px-3 py-2 text-xs font-semibold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
             >
               <Share2 className="h-4 w-4" />
               Compartilhar
@@ -75,7 +75,7 @@ export default function PetitionDetailPage() {
 
           <div className="space-y-5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-primary">
+              <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary">
                 {petition.category}
               </span>
               <span className="inline-flex items-center gap-2 text-xs font-bold text-text-muted">
@@ -84,7 +84,7 @@ export default function PetitionDetailPage() {
               </span>
             </div>
 
-            <h1 className="text-3xl font-black leading-tight tracking-normal text-text-main md:text-5xl">
+            <h1 className="text-3xl font-semibold leading-tight tracking-normal text-text-main md:text-5xl">
               {petition.title}
             </h1>
 
@@ -98,7 +98,7 @@ export default function PetitionDetailPage() {
 
             {petition.officialReply && (
               <div className="rounded-xl border border-green-200 bg-green-50 p-5">
-                <p className="text-xs font-black uppercase tracking-widest text-green-700">
+                <p className="text-xs font-semibold uppercase tracking-widest text-green-700">
                   Resposta oficial
                 </p>
                 <p className="mt-2 text-sm font-medium leading-6 text-green-900">

@@ -49,7 +49,7 @@ export default function PeticoesPage() {
               <Users className="h-4 w-4" />
               Participacao cidada
             </div>
-            <h1 className="mt-4 text-3xl font-black tracking-normal text-text-main md:text-6xl">
+            <h1 className="mt-4 text-3xl font-semibold tracking-normal text-text-main md:text-6xl">
               Peticoes publicas
             </h1>
             <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
@@ -87,7 +87,7 @@ export default function PeticoesPage() {
         ) : filteredPetitions.length === 0 ? (
           <div className="glass-panel border-dashed p-8 text-center">
             <FileText className="mx-auto h-10 w-10 text-primary" />
-            <h2 className="mt-4 text-xl font-black text-text-main">Nenhuma peticao encontrada</h2>
+            <h2 className="mt-4 text-xl font-semibold text-text-main">Nenhuma peticao encontrada</h2>
             <p className="mt-2 text-sm font-medium text-text-muted">
               Crie uma nova peticao ou tente outro termo de busca.
             </p>
@@ -98,14 +98,14 @@ export default function PeticoesPage() {
               <article key={petition.id} className="civic-card flex flex-col p-5">
                 <div className="relative z-10 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
+                    <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-primary">
                       {petition.category}
                     </span>
                     <span className="text-xs font-bold text-text-muted">
                       por {petition.creatorName}
                     </span>
                   </div>
-                  <h2 className="mt-3 text-xl font-black tracking-normal text-text-main">
+                  <h2 className="mt-3 text-xl font-semibold tracking-normal text-text-main">
                     {petition.title}
                   </h2>
                   <p className="mt-2 line-clamp-3 text-sm font-medium leading-6 text-text-muted">

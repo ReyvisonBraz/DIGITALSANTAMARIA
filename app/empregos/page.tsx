@@ -41,11 +41,11 @@ export default function EmpregosPage() {
       <section className="space-y-8">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <div className="space-y-4 max-w-3xl text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest border border-primary/20">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-[9px] md:text-[10px] font-semibold uppercase tracking-widest border border-primary/20">
               <Briefcase className="w-4 h-4" />
               Banco de Oportunidades
             </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-text-main tracking-tighter uppercase leading-[0.9]">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold text-text-main tracking-tighter uppercase leading-[0.9]">
               Banco de <br /> <span className="text-primary">Talentos.</span>
             </h1>
             <p className="text-base md:text-xl font-medium text-text-muted font-ui leading-relaxed">
@@ -74,7 +74,7 @@ export default function EmpregosPage() {
           </div>
         ) : filteredJobs.length === 0 ? (
           <div className="xl:col-span-2 text-center py-20 text-text-muted">
-            <p className="text-xs font-black uppercase tracking-widest">Nenhuma vaga encontrada</p>
+            <p className="text-xs font-semibold uppercase tracking-widest">Nenhuma vaga encontrada</p>
           </div>
         ) : filteredJobs.map((job, idx) => (
           <motion.article
@@ -90,32 +90,32 @@ export default function EmpregosPage() {
               </div>
             </div>
             <div className="space-y-1 mb-4">
-              <h3 className="text-2xl font-black text-text-main uppercase leading-none">{job.title}</h3>
-              <p className="text-[10px] font-black text-primary uppercase">{job.employerName}</p>
+              <h3 className="text-2xl font-semibold text-text-main uppercase leading-none">{job.title}</h3>
+              <p className="text-[10px] font-semibold text-primary uppercase">{job.employerName}</p>
             </div>
             <div className="flex flex-wrap gap-2 mb-6">
               {job.tags.map((tag) => (
-                <span key={tag} className="px-3 py-1 bg-surface border border-border rounded-lg text-[8px] font-black text-text-muted uppercase">{tag}</span>
+                <span key={tag} className="px-3 py-1 bg-surface border border-border rounded-lg text-[8px] font-semibold text-text-muted uppercase">{tag}</span>
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-border/50">
-              <div className="flex items-center gap-1.5 text-[9px] font-black text-text-muted uppercase">
+              <div className="flex items-center gap-1.5 text-[9px] font-semibold text-text-muted uppercase">
                 <MapPin className="w-3.5 h-3.5 text-primary" />
                 {job.location}
               </div>
               {job.salary && (
-                <div className="flex items-center gap-1.5 text-[9px] font-black text-text-muted uppercase">
+                <div className="flex items-center gap-1.5 text-[9px] font-semibold text-text-muted uppercase">
                   <DollarSign className="w-3.5 h-3.5 text-primary" />
                   {job.salary}
                 </div>
               )}
-              <div className="flex items-center gap-1.5 text-[9px] font-black text-text-muted uppercase">
+              <div className="flex items-center gap-1.5 text-[9px] font-semibold text-text-muted uppercase">
                 <Clock className="w-3.5 h-3.5 text-primary" />
                 {job.type}
               </div>
               <button
                 onClick={() => setSelectedJob(job)}
-                className="ml-auto px-6 py-3 bg-primary text-white rounded-xl font-black text-[9px] uppercase tracking-widest shadow-lg hover:brightness-110 active:scale-95 transition-all"
+                className="ml-auto px-6 py-3 bg-primary text-white rounded-xl font-semibold text-[9px] uppercase tracking-widest shadow-lg hover:brightness-110 active:scale-95 transition-all"
               >
                 Candidatar-se
               </button>

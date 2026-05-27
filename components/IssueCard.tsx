@@ -67,7 +67,7 @@ export default function IssueCard({
       )}
       <div className="flex-grow flex flex-col">
         <div className="flex justify-between items-start mb-2">
-          <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-primary">
             {category}
           </span>
           <div className="flex items-center gap-1.5 px-2 py-1 bg-surface-container rounded text-xs font-bold text-primary">

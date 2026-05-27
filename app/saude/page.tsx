@@ -61,11 +61,11 @@ export default function SaudePage() {
          
          <div className="p-6 md:p-8 space-y-6 border-b-2 border-border bg-white sticky top-0 z-20">
             <div className="space-y-1">
-               <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/10 text-rose-500 rounded-full text-[9px] font-black uppercase tracking-widest border border-rose-500/20">
+               <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/10 text-rose-500 rounded-full text-[9px] font-semibold uppercase tracking-widest border border-rose-500/20">
                   <Activity className="w-3 h-3" />
                   Saúde Conectada
                </div>
-               <h1 className="text-3xl font-black text-text-main tracking-tighter uppercase leading-none">Digital <br/> <span className="text-rose-500">Saúde.</span></h1>
+               <h1 className="text-3xl font-semibold text-text-main tracking-tighter uppercase leading-none">Digital <br/> <span className="text-rose-500">Saúde.</span></h1>
             </div>
 
             <div className="flex p-1.5 bg-surface rounded-2xl border-2 border-border shadow-inner">
@@ -74,7 +74,7 @@ export default function SaudePage() {
                      key={cat.id}
                      onClick={() => setActiveTab(cat.id as any)}
                      className={cn(
-                        "flex-1 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all",
+                        "flex-1 py-3 rounded-xl font-semibold text-[10px] uppercase tracking-widest transition-all",
                         activeTab === cat.id ? "bg-white text-rose-500 shadow-lg border border-rose-500/10" : "text-text-muted hover:text-text-main"
                      )}
                   >
@@ -85,7 +85,7 @@ export default function SaudePage() {
 
             <button 
                onClick={() => setModalOpen(true)}
-               className="w-full bg-rose-500 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-rose-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3"
+               className="w-full bg-rose-500 text-white p-4 rounded-2xl font-semibold text-xs uppercase tracking-widest shadow-xl shadow-rose-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3"
             >
                <CalendarDays className="w-4 h-4" />
                Agendar Consulta
@@ -104,8 +104,8 @@ export default function SaudePage() {
                   >
                      <div className="space-y-4">
                         <div className="flex items-center justify-between px-2">
-                           <h3 className="text-[10px] font-black text-text-muted uppercase tracking-widest">Tempos de Espera (Live)</h3>
-                           <div className="flex items-center gap-1.5 text-[8px] font-black text-green-500 animate-pulse">
+                           <h3 className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">Tempos de Espera (Live)</h3>
+                           <div className="flex items-center gap-1.5 text-[8px] font-semibold text-green-500 animate-pulse">
                               <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
                               VERIFICADO
                            </div>
@@ -118,11 +118,11 @@ export default function SaudePage() {
                         ) : status === 'error' ? (
                           <div className="text-center py-8 space-y-3">
                             <AlertTriangle className="w-8 h-8 text-rose-500 mx-auto" />
-                            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">{error}</p>
+                            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">{error}</p>
                           </div>
                         ) : units.length === 0 ? (
                           <div className="text-center py-8">
-                            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Nenhuma unidade disponível</p>
+                            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">Nenhuma unidade disponível</p>
                           </div>
                         ) : (
                           units.map((unit) => (
@@ -138,7 +138,7 @@ export default function SaudePage() {
                                     <Hospital className="w-7 h-7" />
                                  </div>
                                  <div className="space-y-0.5">
-                                    <h4 className="text-sm font-black text-text-main uppercase leading-tight group-hover:text-rose-500 transition-colors">{unit.name}</h4>
+                                    <h4 className="text-sm font-semibold text-text-main uppercase leading-tight group-hover:text-rose-500 transition-colors">{unit.name}</h4>
                                     <p className="text-[9px] font-bold text-text-muted uppercase tracking-widest flex items-center gap-1.5">
                                        <MapPin className="w-3 h-3 text-rose-500" />
                                        {unit.address.split('-')[0]}
@@ -146,8 +146,8 @@ export default function SaudePage() {
                                  </div>
                               </div>
                               <div className="text-right">
-                                 <p className="text-xl font-black text-text-main tabular-nums leading-none">{unit.waitTime}</p>
-                                 <p className="text-[8px] font-black text-text-muted uppercase tracking-widest opacity-60">{unit.type.toUpperCase()}</p>
+                                 <p className="text-xl font-semibold text-text-main tabular-nums leading-none">{unit.waitTime}</p>
+                                 <p className="text-[8px] font-semibold text-text-muted uppercase tracking-widest opacity-60">{unit.type.toUpperCase()}</p>
                               </div>
                            </div>
                           ))
@@ -164,12 +164,12 @@ export default function SaudePage() {
                      <div className="bg-text-main p-8 rounded-[3rem] text-white space-y-6 relative overflow-hidden group shadow-2xl">
                         <div className="relative z-10 flex flex-col h-full justify-between gap-6">
                            <div className="space-y-1">
-                              <h3 className="text-2xl font-black uppercase leading-none">Minha <br/> Saúde.</h3>
+                              <h3 className="text-2xl font-semibold uppercase leading-none">Minha <br/> Saúde.</h3>
                               <p className="text-xs opacity-60 font-ui font-medium">Histórico completo de atendimentos e laudos técnicos disponíves para download.</p>
                            </div>
                            <button 
                               onClick={() => setHistoryOpen(true)}
-                              className="w-full py-4 bg-white text-text-main rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-rose-50 transition-all shadow-xl"
+                              className="w-full py-4 bg-white text-text-main rounded-2xl font-semibold text-[10px] uppercase tracking-widest hover:bg-rose-50 transition-all shadow-xl"
                            >
                               Acessar Prontuário
                            </button>
@@ -183,7 +183,7 @@ export default function SaudePage() {
                               <Syringe className="w-8 h-8" />
                            </div>
                            <div className="space-y-0.5">
-                              <h4 className="text-[10px] font-black text-text-main uppercase tracking-widest">DigitalVax ID</h4>
+                              <h4 className="text-[10px] font-semibold text-text-main uppercase tracking-widest">DigitalVax ID</h4>
                               <p className="text-xs font-bold text-text-muted uppercase italic">Carteira de Vacinação Digital</p>
                            </div>
                         </div>
@@ -197,7 +197,7 @@ export default function SaudePage() {
                               referrerPolicy="no-referrer"
                            />
                            <div className="text-center space-y-1">
-                              <span className="text-[8px] font-black text-rose-500 uppercase flex items-center justify-center gap-1.5 font-mono">
+                              <span className="text-[8px] font-semibold text-rose-500 uppercase flex items-center justify-center gap-1.5 font-mono">
                                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse" />
                                  ASSINATURA DIGITAL ATIVA
                               </span>
@@ -205,7 +205,7 @@ export default function SaudePage() {
                         </div>
                         <button 
                            onClick={() => toast('Configurando exportação do certificado internacional...', 'info')}
-                           className="w-full py-4 bg-rose-500/5 border-2 border-rose-500/20 rounded-2xl font-black text-[9px] uppercase tracking-widest text-rose-600 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center gap-2"
+                           className="w-full py-4 bg-rose-500/5 border-2 border-rose-500/20 rounded-2xl font-semibold text-[9px] uppercase tracking-widest text-rose-600 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center gap-2"
                         >
                            <Download className="w-4 h-4" />
                            Exportar para Viagem
@@ -221,7 +221,7 @@ export default function SaudePage() {
                   >
                      <div className="space-y-4">
                         <div className="flex items-center justify-between px-2">
-                           <h3 className="text-[10px] font-black text-text-muted uppercase tracking-widest">Estoque Popular</h3>
+                           <h3 className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">Estoque Popular</h3>
                            <Pill className="w-4 h-4 text-rose-500" />
                         </div>
                         
@@ -232,11 +232,11 @@ export default function SaudePage() {
                         ].map((med) => (
                            <div key={med.name} className="bg-white p-5 rounded-3xl border-2 border-border flex items-center justify-between group cursor-pointer hover:border-rose-500 transition-all">
                               <div className="space-y-0.5">
-                                 <h4 className="text-sm font-black text-text-main uppercase">{med.name}</h4>
+                                 <h4 className="text-sm font-semibold text-text-main uppercase">{med.name}</h4>
                                  <p className="text-[9px] font-bold text-text-muted uppercase tracking-widest">{med.units}</p>
                               </div>
                               <span className={cn(
-                                 "px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest",
+                                 "px-3 py-1 rounded-full text-[8px] font-semibold uppercase tracking-widest",
                                  med.stock === 'Disponível' ? "bg-green-100 text-green-600" : "bg-rose-100 text-rose-600"
                               )}>
                                  {med.stock}
@@ -247,11 +247,11 @@ export default function SaudePage() {
 
                      <div className="bg-rose-500 p-8 rounded-[3rem] text-white space-y-6 relative overflow-hidden group">
                         <div className="relative z-10 flex flex-col gap-4">
-                           <h3 className="text-xl font-black uppercase leading-none">Receita <br/> Digital.</h3>
+                           <h3 className="text-xl font-semibold uppercase leading-none">Receita <br/> Digital.</h3>
                            <p className="text-xs opacity-80 font-ui font-medium">Sincronize suas receitas assinadas digitalmente para retirada rápida em qualquer UBS.</p>
                            <button 
                               onClick={() => toast('Abrindo scanner de receitas digitais...', 'info')}
-                              className="w-full py-4 bg-white text-rose-500 rounded-2xl font-black text-[9px] uppercase tracking-widest shadow-xl flex items-center justify-center gap-3"
+                              className="w-full py-4 bg-white text-rose-500 rounded-2xl font-semibold text-[9px] uppercase tracking-widest shadow-xl flex items-center justify-center gap-3"
                            >
                               <SearchIcon className="w-4 h-4" />
                               Validar Receita
@@ -283,8 +283,8 @@ export default function SaudePage() {
                   <BriefcaseMedical className="w-6 h-6" />
                </div>
                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-white p-3 rounded-2xl shadow-2xl border-2 border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
-                  <p className="text-xs font-black text-text-main uppercase">UPA Central</p>
-                  <p className="text-[8px] font-black text-green-500 uppercase">Espera: 15 min</p>
+                  <p className="text-xs font-semibold text-text-main uppercase">UPA Central</p>
+                  <p className="text-[8px] font-semibold text-green-500 uppercase">Espera: 15 min</p>
                </div>
             </div>
 
@@ -293,8 +293,8 @@ export default function SaudePage() {
                   <Hospital className="w-6 h-6" />
                </div>
                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-white p-3 rounded-2xl shadow-2xl border-2 border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
-                  <p className="text-xs font-black text-text-main uppercase">Hospital Municipal</p>
-                  <p className="text-[8px] font-black text-rose-500 uppercase">Espera: 120 min</p>
+                  <p className="text-xs font-semibold text-text-main uppercase">Hospital Municipal</p>
+                  <p className="text-[8px] font-semibold text-rose-500 uppercase">Espera: 120 min</p>
                </div>
             </div>
          </div>
@@ -304,15 +304,15 @@ export default function SaudePage() {
             <div className="bg-white/80 backdrop-blur-md p-4 rounded-3xl border-2 border-border shadow-2xl space-y-3">
                <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-green-500 rounded-full" />
-                  <span className="text-[9px] font-black uppercase text-text-main tracking-widest">Espera Menor</span>
+                  <span className="text-[9px] font-semibold uppercase text-text-main tracking-widest">Espera Menor</span>
                </div>
                <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-amber-500 rounded-full" />
-                  <span className="text-[9px] font-black uppercase text-text-main tracking-widest">Espera Média</span>
+                  <span className="text-[9px] font-semibold uppercase text-text-main tracking-widest">Espera Média</span>
                </div>
                <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-rose-500 rounded-full" />
-                  <span className="text-[9px] font-black uppercase text-text-main tracking-widest">Espera Alta</span>
+                  <span className="text-[9px] font-semibold uppercase text-text-main tracking-widest">Espera Alta</span>
                </div>
             </div>
          </div>
@@ -339,15 +339,15 @@ export default function SaudePage() {
                    <div className="bg-white p-8 rounded-[3rem] border-2 border-rose-500 shadow-2xl space-y-6 relative overflow-hidden group">
                       <div className="flex justify-between items-start relative z-10">
                          <div className="space-y-1">
-                            <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">{selectedClinic.type.toUpperCase()}</span>
-                            <h4 className="text-2xl font-black text-text-main uppercase tracking-tighter leading-none">{selectedClinic.name}</h4>
+                            <span className="text-[9px] font-semibold text-rose-500 uppercase tracking-widest">{selectedClinic.type.toUpperCase()}</span>
+                            <h4 className="text-2xl font-semibold text-text-main uppercase tracking-tighter leading-none">{selectedClinic.name}</h4>
                             <div className="flex items-center gap-1.5 text-[10px] font-bold text-text-muted">
                                <MapPin className="w-3 h-3 text-rose-500" />
                                {selectedClinic.address}
                             </div>
                          </div>
                          <div className={cn(
-                            "px-4 py-2 rounded-2xl text-[10px] font-black shadow-lg",
+                            "px-4 py-2 rounded-2xl text-[10px] font-semibold shadow-lg",
                             selectedClinic.waitLevel === 'low' ? "bg-green-500 text-white" : (selectedClinic.waitLevel === 'medium' ? "bg-amber-500 text-white" : (selectedClinic.waitLevel === 'critical' ? "bg-red-500 text-white" : "bg-rose-500 text-white"))
                          )}>
                             {selectedClinic.waitTime}
@@ -357,8 +357,8 @@ export default function SaudePage() {
                       <div className="grid grid-cols-2 gap-3 relative z-10">
                          {selectedClinic.specialties.slice(0, 2).map((spec) => (
                            <div key={spec} className="bg-surface p-3 rounded-2xl border border-border">
-                              <p className="text-[8px] font-black text-text-muted uppercase tracking-widest mb-1">{spec}</p>
-                              <p className="text-xs font-black text-text-main">Disponível</p>
+                              <p className="text-[8px] font-semibold text-text-muted uppercase tracking-widest mb-1">{spec}</p>
+                              <p className="text-xs font-semibold text-text-main">Disponível</p>
                            </div>
                          ))}
                       </div>
@@ -366,11 +366,11 @@ export default function SaudePage() {
                       <div className="flex gap-4 relative z-10">
                          <button 
                             onClick={() => setSelectedClinic(null)}
-                            className="px-6 py-4 bg-surface border-2 border-border rounded-2xl text-[9px] font-black uppercase tracking-widest text-text-muted hover:border-rose-500/30 transition-all font-ui font-bold"
+                            className="px-6 py-4 bg-surface border-2 border-border rounded-2xl text-[9px] font-semibold uppercase tracking-widest text-text-muted hover:border-rose-500/30 transition-all font-ui font-bold"
                          >
                             Fechar
                          </button>
-                         <button className="flex-grow bg-rose-500 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-rose-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3">
+                         <button className="flex-grow bg-rose-500 text-white px-8 py-4 rounded-2xl font-semibold text-[10px] uppercase tracking-widest shadow-xl shadow-rose-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3">
                             Como Chegar
                             <ArrowRight className="w-4 h-4" />
                          </button>

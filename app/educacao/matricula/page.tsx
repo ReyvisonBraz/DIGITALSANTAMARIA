@@ -111,19 +111,19 @@ export default function MatriculaPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
          <button 
            onClick={() => router.push('/educacao')}
-           className="group flex items-center gap-3 text-text-muted hover:text-primary transition-colors font-black text-xs uppercase tracking-widest"
+           className="group flex items-center gap-3 text-text-muted hover:text-primary transition-colors font-semibold text-xs uppercase tracking-widest"
          >
            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
            Voltar para Educação
          </button>
          <div className="flex items-center gap-2 bg-surface px-4 py-2 rounded-full border-2 border-border">
             <ShieldCheck className="w-4 h-4 text-green-500" />
-            <span className="text-[10px] font-black uppercase text-text-muted tracking-widest">Conexão Segura SSL</span>
+            <span className="text-[10px] font-semibold uppercase text-text-muted tracking-widest">Conexão Segura SSL</span>
          </div>
       </div>
 
       <div className="space-y-4 text-center md:text-left">
-         <h1 className="text-4xl md:text-5xl font-black text-text-main tracking-tighter uppercase leading-none">Solicitação de <br /><span className="text-primary">Matrícula 2026.</span></h1>
+         <h1 className="text-4xl md:text-5xl font-semibold text-text-main tracking-tighter uppercase leading-none">Solicitação de <br /><span className="text-primary">Matrícula 2026.</span></h1>
          <p className="text-sm font-ui font-medium text-text-muted max-w-xl">Preencha os dados abaixo para iniciar o processo de vinculação escolar na rede municipal.</p>
       </div>
 
@@ -141,7 +141,7 @@ export default function MatriculaPage() {
                   <step.icon className="w-6 h-6" />
                </div>
                <span className={cn(
-                 "hidden md:block text-[9px] font-black uppercase tracking-widest",
+                 "hidden md:block text-[9px] font-semibold uppercase tracking-widest",
                  currentStep >= step.id ? "text-primary" : "text-text-muted opacity-50"
                )}>
                   {step.title}
@@ -162,10 +162,10 @@ export default function MatriculaPage() {
             >
                 {currentStep === 1 && (
                    <div className="space-y-6">
-                      <h3 className="text-2xl font-black text-text-main uppercase border-b-2 border-border pb-4">Dados do Responsável</h3>
+                      <h3 className="text-2xl font-semibold text-text-main uppercase border-b-2 border-border pb-4">Dados do Responsável</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                          <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase text-text-muted tracking-widest ml-1">Nome Completo</label>
+                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">Nome Completo</label>
                             <input 
                               type="text" 
                               placeholder="Ex: João da Silva"
@@ -175,7 +175,7 @@ export default function MatriculaPage() {
                             />
                          </div>
                          <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase text-text-muted tracking-widest ml-1">CPF do Responsável</label>
+                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">CPF do Responsável</label>
                             <input 
                               type="text" 
                               placeholder="000.000.000-00"
@@ -190,10 +190,10 @@ export default function MatriculaPage() {
 
                 {currentStep === 2 && (
                    <div className="space-y-6">
-                      <h3 className="text-2xl font-black text-text-main uppercase border-b-2 border-border pb-4">Dados do Aluno(a)</h3>
+                      <h3 className="text-2xl font-semibold text-text-main uppercase border-b-2 border-border pb-4">Dados do Aluno(a)</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                          <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase text-text-muted tracking-widest ml-1">Nome da Criança/Jovem</label>
+                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">Nome da Criança/Jovem</label>
                             <input 
                               type="text" 
                               placeholder="Nome Completo"
@@ -203,7 +203,7 @@ export default function MatriculaPage() {
                             />
                          </div>
                          <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase text-text-muted tracking-widest ml-1">Data de Nascimento</label>
+                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">Data de Nascimento</label>
                             <input 
                               type="date"
                               value={formData.studentBirth}
@@ -217,10 +217,10 @@ export default function MatriculaPage() {
 
                 {currentStep === 3 && (
                    <div className="space-y-6">
-                      <h3 className="text-2xl font-black text-text-main uppercase border-b-2 border-border pb-4">Endereço de Residência</h3>
+                      <h3 className="text-2xl font-semibold text-text-main uppercase border-b-2 border-border pb-4">Endereço de Residência</h3>
                       <div className="space-y-4">
                          <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase text-text-muted tracking-widest ml-1">CEP</label>
+                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">CEP</label>
                             <input 
                               type="text" 
                               placeholder="00000-000"
@@ -230,7 +230,7 @@ export default function MatriculaPage() {
                             />
                          </div>
                          <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase text-text-muted tracking-widest ml-1">Logradouro, Número, Bairro</label>
+                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">Logradouro, Número, Bairro</label>
                             <input 
                               type="text" 
                               placeholder="Rua Exemplo, 123, Centro"
@@ -246,14 +246,14 @@ export default function MatriculaPage() {
 
                 {currentStep === 4 && (
                    <div className="space-y-6">
-                      <h3 className="text-2xl font-black text-text-main uppercase border-b-2 border-border pb-4">Unidade Pretendida</h3>
+                      <h3 className="text-2xl font-semibold text-text-main uppercase border-b-2 border-border pb-4">Unidade Pretendida</h3>
                       <div className="grid grid-cols-1 gap-4">
                          {schools.map(school => (
                            <button 
                              key={school} 
                              onClick={() => updateField('schoolPreference', school)}
                              className={cn(
-                               "w-full p-6 border-2 rounded-2xl flex items-center justify-between transition-all font-black text-xs uppercase tracking-tight",
+                               "w-full p-6 border-2 rounded-2xl flex items-center justify-between transition-all font-semibold text-xs uppercase tracking-tight",
                                formData.schoolPreference === school ? "border-primary bg-primary/5 text-primary" : "border-border bg-surface text-text-muted hover:border-primary/50"
                              )}>
                               {school}
@@ -272,7 +272,7 @@ export default function MatriculaPage() {
                              <CheckCircle2 className="w-10 h-10" />
                           </div>
                           <div className="space-y-2">
-                             <h3 className="text-3xl font-black text-text-main uppercase tracking-tighter">Solicitação Enviada!</h3>
+                             <h3 className="text-3xl font-semibold text-text-main uppercase tracking-tighter">Solicitação Enviada!</h3>
                              <p className="text-sm font-ui font-medium text-text-muted max-w-sm mx-auto">
                                 Sua solicitação de matrícula foi registrada na Secretaria de Educação.
                              </p>
@@ -281,14 +281,14 @@ export default function MatriculaPage() {
                              <div className="flex items-center gap-3 justify-center">
                                 <ClipboardList className="w-6 h-6 text-primary" />
                                 <div className="text-left">
-                                   <p className="text-[9px] font-black text-text-muted uppercase tracking-widest">Protocolo</p>
-                                   <p className="text-xl font-black text-text-main tracking-wider font-mono">{protocol}</p>
+                                   <p className="text-[9px] font-semibold text-text-muted uppercase tracking-widest">Protocolo</p>
+                                   <p className="text-xl font-semibold text-text-main tracking-wider font-mono">{protocol}</p>
                                 </div>
                              </div>
                           </div>
                           <button
                             onClick={() => router.push('/educacao')}
-                            className="bg-primary text-white px-10 py-5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+                            className="bg-primary text-white px-10 py-5 rounded-xl font-semibold text-xs uppercase tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
                           >
                             Voltar para Educação
                           </button>
@@ -299,20 +299,20 @@ export default function MatriculaPage() {
                              <CheckCircle2 className="w-10 h-10" />
                           </div>
                           <div className="space-y-2">
-                             <h3 className="text-3xl font-black text-text-main uppercase tracking-tighter">Quase lá!</h3>
+                             <h3 className="text-3xl font-semibold text-text-main uppercase tracking-tighter">Quase lá!</h3>
                              <p className="text-sm font-ui font-medium text-text-muted max-w-sm mx-auto">
                                 Ao clicar em finalizar, sua solicitação será enviada para a central de vagas da Secretaria de Educação.
                              </p>
                           </div>
                           <div className="p-4 bg-surface rounded-3xl border-2 border-border border-dashed text-left space-y-2">
-                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Responsável:</span><span className="text-xs font-black">{formData.parentName}</span></div>
-                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Aluno(a):</span><span className="text-xs font-black">{formData.studentName}</span></div>
-                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Nascimento:</span><span className="text-xs font-black">{formData.studentBirth}</span></div>
-                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Escola:</span><span className="text-xs font-black">{formData.schoolPreference}</span></div>
+                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Responsável:</span><span className="text-xs font-semibold">{formData.parentName}</span></div>
+                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Aluno(a):</span><span className="text-xs font-semibold">{formData.studentName}</span></div>
+                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Nascimento:</span><span className="text-xs font-semibold">{formData.studentBirth}</span></div>
+                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Escola:</span><span className="text-xs font-semibold">{formData.schoolPreference}</span></div>
                           </div>
                           <div className="p-6 bg-surface rounded-3xl border-2 border-border border-dashed flex flex-col items-center gap-3">
                              <Info className="w-6 h-6 text-primary" />
-                             <p className="text-[10px] font-black uppercase text-text-muted tracking-widest">Lembre-se de anexar os documentos físicos na unidade escolar após convocação.</p>
+                             <p className="text-[10px] font-semibold uppercase text-text-muted tracking-widest">Lembre-se de anexar os documentos físicos na unidade escolar após convocação.</p>
                           </div>
                         </>
                       )}
@@ -326,7 +326,7 @@ export default function MatriculaPage() {
                onClick={prevStep}
                disabled={currentStep === 1 || submitted}
                className={cn(
-                 "flex items-center gap-2 px-6 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all",
+                 "flex items-center gap-2 px-6 py-4 rounded-xl font-semibold text-[10px] uppercase tracking-widest transition-all",
                  (currentStep === 1 || submitted) ? "opacity-0 pointer-events-none" : "bg-surface text-text-muted border-2 border-border hover:border-primary hover:text-primary"
                )}
              >
@@ -338,7 +338,7 @@ export default function MatriculaPage() {
                  onClick={currentStep === 5 ? handleSubmit : nextStep}
                  disabled={!canProceed() || submitting}
                  className={cn(
-                   "flex items-center gap-2 bg-primary text-white px-10 py-5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 transition-all",
+                   "flex items-center gap-2 bg-primary text-white px-10 py-5 rounded-xl font-semibold text-xs uppercase tracking-widest shadow-xl shadow-primary/20 transition-all",
                    canProceed() && !submitting ? "hover:scale-105 active:scale-95" : "opacity-50 cursor-not-allowed"
                  )}
                >

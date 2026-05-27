@@ -76,7 +76,7 @@ export default function PerfilPage() {
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
           <UserRound className="h-8 w-8" />
         </div>
-        <h1 className="mt-6 text-3xl font-black tracking-normal text-text-main">
+        <h1 className="mt-6 text-3xl font-semibold tracking-normal text-text-main">
           Painel do Cidadao
         </h1>
         <p className="mt-3 text-base font-medium leading-7 text-text-muted">
@@ -107,8 +107,8 @@ export default function PerfilPage() {
           </div>
 
           <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-widest text-primary">Painel do Cidadao</p>
-            <h1 className="mt-1 truncate text-3xl font-black tracking-normal text-text-main md:text-4xl">
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Painel do Cidadao</p>
+            <h1 className="mt-1 truncate text-3xl font-semibold tracking-normal text-text-main md:text-4xl">
               {displayName}
             </h1>
             <p className="mt-1 break-all text-sm font-bold text-text-muted">{email}</p>
@@ -151,10 +151,10 @@ export default function PerfilPage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <stat.icon className="h-5 w-5" />
                 </div>
-                <p className="mt-4 text-3xl font-black text-text-main">
+                <p className="mt-4 text-3xl font-semibold text-text-main">
                   {loading ? <Loader2 className="h-6 w-6 animate-spin text-primary" /> : stat.value}
                 </p>
-                <p className="mt-1 text-xs font-black uppercase tracking-widest text-text-muted">{stat.label}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-text-muted">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -162,10 +162,10 @@ export default function PerfilPage() {
           <div className="glass-panel p-5 md:p-6">
             <div className="mb-5 flex flex-col gap-2 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="text-xs font-black uppercase tracking-widest text-primary">Historico</p>
-                <h2 className="mt-1 text-2xl font-black tracking-normal text-text-main">Meus protocolos</h2>
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary">Historico</p>
+                <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">Meus protocolos</h2>
               </div>
-              <Link href="/ouvidoria" className="text-xs font-black uppercase tracking-widest text-primary">
+              <Link href="/ouvidoria" className="text-xs font-semibold uppercase tracking-widest text-primary">
                 Consultar protocolo
               </Link>
             </div>
@@ -176,7 +176,7 @@ export default function PerfilPage() {
         <aside className="space-y-4">
           {isStaff && (
             <div className="civic-card border-primary/20 p-5">
-              <p className="text-xs font-black uppercase tracking-widest text-primary">Acesso administrativo</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary">Acesso administrativo</p>
               <div className="mt-4 grid grid-cols-1 gap-2">
                 <Link
                   href="/gestao"
@@ -190,7 +190,7 @@ export default function PerfilPage() {
                 </Link>
                 <Link
                   href="/peticoes"
-                  className="inline-flex min-h-11 items-center justify-between rounded-xl border border-border bg-surface px-4 py-2 text-xs font-black uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+                  className="inline-flex min-h-11 items-center justify-between rounded-xl border border-border bg-surface px-4 py-2 text-xs font-semibold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
                 >
                   <span className="inline-flex items-center gap-2">
                     <FileText className="h-4 w-4" />
@@ -200,7 +200,7 @@ export default function PerfilPage() {
                 </Link>
                 <Link
                   href="/ouvidoria"
-                  className="inline-flex min-h-11 items-center justify-between rounded-xl border border-border bg-surface px-4 py-2 text-xs font-black uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+                  className="inline-flex min-h-11 items-center justify-between rounded-xl border border-border bg-surface px-4 py-2 text-xs font-semibold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
                 >
                   <span className="inline-flex items-center gap-2">
                     <MessageSquare className="h-4 w-4" />
@@ -214,25 +214,25 @@ export default function PerfilPage() {
 
           <div className="civic-card p-5">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-black uppercase tracking-widest text-text-muted">Dados basicos</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">Dados basicos</p>
               <button
                 onClick={() => setSettingsMode('edit')}
-                className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-[10px] font-black uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+                className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
               >
                 <Settings className="h-3.5 w-3.5" />
                 Editar
               </button>
             </div>
             <div className="mt-4 space-y-3 text-sm font-medium text-text-muted">
-              <p><span className="font-black text-text-main">Bairro:</span> {profile?.neighborhood || 'Nao informado'}</p>
-              <p><span className="font-black text-text-main">Telefone:</span> {profile?.phone || 'Nao informado'}</p>
-              <p><span className="font-black text-text-main">Perfil:</span> {profile?.role || 'citizen'}</p>
+              <p><span className="font-semibold text-text-main">Bairro:</span> {profile?.neighborhood || 'Nao informado'}</p>
+              <p><span className="font-semibold text-text-main">Telefone:</span> {profile?.phone || 'Nao informado'}</p>
+              <p><span className="font-semibold text-text-main">Perfil:</span> {profile?.role || 'citizen'}</p>
             </div>
           </div>
 
           <div className="rounded-2xl border border-border bg-text-main p-5 text-white shadow-sm">
             <FileText className="h-6 w-6 text-primary-light" />
-            <h2 className="mt-3 text-lg font-black tracking-normal">Como usar o painel</h2>
+            <h2 className="mt-3 text-lg font-semibold tracking-normal">Como usar o painel</h2>
             <p className="mt-2 text-sm font-medium leading-6 text-white/70">
               Solicitacoes abertas com login aparecem aqui automaticamente. Solicitacoes anonimas podem ser acompanhadas pelo numero de protocolo.
             </p>

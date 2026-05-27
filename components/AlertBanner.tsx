@@ -53,7 +53,7 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
             className="pointer-events-auto flex items-center gap-3 bg-accent-danger text-white px-5 py-3 rounded-full shadow-2xl border-2 border-white/20 hover:scale-105 active:scale-95 transition-all group"
           >
             <BellRing className="w-5 h-5 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Alerta Ativo</span>
+            <span className="text-[10px] font-semibold uppercase tracking-widest">Alerta Ativo</span>
             <ChevronUp className="w-4 h-4 opacity-50" />
           </motion.button>
         ) : (

@@ -27,7 +27,7 @@ export default function ObraDetalhesPage() {
 
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-2 text-sm font-black text-text-muted uppercase tracking-widest hover:text-primary transition-colors"
+        className="flex items-center gap-2 text-sm font-semibold text-text-muted uppercase tracking-widest hover:text-primary transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Voltar
@@ -70,10 +70,10 @@ export default function ObraDetalhesPage() {
                     style={{ width: `${work.progress}%` }}
                   />
                 </div>
-                <p className="text-[10px] font-black text-text-muted uppercase">
+                <p className="text-[10px] font-semibold text-text-muted uppercase">
                   Contratada: {work.contractor}
                 </p>
-                <p className="text-[10px] font-black text-text-muted uppercase">
+                <p className="text-[10px] font-semibold text-text-muted uppercase">
                   Bairro: {work.neighborhood}
                 </p>
               </div>
