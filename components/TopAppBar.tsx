@@ -259,50 +259,76 @@ export default function TopAppBar() {
 
       <AnimatePresence>
         {isExplorerOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] overflow-y-auto bg-text-main/95 px-4 py-6 text-white backdrop-blur-2xl md:px-8 md:py-10"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Mapa de servicos municipais"
-          >
-            <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">Portal do cidadão</p>
-                  <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-5xl">Mapa de serviços</h2>
-                </div>
-                <button
-                  onClick={() => setIsExplorerOpen(false)}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 text-white/70 transition hover:bg-white/10 hover:text-white"
-                  aria-label="Fechar menu de servicos"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsExplorerOpen(false)}
+              className="fixed inset-0 z-[99] bg-text-main/30 backdrop-blur-sm"
+            />
 
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-                {NAV_LINKS.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
+            {/* Painel */}
+            <motion.div
+              initial={{ opacity: 0, y: -16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed inset-x-0 top-0 z-[100] overflow-y-auto bg-white/98 px-4 py-6 shadow-[0_32px_80px_rgba(20,34,74,0.16)] backdrop-blur-3xl md:px-8 md:py-10"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mapa de servicos municipais"
+              style={{ maxHeight: '92vh' }}
+            >
+              {/* Grade decorativa de fundo */}
+              <div className="pointer-events-none absolute inset-0 opacity-[0.03]"
+                style={{
+                  backgroundImage: 'linear-gradient(rgba(20,34,74,1) 1px, transparent 1px), linear-gradient(90deg, rgba(20,34,74,1) 1px, transparent 1px)',
+                  backgroundSize: '40px 40px',
+                }} />
+
+              <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-8">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/8 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-primary">
+                      <Grid className="h-3.5 w-3.5" />
+                      Portal do cidadão
+                    </span>
+                    <h2 className="mt-3 text-3xl font-bold tracking-tight text-text-main md:text-5xl" style={{ fontFamily: 'var(--font-display)' }}>
+                      Mapa de <span className="text-gradient">serviços</span>
+                    </h2>
+                  </div>
+                  <button
                     onClick={() => setIsExplorerOpen(false)}
-                    className="group flex min-h-32 flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-accent hover:bg-white/10"
+                    className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface text-text-muted transition hover:border-primary/30 hover:bg-primary/8 hover:text-primary"
+                    aria-label="Fechar menu de servicos"
                   >
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-accent transition group-hover:bg-accent group-hover:text-text-main">
-                      <link.icon className="h-5 w-5" />
-                    </span>
-                    <span>
-                      <span className="block text-sm font-semibold text-white" style={{ fontFamily: 'var(--font-display)' }}>{link.label}</span>
-                      <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">{link.category}</span>
-                    </span>
-                  </Link>
-                ))}
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                  {NAV_LINKS.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setIsExplorerOpen(false)}
+                      className="group flex min-h-32 flex-col justify-between rounded-2xl border border-border bg-surface-container p-4 transition-all duration-200 hover:-translate-y-1 hover:border-primary/30 hover:bg-white hover:shadow-[0_8px_24px_rgba(26,86,196,0.12)]"
+                    >
+                      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-all duration-200 group-hover:bg-primary group-hover:text-white">
+                        <link.icon className="h-5 w-5" />
+                      </span>
+                      <span>
+                        <span className="block text-sm font-semibold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>{link.label}</span>
+                        <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.18em] text-text-muted">{link.category}</span>
+                      </span>
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
