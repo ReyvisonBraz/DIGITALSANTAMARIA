@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'motion/react';
 import {
@@ -23,6 +23,7 @@ import { LogoMark } from '@/components/Logo';
 import Reveal, { RevealGroup, RevealItem } from '@/components/ui/Reveal';
 import Counter from '@/components/ui/Counter';
 import TextReveal from '@/components/ui/TextReveal';
+import { useHomeMetrics } from '@/lib/hooks/use-home-metrics';
 
 const primaryActions = [
   {
@@ -70,17 +71,22 @@ const processSteps = [
   'Acompanhe a resposta',
 ] as const;
 
-const stats = [
-  { value: 24, suffix: 'h', label: 'Canais sempre abertos' },
-  { value: 14, suffix: '', label: 'Áreas de serviço' },
-  { value: 100, suffix: '%', label: 'Digital e gratuito' },
-] as const;
-
 const ease = [0.16, 1, 0.3, 1] as const;
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
+  const { eventsCount, noticesCount } = useHomeMetrics();
+
+  const stats = useMemo(() => [
+    { value: 24, suffix: 'h', label: 'Canais sempre abertos' },
+    eventsCount > 0
+      ? { value: eventsCount, suffix: '', label: eventsCount === 1 ? 'Evento na agenda' : 'Eventos na agenda' }
+      : { value: 14, suffix: '', label: 'Áreas de serviço' },
+    noticesCount > 0
+      ? { value: noticesCount, suffix: '', label: noticesCount === 1 ? 'Aviso publicado' : 'Avisos publicados' }
+      : { value: 100, suffix: '%', label: 'Digital e gratuito' },
+  ], [eventsCount, noticesCount]);
   const yPanel = useTransform(scrollY, [0, 500], [0, -46]);
   const yBlob = useTransform(scrollY, [0, 500], [0, 80]);
   const yBlob2 = useTransform(scrollY, [0, 600], [0, -60]);

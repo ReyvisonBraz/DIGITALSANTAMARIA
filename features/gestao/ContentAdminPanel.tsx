@@ -1,17 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { Bell, CalendarDays } from 'lucide-react';
+import { Bell, CalendarDays, Car, HardHat, Store } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import NoticesAdmin from '@/features/gestao/content/NoticesAdmin';
 import EventsAdmin from '@/features/gestao/content/EventsAdmin';
+import WorksAdmin from '@/features/gestao/content/WorksAdmin';
+import BusinessesAdmin from '@/features/gestao/content/BusinessesAdmin';
+import TrafficAdmin from '@/features/gestao/content/TrafficAdmin';
 import { cn } from '@/lib/utils';
 
-type ContentTab = 'notices' | 'events';
+type ContentTab = 'notices' | 'events' | 'works' | 'businesses' | 'traffic';
 
-const TABS: { value: ContentTab; label: string; icon: LucideIcon; href: string }[] = [
-  { value: 'notices', label: 'Avisos',  icon: Bell,         href: '/avisos' },
-  { value: 'events',  label: 'Eventos', icon: CalendarDays, href: '/eventos' },
+const TABS: { value: ContentTab; label: string; icon: LucideIcon }[] = [
+  { value: 'notices',    label: 'Avisos',   icon: Bell },
+  { value: 'events',     label: 'Eventos',  icon: CalendarDays },
+  { value: 'works',      label: 'Obras',    icon: HardHat },
+  { value: 'businesses', label: 'Comércio', icon: Store },
+  { value: 'traffic',    label: 'Trânsito', icon: Car },
 ];
 
 export default function ContentAdminPanel() {
@@ -19,7 +25,7 @@ export default function ContentAdminPanel() {
 
   return (
     <div className="space-y-5">
-      <div className="glass-panel grid grid-cols-2 p-1">
+      <div className="glass-panel grid grid-cols-2 gap-1 p-1 sm:grid-cols-3 md:grid-cols-5">
         {TABS.map((item) => {
           const active = item.value === tab;
           const Icon = item.icon;
@@ -29,7 +35,7 @@ export default function ContentAdminPanel() {
               type="button"
               onClick={() => setTab(item.value)}
               className={cn(
-                'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition',
+                'inline-flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-semibold uppercase tracking-widest transition',
                 active ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
               )}
             >
@@ -40,7 +46,11 @@ export default function ContentAdminPanel() {
         })}
       </div>
 
-      {tab === 'notices' ? <NoticesAdmin /> : <EventsAdmin />}
+      {tab === 'notices' && <NoticesAdmin />}
+      {tab === 'events' && <EventsAdmin />}
+      {tab === 'works' && <WorksAdmin />}
+      {tab === 'businesses' && <BusinessesAdmin />}
+      {tab === 'traffic' && <TrafficAdmin />}
     </div>
   );
 }
