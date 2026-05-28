@@ -13,9 +13,24 @@ import {
 import { db } from '@/lib/firebase';
 import { demandConverter } from '@/lib/firebase/converters';
 import { generateDemandProtocolId } from '@/lib/utils/protocol';
-import type { Demand, CreateDemandInput, DemandStatus, AdminAction } from '@/types';
+import { createNotification } from '@/services/notifications.service';
+import type { Demand, CreateDemandInput, DemandStatus, AdminAction, NotificationTone } from '@/types';
 
 const COLLECTION = 'demands';
+
+const STATUS_LABEL: Record<DemandStatus, string> = {
+  pending: 'pendente',
+  analyzing: 'em análise',
+  solved: 'resolvida',
+  rejected: 'recusada',
+};
+
+const STATUS_TONE: Record<DemandStatus, NotificationTone> = {
+  pending: 'update',
+  analyzing: 'update',
+  solved: 'success',
+  rejected: 'alert',
+};
 
 export async function createDemand(
   input: CreateDemandInput & { authorId: string }
@@ -69,8 +84,11 @@ export async function updateDemandStatus(
   status: DemandStatus,
   adminAction: Omit<AdminAction, 'updatedAt'>
 ): Promise<void> {
-  const ref = doc(db, COLLECTION, id);
-  await updateDoc(ref, {
+  const ref = doc(db, COLLECTION, id).withConverter(demandConverter);
+  const snap = await getDoc(ref);
+  const demand = snap.exists() ? snap.data() : null;
+
+  await updateDoc(doc(db, COLLECTION, id), {
     status,
     adminAction: {
       ...adminAction,
@@ -78,4 +96,16 @@ export async function updateDemandStatus(
     },
     updatedAt: serverTimestamp(),
   });
+
+  if (demand && !demand.isAnonymous && demand.authorId) {
+    await createNotification({
+      recipientId: demand.authorId,
+      kind: 'demand_update',
+      tone: STATUS_TONE[status],
+      title: `Solicitação ${STATUS_LABEL[status]}`,
+      message: adminAction.response?.trim() || `Sua solicitação "${demand.subject}" foi atualizada para ${STATUS_LABEL[status]}.`,
+      href: '/perfil',
+      source: { type: 'demand', id, protocol: demand.protocolId },
+    });
+  }
 }

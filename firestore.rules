@@ -153,5 +153,15 @@ service cloud.firestore {
         && incoming().status == 'active';
       allow update: if isStaff();
     }
+
+    match /notifications/{notificationId} {
+      allow read: if isOwner(resource.data.recipientId);
+      allow list: if isSignedIn();
+      allow create: if isStaff();
+      allow update: if isOwner(resource.data.recipientId)
+        && incoming().diff(existing()).affectedKeys().hasOnly(['read'])
+        && incoming().read == true;
+      allow delete: if false;
+    }
   }
 }

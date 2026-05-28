@@ -13,6 +13,7 @@ import type {
   HealthUnit,
   Job,
   JobApplication,
+  Notification,
 } from '@/types';
 
 function converter<T extends { id: string }>(): FirestoreDataConverter<T> {
@@ -36,3 +37,4 @@ export const appointmentConverter = converter<Appointment>();
 export const healthUnitConverter = converter<HealthUnit>();
 export const jobConverter = converter<Job>();
 export const jobApplicationConverter = converter<JobApplication>();
+export const notificationConverter = converter<Notification>();
