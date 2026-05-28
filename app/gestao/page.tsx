@@ -1,17 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { AlertCircle, FileText, Loader2, Search, ShieldCheck } from 'lucide-react';
+import Image from 'next/image';
+import { AlertCircle, FileText, Loader2, MapPin, Megaphone, Search, ShieldCheck } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import Skeleton from '@/components/ui/Skeleton';
 import MetricsDashboard from '@/features/gestao/MetricsDashboard';
 import PetitionsAdminPanel from '@/features/gestao/PetitionsAdminPanel';
+import ReportStatusUpdater from '@/features/gestao/ReportStatusUpdater';
 import StatusUpdater from '@/features/gestao/StatusUpdater';
 import UsersAdminPanel from '@/features/gestao/UsersAdminPanel';
 import { useAdminData } from '@/features/gestao/hooks/useAdminData';
 import { useAuth } from '@/lib/auth-context';
 import { formatDate } from '@/lib/utils/formatters';
-import type { DemandStatus, DemandType } from '@/types';
+import type { DemandStatus, DemandType, ReportStatus, ReportType } from '@/types';
 
 const statusLabel: Record<DemandStatus, string> = {
   pending: 'Pendente',
@@ -27,7 +29,22 @@ const typeLabel: Record<DemandType, string> = {
   elogio: 'Elogio',
 };
 
-type ActiveSection = 'demands' | 'petitions' | 'users';
+const reportStatusLabel: Record<ReportStatus, string> = {
+  pending: 'Pendente',
+  in_review: 'Em análise',
+  resolved: 'Resolvido',
+  rejected: 'Recusado',
+};
+
+const reportTypeLabel: Record<ReportType, string> = {
+  infrastructure: 'Infraestrutura',
+  environment: 'Meio ambiente',
+  security: 'Segurança',
+  other: 'Outro',
+};
+
+type ActiveSection = 'demands' | 'reports' | 'petitions' | 'users';
+type ReportStatusFilter = ReportStatus | 'all';
 type DemandSort = 'newest' | 'oldest' | 'pending';
 type StatusFilter = DemandStatus | 'all';
 
@@ -41,12 +58,14 @@ function demandTime(value: { seconds?: number } | unknown) {
 export default function GestaoPage() {
   const { user, userRole, loading: authLoading, login } = useAuth();
   const isStaff = userRole === 'admin' || userRole === 'clerk';
-  const { demands, loading, error, refresh } = useAdminData(!!user && isStaff);
+  const { demands, reports, loading, error, refresh } = useAdminData(!!user && isStaff);
   const [activeSection, setActiveSection] = useState<ActiveSection>('demands');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortMode, setSortMode] = useState<DemandSort>('newest');
+  const [reportSearch, setReportSearch] = useState('');
+  const [reportStatusFilter, setReportStatusFilter] = useState<ReportStatusFilter>('all');
 
   if (authLoading) {
     return (
@@ -123,6 +142,28 @@ export default function GestaoPage() {
       return demandTime(b.createdAt) - demandTime(a.createdAt);
     });
 
+  const reportPendingCount = reports.filter((r) => r.status === 'pending').length;
+
+  const filteredReports = reports
+    .filter((report) => {
+      const search = reportSearch.trim().toLowerCase();
+      const searchable = [
+        report.protocol,
+        report.title,
+        report.description,
+        report.reporterName,
+        reportTypeLabel[report.type],
+        reportStatusLabel[report.status],
+      ].join(' ').toLowerCase();
+      const matchesSearch = !search || searchable.includes(search);
+      const matchesStatus = reportStatusFilter === 'all' || report.status === reportStatusFilter;
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => {
+      const order: Record<ReportStatus, number> = { pending: 0, in_review: 1, rejected: 2, resolved: 3 };
+      return order[a.status] - order[b.status] || demandTime(b.createdAt) - demandTime(a.createdAt);
+    });
+
   return (
     <div className="page-shell">
       <section className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 md:px-10 lg:px-12">
@@ -141,7 +182,7 @@ export default function GestaoPage() {
       </section>
 
       <main className="mx-auto w-full max-w-7xl space-y-5 px-4 py-7 sm:px-6 md:px-10 lg:px-12">
-        <div className="glass-panel grid grid-cols-3 p-1">
+        <div className="glass-panel grid grid-cols-2 p-1 sm:grid-cols-4">
           <button
             onClick={() => setActiveSection('demands')}
             className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
@@ -149,6 +190,14 @@ export default function GestaoPage() {
             }`}
           >
             Solicitacoes ({demands.length})
+          </button>
+          <button
+            onClick={() => setActiveSection('reports')}
+            className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
+              activeSection === 'reports' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
+            }`}
+          >
+            Relatos ({reports.length}{reportPendingCount > 0 ? ` · ${reportPendingCount} novos` : ''})
           </button>
           <button
             onClick={() => setActiveSection('petitions')}
@@ -278,6 +327,126 @@ export default function GestaoPage() {
                         clerkId={user.uid}
                         clerkName={user.displayName || user.email || 'Gestor'}
                         initialResponse={demand.adminAction?.response || ''}
+                        onUpdate={refresh}
+                      />
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </>
+        ) : activeSection === 'reports' ? (
+          <>
+            <div className="glass-panel p-4">
+              <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_220px]">
+                <label className="relative block">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+                  <input
+                    value={reportSearch}
+                    onChange={(event) => setReportSearch(event.target.value)}
+                    placeholder="Buscar por protocolo, título, descrição ou cidadão"
+                    className="h-11 w-full rounded-xl border border-border bg-surface pl-10 pr-3 text-sm font-medium outline-none transition focus:border-primary"
+                  />
+                </label>
+
+                <select
+                  value={reportStatusFilter}
+                  onChange={(event) => setReportStatusFilter(event.target.value as ReportStatusFilter)}
+                  className="h-11 rounded-xl border border-border bg-surface px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
+                >
+                  <option value="all">Todos status</option>
+                  <option value="pending">Pendente</option>
+                  <option value="in_review">Em análise</option>
+                  <option value="resolved">Resolvido</option>
+                  <option value="rejected">Recusado</option>
+                </select>
+              </div>
+
+              <p className="mt-3 text-xs font-bold text-text-muted">
+                Mostrando {filteredReports.length} de {reports.length} relatos.
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="space-y-4">
+                <Skeleton variant="card" />
+                <Skeleton variant="card" />
+              </div>
+            ) : error ? (
+              <EmptyState title="Erro ao carregar" description={error} />
+            ) : reports.length === 0 ? (
+              <EmptyState
+                title="Nenhum relato ainda"
+                description="Quando alguém enviar um relato pela página /relatar, ele aparece aqui."
+              />
+            ) : filteredReports.length === 0 ? (
+              <EmptyState title="Nada encontrado" description="Tente limpar os filtros ou buscar outro termo." />
+            ) : (
+              <div className="space-y-4">
+                {filteredReports.map((report) => (
+                  <article key={report.id} className="civic-card p-5 md:p-6">
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-accent-success/12 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-accent-success">
+                            <Megaphone className="h-3 w-3" />
+                            {reportTypeLabel[report.type]}
+                          </span>
+                          <span className="rounded-full bg-surface px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+                            {reportStatusLabel[report.status]}
+                          </span>
+                          <span className="text-xs font-bold text-text-muted">{formatDate(report.createdAt)}</span>
+                        </div>
+                        <h2 className="mt-3 text-xl font-semibold tracking-normal text-text-main">{report.title}</h2>
+                        <p className="mt-2 line-clamp-3 text-sm font-medium leading-6 text-text-muted">
+                          {report.description}
+                        </p>
+                        {report.location?.address && (
+                          <p className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-text-muted">
+                            <MapPin className="h-3.5 w-3.5 text-primary" />
+                            {report.location.address}
+                          </p>
+                        )}
+                        <p className="mt-3 break-all font-mono text-xs font-bold text-primary">
+                          {report.protocol}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col gap-3 lg:min-w-64">
+                        {report.photo?.url && (
+                          <div className="relative h-40 w-full overflow-hidden rounded-xl border border-border bg-surface">
+                            <Image
+                              src={report.photo.url}
+                              alt={`Evidência do relato ${report.title}`}
+                              fill
+                              sizes="(min-width: 1024px) 256px, 100vw"
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                        <div className="rounded-xl border border-border bg-surface p-4">
+                          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-text-muted">
+                            <FileText className="h-4 w-4 text-primary" />
+                            Cidadão
+                          </div>
+                          <p className="mt-2 text-sm font-bold text-text-main">
+                            {report.reporterName || 'Identificado'}
+                          </p>
+                          {report.location && (report.location.lat !== 0 || report.location.lng !== 0) && (
+                            <p className="mt-1 font-mono text-[10px] font-bold text-text-muted">
+                              {report.location.lat.toFixed(5)}, {report.location.lng.toFixed(5)}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 border-t border-border pt-5">
+                      <ReportStatusUpdater
+                        reportId={report.id}
+                        clerkId={user.uid}
+                        initialStatus={report.status === 'pending' ? 'in_review' : report.status}
+                        initialResponse={report.adminResponse || ''}
                         onUpdate={refresh}
                       />
                     </div>

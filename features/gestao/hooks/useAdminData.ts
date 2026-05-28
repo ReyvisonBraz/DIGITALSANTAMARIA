@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { getAllDemands } from '@/services/demands.service';
-import type { Demand } from '@/types';
+import { getAllReports } from '@/services/reports.service';
+import type { Demand, Report } from '@/types';
 
 interface AdminData {
   demands: Demand[];
+  reports: Report[];
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
@@ -13,12 +15,14 @@ interface AdminData {
 
 export function useAdminData(enabled = true): AdminData {
   const [demands, setDemands] = useState<Demand[]>([]);
+  const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     if (!enabled) {
       setDemands([]);
+      setReports([]);
       setLoading(false);
       setError(null);
       return;
@@ -27,10 +31,11 @@ export function useAdminData(enabled = true): AdminData {
     setLoading(true);
     setError(null);
     try {
-      const data = await getAllDemands();
-      setDemands(data);
+      const [demandList, reportList] = await Promise.all([getAllDemands(), getAllReports()]);
+      setDemands(demandList);
+      setReports(reportList);
     } catch {
-      setError('Erro ao carregar solicitacoes.');
+      setError('Erro ao carregar dados administrativos.');
     } finally {
       setLoading(false);
     }
@@ -40,5 +45,5 @@ export function useAdminData(enabled = true): AdminData {
     refresh();
   }, [refresh]);
 
-  return { demands, loading, error, refresh };
+  return { demands, reports, loading, error, refresh };
 }
