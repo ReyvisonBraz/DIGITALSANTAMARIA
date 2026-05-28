@@ -4,6 +4,7 @@ import {
   addDoc,
   getDoc,
   getDocs,
+  onSnapshot,
   updateDoc,
   query,
   where,
@@ -70,6 +71,17 @@ export async function getDemandsByUser(userId: string): Promise<Demand[]> {
   const q = query(ref, where('authorId', '==', userId), orderBy('createdAt', 'desc'));
   const snap = await getDocs(q);
   return snap.docs.map((d) => d.data());
+}
+
+export function listenToUserDemands(
+  userId: string,
+  onChange: (demands: Demand[]) => void,
+): () => void {
+  const ref = collection(db, COLLECTION).withConverter(demandConverter);
+  const q = query(ref, where('authorId', '==', userId), orderBy('createdAt', 'desc'));
+  return onSnapshot(q, (snap) => {
+    onChange(snap.docs.map((d) => d.data()));
+  });
 }
 
 export async function getAllDemands(): Promise<Demand[]> {

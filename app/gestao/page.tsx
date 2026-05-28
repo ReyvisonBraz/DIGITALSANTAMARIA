@@ -142,7 +142,13 @@ export default function GestaoPage() {
       return demandTime(b.createdAt) - demandTime(a.createdAt);
     });
 
-  const reportPendingCount = reports.filter((r) => r.status === 'pending').length;
+  const reportMetrics = {
+    total: reports.length,
+    pending: reports.filter((report) => report.status === 'pending').length,
+    analyzing: reports.filter((report) => report.status === 'in_review').length,
+    solved: reports.filter((report) => report.status === 'resolved').length,
+  };
+  const reportPendingCount = reportMetrics.pending;
 
   const filteredReports = reports
     .filter((report) => {
@@ -337,6 +343,8 @@ export default function GestaoPage() {
           </>
         ) : activeSection === 'reports' ? (
           <>
+            <MetricsDashboard {...reportMetrics} />
+
             <div className="glass-panel p-4">
               <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_220px]">
                 <label className="relative block">

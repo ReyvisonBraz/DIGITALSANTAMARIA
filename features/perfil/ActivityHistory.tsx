@@ -4,16 +4,23 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ClipboardList, Clock, FileText, Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { getDemandsByUser } from '@/services/demands.service';
-import { getReportsByUser } from '@/services/reports.service';
+import { listenToUserDemands } from '@/services/demands.service';
+import { listenToUserReports } from '@/services/reports.service';
 import { formatDate } from '@/lib/utils/formatters';
-import type { Demand, DemandStatus, Report } from '@/types';
+import type { Demand, DemandStatus, Report, ReportStatus } from '@/types';
 
 const demandStatusLabel: Record<DemandStatus, string> = {
   pending: 'Pendente',
   analyzing: 'Em análise',
   solved: 'Resolvida',
   rejected: 'Recusada',
+};
+
+const reportStatusLabel: Record<ReportStatus, string> = {
+  pending: 'Pendente',
+  in_review: 'Em análise',
+  resolved: 'Resolvido',
+  rejected: 'Recusado',
 };
 
 function getMillis(value: Demand['createdAt'] | Report['createdAt']) {
@@ -31,17 +38,34 @@ export default function ActivityHistory() {
 
   useEffect(() => {
     if (!user) {
+      setReports([]);
+      setDemands([]);
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    Promise.all([getReportsByUser(user.uid), getDemandsByUser(user.uid)])
-      .then(([userReports, userDemands]) => {
-        setReports(userReports);
-        setDemands(userDemands);
-      })
-      .finally(() => setLoading(false));
+    let demandsReady = false;
+    let reportsReady = false;
+    const markReady = () => {
+      if (demandsReady && reportsReady) setLoading(false);
+    };
+
+    const unsubDemands = listenToUserDemands(user.uid, (next) => {
+      setDemands(next);
+      demandsReady = true;
+      markReady();
+    });
+    const unsubReports = listenToUserReports(user.uid, (next) => {
+      setReports(next);
+      reportsReady = true;
+      markReady();
+    });
+
+    return () => {
+      unsubDemands();
+      unsubReports();
+    };
   }, [user]);
 
   const activities = [
@@ -59,7 +83,7 @@ export default function ActivityHistory() {
       protocol: report.protocol,
       type: 'Relato',
       title: report.title,
-      status: report.status,
+      status: reportStatusLabel[report.status],
       date: report.createdAt,
       icon: FileText,
     })),

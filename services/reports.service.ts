@@ -4,6 +4,7 @@ import {
   addDoc,
   getDoc,
   getDocs,
+  onSnapshot,
   updateDoc,
   query,
   where,
@@ -73,6 +74,17 @@ export async function getReportsByUser(userId: string): Promise<Report[]> {
   const q = query(ref, where('reporterId', '==', userId), orderBy('createdAt', 'desc'));
   const snap = await getDocs(q);
   return snap.docs.map((d) => d.data());
+}
+
+export function listenToUserReports(
+  userId: string,
+  onChange: (reports: Report[]) => void,
+): () => void {
+  const ref = collection(db, COLLECTION).withConverter(reportConverter);
+  const q = query(ref, where('reporterId', '==', userId), orderBy('createdAt', 'desc'));
+  return onSnapshot(q, (snap) => {
+    onChange(snap.docs.map((d) => d.data()));
+  });
 }
 
 export async function getPendingReports(): Promise<Report[]> {
