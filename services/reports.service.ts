@@ -14,13 +14,19 @@ import {
 import { db } from '@/lib/firebase';
 import { reportConverter } from '@/lib/firebase/converters';
 import { generateProtocolId } from '@/lib/utils/protocol';
-import type { Report, CreateReportInput, ReportStatus } from '@/types';
+import { uploadReportPhoto } from '@/services/storage.service';
+import type { Report, CreateReportInput, ReportStatus, StorageFile } from '@/types';
 
 const COLLECTION = 'reports';
 
 export async function createReport(
   input: CreateReportInput & { reporterId: string; reporterName: string }
 ): Promise<string> {
+  let photo: StorageFile | null = null;
+  if (input.photoFile) {
+    photo = await uploadReportPhoto(input.reporterId, input.photoFile);
+  }
+
   const docRef = await addDoc(collection(db, COLLECTION), {
     reporterId: input.reporterId,
     reporterName: input.reporterName,
@@ -30,7 +36,7 @@ export async function createReport(
     status: 'pending',
     protocol: generateProtocolId(),
     location: input.location || null,
-    photo: null,
+    photo,
     votes: 0,
     isPetition: input.isPetition,
     adminResponse: null,

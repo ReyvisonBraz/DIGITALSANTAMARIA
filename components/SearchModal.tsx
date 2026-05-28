@@ -10,6 +10,7 @@ import {
   DollarSign,
   HardHat,
   Heart,
+  Megaphone,
   MessageSquare,
   Navigation,
   School,
@@ -34,7 +35,8 @@ interface SearchResult {
 
 const RESULTS: readonly SearchResult[] = [
   { id: '1', title: 'Abrir solicitacao', category: 'Protocolos', href: '/ouvidoria', icon: MessageSquare },
-  { id: '2', title: 'Consultar protocolo', category: 'Protocolos', href: '/perfil', icon: Search },
+  { id: '2', title: 'Relatar problema', category: 'Protocolos', href: '/relatar', icon: Megaphone },
+  { id: '13', title: 'Consultar protocolo', category: 'Protocolos', href: '/perfil', icon: Search },
   { id: '3', title: 'Peticoes publicas', category: 'Peticoes', href: '/peticoes', icon: ArrowRight },
   { id: '4', title: 'Painel do Cidadao', category: 'Conta', href: '/perfil', icon: MessageSquare },
   { id: '5', title: 'Unidades de saude', category: 'Saude', href: '/saude', icon: Heart },

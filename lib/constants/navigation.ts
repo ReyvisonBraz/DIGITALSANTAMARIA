@@ -7,6 +7,7 @@ import {
   Grid,
   Heart,
   Home,
+  Megaphone,
   MessageSquare,
   Navigation,
   School,
@@ -40,6 +41,7 @@ export interface DashboardModule {
 
 export const NAV_LINKS: readonly NavLink[] = [
   { label: 'Abrir solicitacao', href: '/ouvidoria', icon: MessageSquare, category: 'Atendimento' },
+  { label: 'Relatar problema', href: '/relatar', icon: Megaphone, category: 'Atendimento' },
   { label: 'Consultar protocolo', href: '/perfil', icon: SearchCheck, category: 'Atendimento' },
   { label: 'Peticoes', href: '/peticoes', icon: FileText, category: 'Participacao' },
   { label: 'Painel do Cidadao', href: '/perfil', icon: UserRound, category: 'Conta' },
@@ -65,6 +67,7 @@ export const BOTTOM_NAV_ITEMS: readonly BottomNavItem[] = [
 
 export const DASHBOARD_MODULES: readonly DashboardModule[] = [
   { icon: MessageSquare, label: 'Abrir solicitacao', href: '/ouvidoria', color: 'text-primary', bg: 'bg-primary/10' },
+  { icon: Megaphone, label: 'Relatar problema', href: '/relatar', color: 'text-accent-success', bg: 'bg-accent-success/10' },
   { icon: SearchCheck, label: 'Consultar protocolo', href: '/perfil', color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
   { icon: FileText, label: 'Peticoes', href: '/peticoes', color: 'text-orange-600', bg: 'bg-orange-500/10' },
   { icon: UserRound, label: 'Painel do Cidadao', href: '/perfil', color: 'text-blue-600', bg: 'bg-blue-500/10' },
