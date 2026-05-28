@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { BellOff, Clock, FileText, Heart, Loader2, MessageSquare, Vote } from 'lucide-react';
+import { BellOff, Clock, FileText, Heart, Loader2, MessageSquare, Store, Vote } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import SidePanel from '@/components/ui/SidePanel';
@@ -25,6 +25,7 @@ const KIND_ICONS: Record<NotificationKind, LucideIcon> = {
   demand_update: MessageSquare,
   report_update: FileText,
   petition_update: Vote,
+  business_update: Store,
   system: Heart,
 };
 

@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   onSnapshot,
   orderBy,
@@ -11,10 +12,16 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { createContentService } from '@/services/content.service';
+import { createNotification } from '@/services/notifications.service';
 import type { Business } from '@/types';
 
 const COLLECTION = 'businesses';
 const factory = createContentService<Business>(COLLECTION);
+
+async function readBusiness(id: string): Promise<Business | null> {
+  const snap = await getDoc(doc(db, COLLECTION, id));
+  return snap.exists() ? ({ id: snap.id, ...snap.data() } as Business) : null;
+}
 
 export type RegisterBusinessInput = Pick<
   Business,
@@ -56,22 +63,51 @@ export async function updateOwnedBusiness(
 
 /** Admin aprova um cadastro pendente — vira public no /comercio. */
 export async function approveBusiness(id: string): Promise<void> {
-  const ref = doc(db, COLLECTION, id);
-  await updateDoc(ref, {
+  const business = await readBusiness(id);
+
+  await updateDoc(doc(db, COLLECTION, id), {
     status: 'published',
     reviewNote: null,
     updatedAt: serverTimestamp(),
   });
+
+  if (business?.ownerId) {
+    await createNotification({
+      recipientId: business.ownerId,
+      kind: 'business_update',
+      tone: 'success',
+      title: 'Negócio aprovado',
+      message: `Seu cadastro "${business.title}" foi aprovado e já está visível em /comercio.`,
+      href: '/perfil',
+      source: { type: 'business', id },
+    });
+  }
 }
 
 /** Admin reprova com motivo opcional — fica visível pro dono no painel. */
 export async function rejectBusiness(id: string, note?: string): Promise<void> {
-  const ref = doc(db, COLLECTION, id);
-  await updateDoc(ref, {
+  const business = await readBusiness(id);
+  const trimmedNote = note?.trim() || '';
+
+  await updateDoc(doc(db, COLLECTION, id), {
     status: 'archived',
-    reviewNote: note?.trim() || null,
+    reviewNote: trimmedNote || null,
     updatedAt: serverTimestamp(),
   });
+
+  if (business?.ownerId) {
+    await createNotification({
+      recipientId: business.ownerId,
+      kind: 'business_update',
+      tone: 'alert',
+      title: 'Cadastro não aprovado',
+      message: trimmedNote
+        ? `"${business.title}" não foi aprovado. Motivo: ${trimmedNote}`
+        : `"${business.title}" não foi aprovado pela prefeitura. Veja seu painel para revisar e reenviar.`,
+      href: '/perfil',
+      source: { type: 'business', id },
+    });
+  }
 }
 
 /** Lista negócios pendentes para o painel de moderação. */
