@@ -38,7 +38,7 @@ export default function EventoDetalhesPage() {
         label="Agenda Cultural"
         title={event?.title || 'Evento'}
         subtitle={event?.description || 'Carregando detalhes do evento...'}
-        color="bg-purple-500"
+        accent="primary-dark"
       />
 
       <ContentPage

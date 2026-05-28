@@ -56,12 +56,12 @@ const primaryActions = [
 ] as const;
 
 const serviceHighlights = [
-  { label: 'Saúde', href: '/saude', icon: HeartPulse, tone: 'from-sky-100/80' },
-  { label: 'Educação', href: '/educacao', icon: GraduationCap, tone: 'from-blue-100/80' },
-  { label: 'Empregos', href: '/empregos', icon: Briefcase, tone: 'from-emerald-100/70' },
-  { label: 'Tributos', href: '/tributos', icon: Landmark, tone: 'from-amber-100/80' },
-  { label: 'Eventos', href: '/eventos', icon: CalendarDays, tone: 'from-indigo-100/70' },
-  { label: 'Serviços', href: '/servicos', icon: Bell, tone: 'from-cyan-100/80' },
+  { label: 'Saúde',     href: '/saude',     icon: HeartPulse,    tone: 'from-secondary/15',        iconBg: 'bg-secondary/15',        iconColor: 'text-secondary' },
+  { label: 'Educação',  href: '/educacao',  icon: GraduationCap, tone: 'from-primary/12',          iconBg: 'bg-primary/12',          iconColor: 'text-primary' },
+  { label: 'Empregos',  href: '/empregos',  icon: Briefcase,     tone: 'from-accent-success/12',   iconBg: 'bg-accent-success/15',   iconColor: 'text-accent-success' },
+  { label: 'Tributos',  href: '/tributos',  icon: Landmark,      tone: 'from-accent/18',           iconBg: 'bg-accent/22',           iconColor: 'text-primary-dark' },
+  { label: 'Eventos',   href: '/eventos',   icon: CalendarDays,  tone: 'from-primary-dark/10',     iconBg: 'bg-primary-dark/12',     iconColor: 'text-primary-dark' },
+  { label: 'Serviços',  href: '/servicos',  icon: Bell,          tone: 'from-secondary/15',        iconBg: 'bg-secondary/15',        iconColor: 'text-secondary' },
 ] as const;
 
 const processSteps = [
@@ -326,8 +326,8 @@ export default function Home() {
                   href={service.href}
                   className={`civic-card group flex min-h-40 min-w-44 flex-col justify-between bg-gradient-to-br ${service.tone} to-white p-5`}
                 >
-                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/70 text-primary shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:scale-110">
-                    <service.icon className="h-5 w-5" />
+                  <div className={`grid h-9 w-9 place-items-center rounded-xl ${service.iconBg} ${service.iconColor} shadow-sm transition duration-300 group-hover:-translate-y-0.5 group-hover:scale-105`}>
+                    <service.icon className="h-[18px] w-[18px]" />
                   </div>
                   <span className="relative z-10 inline-flex items-center justify-between text-lg font-bold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>
                     {service.label}

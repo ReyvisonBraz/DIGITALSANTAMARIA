@@ -26,7 +26,7 @@ export default function EventosPage() {
         label="Agenda Cultural"
         title="Eventos 2026"
         subtitle="Shows, feiras, oficinas e atividades gratuitas na cidade."
-        color="bg-purple-500"
+        accent="primary-dark"
       />
 
       <ContentPage

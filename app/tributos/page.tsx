@@ -26,7 +26,7 @@ export default function TributosPage() {
         label="Finanças"
         title="Tributos Municipais"
         subtitle="IPTU, ISS, certidões e serviços da fazenda municipal."
-        color="bg-cyan-600"
+        accent="accent"
       />
 
       <ContentPage

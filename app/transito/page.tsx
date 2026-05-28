@@ -33,7 +33,7 @@ export default function TransitoPage() {
         label="Mobilidade"
         title="Trânsito em Tempo Real"
         subtitle="Alertas de trânsito, obras e condições das vias."
-        color="bg-orange-500"
+        accent="primary"
       />
 
       <ContentPage

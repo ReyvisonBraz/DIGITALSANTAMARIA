@@ -38,7 +38,7 @@ export default function ObraDetalhesPage() {
         label="Infraestrutura"
         title={work?.title || 'Obra'}
         subtitle={work?.description || 'Carregando detalhes da obra...'}
-        color="bg-amber-500"
+        accent="accent"
       />
 
       <ContentPage

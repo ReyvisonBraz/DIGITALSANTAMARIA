@@ -26,7 +26,7 @@ export default function ComercioPage() {
         label="Economia Local"
         title="Comércio Local"
         subtitle="Vitrine de produtores e negócios de Santa Maria do Pará."
-        color="bg-blue-500"
+        accent="accent"
       />
 
       <ContentPage

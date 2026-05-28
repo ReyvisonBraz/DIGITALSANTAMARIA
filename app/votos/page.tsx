@@ -26,7 +26,7 @@ export default function VotosPage() {
         label="Democracia"
         title="Votações Cidadãs"
         subtitle="Orçamento participativo, consultas públicas e projetos de lei."
-        color="bg-violet-600"
+        accent="primary"
       />
 
       <ContentPage

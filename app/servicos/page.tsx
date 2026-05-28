@@ -26,7 +26,7 @@ export default function ServicosPage() {
         label="Catálogo"
         title="Serviços Públicos"
         subtitle="Todos os serviços municipais em um só lugar."
-        color="bg-teal-500"
+        accent="secondary"
       />
 
       <ContentPage

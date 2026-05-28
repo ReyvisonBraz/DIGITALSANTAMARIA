@@ -26,7 +26,7 @@ export default function MeioAmbientePage() {
         label="Sustentabilidade"
         title="Meio Ambiente"
         subtitle="Coleta seletiva, áreas verdes e denúncias ambientais."
-        color="bg-emerald-500"
+        accent="accent-success"
       />
 
       <ContentPage

@@ -26,7 +26,7 @@ export default function ComunidadePage() {
         label="Participação"
         title="Comunidade Viva"
         subtitle="Grupos de bairro, fóruns e engajamento comunitário."
-        color="bg-green-500"
+        accent="accent-success"
       />
 
       <ContentPage

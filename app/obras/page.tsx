@@ -26,7 +26,7 @@ export default function ObrasPage() {
         label="Infraestrutura"
         title="Obras Públicas"
         subtitle="Acompanhe o progresso das obras em Santa Maria do Pará."
-        color="bg-amber-500"
+        accent="accent"
       />
 
       <ContentPage

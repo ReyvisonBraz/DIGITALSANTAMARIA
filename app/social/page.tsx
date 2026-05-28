@@ -26,7 +26,7 @@ export default function SocialPage() {
         label="Assistência"
         title="Cuidado Social"
         subtitle="Programas de habitação, CRAS, Cadastro Único e assistência."
-        color="bg-pink-500"
+        accent="accent-success"
       />
 
       <ContentPage

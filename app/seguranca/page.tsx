@@ -26,7 +26,7 @@ export default function SegurancaPage() {
         label="Proteção"
         title="Rede de Segurança"
         subtitle="Delegacias, postos policiais e serviços de emergência."
-        color="bg-red-600"
+        accent="primary-dark"
       />
 
       <ContentPage

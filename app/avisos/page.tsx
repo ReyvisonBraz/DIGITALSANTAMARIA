@@ -33,7 +33,7 @@ export default function AvisosPage() {
         label="Comunicados"
         title="Avisos e Alertas"
         subtitle="Alertas oficiais da prefeitura e notícias de utilidade pública."
-        color="bg-red-500"
+        accent="primary-dark"
       />
 
       <ContentPage
