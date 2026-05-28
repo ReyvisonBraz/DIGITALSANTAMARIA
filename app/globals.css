@@ -52,8 +52,8 @@
   --color-accent-danger: #E23B3B;
   --color-accent-success: #2E9E5B;
 
-  /* Tipografia — Poppins (display, marca) + Plus Jakarta (corpo) + Dancing Script (floreio) */
-  --font-display: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Tipografia — Fraunces (display, editorial) + Plus Jakarta (corpo) + Dancing Script (floreio) */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-script: 'Dancing Script', 'Brush Script MT', cursive;
 
