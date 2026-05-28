@@ -163,5 +163,20 @@ service cloud.firestore {
         && incoming().read == true;
       allow delete: if false;
     }
+
+    // Conteúdo publicado pela prefeitura — leitura pública, escrita só staff.
+    // Cobre as 12 coleções consumidas pelas páginas de serviço (useContent).
+    match /notices/{id}            { allow read: if true; allow write: if isStaff(); }
+    match /events/{id}             { allow read: if true; allow write: if isStaff(); }
+    match /community_groups/{id}   { allow read: if true; allow write: if isStaff(); }
+    match /businesses/{id}         { allow read: if true; allow write: if isStaff(); }
+    match /safety_zones/{id}       { allow read: if true; allow write: if isStaff(); }
+    match /environment_data/{id}   { allow read: if true; allow write: if isStaff(); }
+    match /social_programs/{id}    { allow read: if true; allow write: if isStaff(); }
+    match /tax_records/{id}        { allow read: if true; allow write: if isStaff(); }
+    match /traffic_alerts/{id}     { allow read: if true; allow write: if isStaff(); }
+    match /polls/{id}              { allow read: if true; allow write: if isStaff(); }
+    match /public_services/{id}    { allow read: if true; allow write: if isStaff(); }
+    match /works/{id}              { allow read: if true; allow write: if isStaff(); }
   }
 }

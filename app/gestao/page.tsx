@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { AlertCircle, FileText, Loader2, MapPin, Megaphone, Search, ShieldCheck } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import Skeleton from '@/components/ui/Skeleton';
+import ContentAdminPanel from '@/features/gestao/ContentAdminPanel';
 import MetricsDashboard from '@/features/gestao/MetricsDashboard';
 import PetitionsAdminPanel from '@/features/gestao/PetitionsAdminPanel';
 import ReportStatusUpdater from '@/features/gestao/ReportStatusUpdater';
@@ -43,7 +44,7 @@ const reportTypeLabel: Record<ReportType, string> = {
   other: 'Outro',
 };
 
-type ActiveSection = 'demands' | 'reports' | 'petitions' | 'users';
+type ActiveSection = 'demands' | 'reports' | 'content' | 'petitions' | 'users';
 type ReportStatusFilter = ReportStatus | 'all';
 type DemandSort = 'newest' | 'oldest' | 'pending';
 type StatusFilter = DemandStatus | 'all';
@@ -188,7 +189,7 @@ export default function GestaoPage() {
       </section>
 
       <main className="mx-auto w-full max-w-7xl space-y-5 px-4 py-7 sm:px-6 md:px-10 lg:px-12">
-        <div className="glass-panel grid grid-cols-2 p-1 sm:grid-cols-4">
+        <div className="glass-panel grid grid-cols-2 p-1 md:grid-cols-5">
           <button
             onClick={() => setActiveSection('demands')}
             className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
@@ -204,6 +205,14 @@ export default function GestaoPage() {
             }`}
           >
             Relatos ({reports.length}{reportPendingCount > 0 ? ` · ${reportPendingCount} novos` : ''})
+          </button>
+          <button
+            onClick={() => setActiveSection('content')}
+            className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
+              activeSection === 'content' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
+            }`}
+          >
+            Conteúdo
           </button>
           <button
             onClick={() => setActiveSection('petitions')}
@@ -463,6 +472,8 @@ export default function GestaoPage() {
               </div>
             )}
           </>
+        ) : activeSection === 'content' ? (
+          <ContentAdminPanel />
         ) : activeSection === 'petitions' ? (
           <PetitionsAdminPanel />
         ) : (
