@@ -21,55 +21,77 @@ import ActivityHistory from '@/features/perfil/ActivityHistory';
 import Counter from '@/components/ui/Counter';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
-import { getDemandsByUser } from '@/services/demands.service';
-import { getReportsByUser } from '@/services/reports.service';
+import { listenToUserDemands } from '@/services/demands.service';
+import { listenToUserReports } from '@/services/reports.service';
 import { getUserProfile } from '@/services/users.service';
-import type { UserProfile } from '@/types';
+import type { Demand, Report, UserProfile } from '@/types';
 
 export default function PerfilPage() {
   const { user, userRole, login, logout } = useAuth();
   const { toast } = useToast();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [demandsCount, setDemandsCount] = useState(0);
-  const [reportsCount, setReportsCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [demands, setDemands] = useState<Demand[]>([]);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [activityLoading, setActivityLoading] = useState(true);
   const [settingsMode, setSettingsMode] = useState<'edit' | 'preferences' | null>(null);
 
-  const loadPanel = useCallback(() => {
+  const loadProfile = useCallback(() => {
     if (!user) {
-      setLoading(false);
+      setProfileLoading(false);
       return;
     }
-
-    setLoading(true);
-    Promise.all([
-      getUserProfile(user.uid),
-      getDemandsByUser(user.uid),
-      getReportsByUser(user.uid),
-    ])
-      .then(([userProfile, demands, reports]) => {
-        setProfile(userProfile);
-        setDemandsCount(demands.length);
-        setReportsCount(reports.length);
-      })
-      .catch(() => toast('Nao foi possivel carregar o painel agora.', 'error'))
-      .finally(() => setLoading(false));
+    setProfileLoading(true);
+    getUserProfile(user.uid)
+      .then(setProfile)
+      .catch(() => toast('Não foi possível carregar o painel agora.', 'error'))
+      .finally(() => setProfileLoading(false));
   }, [toast, user]);
 
   useEffect(() => {
-    loadPanel();
-  }, [loadPanel]);
+    loadProfile();
+  }, [loadProfile]);
+
+  useEffect(() => {
+    if (!user) {
+      setDemands([]);
+      setReports([]);
+      setActivityLoading(false);
+      return;
+    }
+    setActivityLoading(true);
+    let demandsReady = false;
+    let reportsReady = false;
+    const markReady = () => {
+      if (demandsReady && reportsReady) setActivityLoading(false);
+    };
+    const unsubDemands = listenToUserDemands(user.uid, (next) => {
+      setDemands(next);
+      demandsReady = true;
+      markReady();
+    });
+    const unsubReports = listenToUserReports(user.uid, (next) => {
+      setReports(next);
+      reportsReady = true;
+      markReady();
+    });
+    return () => {
+      unsubDemands();
+      unsubReports();
+    };
+  }, [user]);
 
   const displayName = profile?.displayName || user?.displayName || 'Cidadao';
   const email = profile?.email || user?.email || '';
   const photoURL = profile?.photoURL || user?.photoURL || null;
   const isStaff = userRole === 'admin' || userRole === 'clerk';
+  const loading = profileLoading || activityLoading;
 
   const stats = useMemo(() => [
-    { label: 'Solicitacoes', value: demandsCount, icon: ClipboardList },
-    { label: 'Relatos', value: reportsCount, icon: MessageSquare },
+    { label: 'Solicitacoes', value: demands.length, icon: ClipboardList },
+    { label: 'Relatos', value: reports.length, icon: MessageSquare },
     { label: 'Pontos', value: profile?.points ?? 0, icon: ShieldCheck },
-  ], [demandsCount, profile?.points, reportsCount]);
+  ], [demands.length, reports.length, profile?.points]);
 
   if (!user) {
     return (
@@ -170,7 +192,7 @@ export default function PerfilPage() {
                 Consultar protocolo
               </Link>
             </div>
-            <ActivityHistory />
+            <ActivityHistory demands={demands} reports={reports} loading={activityLoading} />
           </div>
         </section>
 
@@ -245,7 +267,7 @@ export default function PerfilPage() {
         isOpen={!!settingsMode}
         onClose={() => {
           setSettingsMode(null);
-          loadPanel();
+          loadProfile();
         }}
         mode={settingsMode === 'preferences' ? 'preferences' : 'edit'}
       />

@@ -1,11 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ClipboardList, Clock, FileText, Loader2 } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
-import { listenToUserDemands } from '@/services/demands.service';
-import { listenToUserReports } from '@/services/reports.service';
 import { formatDate } from '@/lib/utils/formatters';
 import type { Demand, DemandStatus, Report, ReportStatus } from '@/types';
 
@@ -30,44 +26,13 @@ function getMillis(value: Demand['createdAt'] | Report['createdAt']) {
   return new Date(String(value)).getTime();
 }
 
-export default function ActivityHistory() {
-  const { user } = useAuth();
-  const [reports, setReports] = useState<Report[]>([]);
-  const [demands, setDemands] = useState<Demand[]>([]);
-  const [loading, setLoading] = useState(true);
+interface ActivityHistoryProps {
+  demands: Demand[];
+  reports: Report[];
+  loading?: boolean;
+}
 
-  useEffect(() => {
-    if (!user) {
-      setReports([]);
-      setDemands([]);
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    let demandsReady = false;
-    let reportsReady = false;
-    const markReady = () => {
-      if (demandsReady && reportsReady) setLoading(false);
-    };
-
-    const unsubDemands = listenToUserDemands(user.uid, (next) => {
-      setDemands(next);
-      demandsReady = true;
-      markReady();
-    });
-    const unsubReports = listenToUserReports(user.uid, (next) => {
-      setReports(next);
-      reportsReady = true;
-      markReady();
-    });
-
-    return () => {
-      unsubDemands();
-      unsubReports();
-    };
-  }, [user]);
-
+export default function ActivityHistory({ demands, reports, loading = false }: ActivityHistoryProps) {
   const activities = [
     ...demands.map((demand) => ({
       id: demand.id,
@@ -102,14 +67,22 @@ export default function ActivityHistory() {
       <div className="rounded-xl border border-dashed border-border bg-surface p-6 text-center">
         <p className="text-sm font-black uppercase tracking-widest text-text-main">Nenhum protocolo ainda</p>
         <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-          Quando você abrir uma solicitação identificada, ela aparecerá aqui.
+          Abra uma solicitação ou registre um relato — eles aparecerão aqui automaticamente.
         </p>
-        <Link
-          href="/ouvidoria"
-          className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white"
-        >
-          Abrir solicitação
-        </Link>
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
+          <Link
+            href="/ouvidoria"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white"
+          >
+            Abrir solicitação
+          </Link>
+          <Link
+            href="/relatar"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-text-main hover:border-primary hover:text-primary"
+          >
+            Relatar problema
+          </Link>
+        </div>
       </div>
     );
   }
