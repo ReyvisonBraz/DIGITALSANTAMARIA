@@ -169,7 +169,19 @@ service cloud.firestore {
     match /notices/{id}            { allow read: if true; allow write: if isStaff(); }
     match /events/{id}             { allow read: if true; allow write: if isStaff(); }
     match /community_groups/{id}   { allow read: if true; allow write: if isStaff(); }
-    match /businesses/{id}         { allow read: if true; allow write: if isStaff(); }
+    // Comércio Local — admin cria direto e cidadão pode auto-cadastrar (entra como pending_approval).
+    match /businesses/{id} {
+      allow read, list: if true;
+      allow create: if isStaff()
+        || (isSignedIn()
+            && incoming().ownerId == request.auth.uid
+            && incoming().status == 'pending_approval');
+      allow update: if isStaff()
+        || (isOwner(resource.data.ownerId)
+            && incoming().ownerId == existing().ownerId
+            && incoming().status == existing().status);
+      allow delete: if false;
+    }
     match /safety_zones/{id}       { allow read: if true; allow write: if isStaff(); }
     match /environment_data/{id}   { allow read: if true; allow write: if isStaff(); }
     match /social_programs/{id}    { allow read: if true; allow write: if isStaff(); }

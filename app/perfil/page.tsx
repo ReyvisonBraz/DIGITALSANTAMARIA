@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import ProfileSettingsPanel from '@/components/ProfileSettingsPanel';
 import ActivityHistory from '@/features/perfil/ActivityHistory';
+import MyBusinessesSection from '@/features/perfil/MyBusinessesSection';
 import Counter from '@/components/ui/Counter';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
@@ -194,6 +195,8 @@ export default function PerfilPage() {
             </div>
             <ActivityHistory demands={demands} reports={reports} loading={activityLoading} />
           </div>
+
+          <MyBusinessesSection />
         </section>
 
         <aside className="space-y-4">

@@ -1,6 +1,6 @@
 import type { Timestamp } from 'firebase/firestore';
 
-export type ContentStatus = 'published' | 'draft' | 'archived';
+export type ContentStatus = 'published' | 'draft' | 'archived' | 'pending_approval';
 
 export interface BaseContent {
   id: string;
@@ -76,6 +76,12 @@ export interface Business extends BaseContent {
   isOpen: boolean;
   lat: number | null;
   lng: number | null;
+  /** uid do cidadão dono do negócio (vazio quando cadastrado direto pela prefeitura). */
+  ownerId: string;
+  /** Nome de exibição do dono no momento do cadastro. */
+  ownerName: string;
+  /** Mensagem do admin ao reprovar (opcional). */
+  reviewNote?: string | null;
 }
 
 // Zonas de segurança

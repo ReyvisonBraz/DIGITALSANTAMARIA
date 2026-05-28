@@ -65,7 +65,7 @@ export function createContentService<T extends { id: string; status: ContentStat
   async function create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<string> {
     const docRef = await addDoc(collection(db, collectionName), {
       ...data,
-      status: 'published' as ContentStatus,
+      status: (data.status || 'published') as ContentStatus,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
       deletedAt: null,
