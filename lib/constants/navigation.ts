@@ -40,7 +40,7 @@ export interface DashboardModule {
 
 export const NAV_LINKS: readonly NavLink[] = [
   { label: 'Abrir solicitacao', href: '/ouvidoria', icon: MessageSquare, category: 'Atendimento' },
-  { label: 'Consultar protocolo', href: '/ouvidoria', icon: SearchCheck, category: 'Atendimento' },
+  { label: 'Consultar protocolo', href: '/perfil', icon: SearchCheck, category: 'Atendimento' },
   { label: 'Peticoes', href: '/peticoes', icon: FileText, category: 'Participacao' },
   { label: 'Painel do Cidadao', href: '/perfil', icon: UserRound, category: 'Conta' },
   { label: 'Servicos', href: '/servicos', icon: Grid, category: 'Portal' },
@@ -58,14 +58,14 @@ export const NAV_LINKS: readonly NavLink[] = [
 export const BOTTOM_NAV_ITEMS: readonly BottomNavItem[] = [
   { icon: Home, label: 'Inicio', href: '/' },
   { icon: MessageSquare, label: 'Solicitar', href: '/ouvidoria' },
-  { icon: SearchCheck, label: 'Protocolo', href: '/ouvidoria' },
+  { icon: SearchCheck, label: 'Protocolo', href: '/perfil' },
   { icon: FileText, label: 'Peticoes', href: '/peticoes' },
   { icon: UserRound, label: 'Painel', href: '/perfil' },
 ] as const;
 
 export const DASHBOARD_MODULES: readonly DashboardModule[] = [
   { icon: MessageSquare, label: 'Abrir solicitacao', href: '/ouvidoria', color: 'text-primary', bg: 'bg-primary/10' },
-  { icon: SearchCheck, label: 'Consultar protocolo', href: '/ouvidoria', color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
+  { icon: SearchCheck, label: 'Consultar protocolo', href: '/perfil', color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
   { icon: FileText, label: 'Peticoes', href: '/peticoes', color: 'text-orange-600', bg: 'bg-orange-500/10' },
   { icon: UserRound, label: 'Painel do Cidadao', href: '/perfil', color: 'text-blue-600', bg: 'bg-blue-500/10' },
   { icon: Heart, label: 'Saude', href: '/saude', color: 'text-rose-500', bg: 'bg-rose-500/10' },

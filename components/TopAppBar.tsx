@@ -26,6 +26,7 @@ import { NAV_LINKS } from '@/lib/constants';
 import { useAccessibility } from '@/lib/accessibility-context';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
+import { useNotifications } from '@/lib/notifications-context';
 import { useClickOutside } from '@/lib/hooks/use-click-outside';
 import { useKeyboardShortcut } from '@/lib/hooks/use-keyboard-shortcut';
 import { createLogger } from '@/lib/logger';
@@ -36,6 +37,7 @@ const log = createLogger('TopAppBar');
 export default function TopAppBar() {
   const { user, userRole, login } = useAuth();
   const { toast } = useToast();
+  const { unreadCount } = useNotifications();
   const {
     toggleHighContrast,
     increaseFontSize,
@@ -227,10 +229,12 @@ export default function TopAppBar() {
             <button
               onClick={() => setIsNotificationsOpen(true)}
               className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white/80 text-text-muted shadow-sm transition hover:border-primary hover:text-primary"
-              aria-label="Abrir notificacoes"
+              aria-label={unreadCount > 0 ? `Abrir notificacoes (${unreadCount} nao lidas)` : 'Abrir notificacoes'}
             >
               <Bell className="h-4 w-4" />
-              <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-accent-danger" />
+              {unreadCount > 0 && (
+                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-accent-danger" />
+              )}
             </button>
 
             {user ? (

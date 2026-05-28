@@ -34,10 +34,10 @@ const primaryActions = [
   },
   {
     title: 'Consultar protocolo',
-    description: 'Acompanhe o andamento de uma solicitação enviada ao município.',
-    href: '/ouvidoria',
+    description: 'Acompanhe no seu painel o andamento das solicitações enviadas ao município.',
+    href: '/perfil',
     icon: SearchCheck,
-    cta: 'Consultar',
+    cta: 'Acessar',
   },
   {
     title: 'Petições',
@@ -222,13 +222,12 @@ export default function Home() {
                       initial={{ opacity: 0, x: 16 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5, delay: 0.5 + index * 0.12 }}
-                      className="group/step flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm transition-colors hover:bg-white/20"
+                      className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm"
                     >
                       <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-accent text-sm font-extrabold text-primary-dark">
                         {index + 1}
                       </span>
                       <span className="text-sm font-semibold text-white/90">{step}</span>
-                      <ArrowRight className="ml-auto h-4 w-4 text-white/40 transition-transform group-hover/step:translate-x-1 group-hover/step:text-white" />
                     </motion.div>
                   ))}
                 </div>
@@ -240,7 +239,7 @@ export default function Home() {
                   ['Rápido', 'Fluxos reais'],
                   ['Aberto', '24 horas'],
                 ].map(([value, label]) => (
-                  <div key={label} className="rounded-2xl border border-border bg-white/80 p-3 text-center transition-colors hover:border-primary/40">
+                  <div key={label} className="rounded-2xl border border-border bg-white/80 p-3 text-center">
                     <p className="text-sm font-bold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>{value}</p>
                     <p className="mt-1 text-[10px] font-semibold leading-tight text-text-muted">{label}</p>
                   </div>

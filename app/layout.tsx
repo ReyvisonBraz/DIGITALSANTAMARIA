@@ -3,6 +3,7 @@ import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 import { ToastProvider } from '@/lib/toast-context';
 import { AccessibilityProvider } from '@/lib/accessibility-context';
+import { NotificationsProvider } from '@/lib/notifications-context';
 import TopAppBar from '@/components/TopAppBar';
 import Footer from '@/components/Footer';
 import BottomNavBar from '@/components/BottomNavBar';
@@ -41,15 +42,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AccessibilityProvider>
           <AuthProvider>
             <ToastProvider>
-              <ErrorBoundary>
-                <ScrollAmbience />
-                <TopAppBar />
-                <main className="relative pt-20 md:pt-24">{children}</main>
-                <Footer />
-                <BottomNavBar />
-                <InstallPrompt />
-                <RootLayoutLogger />
-              </ErrorBoundary>
+              <NotificationsProvider>
+                <ErrorBoundary>
+                  <ScrollAmbience />
+                  <TopAppBar />
+                  <main className="relative pt-20 md:pt-24">{children}</main>
+                  <Footer />
+                  <BottomNavBar />
+                  <InstallPrompt />
+                  <RootLayoutLogger />
+                </ErrorBoundary>
+              </NotificationsProvider>
             </ToastProvider>
           </AuthProvider>
         </AccessibilityProvider>
