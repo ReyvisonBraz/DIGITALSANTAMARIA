@@ -1,0 +1,69 @@
+rules_version = '2';
+
+// Regras de segurança do Firebase Storage.
+//
+// Funcionam como porteiro do bucket: cada upload, download e delete passa por
+// aqui. Tudo que NÃO for explicitamente liberado abaixo é negado por padrão.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ---------- Helpers ----------
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // Staff = qualquer documento existente em /admins/{uid} no Firestore.
+    // Storage rules podem consultar o Firestore via firestore.exists().
+    function isStaff() {
+      return isSignedIn() &&
+        firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid));
+    }
+
+    // Só aceita imagens JPEG, PNG ou WebP (mesmo whitelist do PhotoUpload no client).
+    function isImage() {
+      return request.resource.contentType.matches('image/(jpeg|png|webp)');
+    }
+
+    // Limite de 5 MB por arquivo — alinha com a validação do client.
+    // Aplicar no servidor também impede bypass via API direta.
+    function withinSizeLimit() {
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+
+    // ---------- Fotos de relatos (/relatar) ----------
+    // Path: reports/{uid}/{timestamp}.{ext} (veja generateStoragePath)
+    // Leitura restrita ao autor e ao staff (fotos podem conter contexto sensível).
+    match /reports/{uid}/{fileName} {
+      allow read: if isOwner(uid) || isStaff();
+      allow create, update: if isOwner(uid) && isImage() && withinSizeLimit();
+      allow delete: if isOwner(uid) || isStaff();
+    }
+
+    // ---------- Capas de petições ----------
+    // Petição é pública por natureza, então a capa também é.
+    match /petitions/{uid}/{fileName} {
+      allow read: if true;
+      allow create, update: if isOwner(uid) && isImage() && withinSizeLimit();
+      allow delete: if isOwner(uid) || isStaff();
+    }
+
+    // ---------- Avatares de usuário ----------
+    // Avatar aparece em listas públicas (autor de petição, comentários), então leitura pública.
+    match /avatars/{uid}/{fileName} {
+      allow read: if true;
+      allow create, update: if isOwner(uid) && isImage() && withinSizeLimit();
+      allow delete: if isOwner(uid);
+    }
+
+    // ---------- Bloqueio padrão ----------
+    // Qualquer outro caminho não cai nas regras acima → negado.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
