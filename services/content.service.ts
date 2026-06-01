@@ -1,5 +1,5 @@
 import {
-  collection, doc, addDoc, getDocs, getDoc, updateDoc,
+  collection, doc, addDoc, getDocs, getDoc, updateDoc, onSnapshot,
   query, where, orderBy, limit, serverTimestamp, Timestamp,
   type QueryConstraint, type WhereFilterOp,
 } from 'firebase/firestore';
@@ -21,6 +21,12 @@ import type { ContentStatus } from '@/types';
 
 interface ContentService<T extends { id: string }> {
   list: (filters?: [string, WhereFilterOp, unknown][], max?: number) => Promise<T[]>;
+  listen: (
+    onData: (items: T[]) => void,
+    onError: (err: Error) => void,
+    filters?: [string, WhereFilterOp, unknown][],
+    max?: number,
+  ) => () => void;
   getById: (id: string) => Promise<T | null>;
   create: (data: Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>) => Promise<string>;
   update: (id: string, data: Partial<T>) => Promise<void>;
@@ -40,20 +46,38 @@ export function createContentService<T extends ContentDoc>(
 ): ContentService<T> {
   const col = collection(db, collectionName);
 
-  async function list(
+  function buildConstraints(
     filters?: [string, WhereFilterOp, unknown][],
     max = 50,
-  ): Promise<T[]> {
-    const constraints: QueryConstraint[] = [
+  ): QueryConstraint[] {
+    return [
       ...(filters?.map(([f, op, v]) => where(f, op, v)) ?? []),
       where('deletedAt', '==', null),
       where('status', '==', 'published'),
       orderBy('createdAt', 'desc'),
       limit(max),
     ];
+  }
 
-    const snap = await getDocs(query(col, ...constraints));
+  async function list(
+    filters?: [string, WhereFilterOp, unknown][],
+    max = 50,
+  ): Promise<T[]> {
+    const snap = await getDocs(query(col, ...buildConstraints(filters, max)));
     return snap.docs.map((d) => ({ ...d.data(), id: d.id }) as T);
+  }
+
+  function listen(
+    onData: (items: T[]) => void,
+    onError: (err: Error) => void,
+    filters?: [string, WhereFilterOp, unknown][],
+    max = 50,
+  ): () => void {
+    return onSnapshot(
+      query(col, ...buildConstraints(filters, max)),
+      (snap) => onData(snap.docs.map((d) => ({ ...d.data(), id: d.id }) as T)),
+      onError,
+    );
   }
 
   async function getById(id: string): Promise<T | null> {
@@ -90,5 +114,5 @@ export function createContentService<T extends ContentDoc>(
     });
   }
 
-  return { list, getById, create, update, archive };
+  return { list, listen, getById, create, update, archive };
 }
