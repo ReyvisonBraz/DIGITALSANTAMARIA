@@ -1,7 +1,7 @@
 import {
   collection, doc, addDoc, getDocs, getDoc, updateDoc,
   query, where, orderBy, limit, serverTimestamp, Timestamp,
-  type FirestoreDataConverter, type QueryConstraint, type WhereFilterOp,
+  type QueryConstraint, type WhereFilterOp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { ContentStatus } from '@/types';
@@ -15,7 +15,7 @@ import type { ContentStatus } from '@/types';
  * Uso:
  * ```ts
  * const worksService = createContentService<Work>('works');
- * const events = await worksService.list(['status', '==', 'published']);
+ * const events = await worksService.list([['status', '==', 'published']]);
  * ```
  */
 
@@ -27,43 +27,46 @@ interface ContentService<T extends { id: string }> {
   archive: (id: string) => Promise<void>;
 }
 
-export function createContentService<T extends { id: string; status: ContentStatus; createdAt: Timestamp; updatedAt: Timestamp; deletedAt: Timestamp | null }>(
-  collectionName: string,
-  converter?: FirestoreDataConverter<T>,
-): ContentService<T> {
-  const col = collection(db, collectionName).withConverter(converter || ({} as FirestoreDataConverter<T>));
+type ContentDoc = {
+  id: string;
+  status: ContentStatus;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  deletedAt: Timestamp | null;
+};
 
-  async function list(filters?: [string, WhereFilterOp, unknown][], max = 50): Promise<T[]> {
-    const baseConstraints: QueryConstraint[] = [
+export function createContentService<T extends ContentDoc>(
+  collectionName: string,
+): ContentService<T> {
+  const col = collection(db, collectionName);
+
+  async function list(
+    filters?: [string, WhereFilterOp, unknown][],
+    max = 50,
+  ): Promise<T[]> {
+    const constraints: QueryConstraint[] = [
+      ...(filters?.map(([f, op, v]) => where(f, op, v)) ?? []),
       where('deletedAt', '==', null),
       where('status', '==', 'published'),
       orderBy('createdAt', 'desc'),
       limit(max),
     ];
 
-    if (filters && filters.length > 0) {
-      const filterConstraints: QueryConstraint[] = filters.map(([f, op, v]) => where(f, op, v));
-      const q = query(collection(db, collectionName), ...filterConstraints, ...baseConstraints);
-      const snap = await getDocs(q);
-      return snap.docs.map(d => ({ ...d.data() as object, id: d.id } as unknown as T));
-    }
-
-    const q = query(col, ...baseConstraints);
-    const snap = await getDocs(q);
-    return snap.docs.map(d => ({ ...d.data() as object, id: d.id } as unknown as T));
+    const snap = await getDocs(query(col, ...constraints));
+    return snap.docs.map((d) => ({ ...d.data(), id: d.id }) as T);
   }
 
   async function getById(id: string): Promise<T | null> {
-    const ref = doc(db, collectionName, id);
-    const snap = await getDoc(ref);
+    const snap = await getDoc(doc(db, collectionName, id));
     if (!snap.exists()) return null;
-    const data = snap.data() as T;
-    if (data.deletedAt) return null;
-    return data;
+    const data = { ...snap.data(), id: snap.id } as T;
+    return data.deletedAt ? null : data;
   }
 
-  async function create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<string> {
-    const docRef = await addDoc(collection(db, collectionName), {
+  async function create(
+    data: Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
+  ): Promise<string> {
+    const docRef = await addDoc(col, {
       ...data,
       status: (data.status || 'published') as ContentStatus,
       createdAt: serverTimestamp(),
@@ -74,13 +77,17 @@ export function createContentService<T extends { id: string; status: ContentStat
   }
 
   async function update(id: string, data: Partial<T>): Promise<void> {
-    const ref = doc(db, collectionName, id);
-    await updateDoc(ref, { ...data, updatedAt: serverTimestamp() });
+    await updateDoc(doc(db, collectionName, id), {
+      ...data,
+      updatedAt: serverTimestamp(),
+    });
   }
 
   async function archive(id: string): Promise<void> {
-    const ref = doc(db, collectionName, id);
-    await updateDoc(ref, { deletedAt: serverTimestamp(), updatedAt: serverTimestamp() });
+    await updateDoc(doc(db, collectionName, id), {
+      deletedAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
   }
 
   return { list, getById, create, update, archive };
