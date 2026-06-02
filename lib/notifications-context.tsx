@@ -2,12 +2,15 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { createLogger } from '@/lib/logger';
 import {
   listenToUserNotifications,
   markAllNotificationsAsRead,
   markNotificationAsRead,
 } from '@/services/notifications.service';
 import type { Notification } from '@/types';
+
+const notificationsLogger = createLogger('Notifications');
 
 interface NotificationsContextValue {
   notifications: Notification[];
@@ -31,10 +34,19 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       return;
     }
     setLoading(true);
-    const unsubscribe = listenToUserNotifications(user.uid, (next) => {
-      setNotifications(next);
-      setLoading(false);
-    });
+    const unsubscribe = listenToUserNotifications(
+      user.uid,
+      (next) => {
+        setNotifications(next);
+        setLoading(false);
+      },
+      (err) => {
+        const code = (err as { code?: string }).code;
+        notificationsLogger.error('Notifications listener failed', { code, userId: user.uid }, err);
+        setNotifications([]);
+        setLoading(false);
+      },
+    );
     return unsubscribe;
   }, [user]);
 
