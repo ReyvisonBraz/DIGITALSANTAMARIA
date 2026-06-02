@@ -31,6 +31,7 @@ export async function createNotification(input: CreateNotificationInput): Promis
 export function listenToUserNotifications(
   userId: string,
   onChange: (notifications: Notification[]) => void,
+  onError?: (error: Error) => void,
 ): () => void {
   const ref = collection(db, COLLECTION).withConverter(notificationConverter);
   const q = query(
@@ -39,9 +40,11 @@ export function listenToUserNotifications(
     orderBy('createdAt', 'desc'),
     limit(FEED_LIMIT),
   );
-  return onSnapshot(q, (snap) => {
-    onChange(snap.docs.map((d) => d.data()));
-  });
+  return onSnapshot(
+    q,
+    (snap) => onChange(snap.docs.map((d) => d.data())),
+    (err) => onError?.(err),
+  );
 }
 
 export async function markNotificationAsRead(id: string): Promise<void> {
