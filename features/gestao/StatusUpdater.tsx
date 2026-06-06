@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2, Save } from 'lucide-react';
 import { updateDemandStatus } from '@/services/demands.service';
 import { useToast } from '@/lib/toast-context';
@@ -10,6 +10,7 @@ interface StatusUpdaterProps {
   demandId: string;
   clerkId: string;
   clerkName: string;
+  initialStatus: DemandStatus;
   initialResponse?: string;
   onUpdate: () => void;
 }
@@ -25,13 +26,19 @@ export default function StatusUpdater({
   demandId,
   clerkId,
   clerkName,
+  initialStatus,
   initialResponse = '',
   onUpdate,
 }: StatusUpdaterProps) {
   const { toast } = useToast();
-  const [status, setStatus] = useState<DemandStatus>('analyzing');
+  const [status, setStatus] = useState<DemandStatus>(initialStatus);
   const [response, setResponse] = useState(initialResponse);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setStatus(initialStatus);
+    setResponse(initialResponse);
+  }, [initialStatus, initialResponse]);
 
   const handleSave = async () => {
     if (!response.trim() && (status === 'solved' || status === 'rejected')) {

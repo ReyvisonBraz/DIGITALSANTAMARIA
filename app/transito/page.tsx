@@ -1,19 +1,11 @@
 'use client';
 
-import React from 'react';
-import { Car, AlertTriangle } from 'lucide-react';
+import { Car } from 'lucide-react';
 import { useContent } from '@/lib/hooks/use-content';
 import ContentPage from '@/components/ui/ContentPage';
 import ContentHero from '@/components/ui/ContentHero';
 import ContentCard from '@/components/ui/ContentCard';
 import type { TrafficAlert } from '@/types';
-
-/**
- * TransitoPage — Alertas de trânsito, obras e condições das vias.
- *
- * Carrega dados da coleção Firestore 'traffic_alerts' via useContent().
- * Exibe loading/error/empty states automaticamente via ContentPage.
- */
 
 export default function TransitoPage() {
   const { data, loading, error, refresh } = useContent<TrafficAlert>('traffic_alerts');
@@ -26,12 +18,11 @@ export default function TransitoPage() {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 md:p-12 pb-32 gap-10">
-
+    <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-10 p-4 pb-32 md:p-12">
       <ContentHero
         icon={Car}
         label="Mobilidade"
-        title="Trânsito em Tempo Real"
+        title="Trânsito em tempo real"
         subtitle="Alertas de trânsito, obras e condições das vias."
         accent="primary"
       />
@@ -42,7 +33,7 @@ export default function TransitoPage() {
         onRetry={refresh}
         emptyMessage="Nenhum alerta de trânsito no momento."
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {data.map((item) => (
             <ContentCard
               key={item.id}
@@ -56,7 +47,6 @@ export default function TransitoPage() {
           ))}
         </div>
       </ContentPage>
-
     </div>
   );
 }

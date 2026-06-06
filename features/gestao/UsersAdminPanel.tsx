@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Loader2, Save, Search, UserRound } from 'lucide-react';
 import { useToast } from '@/lib/toast-context';
@@ -13,6 +13,12 @@ function UserAdminCard({ user, onSaved }: { user: UserProfile; onSaved: () => vo
   const [phone, setPhone] = useState(user.phone || '');
   const [neighborhood, setNeighborhood] = useState(user.neighborhood || '');
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setDisplayName(user.displayName || '');
+    setPhone(user.phone || '');
+    setNeighborhood(user.neighborhood || '');
+  }, [user.displayName, user.phone, user.neighborhood]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -110,17 +116,17 @@ export default function UsersAdminPanel() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
 
-  const loadUsers = () => {
+  const loadUsers = useCallback(() => {
     setLoading(true);
     getAllUsers()
       .then(setUsers)
       .catch(() => toast('Nao foi possivel carregar usuarios.', 'error'))
       .finally(() => setLoading(false));
-  };
+  }, [toast]);
 
   useEffect(() => {
     loadUsers();
-  }, []);
+  }, [loadUsers]);
 
   const filteredUsers = useMemo(() => {
     const search = query.trim().toLowerCase();

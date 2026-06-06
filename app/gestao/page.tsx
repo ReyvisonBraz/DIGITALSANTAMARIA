@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { AlertCircle, FileText, Loader2, MapPin, Megaphone, Search, ShieldCheck } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
@@ -57,16 +57,36 @@ function demandTime(value: { seconds?: number } | unknown) {
 }
 
 export default function GestaoPage() {
-  const { user, userRole, loading: authLoading, login } = useAuth();
+  const { user, userRole, loading: authLoading, authError, login } = useAuth();
   const isStaff = userRole === 'admin' || userRole === 'clerk';
   const { demands, reports, loading, error, refresh } = useAdminData(!!user && isStaff);
   const [activeSection, setActiveSection] = useState<ActiveSection>('demands');
+  const [loginError, setLoginError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortMode, setSortMode] = useState<DemandSort>('newest');
   const [reportSearch, setReportSearch] = useState('');
   const [reportStatusFilter, setReportStatusFilter] = useState<ReportStatusFilter>('all');
+  const canManageAdminCatalog = userRole === 'admin';
+  const visibleSection = canManageAdminCatalog || activeSection === 'demands' || activeSection === 'reports'
+    ? activeSection
+    : 'demands';
+
+  const handleLogin = async () => {
+    setLoginError(null);
+    try {
+      await login();
+    } catch (error) {
+      setLoginError(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.');
+    }
+  };
+
+  useEffect(() => {
+    if (!canManageAdminCatalog && activeSection !== 'demands' && activeSection !== 'reports') {
+      setActiveSection('demands');
+    }
+  }, [activeSection, canManageAdminCatalog]);
 
   if (authLoading) {
     return (
@@ -85,11 +105,16 @@ export default function GestaoPage() {
           Entre com uma conta autorizada para acessar solicitacoes e peticoes.
         </p>
         <button
-          onClick={login}
+          onClick={handleLogin}
           className="action-button-primary mt-6"
         >
           Entrar
         </button>
+        {(loginError || authError) && (
+          <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold leading-6 text-red-700">
+            {loginError || authError}
+          </p>
+        )}
       </div>
     );
   }
@@ -206,6 +231,8 @@ export default function GestaoPage() {
           >
             Relatos ({reports.length}{reportPendingCount > 0 ? ` · ${reportPendingCount} novos` : ''})
           </button>
+          {canManageAdminCatalog && (
+            <>
           <button
             onClick={() => setActiveSection('content')}
             className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
@@ -230,9 +257,11 @@ export default function GestaoPage() {
           >
             Usuarios
           </button>
+            </>
+          )}
         </div>
 
-        {activeSection === 'demands' ? (
+        {visibleSection === 'demands' ? (
           <>
             <MetricsDashboard {...metrics} />
 
@@ -341,6 +370,7 @@ export default function GestaoPage() {
                         demandId={demand.id}
                         clerkId={user.uid}
                         clerkName={user.displayName || user.email || 'Gestor'}
+                        initialStatus={demand.status}
                         initialResponse={demand.adminAction?.response || ''}
                         onUpdate={refresh}
                       />
@@ -350,7 +380,7 @@ export default function GestaoPage() {
               </div>
             )}
           </>
-        ) : activeSection === 'reports' ? (
+        ) : visibleSection === 'reports' ? (
           <>
             <MetricsDashboard {...reportMetrics} />
 
@@ -462,7 +492,7 @@ export default function GestaoPage() {
                       <ReportStatusUpdater
                         reportId={report.id}
                         clerkId={user.uid}
-                        initialStatus={report.status === 'pending' ? 'in_review' : report.status}
+                        initialStatus={report.status}
                         initialResponse={report.adminResponse || ''}
                         onUpdate={refresh}
                       />
@@ -472,9 +502,9 @@ export default function GestaoPage() {
               </div>
             )}
           </>
-        ) : activeSection === 'content' ? (
+        ) : visibleSection === 'content' ? (
           <ContentAdminPanel />
-        ) : activeSection === 'petitions' ? (
+        ) : visibleSection === 'petitions' ? (
           <PetitionsAdminPanel />
         ) : (
           <UsersAdminPanel />

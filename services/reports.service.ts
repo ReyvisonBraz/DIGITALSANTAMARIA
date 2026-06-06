@@ -1,29 +1,29 @@
 import {
+  addDoc,
   collection,
   doc,
-  addDoc,
   getDoc,
   getDocs,
-  onSnapshot,
-  updateDoc,
-  query,
-  where,
-  orderBy,
   limit,
+  onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
+  updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { reportConverter } from '@/lib/firebase/converters';
 import { generateProtocolId } from '@/lib/utils/protocol';
 import { uploadReportPhoto } from '@/services/storage.service';
-import { createNotification } from '@/services/notifications.service';
-import type { Report, CreateReportInput, ReportStatus, StorageFile, NotificationTone } from '@/types';
+import { tryCreateNotification } from '@/services/notifications.service';
+import type { CreateReportInput, NotificationTone, Report, ReportStatus, StorageFile } from '@/types';
 
 const COLLECTION = 'reports';
 
 const STATUS_LABEL: Record<ReportStatus, string> = {
   pending: 'recebido',
-  in_review: 'em análise',
+  in_review: 'em analise',
   resolved: 'resolvido',
   rejected: 'recusado',
 };
@@ -36,7 +36,7 @@ const STATUS_TONE: Record<ReportStatus, NotificationTone> = {
 };
 
 export async function createReport(
-  input: CreateReportInput & { reporterId: string; reporterName: string }
+  input: CreateReportInput & { reporterId: string; reporterName: string },
 ): Promise<string> {
   let photo: StorageFile | null = null;
   if (input.photoFile) {
@@ -79,12 +79,19 @@ export async function getReportsByUser(userId: string): Promise<Report[]> {
 export function listenToUserReports(
   userId: string,
   onChange: (reports: Report[]) => void,
+  onError?: (error: unknown) => void,
 ): () => void {
   const ref = collection(db, COLLECTION).withConverter(reportConverter);
   const q = query(ref, where('reporterId', '==', userId), orderBy('createdAt', 'desc'));
-  return onSnapshot(q, (snap) => {
-    onChange(snap.docs.map((d) => d.data()));
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      onChange(snap.docs.map((d) => d.data()));
+    },
+    (error) => {
+      onError?.(error);
+    },
+  );
 }
 
 export async function getPendingReports(): Promise<Report[]> {
@@ -105,7 +112,7 @@ export async function updateReportStatus(
   id: string,
   status: ReportStatus,
   clerkId: string,
-  adminResponse?: string
+  adminResponse?: string,
 ): Promise<void> {
   const ref = doc(db, COLLECTION, id).withConverter(reportConverter);
   const snap = await getDoc(ref);
@@ -119,7 +126,7 @@ export async function updateReportStatus(
   });
 
   if (report?.reporterId) {
-    await createNotification({
+    await tryCreateNotification({
       recipientId: report.reporterId,
       kind: 'report_update',
       tone: STATUS_TONE[status],
@@ -129,4 +136,11 @@ export async function updateReportStatus(
       source: { type: 'report', id, protocol: report.protocol },
     });
   }
+}
+
+export async function getTopReports(max = 10): Promise<Report[]> {
+  const ref = collection(db, COLLECTION).withConverter(reportConverter);
+  const q = query(ref, orderBy('votes', 'desc'), limit(max));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => d.data());
 }

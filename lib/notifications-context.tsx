@@ -7,6 +7,7 @@ import {
   markAllNotificationsAsRead,
   markNotificationAsRead,
 } from '@/services/notifications.service';
+import { createLogger } from '@/lib/logger';
 import type { Notification } from '@/types';
 
 interface NotificationsContextValue {
@@ -18,6 +19,7 @@ interface NotificationsContextValue {
 }
 
 const NotificationsContext = createContext<NotificationsContextValue | null>(null);
+const log = createLogger('Notifications');
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
@@ -31,10 +33,18 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       return;
     }
     setLoading(true);
-    const unsubscribe = listenToUserNotifications(user.uid, (next) => {
-      setNotifications(next);
-      setLoading(false);
-    });
+    const unsubscribe = listenToUserNotifications(
+      user.uid,
+      (next) => {
+        setNotifications(next);
+        setLoading(false);
+      },
+      (error) => {
+        log.warn('Failed to listen to notifications', { userId: user.uid }, error);
+        setNotifications([]);
+        setLoading(false);
+      },
+    );
     return unsubscribe;
   }, [user]);
 

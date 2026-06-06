@@ -13,11 +13,11 @@ import { cn } from '@/lib/utils';
 type ContentTab = 'notices' | 'events' | 'works' | 'businesses' | 'traffic';
 
 const TABS: { value: ContentTab; label: string; icon: LucideIcon }[] = [
-  { value: 'notices',    label: 'Avisos',   icon: Bell },
-  { value: 'events',     label: 'Eventos',  icon: CalendarDays },
-  { value: 'works',      label: 'Obras',    icon: HardHat },
+  { value: 'notices', label: 'Avisos', icon: Bell },
+  { value: 'events', label: 'Eventos', icon: CalendarDays },
+  { value: 'works', label: 'Obras', icon: HardHat },
   { value: 'businesses', label: 'Comércio', icon: Store },
-  { value: 'traffic',    label: 'Trânsito', icon: Car },
+  { value: 'traffic', label: 'Trânsito', icon: Car },
 ];
 
 export default function ContentAdminPanel() {
@@ -36,7 +36,7 @@ export default function ContentAdminPanel() {
               onClick={() => setTab(item.value)}
               className={cn(
                 'inline-flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-semibold uppercase tracking-widest transition',
-                active ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
+                active ? 'bg-primary text-white' : 'text-text-muted hover:text-primary',
               )}
             >
               <Icon className="h-4 w-4" />

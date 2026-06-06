@@ -9,13 +9,13 @@ import { cn } from '@/lib/utils';
 import type { Business } from '@/types';
 
 const CATEGORIES: { value: Business['category'] | 'all'; label: string }[] = [
-  { value: 'all',         label: 'Todos' },
+  { value: 'all', label: 'Todos' },
   { value: 'restaurante', label: 'Restaurantes' },
-  { value: 'farmacia',    label: 'Farmácias' },
-  { value: 'mercado',     label: 'Mercados' },
-  { value: 'servico',     label: 'Serviços' },
-  { value: 'loja',        label: 'Lojas' },
-  { value: 'outros',      label: 'Outros' },
+  { value: 'farmacia', label: 'Farmacias' },
+  { value: 'mercado', label: 'Mercados' },
+  { value: 'servico', label: 'Servicos' },
+  { value: 'loja', label: 'Lojas' },
+  { value: 'outros', label: 'Outros' },
 ];
 
 export default function ComercioPage() {
@@ -24,7 +24,7 @@ export default function ComercioPage() {
 
   const filtered = useMemo(() => {
     if (category === 'all') return data;
-    return data.filter((biz) => biz.category === category);
+    return data.filter((business) => business.category === category);
   }, [data, category]);
 
   return (
@@ -32,8 +32,8 @@ export default function ComercioPage() {
       <ContentHero
         icon={Store}
         label="Economia local"
-        title="Comércio Local"
-        subtitle="Restaurantes, farmácias, lojas e serviços de Santa Maria do Pará — fale direto no WhatsApp."
+        title="Comercio Local"
+        subtitle="Restaurantes, farmacias, lojas e servicos de Santa Maria do Para: fale direto no WhatsApp."
         accent="accent"
       />
 
@@ -49,7 +49,7 @@ export default function ComercioPage() {
                 'inline-flex items-center rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition',
                 active
                   ? 'border-primary bg-primary text-white shadow-sm'
-                  : 'border-border bg-white text-text-muted hover:border-primary hover:text-primary'
+                  : 'border-border bg-white text-text-muted hover:border-primary hover:text-primary',
               )}
             >
               {option.label}
@@ -76,7 +76,7 @@ export default function ComercioPage() {
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:brightness-110"
           >
             <RefreshCcw className="h-4 w-4" />
-            Tentar Novamente
+            Tentar novamente
           </button>
         </div>
       ) : filtered.length === 0 ? (
@@ -86,8 +86,8 @@ export default function ComercioPage() {
           </div>
           <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
             {category === 'all'
-              ? 'Nenhum comércio cadastrado ainda.'
-              : 'Nenhum negócio nesta categoria.'}
+              ? 'Nenhum comercio cadastrado ainda.'
+              : 'Nenhum negocio nesta categoria.'}
           </p>
         </div>
       ) : (

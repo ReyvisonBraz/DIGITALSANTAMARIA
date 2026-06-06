@@ -35,7 +35,6 @@ export function createContentService<T extends { id: string; status: ContentStat
 
   async function list(filters?: [string, WhereFilterOp, unknown][], max = 50): Promise<T[]> {
     const baseConstraints: QueryConstraint[] = [
-      where('deletedAt', '==', null),
       where('status', '==', 'published'),
       orderBy('createdAt', 'desc'),
       limit(max),
@@ -45,12 +44,16 @@ export function createContentService<T extends { id: string; status: ContentStat
       const filterConstraints: QueryConstraint[] = filters.map(([f, op, v]) => where(f, op, v));
       const q = query(collection(db, collectionName), ...filterConstraints, ...baseConstraints);
       const snap = await getDocs(q);
-      return snap.docs.map(d => ({ ...d.data() as object, id: d.id } as unknown as T));
+      return snap.docs
+        .map(d => ({ ...d.data() as object, id: d.id } as unknown as T))
+        .filter((item) => !item.deletedAt);
     }
 
     const q = query(col, ...baseConstraints);
     const snap = await getDocs(q);
-    return snap.docs.map(d => ({ ...d.data() as object, id: d.id } as unknown as T));
+    return snap.docs
+      .map(d => ({ ...d.data() as object, id: d.id } as unknown as T))
+      .filter((item) => !item.deletedAt);
   }
 
   async function getById(id: string): Promise<T | null> {

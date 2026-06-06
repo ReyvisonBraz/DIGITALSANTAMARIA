@@ -39,15 +39,17 @@ import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
 import type { HealthUnit } from '@/types';
 
+type HealthTab = 'unidades' | 'portal' | 'farmacia';
+
 export default function SaudePage() {
   const { toast } = useToast();
   const { units, status, error } = useHealthUnits();
   const [selectedClinic, setSelectedClinic] = useState<HealthUnit | null>(null);
-  const [activeTab, setActiveTab] = useState<'unidades' | 'portal' | 'farmacia'>('unidades');
+  const [activeTab, setActiveTab] = useState<HealthTab>('unidades');
   const [modalOpen, setModalOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
 
-  const categories = [
+  const categories: { id: HealthTab; label: string; icon: typeof Hospital }[] = [
     { id: 'unidades', label: 'Unidades', icon: Hospital },
     { id: 'portal', label: 'Meu Portal', icon: Activity },
     { id: 'farmacia', label: 'Farmácia', icon: Pill },
@@ -72,7 +74,7 @@ export default function SaudePage() {
                {categories.map((cat) => (
                   <button 
                      key={cat.id}
-                     onClick={() => setActiveTab(cat.id as any)}
+                     onClick={() => setActiveTab(cat.id)}
                      className={cn(
                         "flex-1 py-3 rounded-xl font-semibold text-[10px] uppercase tracking-widest transition-all",
                         activeTab === cat.id ? "bg-white text-sky-500 shadow-lg border border-sky-500/10" : "text-text-muted hover:text-text-main"

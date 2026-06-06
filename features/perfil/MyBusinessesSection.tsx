@@ -72,12 +72,20 @@ export default function MyBusinessesSection() {
       return;
     }
     setLoading(true);
-    const unsub = listenToOwnedBusinesses(user.uid, (list) => {
-      setBusinesses(list);
-      setLoading(false);
-    });
+    const unsub = listenToOwnedBusinesses(
+      user.uid,
+      (list) => {
+        setBusinesses(list);
+        setLoading(false);
+      },
+      () => {
+        setBusinesses([]);
+        setLoading(false);
+        toast('Nao foi possivel carregar seus negocios agora.', 'error');
+      },
+    );
     return unsub;
-  }, [user]);
+  }, [toast, user]);
 
   const pendingCount = useMemo(
     () => businesses.filter((b) => b.status === 'pending_approval').length,

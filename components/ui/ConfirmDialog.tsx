@@ -1,59 +1,63 @@
 'use client';
 
-import { AlertTriangle } from 'lucide-react';
-import Modal from './Modal';
-import Button from './Button';
+import { AlertTriangle, Loader2 } from 'lucide-react';
+import Modal from '@/components/ui/Modal';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
   title: string;
-  message: string;
+  description: string;
   confirmLabel?: string;
   cancelLabel?: string;
-  variant?: 'primary' | 'danger';
+  loading?: boolean;
+  tone?: 'danger' | 'default';
   onConfirm: () => void;
-  onCancel: () => void;
+  onClose: () => void;
 }
 
 export default function ConfirmDialog({
   isOpen,
   title,
-  message,
+  description,
   confirmLabel = 'Confirmar',
   cancelLabel = 'Cancelar',
-  variant = 'primary',
+  loading = false,
+  tone = 'default',
   onConfirm,
-  onCancel,
+  onClose,
 }: ConfirmDialogProps) {
+  const danger = tone === 'danger';
+
   return (
-    <Modal isOpen={isOpen} onClose={onCancel}>
-      <div className="flex flex-col items-center text-center py-4">
-        <div
-          className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${
-            variant === 'danger'
-              ? 'bg-red-100 dark:bg-red-900/30 text-red-600'
-              : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600'
-          }`}
-        >
-          <AlertTriangle className="w-7 h-7" />
+    <Modal isOpen={isOpen} onClose={loading ? () => undefined : onClose} title={title} className="max-w-md">
+      <div className="space-y-5">
+        <div className="flex gap-3">
+          <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${danger ? 'bg-rose-50 text-rose-600' : 'bg-primary/10 text-primary'}`}>
+            <AlertTriangle className="h-5 w-5" />
+          </div>
+          <p className="text-sm font-medium leading-6 text-text-muted">{description}</p>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {title}
-        </h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-          {message}
-        </p>
-        <div className="flex items-center gap-3 mt-6 w-full">
-          <Button variant="secondary" onClick={onCancel} className="flex-1">
-            {cancelLabel}
-          </Button>
-          <Button
-            variant={variant === 'danger' ? 'danger' : 'primary'}
-            onClick={onConfirm}
-            className="flex-1"
+
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={loading}
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-60"
           >
+            {cancelLabel}
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={loading}
+            className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition disabled:cursor-not-allowed disabled:opacity-60 ${
+              danger ? 'bg-rose-600 hover:bg-rose-700' : 'bg-primary hover:bg-primary-dark'
+            }`}
+          >
+            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             {confirmLabel}
-          </Button>
+          </button>
         </div>
       </div>
     </Modal>

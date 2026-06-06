@@ -1,8 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { Archive, Bell, Loader2, Save } from 'lucide-react';
+import { Archive, Bell, Loader2, Pencil, Save, X } from 'lucide-react';
 import { createContentService } from '@/services/content.service';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
 import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
@@ -37,6 +38,9 @@ export default function NoticesAdmin() {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [archiveId, setArchiveId] = useState<string | null>(null);
+  const [archiving, setArchiving] = useState(false);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -61,6 +65,27 @@ export default function NoticesAdmin() {
     load();
   }, [load]);
 
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setType('aviso');
+    setPriority('medium');
+    setActionLabel('');
+    setActionURL('');
+    setEditingId(null);
+  };
+
+  const startEdit = (notice: Notice) => {
+    setEditingId(notice.id);
+    setTitle(notice.title);
+    setDescription(notice.description);
+    setType(notice.type);
+    setPriority(notice.priority);
+    setActionLabel(notice.actionLabel || '');
+    setActionURL(notice.actionURL || '');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!title.trim() || !description.trim()) {
@@ -74,23 +99,24 @@ export default function NoticesAdmin() {
 
     setSaving(true);
     try {
-      await service.create({
+      const payload = {
         title: title.trim(),
         description: description.trim(),
-        status: 'published',
+        status: 'published' as const,
         type,
         priority,
         expiresAt: null,
         actionLabel: actionLabel.trim() || null,
         actionURL: actionURL.trim() || null,
-      });
-      toast('Aviso publicado.', 'success');
-      setTitle('');
-      setDescription('');
-      setType('aviso');
-      setPriority('medium');
-      setActionLabel('');
-      setActionURL('');
+      };
+      if (editingId) {
+        await service.update(editingId, payload);
+        toast('Aviso atualizado.', 'success');
+      } else {
+        await service.create(payload);
+        toast('Aviso publicado.', 'success');
+      }
+      resetForm();
       load();
     } catch {
       toast('Erro ao publicar o aviso.', 'error');
@@ -99,14 +125,18 @@ export default function NoticesAdmin() {
     }
   };
 
-  const handleArchive = async (id: string) => {
-    if (!confirm('Arquivar este aviso? Ele deixa de aparecer na página pública.')) return;
+  const handleArchive = async () => {
+    if (!archiveId) return;
+    setArchiving(true);
     try {
-      await service.archive(id);
+      await service.archive(archiveId);
       toast('Aviso arquivado.', 'success');
+      setArchiveId(null);
       load();
     } catch {
       toast('Erro ao arquivar.', 'error');
+    } finally {
+      setArchiving(false);
     }
   };
 
@@ -119,7 +149,9 @@ export default function NoticesAdmin() {
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Avisos e alertas</p>
-            <h2 className="text-xl font-semibold tracking-normal text-text-main">Publicar aviso</h2>
+            <h2 className="text-xl font-semibold tracking-normal text-text-main">
+              {editingId ? 'Editar aviso' : 'Publicar aviso'}
+            </h2>
             <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
               Aparece imediatamente em <code className="font-mono text-xs text-primary">/avisos</code> após salvar.
             </p>
@@ -202,14 +234,24 @@ export default function NoticesAdmin() {
             />
           </label>
 
-          <div className="md:col-span-2 flex justify-end">
+          <div className="md:col-span-2 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            {editingId && (
+              <button
+                type="button"
+                onClick={resetForm}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
+              >
+                <X className="h-4 w-4" />
+                Cancelar edicao
+              </button>
+            )}
             <button
               type="submit"
               disabled={saving}
               className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              Publicar
+              {editingId ? 'Salvar alteracoes' : 'Publicar'}
             </button>
           </div>
         </form>
@@ -259,19 +301,40 @@ export default function NoticesAdmin() {
                     </a>
                   )}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleArchive(notice.id)}
-                  className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-muted transition hover:border-rose-300 hover:text-rose-600"
-                >
-                  <Archive className="h-3.5 w-3.5" />
-                  Arquivar
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => startEdit(notice)}
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setArchiveId(notice.id)}
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-muted transition hover:border-rose-300 hover:text-rose-600"
+                  >
+                    <Archive className="h-3.5 w-3.5" />
+                    Arquivar
+                  </button>
+                </div>
               </article>
             ))}
           </div>
         )}
       </section>
+
+      <ConfirmDialog
+        isOpen={!!archiveId}
+        title="Arquivar aviso"
+        description="Este aviso deixa de aparecer na pagina publica, mas o registro continua salvo no Firebase."
+        confirmLabel="Arquivar"
+        loading={archiving}
+        tone="danger"
+        onConfirm={handleArchive}
+        onClose={() => setArchiveId(null)}
+      />
     </div>
   );
 }

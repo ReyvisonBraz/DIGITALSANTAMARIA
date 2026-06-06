@@ -56,7 +56,11 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
     }
 
     if (!user) {
-      await login();
+      try {
+        await login();
+      } catch (error) {
+        toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+      }
       return;
     }
 

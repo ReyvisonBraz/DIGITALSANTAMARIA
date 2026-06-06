@@ -46,6 +46,7 @@ interface AuthContextType {
   userRole: UserRole;
   /** Se a autenticação ainda está sendo verificada */
   loading: boolean;
+  authError: string | null;
   /** Inicia login com Google via popup */
   login: () => Promise<void>;
   /** Faz logout e limpa estado */
@@ -109,11 +110,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<UserRole>('citizen');
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   /** Escuta mudanças de estado de autenticação */
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
+        setAuthError(null);
         authLogger.info('Auth state: user logged in', {
           userId: fbUser.uid,
           email: fbUser.email || '',
@@ -140,6 +143,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async () => {
     const provider = new GoogleAuthProvider();
     authLogger.info('Login initiated');
+    setAuthError(null);
     try {
       const result = await signInWithPopup(auth, provider);
       authLogger.info('Login successful', {
@@ -149,8 +153,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: unknown) {
       const err = error as { code?: string };
       if (err.code === 'auth/popup-blocked') {
+        const message = 'Popup bloqueado. Permita popups para este site e tente novamente.';
+        setAuthError(message);
         authLogger.error('Popup blocked by browser', {});
-        throw new Error('Popup bloqueado. Permita popups para este site e tente novamente.');
+        throw new Error(message);
+      }
+      if (err.code === 'auth/unauthorized-domain') {
+        const message = 'Dominio local nao autorizado no Firebase. Adicione localhost em Authentication > Settings > Authorized domains.';
+        setAuthError(message);
+        authLogger.error('Unauthorized OAuth domain', {});
+        throw new Error(message);
       }
       authLogger.error('Login failed', {}, error);
       throw error;
@@ -170,7 +182,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, userRole, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, userRole, loading, authError, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

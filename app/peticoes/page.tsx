@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, FileText, Loader2, Plus, Search, Users } from 'lucide-react';
 import CreatePetitionModal from '@/components/CreatePetitionModal';
@@ -17,20 +17,19 @@ export default function PeticoesPage() {
   const [query, setQuery] = useState('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const loadPetitions = () => {
+  const loadPetitions = useCallback(() => {
     setLoading(true);
     getActivePetitions()
       .then(setPetitions)
-      .catch((error) => {
-        console.error('[peticoes] erro ao carregar peticoes', error);
+      .catch(() => {
         toast('Nao foi possivel carregar as peticoes.', 'error');
       })
       .finally(() => setLoading(false));
-  };
+  }, [toast]);
 
   useEffect(() => {
     loadPetitions();
-  }, []);
+  }, [loadPetitions]);
 
   const filteredPetitions = useMemo(() => {
     const search = query.trim().toLowerCase();

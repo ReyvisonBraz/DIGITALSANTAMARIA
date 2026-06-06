@@ -1,13 +1,27 @@
 'use client';
 
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { Archive, CheckCircle2, Clock3, Loader2, MapPin, Phone, Save, Store, UserRound, XCircle } from 'lucide-react';
+import {
+  Archive,
+  CheckCircle2,
+  Clock3,
+  Loader2,
+  MapPin,
+  Pencil,
+  Phone,
+  Save,
+  Store,
+  UserRound,
+  X,
+  XCircle,
+} from 'lucide-react';
 import { createContentService } from '@/services/content.service';
 import {
   approveBusiness,
   listPendingBusinesses,
   rejectBusiness,
 } from '@/services/businesses.service';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
 import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
@@ -17,11 +31,11 @@ const service = createContentService<Business>('businesses');
 
 const CATEGORIES: { value: Business['category']; label: string }[] = [
   { value: 'restaurante', label: 'Restaurante' },
-  { value: 'farmacia',    label: 'Farmácia' },
-  { value: 'mercado',     label: 'Mercado' },
-  { value: 'servico',     label: 'Serviço' },
-  { value: 'loja',        label: 'Loja' },
-  { value: 'outros',      label: 'Outros' },
+  { value: 'farmacia', label: 'Farmacia' },
+  { value: 'mercado', label: 'Mercado' },
+  { value: 'servico', label: 'Servico' },
+  { value: 'loja', label: 'Loja' },
+  { value: 'outros', label: 'Outros' },
 ];
 
 export default function BusinessesAdmin() {
@@ -31,6 +45,11 @@ export default function BusinessesAdmin() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [archiveId, setArchiveId] = useState<string | null>(null);
+  const [archiving, setArchiving] = useState(false);
+  const [rejectNote, setRejectNote] = useState('');
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -47,13 +66,36 @@ export default function BusinessesAdmin() {
       setBusinesses(list);
       setPending(pendingList);
     } catch {
-      toast('Não foi possível carregar os comércios.', 'error');
+      toast('Nao foi possivel carregar os comercios.', 'error');
     } finally {
       setLoading(false);
     }
   }, [toast]);
 
   useEffect(() => { load(); }, [load]);
+
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setCategory('restaurante');
+    setAddress('');
+    setPhone('');
+    setWhatsapp('');
+    setHours('');
+    setEditingId(null);
+  };
+
+  const startEdit = (business: Business) => {
+    setEditingId(business.id);
+    setTitle(business.title);
+    setDescription(business.description);
+    setCategory(business.category);
+    setAddress(business.address);
+    setPhone(business.phone);
+    setWhatsapp(business.whatsapp);
+    setHours(business.hours);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleApprove = async (id: string) => {
     setActionId(id);
@@ -68,13 +110,19 @@ export default function BusinessesAdmin() {
     }
   };
 
-  const handleReject = async (id: string) => {
-    const note = prompt('Motivo da reprovação (opcional, fica visível pro lojista):') || '';
-    if (note === null) return;
-    setActionId(id);
+  const startReject = (id: string) => {
+    setRejectingId(id);
+    setRejectNote('');
+  };
+
+  const handleReject = async () => {
+    if (!rejectingId) return;
+    setActionId(rejectingId);
     try {
-      await rejectBusiness(id, note);
+      await rejectBusiness(rejectingId, rejectNote.trim());
       toast('Cadastro reprovado.', 'success');
+      setRejectingId(null);
+      setRejectNote('');
       load();
     } catch {
       toast('Erro ao reprovar.', 'error');
@@ -83,29 +131,19 @@ export default function BusinessesAdmin() {
     }
   };
 
-  const resetForm = () => {
-    setTitle('');
-    setDescription('');
-    setCategory('restaurante');
-    setAddress('');
-    setPhone('');
-    setWhatsapp('');
-    setHours('');
-  };
-
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!title.trim() || !description.trim() || !address.trim()) {
-      toast('Preencha nome, descrição e endereço.', 'error');
+      toast('Preencha nome, descricao e endereco.', 'error');
       return;
     }
 
     setSaving(true);
     try {
-      await service.create({
+      const payload = {
         title: title.trim(),
         description: description.trim(),
-        status: 'published',
+        status: 'published' as const,
         category,
         address: address.trim(),
         phone: phone.trim(),
@@ -118,25 +156,37 @@ export default function BusinessesAdmin() {
         ownerId: '',
         ownerName: 'Prefeitura',
         reviewNote: null,
-      });
-      toast('Comércio publicado.', 'success');
+      };
+
+      if (editingId) {
+        await service.update(editingId, payload);
+        toast('Comercio atualizado.', 'success');
+      } else {
+        await service.create(payload);
+        toast('Comercio publicado.', 'success');
+      }
+
       resetForm();
       load();
     } catch {
-      toast('Erro ao publicar o comércio.', 'error');
+      toast('Erro ao salvar o comercio.', 'error');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleArchive = async (id: string) => {
-    if (!confirm('Arquivar este comércio? Ele deixa de aparecer na página pública.')) return;
+  const handleArchive = async () => {
+    if (!archiveId) return;
+    setArchiving(true);
     try {
-      await service.archive(id);
-      toast('Comércio arquivado.', 'success');
+      await service.archive(archiveId);
+      toast('Comercio arquivado.', 'success');
+      setArchiveId(null);
       load();
     } catch {
       toast('Erro ao arquivar.', 'error');
+    } finally {
+      setArchiving(false);
     }
   };
 
@@ -149,32 +199,49 @@ export default function BusinessesAdmin() {
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Economia local</p>
-            <h2 className="text-xl font-semibold tracking-normal text-text-main">Cadastrar comércio</h2>
+            <h2 className="text-xl font-semibold tracking-normal text-text-main">
+              {editingId ? 'Editar comercio' : 'Cadastrar comercio'}
+            </h2>
             <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
-              Aparece em <code className="font-mono text-xs text-primary">/comercio</code> com botão pro WhatsApp e horário.
+              Aparece em <code className="font-mono text-xs text-primary">/comercio</code> com telefone, WhatsApp e horario.
             </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <label className="md:col-span-2 space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Nome do negócio</span>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} required
-              placeholder='Ex: "Padaria São José"'
-              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary" />
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Nome do negocio</span>
+            <input
+              type="text"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              maxLength={120}
+              required
+              placeholder='Ex: "Padaria Sao Jose"'
+              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary"
+            />
           </label>
 
           <label className="md:col-span-2 space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descrição</span>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={400} required
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descricao</span>
+            <textarea
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              rows={3}
+              maxLength={400}
+              required
               placeholder="O que vende, especialidades, diferenciais."
-              className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary" />
+              className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary"
+            />
           </label>
 
           <label className="space-y-1.5">
             <span className="text-xs font-black uppercase tracking-widest text-text-muted">Categoria</span>
-            <select value={category} onChange={(e) => setCategory(e.target.value as Business['category'])}
-              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary">
+            <select
+              value={category}
+              onChange={(event) => setCategory(event.target.value as Business['category'])}
+              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary"
+            >
               {CATEGORIES.map((item) => (
                 <option key={item.value} value={item.value}>{item.label}</option>
               ))}
@@ -182,38 +249,72 @@ export default function BusinessesAdmin() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Horário</span>
-            <input type="text" value={hours} onChange={(e) => setHours(e.target.value)} maxLength={80}
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Horario</span>
+            <input
+              type="text"
+              value={hours}
+              onChange={(event) => setHours(event.target.value)}
+              maxLength={80}
               placeholder='Ex: "Seg-Sab 8h-18h"'
-              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
+              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
+            />
           </label>
 
           <label className="md:col-span-2 space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Endereço</span>
-            <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} required maxLength={200}
-              placeholder="Rua, número, bairro"
-              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Endereco</span>
+            <input
+              type="text"
+              value={address}
+              onChange={(event) => setAddress(event.target.value)}
+              required
+              maxLength={200}
+              placeholder="Rua, numero, bairro"
+              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
+            />
           </label>
 
           <label className="space-y-1.5">
             <span className="text-xs font-black uppercase tracking-widest text-text-muted">Telefone</span>
-            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={20}
+            <input
+              type="tel"
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+              maxLength={20}
               placeholder="(91) 99999-0000"
-              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
+              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
+            />
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">WhatsApp (somente números, com DDD)</span>
-            <input type="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, ''))} maxLength={13}
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">WhatsApp com DDD</span>
+            <input
+              type="tel"
+              value={whatsapp}
+              onChange={(event) => setWhatsapp(event.target.value.replace(/\D/g, ''))}
+              maxLength={13}
               placeholder="91999990000"
-              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
+              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
+            />
           </label>
 
-          <div className="md:col-span-2 flex justify-end">
-            <button type="submit" disabled={saving}
-              className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60">
+          <div className="md:col-span-2 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            {editingId && (
+              <button
+                type="button"
+                onClick={resetForm}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
+              >
+                <X className="h-4 w-4" />
+                Cancelar edicao
+              </button>
+            )}
+            <button
+              type="submit"
+              disabled={saving}
+              className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
+            >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              Publicar
+              {editingId ? 'Salvar alteracoes' : 'Publicar'}
             </button>
           </div>
         </form>
@@ -224,7 +325,7 @@ export default function BusinessesAdmin() {
           <div>
             <p className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-widest text-accent-success">
               <Clock3 className="h-3.5 w-3.5" />
-              Aguardando aprovação
+              Aguardando aprovacao
             </p>
             <h3 className="text-lg font-semibold text-text-main">
               Cadastros pendentes ({pending.length})
@@ -239,7 +340,7 @@ export default function BusinessesAdmin() {
         ) : pending.length === 0 ? (
           <EmptyState
             title="Nenhum cadastro pendente"
-            description="Quando um lojista cadastrar seu negócio pelo painel, aparece aqui pra você aprovar."
+            description="Quando um lojista cadastrar seu negocio pelo painel, aparece aqui para aprovacao."
           />
         ) : (
           <div className="space-y-3">
@@ -254,10 +355,12 @@ export default function BusinessesAdmin() {
                   </span>
                   <span className="text-xs font-bold text-text-muted">{formatDate(biz.createdAt)}</span>
                 </div>
+
                 <div>
                   <h4 className="text-base font-semibold text-text-main">{biz.title}</h4>
                   <p className="mt-1 text-sm font-medium leading-6 text-text-muted">{biz.description}</p>
                 </div>
+
                 <div className="grid gap-2 text-xs font-bold text-text-muted md:grid-cols-2">
                   <p className="inline-flex items-center gap-1">
                     <UserRound className="h-3.5 w-3.5 text-primary" />
@@ -270,13 +373,30 @@ export default function BusinessesAdmin() {
                   {(biz.phone || biz.whatsapp) && (
                     <p className="inline-flex items-center gap-1 md:col-span-2">
                       <Phone className="h-3.5 w-3.5 text-primary" />
-                      {biz.phone}{biz.whatsapp ? ` · WhatsApp ${biz.whatsapp}` : ''}
+                      {biz.phone}{biz.whatsapp ? ` - WhatsApp ${biz.whatsapp}` : ''}
                     </p>
                   )}
                   {biz.hours && (
-                    <p className="text-text-muted md:col-span-2">Horário: {biz.hours}</p>
+                    <p className="text-text-muted md:col-span-2">Horario: {biz.hours}</p>
                   )}
                 </div>
+
+                {rejectingId === biz.id && (
+                  <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
+                    <label className="space-y-2">
+                      <span className="text-xs font-black uppercase tracking-widest text-rose-700">Motivo da reprovacao</span>
+                      <textarea
+                        value={rejectNote}
+                        onChange={(event) => setRejectNote(event.target.value)}
+                        rows={3}
+                        maxLength={300}
+                        placeholder="Opcional, fica visivel para o lojista."
+                        className="w-full resize-none rounded-xl border border-rose-200 bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-rose-400"
+                      />
+                    </label>
+                  </div>
+                )}
+
                 <div className="flex flex-wrap gap-2 border-t border-border pt-3">
                   <button
                     type="button"
@@ -287,15 +407,40 @@ export default function BusinessesAdmin() {
                     {actionId === biz.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
                     Aprovar e publicar
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => handleReject(biz.id)}
-                    disabled={actionId === biz.id}
-                    className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-rose-200 bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <XCircle className="h-4 w-4" />
-                    Reprovar
-                  </button>
+
+                  {rejectingId === biz.id ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={handleReject}
+                        disabled={actionId === biz.id}
+                        className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-rose-600 px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        <XCircle className="h-4 w-4" />
+                        Confirmar reprovacao
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setRejectingId(null);
+                          setRejectNote('');
+                        }}
+                        className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
+                      >
+                        Cancelar
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => startReject(biz.id)}
+                      disabled={actionId === biz.id}
+                      className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-rose-200 bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <XCircle className="h-4 w-4" />
+                      Reprovar
+                    </button>
+                  )}
                 </div>
               </article>
             ))}
@@ -307,7 +452,7 @@ export default function BusinessesAdmin() {
         <div className="mb-5 flex items-end justify-between border-b border-border pb-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Cadastrados</p>
-            <h3 className="text-lg font-semibold text-text-main">Comércios ativos ({businesses.length})</h3>
+            <h3 className="text-lg font-semibold text-text-main">Comercios ativos ({businesses.length})</h3>
           </div>
         </div>
 
@@ -316,7 +461,7 @@ export default function BusinessesAdmin() {
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
           </div>
         ) : businesses.length === 0 ? (
-          <EmptyState title="Nenhum comércio cadastrado" description="Use o formulário acima para registrar o primeiro." />
+          <EmptyState title="Nenhum comercio cadastrado" description="Use o formulario acima para registrar o primeiro." />
         ) : (
           <div className="space-y-3">
             {businesses.map((biz) => (
@@ -342,20 +487,44 @@ export default function BusinessesAdmin() {
                   {(biz.phone || biz.whatsapp) && (
                     <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-text-muted">
                       <Phone className="h-3.5 w-3.5 text-primary" />
-                      {biz.phone}{biz.whatsapp ? ` · WhatsApp ${biz.whatsapp}` : ''}
+                      {biz.phone}{biz.whatsapp ? ` - WhatsApp ${biz.whatsapp}` : ''}
                     </p>
                   )}
                 </div>
-                <button type="button" onClick={() => handleArchive(biz.id)}
-                  className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-muted transition hover:border-rose-300 hover:text-rose-600">
-                  <Archive className="h-3.5 w-3.5" />
-                  Arquivar
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => startEdit(biz)}
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setArchiveId(biz.id)}
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-muted transition hover:border-rose-300 hover:text-rose-600"
+                  >
+                    <Archive className="h-3.5 w-3.5" />
+                    Arquivar
+                  </button>
+                </div>
               </article>
             ))}
           </div>
         )}
       </section>
+
+      <ConfirmDialog
+        isOpen={!!archiveId}
+        title="Arquivar comercio"
+        description="Este comercio deixa de aparecer na pagina publica, mas o registro continua salvo no Firebase."
+        confirmLabel="Arquivar"
+        loading={archiving}
+        tone="danger"
+        onConfirm={handleArchive}
+        onClose={() => setArchiveId(null)}
+      />
     </div>
   );
 }

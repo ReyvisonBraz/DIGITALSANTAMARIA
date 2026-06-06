@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { collection, getCountFromServer, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 interface HomeMetrics {
@@ -12,15 +12,14 @@ interface HomeMetrics {
 
 const PUBLISHED_FILTERS = [
   where('status', '==', 'published'),
-  where('deletedAt', '==', null),
 ] as const;
 
 async function countCollection(name: string): Promise<number> {
   try {
     const ref = collection(db, name);
     const q = query(ref, ...PUBLISHED_FILTERS);
-    const snap = await getCountFromServer(q);
-    return snap.data().count;
+    const snap = await getDocs(q);
+    return snap.docs.filter((docSnap) => !docSnap.data().deletedAt).length;
   } catch {
     return 0;
   }

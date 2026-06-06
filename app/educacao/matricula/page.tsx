@@ -1,21 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  ArrowLeft, 
-  User, 
-  Home, 
-  School, 
-  FileText, 
-  CheckCircle2, 
-  ChevronRight, 
+import { useState } from 'react';
+import {
+  ArrowLeft,
+  CheckCircle2,
   ChevronLeft,
+  ChevronRight,
+  ClipboardList,
+  FileText,
+  Home,
   Info,
-  ShieldCheck,
   Loader2,
-  ClipboardList
+  School,
+  ShieldCheck,
+  User,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/lib/toast-context';
 import { useAuth } from '@/lib/auth-context';
@@ -23,20 +23,33 @@ import { createEnrollment } from '@/services/educacao.service';
 import { cn } from '@/lib/utils';
 
 const steps = [
-  { id: 1, title: 'Responsável', icon: User },
+  { id: 1, title: 'Responsavel', icon: User },
   { id: 2, title: 'Aluno(a)', icon: FileText },
-  { id: 3, title: 'Endereço', icon: Home },
+  { id: 3, title: 'Endereco', icon: Home },
   { id: 4, title: 'Unidade', icon: School },
-  { id: 5, title: 'Confirmação', icon: CheckCircle2 },
-];
+  { id: 5, title: 'Confirmacao', icon: CheckCircle2 },
+] as const;
 
 const schools = [
   'E.M.E.F. Monteiro Lobato',
-  'E.M. João Paulo II',
-  'C.E.I. Ciranda da Criança',
+  'E.M. Joao Paulo II',
+  'C.E.I. Ciranda da Crianca',
   'E.M.E.F. Santa Maria',
   'C.E.I. Pequeno Aprendiz',
 ];
+
+const emptyForm = {
+  parentName: '',
+  parentCpf: '',
+  studentName: '',
+  studentBirth: '',
+  cep: '',
+  address: '',
+  schoolPreference: '',
+};
+
+type FormData = typeof emptyForm;
+type FormField = keyof FormData;
 
 export default function MatriculaPage() {
   const router = useRouter();
@@ -46,314 +59,384 @@ export default function MatriculaPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [protocol, setProtocol] = useState('');
-  const [formData, setFormData] = useState({
-    parentName: '',
-    parentCpf: '',
-    studentName: '',
-    studentBirth: '',
-    cep: '',
-    address: '',
-    schoolPreference: ''
-  });
+  const [formData, setFormData] = useState<FormData>(emptyForm);
 
-  const updateField = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const updateField = (field: FormField, value: string) => {
+    setFormData((previous) => ({ ...previous, [field]: value }));
   };
 
   const canProceed = () => {
     switch (currentStep) {
-      case 1: return formData.parentName.trim() && formData.parentCpf.trim();
-      case 2: return formData.studentName.trim() && formData.studentBirth.trim();
-      case 3: return formData.address.trim();
-      case 4: return formData.schoolPreference.trim();
-      default: return true;
+      case 1:
+        return Boolean(formData.parentName.trim() && formData.parentCpf.trim());
+      case 2:
+        return Boolean(formData.studentName.trim() && formData.studentBirth.trim());
+      case 3:
+        return Boolean(formData.address.trim());
+      case 4:
+        return Boolean(formData.schoolPreference.trim());
+      default:
+        return true;
     }
   };
 
   const nextStep = () => {
-    if (currentStep < 5 && canProceed()) setCurrentStep(currentStep + 1);
+    if (!canProceed()) {
+      toast('Preencha os campos obrigatorios desta etapa.', 'error');
+      return;
+    }
+    if (currentStep < 5) setCurrentStep((step) => step + 1);
   };
 
   const prevStep = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
+    if (currentStep > 1) setCurrentStep((step) => step - 1);
   };
 
   const handleSubmit = async () => {
-    if (!user) {
-      await login();
+    if (!canProceed()) {
+      toast('Revise os dados antes de finalizar.', 'error');
       return;
     }
+
+    if (!user) {
+      try {
+        await login();
+      } catch (error) {
+        toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+      }
+      return;
+    }
+
     setSubmitting(true);
     try {
       const enrollmentProtocol = await createEnrollment({
         userId: user.uid,
-        parentName: formData.parentName,
-        parentCpf: formData.parentCpf,
-        studentName: formData.studentName,
+        parentName: formData.parentName.trim(),
+        parentCpf: formData.parentCpf.trim(),
+        studentName: formData.studentName.trim(),
         studentBirth: formData.studentBirth,
-        address: formData.address,
-        cep: formData.cep,
+        address: formData.address.trim(),
+        cep: formData.cep.trim(),
         schoolPreference: formData.schoolPreference,
       });
       setProtocol(enrollmentProtocol);
       setSubmitted(true);
+      toast('Solicitacao de matricula enviada.', 'success');
     } catch {
-      toast('Erro ao enviar solicitação. Tente novamente.', 'error');
+      toast('Erro ao enviar solicitacao. Tente novamente.', 'error');
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="flex flex-col w-full max-w-4xl mx-auto min-h-screen p-6 md:p-12 pb-32 gap-12">
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-         <button 
-           onClick={() => router.push('/educacao')}
-           className="group flex items-center gap-3 text-text-muted hover:text-primary transition-colors font-semibold text-xs uppercase tracking-widest"
-         >
-           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-           Voltar para Educação
-         </button>
-         <div className="flex items-center gap-2 bg-surface px-4 py-2 rounded-full border-2 border-border">
-            <ShieldCheck className="w-4 h-4 text-green-500" />
-            <span className="text-[10px] font-semibold uppercase text-text-muted tracking-widest">Conexão Segura SSL</span>
-         </div>
+    <div className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-12 p-6 pb-32 md:p-12">
+      <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+        <button
+          type="button"
+          onClick={() => router.push('/educacao')}
+          className="group flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-text-muted transition-colors hover:text-primary"
+        >
+          <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
+          Voltar para Educacao
+        </button>
+        <div className="flex items-center gap-2 rounded-full border-2 border-border bg-surface px-4 py-2">
+          <ShieldCheck className="h-4 w-4 text-green-500" />
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-text-muted">Conexao segura SSL</span>
+        </div>
       </div>
 
       <div className="space-y-4 text-center md:text-left">
-         <h1 className="text-4xl md:text-5xl font-semibold text-text-main tracking-tighter uppercase leading-none">Solicitação de <br /><span className="text-primary">Matrícula 2026.</span></h1>
-         <p className="text-sm font-ui font-medium text-text-muted max-w-xl">Preencha os dados abaixo para iniciar o processo de vinculação escolar na rede municipal.</p>
+        <h1 className="text-4xl font-semibold uppercase leading-none tracking-tighter text-text-main md:text-5xl">
+          Solicitacao de <br />
+          <span className="text-primary">Matricula 2026.</span>
+        </h1>
+        <p className="font-ui max-w-xl text-sm font-medium text-text-muted">
+          Preencha os dados abaixo para iniciar o processo de vinculacao escolar na rede municipal.
+        </p>
       </div>
 
-      {/* Stepper */}
-      <div className="relative flex justify-between items-center bg-white p-8 rounded-[2.5rem] border-2 border-border shadow-sm">
-         <div className="absolute left-10 right-10 top-1/2 -translate-y-1/2 h-1 bg-surface border-y border-border" />
-         {steps.map((step) => (
-            <div key={step.id} className="relative z-10 flex flex-col items-center gap-3">
-               <div className={cn(
-                 "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 border-2",
-                 currentStep >= step.id 
-                   ? "bg-primary border-primary text-white shadow-lg shadow-primary/20 scale-110" 
-                   : "bg-white border-border text-text-muted"
-               )}>
-                  <step.icon className="w-6 h-6" />
-               </div>
-               <span className={cn(
-                 "hidden md:block text-[9px] font-semibold uppercase tracking-widest",
-                 currentStep >= step.id ? "text-primary" : "text-text-muted opacity-50"
-               )}>
-                  {step.title}
-               </span>
-            </div>
-         ))}
-      </div>
-
-      {/* Form Content */}
-      <div className="bg-white p-8 md:p-12 rounded-[3.5rem] border-2 border-border shadow-2xl min-h-[400px] flex flex-col">
-         <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStep}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="flex-grow space-y-8"
+      <div className="relative flex items-center justify-between rounded-[2.5rem] border-2 border-border bg-white p-8 shadow-sm">
+        <div className="absolute left-10 right-10 top-1/2 h-1 -translate-y-1/2 border-y border-border bg-surface" />
+        {steps.map((step) => (
+          <div key={step.id} className="relative z-10 flex flex-col items-center gap-3">
+            <div
+              className={cn(
+                'flex h-12 w-12 items-center justify-center rounded-xl border-2 transition-all duration-500',
+                currentStep >= step.id
+                  ? 'scale-110 border-primary bg-primary text-white shadow-lg shadow-primary/20'
+                  : 'border-border bg-white text-text-muted',
+              )}
             >
-                {currentStep === 1 && (
-                   <div className="space-y-6">
-                      <h3 className="text-2xl font-semibold text-text-main border-b border-border pb-4">Dados do Responsável</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                         <div className="space-y-2">
-                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">Nome Completo</label>
-                            <input 
-                              type="text" 
-                              placeholder="Ex: João da Silva"
-                              value={formData.parentName}
-                              onChange={(e) => updateField('parentName', e.target.value)}
-                              className="w-full p-4 bg-surface border-2 border-border rounded-xl focus:border-primary outline-none transition-all font-bold text-sm"
-                            />
-                         </div>
-                         <div className="space-y-2">
-                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">CPF do Responsável</label>
-                            <input 
-                              type="text" 
-                              placeholder="000.000.000-00"
-                              value={formData.parentCpf}
-                              onChange={(e) => updateField('parentCpf', e.target.value)}
-                              className="w-full p-4 bg-surface border-2 border-border rounded-xl focus:border-primary outline-none transition-all font-bold text-sm"
-                            />
-                         </div>
-                      </div>
-                   </div>
-                )}
-
-                {currentStep === 2 && (
-                   <div className="space-y-6">
-                      <h3 className="text-2xl font-semibold text-text-main border-b border-border pb-4">Dados do Aluno(a)</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                         <div className="space-y-2">
-                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">Nome da Criança/Jovem</label>
-                            <input 
-                              type="text" 
-                              placeholder="Nome Completo"
-                              value={formData.studentName}
-                              onChange={(e) => updateField('studentName', e.target.value)}
-                              className="w-full p-4 bg-surface border-2 border-border rounded-xl focus:border-primary outline-none transition-all font-bold text-sm"
-                            />
-                         </div>
-                         <div className="space-y-2">
-                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">Data de Nascimento</label>
-                            <input 
-                              type="date"
-                              value={formData.studentBirth}
-                              onChange={(e) => updateField('studentBirth', e.target.value)}
-                              className="w-full p-4 bg-surface border-2 border-border rounded-xl focus:border-primary outline-none transition-all font-bold text-sm"
-                            />
-                         </div>
-                      </div>
-                   </div>
-                )}
-
-                {currentStep === 3 && (
-                   <div className="space-y-6">
-                      <h3 className="text-2xl font-semibold text-text-main border-b border-border pb-4">Endereço de Residência</h3>
-                      <div className="space-y-4">
-                         <div className="space-y-2">
-                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">CEP</label>
-                            <input 
-                              type="text" 
-                              placeholder="00000-000"
-                              value={formData.cep}
-                              onChange={(e) => updateField('cep', e.target.value)}
-                              className="w-full p-4 bg-surface border-2 border-border rounded-xl focus:border-primary outline-none transition-all font-bold text-sm"
-                            />
-                         </div>
-                         <div className="space-y-2">
-                            <label className="text-[10px] font-semibold uppercase text-text-muted tracking-widest ml-1">Logradouro, Número, Bairro</label>
-                            <input 
-                              type="text" 
-                              placeholder="Rua Exemplo, 123, Centro"
-                              value={formData.address}
-                              onChange={(e) => updateField('address', e.target.value)}
-                              className="w-full p-4 bg-surface border-2 border-border rounded-xl focus:border-primary outline-none transition-all font-bold text-sm"
-                            />
-                         </div>
-                         <p className="text-[10px] font-ui font-bold text-text-muted">O zoneamento escolar é baseado no endereço de residência do aluno.</p>
-                      </div>
-                   </div>
-                )}
-
-                {currentStep === 4 && (
-                   <div className="space-y-6">
-                      <h3 className="text-2xl font-semibold text-text-main border-b border-border pb-4">Unidade Pretendida</h3>
-                      <div className="grid grid-cols-1 gap-4">
-                         {schools.map(school => (
-                           <button 
-                             key={school} 
-                             onClick={() => updateField('schoolPreference', school)}
-                             className={cn(
-                               "w-full p-6 border-2 rounded-2xl flex items-center justify-between transition-all font-semibold text-xs uppercase tracking-tight",
-                               formData.schoolPreference === school ? "border-primary bg-primary/5 text-primary" : "border-border bg-surface text-text-muted hover:border-primary/50"
-                             )}>
-                              {school}
-                              {formData.schoolPreference === school && <CheckCircle2 className="w-5 h-5" />}
-                           </button>
-                         ))}
-                      </div>
-                   </div>
-                )}
-
-                {currentStep === 5 && (
-                   <div className="space-y-8 text-center py-6">
-                      {submitted ? (
-                        <>
-                          <div className="w-20 h-20 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto border-4 border-white shadow-xl">
-                             <CheckCircle2 className="w-10 h-10" />
-                          </div>
-                          <div className="space-y-2">
-                             <h3 className="text-3xl font-semibold text-text-main tracking-tight">Solicitação Enviada!</h3>
-                             <p className="text-sm font-ui font-medium text-text-muted max-w-sm mx-auto">
-                                Sua solicitação de matrícula foi registrada na Secretaria de Educação.
-                             </p>
-                          </div>
-                          <div className="bg-surface p-6 rounded-3xl border-2 border-border border-dashed">
-                             <div className="flex items-center gap-3 justify-center">
-                                <ClipboardList className="w-6 h-6 text-primary" />
-                                <div className="text-left">
-                                   <p className="text-[9px] font-semibold text-text-muted uppercase tracking-widest">Protocolo</p>
-                                   <p className="text-xl font-semibold text-text-main tracking-wider font-mono">{protocol}</p>
-                                </div>
-                             </div>
-                          </div>
-                          <button
-                            onClick={() => router.push('/educacao')}
-                            className="bg-primary text-white px-10 py-5 rounded-xl font-semibold text-xs uppercase tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
-                          >
-                            Voltar para Educação
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <div className="w-20 h-20 bg-primary-500/10 text-primary rounded-full flex items-center justify-center mx-auto border-4 border-white shadow-xl">
-                             <CheckCircle2 className="w-10 h-10" />
-                          </div>
-                          <div className="space-y-2">
-                             <h3 className="text-3xl font-semibold text-text-main tracking-tight">Quase lá!</h3>
-                             <p className="text-sm font-ui font-medium text-text-muted max-w-sm mx-auto">
-                                Ao clicar em finalizar, sua solicitação será enviada para a central de vagas da Secretaria de Educação.
-                             </p>
-                          </div>
-                          <div className="p-4 bg-surface rounded-3xl border-2 border-border border-dashed text-left space-y-2">
-                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Responsável:</span><span className="text-xs font-semibold">{formData.parentName}</span></div>
-                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Aluno(a):</span><span className="text-xs font-semibold">{formData.studentName}</span></div>
-                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Nascimento:</span><span className="text-xs font-semibold">{formData.studentBirth}</span></div>
-                             <div className="flex justify-between"><span className="text-[10px] font-bold text-text-muted">Escola:</span><span className="text-xs font-semibold">{formData.schoolPreference}</span></div>
-                          </div>
-                          <div className="p-6 bg-surface rounded-3xl border-2 border-border border-dashed flex flex-col items-center gap-3">
-                             <Info className="w-6 h-6 text-primary" />
-                             <p className="text-[10px] font-semibold uppercase text-text-muted tracking-widest">Lembre-se de anexar os documentos físicos na unidade escolar após convocação.</p>
-                          </div>
-                        </>
-                      )}
-                   </div>
-                )}
-            </motion.div>
-         </AnimatePresence>
-
-          <div className="flex justify-between items-center pt-12 border-t border-border mt-auto">
-             <button 
-               onClick={prevStep}
-               disabled={currentStep === 1 || submitted}
-               className={cn(
-                 "flex items-center gap-2 px-6 py-4 rounded-xl font-semibold text-[10px] uppercase tracking-widest transition-all",
-                 (currentStep === 1 || submitted) ? "opacity-0 pointer-events-none" : "bg-surface text-text-muted border-2 border-border hover:border-primary hover:text-primary"
-               )}
-             >
-                <ChevronLeft className="w-4 h-4" />
-                Anterior
-             </button>
-             {submitted ? null : (
-               <button 
-                 onClick={currentStep === 5 ? handleSubmit : nextStep}
-                 disabled={!canProceed() || submitting}
-                 className={cn(
-                   "flex items-center gap-2 bg-primary text-white px-10 py-5 rounded-xl font-semibold text-xs uppercase tracking-widest shadow-xl shadow-primary/20 transition-all",
-                   canProceed() && !submitting ? "hover:scale-105 active:scale-95" : "opacity-50 cursor-not-allowed"
-                 )}
-               >
-                 {submitting ? (
-                   <><Loader2 className="w-4 h-4 animate-spin" /> Enviando...</>
-                 ) : currentStep === 5 ? (
-                   <>Finalizar Solicitação<ChevronRight className="w-4 h-4" /></>
-                 ) : (
-                   <>Próximo Passo<ChevronRight className="w-4 h-4" /></>
-                 )}
-               </button>
-             )}
+              <step.icon className="h-6 w-6" />
+            </div>
+            <span
+              className={cn(
+                'hidden text-[9px] font-semibold uppercase tracking-widest md:block',
+                currentStep >= step.id ? 'text-primary' : 'text-text-muted opacity-50',
+              )}
+            >
+              {step.title}
+            </span>
           </div>
+        ))}
       </div>
 
+      <div className="flex min-h-[400px] flex-col rounded-[3.5rem] border-2 border-border bg-white p-8 shadow-2xl md:p-12">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="flex-grow space-y-8"
+          >
+            {currentStep === 1 && (
+              <FormStep title="Dados do responsavel">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <TextField
+                    label="Nome completo"
+                    placeholder="Ex: Joao da Silva"
+                    value={formData.parentName}
+                    onChange={(value) => updateField('parentName', value)}
+                  />
+                  <TextField
+                    label="CPF do responsavel"
+                    placeholder="000.000.000-00"
+                    value={formData.parentCpf}
+                    onChange={(value) => updateField('parentCpf', value)}
+                  />
+                </div>
+              </FormStep>
+            )}
+
+            {currentStep === 2 && (
+              <FormStep title="Dados do aluno(a)">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <TextField
+                    label="Nome da crianca/jovem"
+                    placeholder="Nome completo"
+                    value={formData.studentName}
+                    onChange={(value) => updateField('studentName', value)}
+                  />
+                  <TextField
+                    label="Data de nascimento"
+                    type="date"
+                    value={formData.studentBirth}
+                    onChange={(value) => updateField('studentBirth', value)}
+                  />
+                </div>
+              </FormStep>
+            )}
+
+            {currentStep === 3 && (
+              <FormStep title="Endereco de residencia">
+                <div className="space-y-4">
+                  <TextField
+                    label="CEP"
+                    placeholder="00000-000"
+                    value={formData.cep}
+                    onChange={(value) => updateField('cep', value)}
+                  />
+                  <TextField
+                    label="Logradouro, numero, bairro"
+                    placeholder="Rua Exemplo, 123, Centro"
+                    value={formData.address}
+                    onChange={(value) => updateField('address', value)}
+                  />
+                  <p className="font-ui text-[10px] font-bold text-text-muted">
+                    O zoneamento escolar e baseado no endereco de residencia do aluno.
+                  </p>
+                </div>
+              </FormStep>
+            )}
+
+            {currentStep === 4 && (
+              <FormStep title="Unidade pretendida">
+                <div className="grid grid-cols-1 gap-4">
+                  {schools.map((school) => (
+                    <button
+                      key={school}
+                      type="button"
+                      onClick={() => updateField('schoolPreference', school)}
+                      className={cn(
+                        'flex w-full items-center justify-between rounded-2xl border-2 p-6 text-xs font-semibold uppercase tracking-tight transition-all',
+                        formData.schoolPreference === school
+                          ? 'border-primary bg-primary/5 text-primary'
+                          : 'border-border bg-surface text-text-muted hover:border-primary/50',
+                      )}
+                    >
+                      {school}
+                      {formData.schoolPreference === school && <CheckCircle2 className="h-5 w-5" />}
+                    </button>
+                  ))}
+                </div>
+              </FormStep>
+            )}
+
+            {currentStep === 5 && (
+              <div className="space-y-8 py-6 text-center">
+                {submitted ? (
+                  <SuccessView protocol={protocol} onBack={() => router.push('/educacao')} />
+                ) : (
+                  <ReviewView formData={formData} />
+                )}
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="mt-auto flex items-center justify-between border-t border-border pt-12">
+          <button
+            type="button"
+            onClick={prevStep}
+            disabled={currentStep === 1 || submitted}
+            className={cn(
+              'flex items-center gap-2 rounded-xl px-6 py-4 text-[10px] font-semibold uppercase tracking-widest transition-all',
+              currentStep === 1 || submitted
+                ? 'pointer-events-none opacity-0'
+                : 'border-2 border-border bg-surface text-text-muted hover:border-primary hover:text-primary',
+            )}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Anterior
+          </button>
+
+          {submitted ? null : (
+            <button
+              type="button"
+              onClick={currentStep === 5 ? handleSubmit : nextStep}
+              disabled={!canProceed() || submitting}
+              className={cn(
+                'flex items-center gap-2 rounded-xl bg-primary px-10 py-5 text-xs font-semibold uppercase tracking-widest text-white shadow-xl shadow-primary/20 transition-all',
+                canProceed() && !submitting ? 'hover:scale-105 active:scale-95' : 'cursor-not-allowed opacity-50',
+              )}
+            >
+              {submitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Enviando...
+                </>
+              ) : currentStep === 5 ? (
+                <>
+                  Finalizar solicitacao
+                  <ChevronRight className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  Proximo passo
+                  <ChevronRight className="h-4 w-4" />
+                </>
+              )}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
+  );
+}
+
+function FormStep({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-6">
+      <h3 className="border-b border-border pb-4 text-2xl font-semibold text-text-main">{title}</h3>
+      {children}
+    </div>
+  );
+}
+
+function TextField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = 'text',
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  type?: string;
+}) {
+  return (
+    <label className="space-y-2">
+      <span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">{label}</span>
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="w-full rounded-xl border-2 border-border bg-surface p-4 text-sm font-bold outline-none transition-all focus:border-primary"
+      />
+    </label>
+  );
+}
+
+function ReviewView({ formData }: { formData: FormData }) {
+  return (
+    <>
+      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-primary/10 text-primary shadow-xl">
+        <CheckCircle2 className="h-10 w-10" />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-3xl font-semibold tracking-tight text-text-main">Quase la</h3>
+        <p className="font-ui mx-auto max-w-sm text-sm font-medium text-text-muted">
+          Ao finalizar, sua solicitacao sera enviada para a central de vagas da Secretaria de Educacao.
+        </p>
+      </div>
+      <div className="space-y-2 rounded-3xl border-2 border-dashed border-border bg-surface p-4 text-left">
+        <ReviewRow label="Responsavel" value={formData.parentName} />
+        <ReviewRow label="Aluno(a)" value={formData.studentName} />
+        <ReviewRow label="Nascimento" value={formData.studentBirth} />
+        <ReviewRow label="Escola" value={formData.schoolPreference} />
+      </div>
+      <div className="flex flex-col items-center gap-3 rounded-3xl border-2 border-dashed border-border bg-surface p-6">
+        <Info className="h-6 w-6 text-primary" />
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+          Lembre-se de apresentar os documentos fisicos na unidade escolar apos convocacao.
+        </p>
+      </div>
+    </>
+  );
+}
+
+function ReviewRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-4">
+      <span className="text-[10px] font-bold text-text-muted">{label}:</span>
+      <span className="text-right text-xs font-semibold">{value}</span>
+    </div>
+  );
+}
+
+function SuccessView({ protocol, onBack }: { protocol: string; onBack: () => void }) {
+  return (
+    <>
+      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-green-500/10 text-green-500 shadow-xl">
+        <CheckCircle2 className="h-10 w-10" />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-3xl font-semibold tracking-tight text-text-main">Solicitacao enviada</h3>
+        <p className="font-ui mx-auto max-w-sm text-sm font-medium text-text-muted">
+          Sua solicitacao de matricula foi registrada na Secretaria de Educacao.
+        </p>
+      </div>
+      <div className="rounded-3xl border-2 border-dashed border-border bg-surface p-6">
+        <div className="flex items-center justify-center gap-3">
+          <ClipboardList className="h-6 w-6 text-primary" />
+          <div className="text-left">
+            <p className="text-[9px] font-semibold uppercase tracking-widest text-text-muted">Protocolo</p>
+            <p className="font-mono text-xl font-semibold tracking-wider text-text-main">{protocol}</p>
+          </div>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={onBack}
+        className="rounded-xl bg-primary px-10 py-5 text-xs font-semibold uppercase tracking-widest text-white shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+      >
+        Voltar para Educacao
+      </button>
+    </>
   );
 }

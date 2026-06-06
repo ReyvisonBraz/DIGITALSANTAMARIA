@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2, Save } from 'lucide-react';
 import { updateReportStatus } from '@/services/reports.service';
 import { useToast } from '@/lib/toast-context';
@@ -32,6 +32,11 @@ export default function ReportStatusUpdater({
   const [status, setStatus] = useState<ReportStatus>(initialStatus);
   const [response, setResponse] = useState(initialResponse);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setStatus(initialStatus);
+    setResponse(initialResponse);
+  }, [initialStatus, initialResponse]);
 
   const handleSave = async () => {
     if (!response.trim() && (status === 'resolved' || status === 'rejected')) {

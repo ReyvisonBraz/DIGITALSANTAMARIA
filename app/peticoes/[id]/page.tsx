@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, CalendarDays, Loader2, Share2, ShieldCheck } from 'lucide-react';
@@ -18,7 +18,7 @@ export default function PetitionDetailPage() {
   const [petition, setPetition] = useState<Petition | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadPetition = () => {
+  const loadPetition = useCallback(() => {
     const id = params.id as string;
     if (!id) return;
     setLoading(true);
@@ -33,11 +33,20 @@ export default function PetitionDetailPage() {
       })
       .catch(() => toast('Nao foi possivel carregar a peticao.', 'error'))
       .finally(() => setLoading(false));
-  };
+  }, [params.id, router, toast]);
 
   useEffect(() => {
     loadPetition();
-  }, [params.id]);
+  }, [loadPetition]);
+
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast('Link copiado.', 'info');
+    } catch {
+      toast('Nao foi possivel copiar o link automaticamente.', 'error');
+    }
+  };
 
   if (loading) {
     return (
@@ -62,10 +71,7 @@ export default function PetitionDetailPage() {
               Voltar
             </Link>
             <button
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                toast('Link copiado.', 'info');
-              }}
+              onClick={handleShare}
               className="inline-flex w-fit items-center gap-2 rounded-xl border border-border px-3 py-2 text-xs font-semibold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
             >
               <Share2 className="h-4 w-4" />

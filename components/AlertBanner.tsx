@@ -7,6 +7,24 @@ import Link from 'next/link';
 import { createLogger } from '@/lib/logger';
 
 const log = createLogger('AlertBanner');
+const STORAGE_KEY = 'civic-dismissed-alerts';
+
+function readDismissedMessages(): string[] {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveDismissedMessages(messages: string[]) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+  } catch {
+    // Storage can be unavailable or full; the alert still works for the current session.
+  }
+}
 
 interface AlertBannerProps {
   message: string;
@@ -20,7 +38,7 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
 
   useEffect(() => {
     setMounted(true);
-    const dismissedMessages = JSON.parse(localStorage.getItem('civic-dismissed-alerts') || '[]');
+    const dismissedMessages = readDismissedMessages();
     const alreadyDismissed = dismissedMessages.includes(message);
     if (!alreadyDismissed) {
       setIsVisible(true);
@@ -30,10 +48,10 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
 
   const handleDismiss = () => {
     setIsVisible(false);
-    const dismissedMessages = JSON.parse(localStorage.getItem('civic-dismissed-alerts') || '[]');
+    const dismissedMessages = readDismissedMessages();
     if (!dismissedMessages.includes(message)) {
       dismissedMessages.push(message);
-      localStorage.setItem('civic-dismissed-alerts', JSON.stringify(dismissedMessages));
+      saveDismissedMessages(dismissedMessages);
     }
     log.info('Alert dismissed', { message: message.substring(0, 60) });
   };

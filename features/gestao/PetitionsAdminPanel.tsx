@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ExternalLink, FileText, Loader2, Save, Search } from 'lucide-react';
 import { useToast } from '@/lib/toast-context';
@@ -36,6 +36,11 @@ function PetitionAdminCard({ petition, onSaved }: { petition: Petition; onSaved:
   const [status, setStatus] = useState<PetitionStatus>(petition.status);
   const [officialReply, setOfficialReply] = useState(petition.officialReply || '');
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setStatus(petition.status);
+    setOfficialReply(petition.officialReply || '');
+  }, [petition.status, petition.officialReply]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -132,17 +137,17 @@ export default function PetitionsAdminPanel() {
   const [statusFilter, setStatusFilter] = useState<PetitionStatusFilter>('all');
   const [sortMode, setSortMode] = useState<'newest' | 'oldest' | 'signatures'>('newest');
 
-  const loadPetitions = () => {
+  const loadPetitions = useCallback(() => {
     setLoading(true);
     getAllPetitions()
       .then(setPetitions)
       .catch(() => toast('Nao foi possivel carregar peticoes.', 'error'))
       .finally(() => setLoading(false));
-  };
+  }, [toast]);
 
   useEffect(() => {
     loadPetitions();
-  }, []);
+  }, [loadPetitions]);
 
   const filteredPetitions = petitions
     .filter((petition) => {

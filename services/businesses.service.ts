@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { createContentService } from '@/services/content.service';
-import { createNotification } from '@/services/notifications.service';
+import { tryCreateNotification } from '@/services/notifications.service';
 import type { Business } from '@/types';
 
 const COLLECTION = 'businesses';
@@ -31,7 +31,7 @@ export type RegisterBusinessInput = Pick<
   ownerName: string;
 };
 
-/** Cidadão cadastra seu próprio negócio — entra como pending_approval. */
+/** Cidadao cadastra seu proprio negocio e entra como pending_approval. */
 export async function registerBusiness(input: RegisterBusinessInput): Promise<string> {
   return factory.create({
     title: input.title,
@@ -52,7 +52,7 @@ export async function registerBusiness(input: RegisterBusinessInput): Promise<st
   });
 }
 
-/** Dono edita o próprio negócio (sem mudar status nem ownerId). */
+/** Dono edita o proprio negocio sem mudar status nem ownerId. */
 export async function updateOwnedBusiness(
   id: string,
   patch: Partial<Pick<Business, 'title' | 'description' | 'category' | 'address' | 'phone' | 'whatsapp' | 'hours' | 'isOpen'>>,
@@ -61,7 +61,7 @@ export async function updateOwnedBusiness(
   await updateDoc(ref, { ...patch, updatedAt: serverTimestamp() });
 }
 
-/** Admin aprova um cadastro pendente — vira public no /comercio. */
+/** Admin aprova um cadastro pendente, deixando visivel em /comercio. */
 export async function approveBusiness(id: string): Promise<void> {
   const business = await readBusiness(id);
 
@@ -72,19 +72,19 @@ export async function approveBusiness(id: string): Promise<void> {
   });
 
   if (business?.ownerId) {
-    await createNotification({
+    await tryCreateNotification({
       recipientId: business.ownerId,
       kind: 'business_update',
       tone: 'success',
-      title: 'Negócio aprovado',
-      message: `Seu cadastro "${business.title}" foi aprovado e já está visível em /comercio.`,
+      title: 'Negocio aprovado',
+      message: `Seu cadastro "${business.title}" foi aprovado e ja esta visivel em /comercio.`,
       href: '/perfil',
       source: { type: 'business', id },
     });
   }
 }
 
-/** Admin reprova com motivo opcional — fica visível pro dono no painel. */
+/** Admin reprova com motivo opcional, visivel para o dono no painel. */
 export async function rejectBusiness(id: string, note?: string): Promise<void> {
   const business = await readBusiness(id);
   const trimmedNote = note?.trim() || '';
@@ -96,46 +96,57 @@ export async function rejectBusiness(id: string, note?: string): Promise<void> {
   });
 
   if (business?.ownerId) {
-    await createNotification({
+    await tryCreateNotification({
       recipientId: business.ownerId,
       kind: 'business_update',
       tone: 'alert',
-      title: 'Cadastro não aprovado',
+      title: 'Cadastro nao aprovado',
       message: trimmedNote
-        ? `"${business.title}" não foi aprovado. Motivo: ${trimmedNote}`
-        : `"${business.title}" não foi aprovado pela prefeitura. Veja seu painel para revisar e reenviar.`,
+        ? `"${business.title}" nao foi aprovado. Motivo: ${trimmedNote}`
+        : `"${business.title}" nao foi aprovado pela prefeitura. Veja seu painel para revisar e reenviar.`,
       href: '/perfil',
       source: { type: 'business', id },
     });
   }
 }
 
-/** Lista negócios pendentes para o painel de moderação. */
+/** Lista negocios pendentes para o painel de moderacao. */
 export async function listPendingBusinesses(): Promise<Business[]> {
   const ref = collection(db, COLLECTION);
   const q = query(
     ref,
     where('status', '==', 'pending_approval'),
-    where('deletedAt', '==', null),
     orderBy('createdAt', 'desc'),
   );
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Business);
+  return snap.docs
+    .map((d) => ({ id: d.id, ...d.data() }) as Business)
+    .filter((business) => !business.deletedAt);
 }
 
-/** Stream em tempo real dos negócios de um cidadão (qualquer status). */
+/** Stream em tempo real dos negocios de um cidadao, em qualquer status. */
 export function listenToOwnedBusinesses(
   ownerId: string,
   onChange: (businesses: Business[]) => void,
+  onError?: (error: unknown) => void,
 ): () => void {
   const ref = collection(db, COLLECTION);
   const q = query(
     ref,
     where('ownerId', '==', ownerId),
-    where('deletedAt', '==', null),
     orderBy('createdAt', 'desc'),
   );
-  return onSnapshot(q, (snap) => {
-    onChange(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Business));
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      onChange(
+        snap.docs
+          .map((d) => ({ id: d.id, ...d.data() }) as Business)
+          .filter((business) => !business.deletedAt),
+      );
+    },
+    (error) => {
+      onError?.(error);
+    },
+  );
 }

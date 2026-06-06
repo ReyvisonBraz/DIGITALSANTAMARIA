@@ -14,7 +14,7 @@ import {
 import { db } from '@/lib/firebase';
 import { demandConverter } from '@/lib/firebase/converters';
 import { generateDemandProtocolId } from '@/lib/utils/protocol';
-import { createNotification } from '@/services/notifications.service';
+import { tryCreateNotification } from '@/services/notifications.service';
 import type { Demand, CreateDemandInput, DemandStatus, AdminAction, NotificationTone } from '@/types';
 
 const COLLECTION = 'demands';
@@ -76,12 +76,19 @@ export async function getDemandsByUser(userId: string): Promise<Demand[]> {
 export function listenToUserDemands(
   userId: string,
   onChange: (demands: Demand[]) => void,
+  onError?: (error: unknown) => void,
 ): () => void {
   const ref = collection(db, COLLECTION).withConverter(demandConverter);
   const q = query(ref, where('authorId', '==', userId), orderBy('createdAt', 'desc'));
-  return onSnapshot(q, (snap) => {
-    onChange(snap.docs.map((d) => d.data()));
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      onChange(snap.docs.map((d) => d.data()));
+    },
+    (error) => {
+      onError?.(error);
+    },
+  );
 }
 
 export async function getAllDemands(): Promise<Demand[]> {
@@ -110,7 +117,7 @@ export async function updateDemandStatus(
   });
 
   if (demand && !demand.isAnonymous && demand.authorId) {
-    await createNotification({
+    await tryCreateNotification({
       recipientId: demand.authorId,
       kind: 'demand_update',
       tone: STATUS_TONE[status],

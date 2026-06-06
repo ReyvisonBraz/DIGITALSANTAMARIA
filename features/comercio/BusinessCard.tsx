@@ -8,9 +8,9 @@ import type { Business } from '@/types';
 
 const CATEGORY_LABEL: Record<Business['category'], string> = {
   restaurante: 'Restaurante',
-  farmacia: 'Farmácia',
+  farmacia: 'Farmacia',
   mercado: 'Mercado',
-  servico: 'Serviço',
+  servico: 'Servico',
   loja: 'Loja',
   outros: 'Outros',
 };
@@ -27,7 +27,7 @@ const CATEGORY_ACCENT: Record<Business['category'], string> = {
 function buildWhatsAppLink(numbersOnly: string, businessName: string): string {
   const trimmed = numbersOnly.replace(/\D/g, '');
   const withCountry = trimmed.length === 11 || trimmed.length === 10 ? `55${trimmed}` : trimmed;
-  const text = encodeURIComponent(`Olá! Encontrei "${businessName}" no portal Conecta Santa Maria.`);
+  const text = encodeURIComponent(`Ola! Encontrei "${businessName}" no portal Conecta Santa Maria.`);
   return `https://wa.me/${withCountry}?text=${text}`;
 }
 
@@ -40,9 +40,15 @@ interface BusinessCardProps {
 }
 
 export default function BusinessCard({ business }: BusinessCardProps) {
-  const hasWhatsapp = business.whatsapp.replace(/\D/g, '').length >= 10;
-  const hasPhone = business.phone.trim().length > 0;
-  const hasAddress = business.address.trim().length > 0;
+  const categoryLabel = CATEGORY_LABEL[business.category] ?? 'Outros';
+  const categoryAccent = CATEGORY_ACCENT[business.category] ?? CATEGORY_ACCENT.outros;
+  const whatsapp = business.whatsapp || '';
+  const phone = business.phone || '';
+  const address = business.address || '';
+  const hours = business.hours || '';
+  const hasWhatsapp = whatsapp.replace(/\D/g, '').length >= 10;
+  const hasPhone = phone.trim().length > 0;
+  const hasAddress = address.trim().length > 0;
 
   return (
     <motion.article
@@ -58,15 +64,29 @@ export default function BusinessCard({ business }: BusinessCardProps) {
             src={business.imageURL}
             alt={business.title}
             fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-          <span className={cn(
-            'absolute left-4 top-4 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] backdrop-blur-sm',
-            CATEGORY_ACCENT[business.category]
-          )}>
+          <span
+            className={cn(
+              'absolute left-4 top-4 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] backdrop-blur-sm',
+              categoryAccent,
+            )}
+          >
             <Store className="h-3 w-3" />
-            {CATEGORY_LABEL[business.category]}
+            {categoryLabel}
+          </span>
+          <span
+            className={cn(
+              'absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] backdrop-blur-sm',
+              business.isOpen
+                ? 'border-green-200 bg-green-50/90 text-green-700'
+                : 'border-rose-200 bg-rose-50/90 text-rose-700',
+            )}
+          >
+            <span className={cn('h-1.5 w-1.5 rounded-full', business.isOpen ? 'bg-green-500' : 'bg-rose-500')} />
+            {business.isOpen ? 'Aberto' : 'Fechado'}
           </span>
         </div>
       ) : null}
@@ -74,19 +94,23 @@ export default function BusinessCard({ business }: BusinessCardProps) {
       <div className="space-y-3 p-6">
         {!business.imageURL && (
           <div className="flex flex-wrap items-center gap-2">
-            <span className={cn(
-              'inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em]',
-              CATEGORY_ACCENT[business.category]
-            )}>
+            <span
+              className={cn(
+                'inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em]',
+                categoryAccent,
+              )}
+            >
               <Store className="h-3 w-3" />
-              {CATEGORY_LABEL[business.category]}
+              {categoryLabel}
             </span>
-            <span className={cn(
-              'inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em]',
-              business.isOpen
-                ? 'border-green-200 bg-green-50 text-green-700'
-                : 'border-rose-200 bg-rose-50 text-rose-700'
-            )}>
+            <span
+              className={cn(
+                'inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em]',
+                business.isOpen
+                  ? 'border-green-200 bg-green-50 text-green-700'
+                  : 'border-rose-200 bg-rose-50 text-rose-700',
+              )}
+            >
               <span className={cn('h-1.5 w-1.5 rounded-full', business.isOpen ? 'bg-green-500' : 'bg-rose-500')} />
               {business.isOpen ? 'Aberto' : 'Fechado'}
             </span>
@@ -107,19 +131,19 @@ export default function BusinessCard({ business }: BusinessCardProps) {
         <div className="flex flex-col gap-1.5 pt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted">
           {hasAddress && (
             <a
-              href={buildMapsLink(business.address)}
+              href={buildMapsLink(address)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 truncate transition hover:text-primary"
             >
               <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
-              <span className="truncate">{business.address}</span>
+              <span className="truncate">{address}</span>
             </a>
           )}
-          {business.hours && (
+          {hours && (
             <span className="inline-flex items-center gap-1.5">
               <Clock className="h-3.5 w-3.5 text-primary" />
-              {business.hours}
+              {hours}
             </span>
           )}
         </div>
@@ -128,7 +152,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
           <div className="flex flex-col gap-2 pt-3 sm:flex-row">
             {hasWhatsapp && (
               <a
-                href={buildWhatsAppLink(business.whatsapp, business.title)}
+                href={buildWhatsAppLink(whatsapp, business.title)}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-accent-success px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-accent-success/90"
@@ -139,7 +163,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
             )}
             {hasPhone && (
               <a
-                href={`tel:${business.phone.replace(/\D/g, '')}`}
+                href={`tel:${phone.replace(/\D/g, '')}`}
                 className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
               >
                 <Phone className="h-4 w-4" />

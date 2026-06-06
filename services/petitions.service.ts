@@ -1,25 +1,25 @@
 import {
+  addDoc,
   collection,
   doc,
-  addDoc,
   getDoc,
   getDocs,
-  updateDoc,
-  query,
-  where,
   increment,
-  serverTimestamp,
+  query,
   runTransaction,
+  serverTimestamp,
+  updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { petitionConverter } from '@/lib/firebase/converters';
-import type { Petition, CreatePetitionInput, PetitionStatus } from '@/types';
+import type { CreatePetitionInput, Petition, PetitionStatus } from '@/types';
 
 const PETITIONS_COL = 'petitions';
 const SIGNATURES_COL = 'petition_signatures';
 
 export async function createPetition(
-  input: CreatePetitionInput & { creatorId: string; creatorName: string }
+  input: CreatePetitionInput & { creatorId: string; creatorName: string },
 ): Promise<string> {
   const docRef = await addDoc(collection(db, PETITIONS_COL), {
     creatorId: input.creatorId,
@@ -75,7 +75,7 @@ export async function updatePetitionAdmin(
   input: {
     status: PetitionStatus;
     officialReply?: string | null;
-  }
+  },
 ): Promise<void> {
   const ref = doc(db, PETITIONS_COL, id);
   await updateDoc(ref, {
@@ -93,11 +93,11 @@ export async function signPetition(petitionId: string, userId: string, userName:
   await runTransaction(db, async (transaction) => {
     const petitionSnap = await transaction.get(petitionRef);
     if (!petitionSnap.exists()) {
-      throw new Error('Petição não encontrada');
+      throw new Error('Peticao nao encontrada');
     }
     const signatureSnap = await transaction.get(signatureRef);
     if (signatureSnap.exists()) {
-      throw new Error('Você já assinou esta petição');
+      throw new Error('Voce ja assinou esta peticao');
     }
     transaction.set(signatureRef, {
       petitionId,

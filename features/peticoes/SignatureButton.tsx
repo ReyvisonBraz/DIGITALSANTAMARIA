@@ -20,7 +20,11 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
 
   const handleSign = async () => {
     if (!user) {
-      await login();
+      try {
+        await login();
+      } catch (error) {
+        toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+      }
       return;
     }
 

@@ -70,23 +70,40 @@ export default function PerfilPage() {
       setDemands(next);
       demandsReady = true;
       markReady();
+    }, () => {
+      setDemands([]);
+      demandsReady = true;
+      toast('Nao foi possivel carregar suas solicitacoes agora.', 'error');
+      markReady();
     });
     const unsubReports = listenToUserReports(user.uid, (next) => {
       setReports(next);
       reportsReady = true;
+      markReady();
+    }, () => {
+      setReports([]);
+      reportsReady = true;
+      toast('Nao foi possivel carregar seus relatos agora.', 'error');
       markReady();
     });
     return () => {
       unsubDemands();
       unsubReports();
     };
-  }, [user]);
+  }, [user, toast]);
 
   const displayName = profile?.displayName || user?.displayName || 'Cidadao';
   const email = profile?.email || user?.email || '';
   const photoURL = profile?.photoURL || user?.photoURL || null;
   const isStaff = userRole === 'admin' || userRole === 'clerk';
   const loading = profileLoading || activityLoading;
+  const handleLogin = async () => {
+    try {
+      await login();
+    } catch (error) {
+      toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+    }
+  };
 
   const stats = useMemo(() => [
     { label: 'Solicitacoes', value: demands.length, icon: ClipboardList },
@@ -107,7 +124,7 @@ export default function PerfilPage() {
           Entre com sua conta Google para acompanhar protocolos, dados basicos e atividades no portal.
         </p>
         <button
-          onClick={login}
+          onClick={handleLogin}
           className="action-button-primary mt-6"
         >
           Entrar no painel

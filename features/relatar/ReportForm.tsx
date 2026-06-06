@@ -25,10 +25,10 @@ import type { GeoLocation, ReportType } from '@/types';
 const log = createLogger('ReportForm');
 
 const REPORT_TYPES: { value: ReportType; label: string; hint: string; icon: LucideIcon }[] = [
-  { value: 'infrastructure', label: 'Infraestrutura', hint: 'Buracos, iluminação, calçadas',     icon: HardHat },
-  { value: 'environment',    label: 'Meio ambiente',  hint: 'Lixo, descarte, áreas verdes',      icon: Leaf },
-  { value: 'security',       label: 'Segurança',      hint: 'Riscos, pontos perigosos',          icon: Shield },
-  { value: 'other',          label: 'Outro',          hint: 'Qualquer outra ocorrência',         icon: MoreHorizontal },
+  { value: 'infrastructure', label: 'Infraestrutura', hint: 'Buracos, iluminacao, calcadas', icon: HardHat },
+  { value: 'environment', label: 'Meio ambiente', hint: 'Lixo, descarte, areas verdes', icon: Leaf },
+  { value: 'security', label: 'Seguranca', hint: 'Riscos, pontos perigosos', icon: Shield },
+  { value: 'other', label: 'Outro', hint: 'Qualquer outra ocorrencia', icon: MoreHorizontal },
 ];
 
 const MIN_TITLE = 5;
@@ -59,12 +59,21 @@ export default function ReportForm() {
     setCreatedProtocol(null);
   };
 
+  const handleLogin = async () => {
+    try {
+      await login();
+    } catch (error) {
+      log.error('Login failed before report creation', {}, error);
+      toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+    }
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!user) return;
 
     if (title.trim().length < MIN_TITLE) {
-      toast(`Dê um título com pelo menos ${MIN_TITLE} caracteres.`, 'error');
+      toast(`De um titulo com pelo menos ${MIN_TITLE} caracteres.`, 'error');
       return;
     }
     if (description.trim().length < MIN_DESCRIPTION) {
@@ -83,7 +92,7 @@ export default function ReportForm() {
     try {
       const id = await createReport({
         reporterId: user.uid,
-        reporterName: user.displayName || 'Cidadão',
+        reporterName: user.displayName || 'Cidadao',
         type,
         title: title.trim(),
         description: description.trim(),
@@ -96,7 +105,7 @@ export default function ReportForm() {
       toast('Relato enviado. Acompanhe pelo seu painel.', 'success');
     } catch (error) {
       log.error('Failed to create report', {}, error);
-      toast('Não foi possível enviar agora. Tente novamente em instantes.', 'error');
+      toast('Nao foi possivel enviar agora. Tente novamente em instantes.', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -111,12 +120,12 @@ export default function ReportForm() {
         <div>
           <h3 className="text-lg font-semibold tracking-normal text-text-main">Entre para relatar</h3>
           <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
-            Relatos são identificados para que o município possa retornar com a solução. Use sua conta Google para entrar.
+            Relatos sao identificados para que o municipio possa retornar com a solucao. Use sua conta Google para entrar.
           </p>
         </div>
         <button
           type="button"
-          onClick={login}
+          onClick={handleLogin}
           className="action-button-primary"
         >
           <LogIn className="h-4 w-4" />
@@ -137,7 +146,7 @@ export default function ReportForm() {
               {createdProtocol}
             </p>
             <p className="mt-2 text-xs font-medium leading-5 text-green-900/80">
-              A equipe responsável recebeu o aviso. Você acompanha a resposta no seu painel.
+              A equipe responsavel recebeu o aviso. Voce acompanha a resposta no seu painel.
             </p>
           </div>
         </div>
@@ -158,7 +167,7 @@ export default function ReportForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <fieldset className="space-y-3">
         <legend className="text-[11px] font-black uppercase tracking-widest text-text-main">
-          Tipo de ocorrência
+          Tipo de ocorrencia
         </legend>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {REPORT_TYPES.map((option) => {
@@ -174,12 +183,12 @@ export default function ReportForm() {
                   'group flex flex-col items-start gap-2 rounded-2xl border p-3 text-left transition',
                   active
                     ? 'border-primary bg-primary/5 shadow-sm'
-                    : 'border-border bg-white hover:border-primary/40'
+                    : 'border-border bg-white hover:border-primary/40',
                 )}
               >
                 <span className={cn(
                   'grid h-9 w-9 place-items-center rounded-xl transition',
-                  active ? 'bg-primary text-white' : 'bg-primary/10 text-primary'
+                  active ? 'bg-primary text-white' : 'bg-primary/10 text-primary',
                 )}>
                   <Icon className="h-4 w-4" />
                 </span>
@@ -193,13 +202,13 @@ export default function ReportForm() {
 
       <div className="space-y-2">
         <label htmlFor="report-title" className="text-[11px] font-black uppercase tracking-widest text-text-main">
-          Título curto
+          Titulo curto
         </label>
         <input
           id="report-title"
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(event) => setTitle(event.target.value)}
           maxLength={120}
           required
           placeholder="Ex: Buraco grande na Av. Brasil"
@@ -209,16 +218,16 @@ export default function ReportForm() {
 
       <div className="space-y-2">
         <label htmlFor="report-description" className="text-[11px] font-black uppercase tracking-widest text-text-main">
-          Descreva a situação
+          Descreva a situacao
         </label>
         <textarea
           id="report-description"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(event) => setDescription(event.target.value)}
           maxLength={1000}
           required
           rows={5}
-          placeholder="Conte o que está acontecendo, quando começou e a quem afeta."
+          placeholder="Conte o que esta acontecendo, quando comecou e a quem afeta."
           className="w-full rounded-xl border-2 border-border bg-white p-4 font-medium leading-6 text-text-main outline-none transition focus:border-primary"
         />
         <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">
@@ -252,7 +261,7 @@ export default function ReportForm() {
         {submitting ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            Enviando…
+            Enviando...
           </>
         ) : (
           <>

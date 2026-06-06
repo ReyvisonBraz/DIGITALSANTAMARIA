@@ -1,22 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createContentService } from '@/services/content.service';
 import type { ContentStatus } from '@/types';
 import type { Timestamp, WhereFilterOp } from 'firebase/firestore';
 
 /**
- * useContent — Hook universal para carregar conteúdo de qualquer coleção.
+ * Hook universal para carregar conteúdo de qualquer coleção.
  *
- * Gerencia automaticamente:
- * - loading / error / data states
- * - Retry em caso de falha
- * - Filtros dinâmicos
- *
- * Uso:
- * ```tsx
- * const { data, loading, error, refresh } = useContent<Work>('works');
- * ```
+ * Gerencia loading, erro, dados e recarregamento manual.
  */
 
 interface UseContentResult<T> {
@@ -42,7 +34,7 @@ export function useContent<T extends BaseDoc>(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const service = createContentService<T>(collectionName);
+  const service = useMemo(() => createContentService<T>(collectionName), [collectionName]);
 
   const fetch = useCallback(() => {
     setLoading(true);
@@ -51,7 +43,7 @@ export function useContent<T extends BaseDoc>(
       .then(setData)
       .catch((err) => setError(err instanceof Error ? err.message : 'Erro ao carregar dados'))
       .finally(() => setLoading(false));
-  }, [collectionName, JSON.stringify(filters)]);
+  }, [filters, service]);
 
   useEffect(() => { fetch(); }, [fetch]);
 

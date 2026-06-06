@@ -11,6 +11,7 @@ import { useNotifications } from '@/lib/notifications-context';
 import { createLogger } from '@/lib/logger';
 import { formatRelativeTime } from '@/lib/utils/formatters';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/lib/toast-context';
 import type { NotificationKind, NotificationTone } from '@/types';
 
 const log = createLogger('NotificationsPanel');
@@ -36,11 +37,22 @@ interface NotificationsPanelProps {
 
 export default function NotificationsPanel({ isOpen, onClose }: NotificationsPanelProps) {
   const { user, login } = useAuth();
+  const { toast } = useToast();
   const { notifications, unreadCount, loading, markAllAsRead, markAsRead } = useNotifications();
 
   useEffect(() => {
     if (isOpen) log.info('Notifications panel opened', { count: notifications.length });
   }, [isOpen, notifications.length]);
+
+  const handleLogin = async () => {
+    try {
+      await login();
+      onClose();
+    } catch (error) {
+      log.error('Login failed from notifications panel', {}, error);
+      toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+    }
+  };
 
   return (
     <SidePanel isOpen={isOpen} onClose={onClose} title="Notificacoes">
@@ -48,16 +60,13 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
         {!user ? (
           <div className="rounded-2xl border border-dashed border-border bg-surface p-6 text-center">
             <BellOff className="mx-auto h-6 w-6 text-text-muted" />
-            <p className="mt-3 text-sm font-semibold text-text-main">Entre para receber notificações</p>
+            <p className="mt-3 text-sm font-semibold text-text-main">Entre para receber notificacoes</p>
             <p className="mt-2 text-xs font-medium leading-5 text-text-muted">
-              Avisos sobre seus protocolos, relatos e petições aparecem aqui assim que você entra com sua conta.
+              Avisos sobre seus protocolos, relatos e peticoes aparecem aqui assim que voce entra com sua conta.
             </p>
             <button
               type="button"
-              onClick={() => {
-                login();
-                onClose();
-              }}
+              onClick={handleLogin}
               className="action-button-primary mt-4"
             >
               Entrar com Google
@@ -70,9 +79,9 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
         ) : notifications.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border bg-surface p-6 text-center">
             <BellOff className="mx-auto h-6 w-6 text-text-muted" />
-            <p className="mt-3 text-sm font-semibold text-text-main">Nenhuma notificação ainda</p>
+            <p className="mt-3 text-sm font-semibold text-text-main">Nenhuma notificacao ainda</p>
             <p className="mt-2 text-xs font-medium leading-5 text-text-muted">
-              Quando uma solicitação, relato ou petição sua mudar de status, você é avisado por aqui.
+              Quando uma solicitacao, relato ou peticao sua mudar de status, voce e avisado por aqui.
             </p>
           </div>
         ) : (
@@ -92,7 +101,7 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
                   }}
                   className={cn(
                     'relative block overflow-hidden rounded-xl border p-4 transition hover:border-primary/40 hover:shadow-sm',
-                    !notification.read ? 'border-primary/20 bg-white shadow-sm' : 'border-border bg-surface'
+                    !notification.read ? 'border-primary/20 bg-white shadow-sm' : 'border-border bg-surface',
                   )}
                   aria-label={`Notificacao: ${notification.title}`}
                 >

@@ -60,7 +60,12 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!user) {
-      await login();
+      try {
+        await login();
+      } catch (error) {
+        log.error('Login failed before petition creation', {}, error);
+        toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+      }
       return;
     }
 

@@ -80,6 +80,14 @@ export default function TopAppBar() {
     toast(nextState ? 'Modo de acessibilidade ativado.' : 'Modo padrao restaurado.', 'info');
   }, [highContrast, toast, toggleHighContrast]);
 
+  const handleLogin = useCallback(async () => {
+    try {
+      await login();
+    } catch (error) {
+      toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+    }
+  }, [login, toast]);
+
   return (
     <>
       <header
@@ -249,7 +257,7 @@ export default function TopAppBar() {
               </Link>
             ) : (
               <button
-                onClick={login}
+                onClick={handleLogin}
                 className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-3 text-[10px] font-semibold uppercase tracking-widest text-white shadow-[0_12px_24px_rgba(26,86,196,0.22)] transition hover:bg-primary-dark"
                 aria-label="Entrar com conta Google"
               >

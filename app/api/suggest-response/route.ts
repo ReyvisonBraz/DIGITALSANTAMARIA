@@ -7,7 +7,8 @@ export async function POST(request: NextRequest) {
     if (!type || !subject || !text) {
       return NextResponse.json({ suggestion: '' });
     }
-    const suggestion = await suggestDemandResponse(type, subject, text);
+
+    const suggestion = await suggestDemandResponse(String(type), String(subject), String(text));
     return NextResponse.json({ suggestion });
   } catch (error) {
     console.error('[/api/suggest-response]', error);

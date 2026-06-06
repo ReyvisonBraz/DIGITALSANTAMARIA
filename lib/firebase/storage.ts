@@ -37,7 +37,9 @@ export function generateStoragePath(
   uid: string,
   fileName: string
 ): string {
-  const ext = fileName.split('.').pop();
+  const fallbackExt = 'bin';
+  const rawExt = fileName.split('.').pop() || fallbackExt;
+  const ext = rawExt.toLowerCase().replace(/[^a-z0-9]/g, '') || fallbackExt;
   const timestamp = Date.now();
   return `${collection}/${uid}/${timestamp}.${ext}`;
 }

@@ -30,7 +30,7 @@ export default function EmpregosPage() {
       .then(setJobs)
       .catch(() => toast('Erro ao carregar vagas', 'error'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [toast]);
 
   const filteredJobs = jobs.filter((j) =>
     search === '' || j.title.toLowerCase().includes(search.toLowerCase())

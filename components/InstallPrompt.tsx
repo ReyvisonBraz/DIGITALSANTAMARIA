@@ -37,8 +37,24 @@ export default function InstallPrompt() {
   const [show, setShow] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production' || !('serviceWorker' in navigator)) return;
+
+    navigator.serviceWorker.getRegistrations()
+      .then((registrations) => {
+        registrations.forEach((registration) => {
+          registration.unregister();
+        });
+      })
+      .catch(() => {
+        // Development-only cleanup should never affect app usage.
+      });
+  }, []);
+
   /** Intercepta o evento beforeinstallprompt para exibir UI customizada */
   useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') return;
+
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);

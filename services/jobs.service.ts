@@ -1,14 +1,10 @@
 import {
   collection,
-  doc,
   addDoc,
-  getDoc,
   getDocs,
-  updateDoc,
   query,
   where,
   orderBy,
-  increment,
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -47,9 +43,6 @@ export async function applyForJob(
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
-
-  const jobRef = doc(db, JOBS_COL, input.jobId);
-  await updateDoc(jobRef, { applicationCount: increment(1) });
 
   return docRef.id;
 }

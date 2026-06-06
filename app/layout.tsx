@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Dancing_Script, Fraunces, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 import { ToastProvider } from '@/lib/toast-context';
@@ -11,6 +12,25 @@ import RootLayoutLogger from './root-layout-logger';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import InstallPrompt from '@/components/InstallPrompt';
 import ScrollAmbience from '@/components/ScrollAmbience';
+
+const displayFont = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-display',
+  weight: ['500', '600', '700'],
+  style: ['normal', 'italic'],
+});
+
+const sansFont = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  weight: ['400', '500', '600', '700', '800'],
+});
+
+const scriptFont = Dancing_Script({
+  subsets: ['latin'],
+  variable: '--font-script',
+  weight: ['600', '700'],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -29,15 +49,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Dancing+Script:wght@600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="pt-BR" className={`${displayFont.variable} ${sansFont.variable} ${scriptFont.variable}`} suppressHydrationWarning>
       <body className="antialiased min-h-screen bg-background text-text-main pt-[env(safe-area-inset-top,0px)]">
         <AccessibilityProvider>
           <AuthProvider>
