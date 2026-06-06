@@ -17,6 +17,7 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getFunctions } from 'firebase/functions';
 import { createLogger } from './logger';
 import fireaseConfig from '../firebase-applet-config.json';
 
@@ -53,6 +54,7 @@ const { config, databaseId } = getFirebaseConfig();
 export const app = getApps().length === 0 ? initializeApp(config) : getApps()[0];
 export const auth = getAuth(app);
 export const db = getFirestore(app, databaseId);
+export const functions = getFunctions(app, 'us-central1');
 
 firebaseLogger.info('Firebase initialized', {
   projectId: config.projectId,

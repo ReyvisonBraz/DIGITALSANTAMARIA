@@ -1,16 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.onDemandCreated = void 0;
-const functions = require("firebase-functions/v2");
+const functions = require("firebase-functions/v1");
 const admin = require("firebase-admin");
 if (!admin.apps.length)
     admin.initializeApp();
-exports.onDemandCreated = functions.firestore.onDocumentCreated('demands/{demandId}', async (event) => {
-    var _a;
-    const demandId = event.params.demandId;
-    const data = (_a = event.data) === null || _a === void 0 ? void 0 : _a.data();
-    if (!data)
-        return;
+exports.onDemandCreated = functions.firestore
+    .document('demands/{demandId}')
+    .onCreate(async (_snap, context) => {
+    const demandId = context.params.demandId;
     const counterRef = admin.firestore().doc('_counters/demands');
     try {
         const protocol = await admin.firestore().runTransaction(async (tx) => {

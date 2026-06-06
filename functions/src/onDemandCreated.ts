@@ -1,15 +1,12 @@
-import * as functions from 'firebase-functions/v2';
+import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
 
 if (!admin.apps.length) admin.initializeApp();
 
-export const onDemandCreated = functions.firestore.onDocumentCreated(
-  'demands/{demandId}',
-  async (event) => {
-    const demandId = event.params.demandId;
-    const data = event.data?.data();
-    if (!data) return;
-
+export const onDemandCreated = functions.firestore
+  .document('demands/{demandId}')
+  .onCreate(async (_snap, context) => {
+    const demandId = context.params.demandId;
     const counterRef = admin.firestore().doc('_counters/demands');
 
     try {
@@ -37,5 +34,4 @@ export const onDemandCreated = functions.firestore.onDocumentCreated(
     } catch (error) {
       console.error('[onDemandCreated] Erro ao gerar protocolo:', error);
     }
-  }
-);
+  });

@@ -1,42 +1,44 @@
-import * as functions from 'firebase-functions/v2';
+import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
 
 if (!admin.apps.length) admin.initializeApp();
 
 const STATUS_MESSAGES: Record<string, { title: string; body: string }> = {
   in_review: {
-    title: 'Solicitação em Análise',
-    body: 'Sua solicitação foi recebida e está sendo analisada pela equipe municipal.',
+    title: 'Solicitacao em analise',
+    body: 'Sua solicitacao foi recebida e esta sendo analisada pela equipe municipal.',
   },
   resolved: {
-    title: 'Solicitação Resolvida',
-    body: 'Sua solicitação foi resolvida. Veja a resposta no aplicativo.',
+    title: 'Solicitacao resolvida',
+    body: 'Sua solicitacao foi resolvida. Veja a resposta no aplicativo.',
   },
   rejected: {
-    title: 'Solicitação Indeferida',
-    body: 'Sua solicitação não pôde ser atendida.',
+    title: 'Solicitacao indeferida',
+    body: 'Sua solicitacao nao pode ser atendida.',
   },
   analyzing: {
-    title: 'Solicitação em Análise',
-    body: 'Sua solicitação entrou na fila de análise da prefeitura.',
+    title: 'Solicitacao em analise',
+    body: 'Sua solicitacao entrou na fila de analise da prefeitura.',
   },
   solved: {
-    title: 'Solicitação Resolvida',
-    body: 'Sua solicitação da ouvidoria foi resolvida.',
+    title: 'Solicitacao resolvida',
+    body: 'Sua solicitacao da ouvidoria foi resolvida.',
   },
 };
 
-async function notifyUser(userId: string, status: string): Promise<void> {
+async function notifyUser(userId: string | null | undefined, status: string): Promise<void> {
+  if (!userId) return;
+
+  const message = STATUS_MESSAGES[status];
+  if (!message) return;
+
   const userDoc = await admin.firestore().doc(`users/${userId}`).get();
   const fcmToken = userDoc.data()?.fcmToken;
 
   if (!fcmToken) {
-    console.log(`[onStatusChanged] Usuário ${userId} sem FCM token`);
+    console.log(`[onStatusChanged] Usuario ${userId} sem FCM token`);
     return;
   }
-
-  const message = STATUS_MESSAGES[status];
-  if (!message) return;
 
   try {
     await admin.messaging().send({
@@ -44,33 +46,26 @@ async function notifyUser(userId: string, status: string): Promise<void> {
       notification: { title: message.title, body: message.body },
       data: { type: 'status_update', status },
     });
-    console.log(`[onStatusChanged] Notificação enviada para ${userId}`);
+    console.log(`[onStatusChanged] Notificacao enviada para ${userId}`);
   } catch (error) {
-    console.error('[onStatusChanged] Erro ao enviar notificação:', error);
+    console.error('[onStatusChanged] Erro ao enviar notificacao:', error);
   }
 }
 
-const onReportStatusChanged = functions.firestore.onDocumentUpdated(
-  'reports/{reportId}',
-  async (event) => {
-    const before = event.data?.before.data();
-    const after = event.data?.after.data();
+export const onReportStatusChanged = functions.firestore
+  .document('reports/{reportId}')
+  .onUpdate(async (change) => {
+    const before = change.before.data();
+    const after = change.after.data();
     if (!before || !after || before.status === after.status) return;
     await notifyUser(after.reporterId, after.status);
-  }
-);
+  });
 
-const onDemandStatusChanged = functions.firestore.onDocumentUpdated(
-  'demands/{demandId}',
-  async (event) => {
-    const before = event.data?.before.data();
-    const after = event.data?.after.data();
+export const onDemandStatusChanged = functions.firestore
+  .document('demands/{demandId}')
+  .onUpdate(async (change) => {
+    const before = change.before.data();
+    const after = change.after.data();
     if (!before || !after || before.status === after.status) return;
     await notifyUser(after.authorId, after.status);
-  }
-);
-
-export const onStatusChanged = {
-  report: onReportStatusChanged,
-  demand: onDemandStatusChanged,
-};
+  });

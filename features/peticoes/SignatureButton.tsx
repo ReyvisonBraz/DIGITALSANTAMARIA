@@ -36,7 +36,7 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
         return;
       }
 
-      await signPetition(petitionId, user.uid, user.displayName || 'Cidadao');
+      await signPetition(petitionId, user.displayName || 'Cidadao');
       toast(`Assinatura registrada em "${petitionTitle}"!`, 'success');
       onSign();
     } catch (err) {

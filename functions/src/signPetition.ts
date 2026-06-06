@@ -9,16 +9,19 @@ export const signPetitionCallable = functions.https.onCall(
     if (!request.auth) {
       throw new functions.https.HttpsError(
         'unauthenticated',
-        'Autenticação necessária para assinar petições.'
+        'Autenticacao necessaria para assinar peticoes.'
       );
     }
 
-    const { petitionId } = request.data as { petitionId: string };
+    const { petitionId, userName: inputUserName } = request.data as {
+      petitionId?: string;
+      userName?: string;
+    };
     const userId = request.auth.uid;
-    const userName = request.auth.token.name ?? 'Cidadão';
+    const userName = inputUserName?.trim() || request.auth.token.name || 'Cidadao';
 
-    if (!petitionId) {
-      throw new functions.https.HttpsError('invalid-argument', 'petitionId é obrigatório');
+    if (!petitionId || typeof petitionId !== 'string') {
+      throw new functions.https.HttpsError('invalid-argument', 'petitionId e obrigatorio');
     }
 
     const sigId = `${petitionId}_${userId}`;
@@ -35,21 +38,24 @@ export const signPetitionCallable = functions.https.onCall(
         if (sigSnap.exists) {
           throw new functions.https.HttpsError(
             'already-exists',
-            'Você já assinou esta petição.'
+            'Voce ja assinou esta peticao.'
           );
         }
 
         if (!petitionSnap.exists) {
-          throw new functions.https.HttpsError('not-found', 'Petição não encontrada.');
+          throw new functions.https.HttpsError('not-found', 'Peticao nao encontrada.');
         }
 
         const petition = petitionSnap.data()!;
         if (petition.status !== 'active') {
           throw new functions.https.HttpsError(
             'failed-precondition',
-            'Esta petição não está mais ativa.'
+            'Esta peticao nao esta mais ativa.'
           );
         }
+
+        const nextSignaturesCount = (petition.signaturesCount ?? 0) + 1;
+        const nextStatus = nextSignaturesCount >= petition.goal ? 'achieved' : petition.status;
 
         tx.set(signatureRef, {
           petitionId,
@@ -60,12 +66,9 @@ export const signPetitionCallable = functions.https.onCall(
 
         tx.update(petitionRef, {
           signaturesCount: admin.firestore.FieldValue.increment(1),
+          status: nextStatus,
           updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         });
-
-        if (petition.signaturesCount + 1 >= petition.goal) {
-          tx.update(petitionRef, { status: 'achieved' });
-        }
       });
 
       return { success: true };

@@ -4,14 +4,13 @@ import {
   doc,
   getDoc,
   getDocs,
-  increment,
   query,
-  runTransaction,
   serverTimestamp,
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { httpsCallable } from 'firebase/functions';
+import { db, functions } from '@/lib/firebase';
 import { petitionConverter } from '@/lib/firebase/converters';
 import type { CreatePetitionInput, Petition, PetitionStatus } from '@/types';
 
@@ -85,30 +84,15 @@ export async function updatePetitionAdmin(
   });
 }
 
-export async function signPetition(petitionId: string, userId: string, userName: string): Promise<void> {
-  const petitionRef = doc(db, PETITIONS_COL, petitionId);
-  const signatureId = `${petitionId}_${userId}`;
-  const signatureRef = doc(db, SIGNATURES_COL, signatureId);
+export async function signPetition(petitionId: string, userName: string): Promise<void> {
+  const callable = httpsCallable<
+    { petitionId: string; userName?: string },
+    { success: boolean }
+  >(functions, 'signPetitionCallable');
 
-  await runTransaction(db, async (transaction) => {
-    const petitionSnap = await transaction.get(petitionRef);
-    if (!petitionSnap.exists()) {
-      throw new Error('Peticao nao encontrada');
-    }
-    const signatureSnap = await transaction.get(signatureRef);
-    if (signatureSnap.exists()) {
-      throw new Error('Voce ja assinou esta peticao');
-    }
-    transaction.set(signatureRef, {
-      petitionId,
-      userId,
-      userName,
-      createdAt: serverTimestamp(),
-    });
-    transaction.update(petitionRef, {
-      signaturesCount: increment(1),
-      updatedAt: serverTimestamp(),
-    });
+  await callable({
+    petitionId,
+    userName: userName || 'Cidadao',
   });
 }
 

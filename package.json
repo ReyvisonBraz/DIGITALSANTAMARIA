@@ -6,7 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "firebase:rules:check": "firebase deploy --only firestore:rules --project digitalsantamaria-2ced4 --dry-run",
+    "firebase:rules:deploy": "firebase deploy --only firestore:rules --project digitalsantamaria-2ced4",
+    "firebase:indexes:check": "firebase deploy --only firestore:indexes --project digitalsantamaria-2ced4 --dry-run",
+    "firebase:indexes:deploy": "firebase deploy --only firestore:indexes --project digitalsantamaria-2ced4",
+    "firebase:storage:check": "firebase deploy --only storage --project digitalsantamaria-2ced4 --dry-run",
+    "firebase:storage:deploy": "firebase deploy --only storage --project digitalsantamaria-2ced4",
+    "firebase:functions:build": "npm --prefix functions run build",
+    "firebase:functions:deploy": "firebase deploy --only functions --project digitalsantamaria-2ced4",
+    "firebase:seed": "ts-node scripts/seed.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -32,6 +41,7 @@
     "eslint": "^8.0.0",
     "eslint-config-next": "^16.0.0",
     "firebase-admin": "^12.7.0",
+    "firebase-tools": "^15.19.1",
     "postcss": "^8.5.10",
     "tailwindcss": "^4.2.4",
     "ts-node": "^10.9.2",
