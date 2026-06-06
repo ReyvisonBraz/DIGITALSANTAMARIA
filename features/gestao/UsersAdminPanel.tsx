@@ -44,7 +44,13 @@ function UserAdminCard({ user, onSaved }: { user: UserProfile; onSaved: () => vo
           <div className="flex items-center gap-3">
             <div className="relative h-12 w-12 overflow-hidden rounded-xl border border-border bg-surface">
               {user.photoURL ? (
-                <Image src={user.photoURL} alt={user.displayName || 'Usuario'} fill className="object-cover" />
+                <Image
+                  src={user.photoURL}
+                  alt={user.displayName || 'Usuario'}
+                  fill
+                  sizes="48px"
+                  className="object-cover"
+                />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-primary">
                   <UserRound className="h-6 w-6" />

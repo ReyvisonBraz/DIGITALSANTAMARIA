@@ -247,13 +247,21 @@ export default function TopAppBar() {
 
             {user ? (
               <Link href="/perfil" className="relative h-10 w-10 overflow-hidden rounded-xl border border-border bg-primary-light" aria-label="Ir para perfil">
-                <Image
-                  src={user.photoURL || 'https://picsum.photos/seed/user/100/100'}
-                  alt="Foto de perfil"
-                  fill
-                  className="object-cover"
-                  referrerPolicy="no-referrer"
-                />
+                {user.photoURL ? (
+                  <Image
+                    src={user.photoURL}
+                    alt="Foto de perfil"
+                    fill
+                    sizes="40px"
+                    priority={pathname === '/gestao'}
+                    className="object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <span className="flex h-full w-full items-center justify-center text-primary">
+                    <UserIcon className="h-4 w-4" />
+                  </span>
+                )}
               </Link>
             ) : (
               <button

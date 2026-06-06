@@ -31,7 +31,9 @@ export function createContentService<T extends { id: string; status: ContentStat
   collectionName: string,
   converter?: FirestoreDataConverter<T>,
 ): ContentService<T> {
-  const col = collection(db, collectionName).withConverter(converter || ({} as FirestoreDataConverter<T>));
+  const col = converter
+    ? collection(db, collectionName).withConverter(converter)
+    : collection(db, collectionName);
 
   async function list(filters?: [string, WhereFilterOp, unknown][], max = 50): Promise<T[]> {
     const baseConstraints: QueryConstraint[] = [
