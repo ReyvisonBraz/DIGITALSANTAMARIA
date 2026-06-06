@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ArrowLeft,
   CalendarDays,
@@ -19,26 +19,23 @@ import { useToast } from '@/lib/toast-context';
 import { useAuth } from '@/lib/auth-context';
 import { createAppointment } from '@/services/appointments.service';
 import { createLogger } from '@/lib/logger';
+import type { HealthUnit } from '@/types';
 
 const log = createLogger('AppointmentModal');
 
 interface AppointmentModalProps {
   isOpen: boolean;
   onClose: () => void;
+  units: HealthUnit[];
+  initialUnit?: HealthUnit | null;
 }
 
-const specialties = ['Clinico Geral', 'Pediatria', 'Ginecologia', 'Odontologia'];
-const units = [
-  { id: 'ubs-felicidade', name: 'UBS Santa Felicidade' },
-  { id: 'upa-central', name: 'UPA Central' },
-  { id: 'ubs-centro', name: 'UBS Centro' },
-];
 const availableTimes = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '14:00', '14:30', '15:00', '15:30'];
 
 function getNextBusinessDates(count = 5) {
   const formatter = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short' });
   const weekdayFormatter = new Intl.DateTimeFormat('pt-BR', { weekday: 'short' });
-  const dates: { day: string; date: string }[] = [];
+  const dates: { day: string; label: string; value: string }[] = [];
   const current = new Date();
   current.setDate(current.getDate() + 1);
 
@@ -47,7 +44,8 @@ function getNextBusinessDates(count = 5) {
     if (weekday !== 0 && weekday !== 6) {
       dates.push({
         day: weekdayFormatter.format(current).replace('.', ''),
-        date: formatter.format(current).replace('.', ''),
+        label: formatter.format(current).replace('.', ''),
+        value: current.toISOString().slice(0, 10),
       });
     }
     current.setDate(current.getDate() + 1);
@@ -56,7 +54,7 @@ function getNextBusinessDates(count = 5) {
   return dates;
 }
 
-const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose }) => {
+const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, units, initialUnit = null }) => {
   const { user, login } = useAuth();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
@@ -64,12 +62,25 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose }) 
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
     specialty: '',
-    unit: '',
-    unitName: '',
+    unit: initialUnit?.id || '',
+    unitName: initialUnit?.name || '',
     date: '',
     time: '',
   });
   const availableDates = useMemo(() => getNextBusinessDates(), []);
+  const selectedUnit = units.find((unit) => unit.id === formData.unit) || initialUnit || null;
+  const specialties = selectedUnit?.specialties?.length
+    ? selectedUnit.specialties
+    : Array.from(new Set(units.flatMap((unit) => unit.specialties || [])));
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setFormData((previous) => ({
+      ...previous,
+      unit: initialUnit?.id || previous.unit,
+      unitName: initialUnit?.name || previous.unitName,
+    }));
+  }, [initialUnit, isOpen]);
 
   const handleConfirm = async () => {
     if (!formData.specialty || !formData.unit || !formData.date || !formData.time) {
@@ -110,7 +121,13 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose }) 
   const handleClose = () => {
     setStep(1);
     setSuccess(false);
-    setFormData({ specialty: '', unit: '', unitName: '', date: '', time: '' });
+    setFormData({
+      specialty: '',
+      unit: initialUnit?.id || '',
+      unitName: initialUnit?.name || '',
+      date: '',
+      time: '',
+    });
     onClose();
   };
 
@@ -161,14 +178,19 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose }) 
         ) : step === 1 ? (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
             <h4 className="pl-1 text-xs font-semibold uppercase tracking-widest text-text-muted">Escolha a especialidade</h4>
-            <div className="grid grid-cols-1 gap-3">
-              {specialties.map((specialty) => (
+            {specialties.length === 0 ? (
+              <div className="rounded-2xl border-2 border-dashed border-border bg-surface p-6 text-center text-xs font-semibold uppercase tracking-widest text-text-muted">
+                Nenhuma especialidade disponivel no momento.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-3">
+                {specialties.map((specialty) => (
                 <button
                   key={specialty}
                   type="button"
                   onClick={() => {
                     setFormData({ ...formData, specialty });
-                    setStep(2);
+                    setStep(formData.unit ? 3 : 2);
                   }}
                   className="group flex w-full items-center justify-between rounded-xl border-2 border-border p-4 transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98]"
                 >
@@ -180,8 +202,9 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose }) 
                   </div>
                   <ChevronRight className="h-5 w-5 text-text-muted transition-colors group-hover:text-primary" />
                 </button>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </motion.div>
         ) : step === 2 ? (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
@@ -192,12 +215,26 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose }) 
               <h4 className="text-xs font-semibold uppercase tracking-widest text-text-muted">Unidade de atendimento</h4>
             </div>
             <div className="grid grid-cols-1 gap-3">
-              {units.map((unit) => (
+              {units.length === 0 ? (
+                <div className="rounded-2xl border-2 border-dashed border-border bg-surface p-6 text-center text-xs font-semibold uppercase tracking-widest text-text-muted">
+                  Nenhuma unidade disponivel no momento.
+                </div>
+              ) : units.map((unit) => (
                 <button
                   key={unit.id}
                   type="button"
                   onClick={() => {
-                    setFormData({ ...formData, unit: unit.id, unitName: unit.name });
+                    const keepSpecialty = unit.specialties.includes(formData.specialty);
+                    setFormData({
+                      ...formData,
+                      unit: unit.id,
+                      unitName: unit.name,
+                      specialty: keepSpecialty ? formData.specialty : '',
+                    });
+                    if (!keepSpecialty) {
+                      setStep(1);
+                      return;
+                    }
                     setStep(3);
                   }}
                   className="group flex w-full items-center justify-between rounded-xl border-2 border-border p-4 transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98]"
@@ -225,18 +262,18 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose }) 
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {availableDates.map((dateOption) => (
                   <button
-                    key={dateOption.date}
+                    key={dateOption.value}
                     type="button"
-                    onClick={() => setFormData({ ...formData, date: dateOption.date })}
+                    onClick={() => setFormData({ ...formData, date: dateOption.value })}
                     className={cn(
                       'flex w-20 flex-none flex-col items-center gap-1 rounded-xl border-2 p-3 transition-all',
-                      formData.date === dateOption.date
+                      formData.date === dateOption.value
                         ? 'border-primary bg-primary text-white shadow-lg'
                         : 'border-border bg-white text-text-muted',
                     )}
                   >
                     <span className="text-[10px] font-semibold uppercase tracking-widest opacity-60">{dateOption.day}</span>
-                    <span className="text-sm font-semibold">{dateOption.date}</span>
+                    <span className="text-sm font-semibold">{dateOption.label}</span>
                   </button>
                 ))}
               </div>

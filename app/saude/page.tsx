@@ -86,7 +86,10 @@ export default function SaudePage() {
             </div>
 
             <button 
-               onClick={() => setModalOpen(true)}
+               onClick={() => {
+                  setSelectedClinic(null);
+                  setModalOpen(true);
+               }}
                className="w-full bg-sky-500 text-white p-4 rounded-2xl font-semibold text-xs uppercase tracking-widest shadow-xl shadow-sky-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3"
             >
                <CalendarDays className="w-4 h-4" />
@@ -372,8 +375,12 @@ export default function SaudePage() {
                          >
                             Fechar
                          </button>
-                         <button className="flex-grow bg-sky-500 text-white px-8 py-4 rounded-2xl font-semibold text-[10px] uppercase tracking-widest shadow-xl shadow-sky-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3">
-                            Como Chegar
+                         <button
+                            type="button"
+                            onClick={() => setModalOpen(true)}
+                            className="flex-grow bg-sky-500 text-white px-8 py-4 rounded-2xl font-semibold text-[10px] uppercase tracking-widest shadow-xl shadow-sky-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3"
+                         >
+                            Agendar aqui
                             <ArrowRight className="w-4 h-4" />
                          </button>
                       </div>
@@ -390,6 +397,8 @@ export default function SaudePage() {
       <AppointmentModal 
         isOpen={modalOpen} 
         onClose={() => setModalOpen(false)} 
+        units={units}
+        initialUnit={selectedClinic}
       />
 
       <HealthHistoryPanel 
