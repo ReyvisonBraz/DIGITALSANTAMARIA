@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Loader2, Save } from 'lucide-react';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { updateDemandStatus } from '@/services/demands.service';
 import { useToast } from '@/lib/toast-context';
 import type { DemandStatus } from '@/types';
@@ -22,6 +23,14 @@ const statuses: { label: string; value: DemandStatus }[] = [
   { label: 'Recusada', value: 'rejected' },
 ];
 
+function getStatusLabel(status: DemandStatus) {
+  return statuses.find((item) => item.value === status)?.label || status;
+}
+
+function requiresConfirmation(status: DemandStatus) {
+  return status === 'solved' || status === 'rejected';
+}
+
 export default function StatusUpdater({
   demandId,
   clerkId,
@@ -34,18 +43,14 @@ export default function StatusUpdater({
   const [status, setStatus] = useState<DemandStatus>(initialStatus);
   const [response, setResponse] = useState(initialResponse);
   const [loading, setLoading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
     setStatus(initialStatus);
     setResponse(initialResponse);
   }, [initialStatus, initialResponse]);
 
-  const handleSave = async () => {
-    if (!response.trim() && (status === 'solved' || status === 'rejected')) {
-      toast('Informe uma resposta oficial para concluir a solicitacao.', 'error');
-      return;
-    }
-
+  const saveStatus = async () => {
     setLoading(true);
     try {
       await updateDemandStatus(demandId, status, {
@@ -54,6 +59,7 @@ export default function StatusUpdater({
         response: response.trim(),
       });
       toast('Solicitacao atualizada.', 'success');
+      setConfirmOpen(false);
       onUpdate();
     } catch {
       toast('Erro ao atualizar solicitacao.', 'error');
@@ -62,42 +68,69 @@ export default function StatusUpdater({
     }
   };
 
-  return (
-    <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[180px_1fr]">
-        <label className="space-y-2">
-          <span className="text-xs font-black uppercase tracking-widest text-text-muted">Status</span>
-          <select
-            value={status}
-            onChange={(event) => setStatus(event.target.value as DemandStatus)}
-            className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary"
-          >
-            {statuses.map((item) => (
-              <option key={item.value} value={item.value}>{item.label}</option>
-            ))}
-          </select>
-        </label>
+  const handleSave = () => {
+    if (!response.trim() && (status === 'solved' || status === 'rejected')) {
+      toast('Informe uma resposta oficial para concluir a solicitacao.', 'error');
+      return;
+    }
 
-        <label className="space-y-2">
-          <span className="text-xs font-black uppercase tracking-widest text-text-muted">Resposta oficial</span>
-          <textarea
-            value={response}
-            onChange={(event) => setResponse(event.target.value)}
-            rows={3}
-            placeholder="Escreva a resposta que o cidadao vera na consulta do protocolo."
-            className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary"
-          />
-        </label>
+    if (requiresConfirmation(status)) {
+      setConfirmOpen(true);
+      return;
+    }
+
+    saveStatus();
+  };
+
+  return (
+    <>
+      <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[180px_1fr]">
+          <label className="space-y-2">
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Status</span>
+            <select
+              value={status}
+              onChange={(event) => setStatus(event.target.value as DemandStatus)}
+              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary"
+            >
+              {statuses.map((item) => (
+                <option key={item.value} value={item.value}>{item.label}</option>
+              ))}
+            </select>
+          </label>
+
+          <label className="space-y-2">
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Resposta oficial</span>
+            <textarea
+              value={response}
+              onChange={(event) => setResponse(event.target.value)}
+              rows={3}
+              placeholder="Escreva a resposta que o cidadao vera na consulta do protocolo."
+              className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary"
+            />
+          </label>
+        </div>
+
+        <button
+          onClick={handleSave}
+          disabled={loading}
+          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        >
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          Salvar atualizacao
+        </button>
       </div>
 
-      <button
-        onClick={handleSave}
-        disabled={loading}
-        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-      >
-        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-        Salvar atualizacao
-      </button>
-    </div>
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title={`Confirmar ${getStatusLabel(status).toLowerCase()}`}
+        description={`Esta acao vai marcar a solicitacao como ${getStatusLabel(status).toLowerCase()} e o cidadao vera a resposta oficial no historico do protocolo.`}
+        confirmLabel="Confirmar status"
+        loading={loading}
+        tone={status === 'rejected' ? 'danger' : 'default'}
+        onConfirm={saveStatus}
+        onClose={() => setConfirmOpen(false)}
+      />
+    </>
   );
 }

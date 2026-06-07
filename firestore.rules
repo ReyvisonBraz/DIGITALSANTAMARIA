@@ -155,6 +155,19 @@ service cloud.firestore {
       allow update: if isStaff();
     }
 
+    match /report_messages/{messageId} {
+      allow read: if isStaff()
+        || isOwner(get(/databases/$(database)/documents/reports/$(resource.data.reportId)).data.reporterId);
+      allow create: if isStaff()
+        || (
+          isSignedIn()
+          && incoming().authorId == request.auth.uid
+          && incoming().authorRole == 'citizen'
+          && get(/databases/$(database)/documents/reports/$(incoming().reportId)).data.reporterId == request.auth.uid
+        );
+      allow update, delete: if false;
+    }
+
     match /demands/{demandId} {
       allow read: if isStaff()
         || isOwner(resource.data.authorId)
@@ -162,6 +175,20 @@ service cloud.firestore {
       allow create: if isSignedIn() && validDemandCreate();
       allow update: if isStaff();
       allow delete: if isAdmin();
+    }
+
+    match /demand_messages/{messageId} {
+      allow read: if isStaff()
+        || isOwner(get(/databases/$(database)/documents/demands/$(resource.data.demandId)).data.authorId)
+        || get(/databases/$(database)/documents/demands/$(resource.data.demandId)).data.isAnonymous == true;
+      allow create: if isStaff()
+        || (
+          isSignedIn()
+          && incoming().authorId == request.auth.uid
+          && incoming().authorRole == 'citizen'
+          && get(/databases/$(database)/documents/demands/$(incoming().demandId)).data.authorId == request.auth.uid
+        );
+      allow update, delete: if false;
     }
 
     match /petitions/{petitionId} {
@@ -232,6 +259,12 @@ service cloud.firestore {
         && incoming().diff(existing()).affectedKeys().hasOnly(['read'])
         && incoming().read == true;
       allow delete: if false;
+    }
+
+    match /admin_audit_logs/{logId} {
+      allow read: if isStaff();
+      allow create: if isStaff();
+      allow update, delete: if false;
     }
 
     // Conteudo publicado pela prefeitura: leitura publica, escrita so admin.

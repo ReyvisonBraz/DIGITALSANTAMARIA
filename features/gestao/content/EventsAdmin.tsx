@@ -1,13 +1,24 @@
 'use client';
 
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Archive, CalendarDays, Loader2, MapPin, Pencil, Save, X } from 'lucide-react';
 import { createContentService } from '@/services/content.service';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
+import {
+  ContentListControls,
+  ContentQuickActions,
+  ContentPreviewDialog,
+  ContentStatusBadge,
+  ContentStatusFilter,
+  ContentStatusSelect,
+  type ContentListSort,
+} from '@/features/gestao/content/ContentWorkflowControls';
+import { tryCreateAdminAuditLog } from '@/services/admin-audit.service';
 import { useToast } from '@/lib/toast-context';
+import { useAuth } from '@/lib/auth-context';
 import { formatDate } from '@/lib/utils/formatters';
-import type { Event as CityEvent } from '@/types';
+import type { ContentStatus, Event as CityEvent } from '@/types';
 
 const service = createContentService<CityEvent>('events');
 
@@ -23,15 +34,22 @@ const CATEGORIES: { value: CityEvent['category']; label: string }[] = [
 
 export default function EventsAdmin() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [events, setEvents] = useState<CityEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const [archiving, setArchiving] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<ContentStatus | 'all'>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortMode, setSortMode] = useState<ContentListSort>('newest');
+  const [quickActionId, setQuickActionId] = useState<string | null>(null);
+  const [previewEvent, setPreviewEvent] = useState<CityEvent | null>(null);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [status, setStatus] = useState<ContentStatus>('published');
   const [category, setCategory] = useState<CityEvent['category']>('cultura');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -44,7 +62,7 @@ export default function EventsAdmin() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const list = await service.list();
+      const list = await service.listAdmin();
       setEvents(list);
     } catch {
       toast('Não foi possível carregar os eventos.', 'error');
@@ -60,6 +78,7 @@ export default function EventsAdmin() {
   const resetForm = () => {
     setTitle('');
     setDescription('');
+    setStatus('published');
     setCategory('cultura');
     setDate('');
     setTime('');
@@ -75,6 +94,7 @@ export default function EventsAdmin() {
     setEditingId(event.id);
     setTitle(event.title);
     setDescription(event.description);
+    setStatus(event.status);
     setCategory(event.category);
     setDate(event.date);
     setTime(event.time);
@@ -102,7 +122,7 @@ export default function EventsAdmin() {
       const payload = {
         title: title.trim(),
         description: description.trim(),
-        status: 'published' as const,
+        status,
         category,
         date,
         time: time.trim(),
@@ -119,7 +139,7 @@ export default function EventsAdmin() {
         toast('Evento atualizado.', 'success');
       } else {
         await service.create(payload);
-        toast('Evento publicado.', 'success');
+        toast(status === 'published' ? 'Evento publicado.' : 'Evento salvo.', 'success');
       }
       resetForm();
       load();
@@ -144,6 +164,68 @@ export default function EventsAdmin() {
       setArchiving(false);
     }
   };
+
+  const handleQuickStatus = async (cityEvent: CityEvent, nextStatus: ContentStatus) => {
+    const eventId = cityEvent.id;
+    setQuickActionId(eventId);
+    try {
+      if (nextStatus === 'archived') {
+        await service.archive(eventId);
+      } else {
+        await service.setStatus(eventId, nextStatus);
+      }
+      await tryCreateAdminAuditLog({
+        action: nextStatus === 'archived' ? 'content_archived' : 'content_status_changed',
+        collectionName: 'events',
+        documentId: eventId,
+        actorId: user?.uid || 'unknown',
+        actorName: user?.displayName || user?.email || 'Gestor',
+        previousValue: cityEvent.status,
+        nextValue: nextStatus,
+        note: null,
+      });
+      toast('Status do evento atualizado.', 'success');
+      load();
+    } catch {
+      toast('Erro ao atualizar status do evento.', 'error');
+    } finally {
+      setQuickActionId(null);
+    }
+  };
+
+  const statusCounts = useMemo(() => {
+    return events.reduce<Record<string, number>>((acc, event) => {
+      acc[event.status] = (acc[event.status] || 0) + 1;
+      return acc;
+    }, {});
+  }, [events]);
+
+  const visibleEvents = useMemo(() => {
+    const search = searchTerm.trim().toLowerCase();
+    return events
+      .filter((event) => {
+        const matchesStatus = statusFilter === 'all' || event.status === statusFilter;
+        const searchable = [
+          event.title,
+          event.description,
+          event.category,
+          event.date,
+          event.time,
+          event.location,
+          event.address,
+          event.organizer,
+          event.price,
+        ].join(' ').toLowerCase();
+        const matchesSearch = !search || searchable.includes(search);
+        return matchesStatus && matchesSearch;
+      })
+      .sort((a, b) => {
+        if (sortMode === 'title') return a.title.localeCompare(b.title);
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return sortMode === 'oldest' ? aTime - bTime : bTime - aTime;
+      });
+  }, [events, searchTerm, sortMode, statusFilter]);
 
   return (
     <div className="space-y-6">
@@ -214,6 +296,8 @@ export default function EventsAdmin() {
               className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
             />
           </label>
+
+          <ContentStatusSelect value={status} onChange={setStatus} />
 
           <label className="space-y-1.5">
             <span className="text-xs font-black uppercase tracking-widest text-text-muted">Data</span>
@@ -305,7 +389,7 @@ export default function EventsAdmin() {
               className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {editingId ? 'Salvar alteracoes' : 'Publicar'}
+              {editingId ? 'Salvar alteracoes' : status === 'published' ? 'Publicar' : 'Salvar'}
             </button>
           </div>
         </form>
@@ -314,9 +398,28 @@ export default function EventsAdmin() {
       <section className="glass-panel p-5 md:p-6">
         <div className="mb-5 flex items-end justify-between border-b border-border pb-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Publicados</p>
-            <h3 className="text-lg font-semibold text-text-main">Eventos na agenda ({events.length})</h3>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Workflow editorial</p>
+            <h3 className="text-lg font-semibold text-text-main">Eventos cadastrados ({events.length})</h3>
           </div>
+        </div>
+
+        <div className="mb-4">
+          <ContentStatusFilter
+            value={statusFilter}
+            counts={statusCounts}
+            total={events.length}
+            onChange={setStatusFilter}
+          />
+        </div>
+
+        <div className="mb-4">
+          <ContentListControls
+            search={searchTerm}
+            sort={sortMode}
+            searchPlaceholder="Buscar por titulo, local, data, categoria ou organizador"
+            onSearchChange={setSearchTerm}
+            onSortChange={setSortMode}
+          />
         </div>
 
         {loading ? (
@@ -325,18 +428,21 @@ export default function EventsAdmin() {
           </div>
         ) : events.length === 0 ? (
           <EmptyState
-            title="Nenhum evento publicado"
+            title="Nenhum evento cadastrado"
             description="Use o formulário acima para colocar o primeiro evento na agenda da cidade."
           />
+        ) : visibleEvents.length === 0 ? (
+          <EmptyState title="Nenhum evento encontrado" description="Ajuste a busca ou os filtros para ver mais registros." />
         ) : (
           <div className="space-y-3">
-            {events.map((event) => (
+            {visibleEvents.map((event) => (
               <article key={event.id} className="civic-card flex flex-col gap-3 p-4 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary">
                       {event.category}
                     </span>
+                    <ContentStatusBadge status={event.status} />
                     <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
                       {event.isFree ? 'Gratuito' : event.price}
                     </span>
@@ -355,6 +461,20 @@ export default function EventsAdmin() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
+                  <ContentQuickActions
+                    status={event.status}
+                    loading={quickActionId === event.id}
+                    onPublish={() => handleQuickStatus(event, 'published')}
+                    onDraft={() => handleQuickStatus(event, 'draft')}
+                    onArchive={() => setArchiveId(event.id)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setPreviewEvent(event)}
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+                  >
+                    Preview
+                  </button>
                   <button
                     type="button"
                     onClick={() => startEdit(event)}
@@ -387,6 +507,15 @@ export default function EventsAdmin() {
         tone="danger"
         onConfirm={handleArchive}
         onClose={() => setArchiveId(null)}
+      />
+
+      <ContentPreviewDialog
+        isOpen={!!previewEvent}
+        title={previewEvent?.title || ''}
+        description={previewEvent?.description || ''}
+        meta={previewEvent ? [previewEvent.category, previewEvent.date, previewEvent.time, previewEvent.location] : []}
+        actionLabel={previewEvent?.isFree ? 'Evento gratuito' : previewEvent?.price || null}
+        onClose={() => setPreviewEvent(null)}
       />
     </div>
   );

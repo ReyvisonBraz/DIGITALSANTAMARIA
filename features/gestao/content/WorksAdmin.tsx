@@ -1,14 +1,25 @@
 'use client';
 
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Archive, HardHat, Loader2, MapPin, Pencil, Save, X } from 'lucide-react';
 import { createContentService } from '@/services/content.service';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
+import {
+  ContentListControls,
+  ContentQuickActions,
+  ContentPreviewDialog,
+  ContentStatusBadge,
+  ContentStatusFilter,
+  ContentStatusSelect,
+  type ContentListSort,
+} from '@/features/gestao/content/ContentWorkflowControls';
+import { tryCreateAdminAuditLog } from '@/services/admin-audit.service';
 import { useToast } from '@/lib/toast-context';
+import { useAuth } from '@/lib/auth-context';
 import { formatDate, formatCurrency } from '@/lib/utils/formatters';
 import { cn } from '@/lib/utils';
-import type { Work } from '@/types';
+import type { ContentStatus, Work } from '@/types';
 
 const service = createContentService<Work>('works');
 
@@ -24,15 +35,22 @@ const CATEGORIES: { value: Work['category']; label: string }[] = [
 
 export default function WorksAdmin() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [works, setWorks] = useState<Work[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const [archiving, setArchiving] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<ContentStatus | 'all'>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortMode, setSortMode] = useState<ContentListSort>('newest');
+  const [quickActionId, setQuickActionId] = useState<string | null>(null);
+  const [previewWork, setPreviewWork] = useState<Work | null>(null);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [status, setStatus] = useState<ContentStatus>('published');
   const [category, setCategory] = useState<Work['category']>('asfalto');
   const [address, setAddress] = useState('');
   const [neighborhood, setNeighborhood] = useState('');
@@ -45,7 +63,7 @@ export default function WorksAdmin() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const list = await service.list();
+      const list = await service.listAdmin();
       setWorks(list);
     } catch {
       toast('Não foi possível carregar as obras.', 'error');
@@ -59,6 +77,7 @@ export default function WorksAdmin() {
   const resetForm = () => {
     setTitle('');
     setDescription('');
+    setStatus('published');
     setCategory('asfalto');
     setAddress('');
     setNeighborhood('');
@@ -74,6 +93,7 @@ export default function WorksAdmin() {
     setEditingId(work.id);
     setTitle(work.title);
     setDescription(work.description);
+    setStatus(work.status);
     setCategory(work.category);
     setAddress(work.address);
     setNeighborhood(work.neighborhood);
@@ -99,7 +119,7 @@ export default function WorksAdmin() {
       const payload = {
         title: title.trim(),
         description: description.trim(),
-        status: 'published' as const,
+        status,
         category,
         address: address.trim(),
         neighborhood: neighborhood.trim(),
@@ -116,7 +136,7 @@ export default function WorksAdmin() {
         toast('Obra atualizada.', 'success');
       } else {
         await service.create(payload);
-        toast('Obra publicada.', 'success');
+        toast(status === 'published' ? 'Obra publicada.' : 'Obra salva.', 'success');
       }
       resetForm();
       load();
@@ -141,6 +161,67 @@ export default function WorksAdmin() {
       setArchiving(false);
     }
   };
+
+  const handleQuickStatus = async (work: Work, nextStatus: ContentStatus) => {
+    const workId = work.id;
+    setQuickActionId(workId);
+    try {
+      if (nextStatus === 'archived') {
+        await service.archive(workId);
+      } else {
+        await service.setStatus(workId, nextStatus);
+      }
+      await tryCreateAdminAuditLog({
+        action: nextStatus === 'archived' ? 'content_archived' : 'content_status_changed',
+        collectionName: 'works',
+        documentId: workId,
+        actorId: user?.uid || 'unknown',
+        actorName: user?.displayName || user?.email || 'Gestor',
+        previousValue: work.status,
+        nextValue: nextStatus,
+        note: null,
+      });
+      toast('Status da obra atualizado.', 'success');
+      load();
+    } catch {
+      toast('Erro ao atualizar status da obra.', 'error');
+    } finally {
+      setQuickActionId(null);
+    }
+  };
+
+  const statusCounts = useMemo(() => {
+    return works.reduce<Record<string, number>>((acc, work) => {
+      acc[work.status] = (acc[work.status] || 0) + 1;
+      return acc;
+    }, {});
+  }, [works]);
+
+  const visibleWorks = useMemo(() => {
+    const search = searchTerm.trim().toLowerCase();
+    return works
+      .filter((work) => {
+        const matchesStatus = statusFilter === 'all' || work.status === statusFilter;
+        const searchable = [
+          work.title,
+          work.description,
+          work.category,
+          work.address,
+          work.neighborhood,
+          work.contractor,
+          String(work.budget || ''),
+          String(work.progress || ''),
+        ].join(' ').toLowerCase();
+        const matchesSearch = !search || searchable.includes(search);
+        return matchesStatus && matchesSearch;
+      })
+      .sort((a, b) => {
+        if (sortMode === 'title') return a.title.localeCompare(b.title);
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return sortMode === 'oldest' ? aTime - bTime : bTime - aTime;
+      });
+  }, [searchTerm, sortMode, statusFilter, works]);
 
   return (
     <div className="space-y-6">
@@ -192,6 +273,8 @@ export default function WorksAdmin() {
               className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
           </label>
 
+          <ContentStatusSelect value={status} onChange={setStatus} />
+
           <label className="md:col-span-2 space-y-1.5">
             <span className="text-xs font-black uppercase tracking-widest text-text-muted">Endereço</span>
             <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} required maxLength={200}
@@ -241,7 +324,7 @@ export default function WorksAdmin() {
             <button type="submit" disabled={saving}
               className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {editingId ? 'Salvar alteracoes' : 'Publicar'}
+              {editingId ? 'Salvar alteracoes' : status === 'published' ? 'Publicar' : 'Salvar'}
             </button>
           </div>
         </form>
@@ -250,9 +333,28 @@ export default function WorksAdmin() {
       <section className="glass-panel p-5 md:p-6">
         <div className="mb-5 flex items-end justify-between border-b border-border pb-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Publicadas</p>
-            <h3 className="text-lg font-semibold text-text-main">Obras em andamento ({works.length})</h3>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Workflow editorial</p>
+            <h3 className="text-lg font-semibold text-text-main">Obras cadastradas ({works.length})</h3>
           </div>
+        </div>
+
+        <div className="mb-4">
+          <ContentStatusFilter
+            value={statusFilter}
+            counts={statusCounts}
+            total={works.length}
+            onChange={setStatusFilter}
+          />
+        </div>
+
+        <div className="mb-4">
+          <ContentListControls
+            search={searchTerm}
+            sort={sortMode}
+            searchPlaceholder="Buscar por titulo, endereco, bairro, categoria ou empresa"
+            onSearchChange={setSearchTerm}
+            onSortChange={setSortMode}
+          />
         </div>
 
         {loading ? (
@@ -260,16 +362,19 @@ export default function WorksAdmin() {
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
           </div>
         ) : works.length === 0 ? (
-          <EmptyState title="Nenhuma obra publicada" description="Use o formulário acima para registrar a primeira obra." />
+          <EmptyState title="Nenhuma obra cadastrada" description="Use o formulario acima para registrar a primeira obra." />
+        ) : visibleWorks.length === 0 ? (
+          <EmptyState title="Nenhuma obra encontrada" description="Ajuste a busca ou os filtros para ver mais registros." />
         ) : (
           <div className="space-y-3">
-            {works.map((work) => (
+            {visibleWorks.map((work) => (
               <article key={work.id} className="civic-card flex flex-col gap-3 p-4 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-dark">
                       {work.category}
                     </span>
+                    <ContentStatusBadge status={work.status} />
                     {work.budget > 0 && (
                       <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
                         {formatCurrency(work.budget)}
@@ -294,6 +399,17 @@ export default function WorksAdmin() {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
+                  <ContentQuickActions
+                    status={work.status}
+                    loading={quickActionId === work.id}
+                    onPublish={() => handleQuickStatus(work, 'published')}
+                    onDraft={() => handleQuickStatus(work, 'draft')}
+                    onArchive={() => setArchiveId(work.id)}
+                  />
+                  <button type="button" onClick={() => setPreviewWork(work)}
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary">
+                    Preview
+                  </button>
                   <button type="button" onClick={() => startEdit(work)}
                     className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary">
                     <Pencil className="h-3.5 w-3.5" />
@@ -320,6 +436,14 @@ export default function WorksAdmin() {
         tone="danger"
         onConfirm={handleArchive}
         onClose={() => setArchiveId(null)}
+      />
+
+      <ContentPreviewDialog
+        isOpen={!!previewWork}
+        title={previewWork?.title || ''}
+        description={previewWork?.description || ''}
+        meta={previewWork ? [previewWork.category, `${previewWork.progress}%`, previewWork.address, previewWork.neighborhood] : []}
+        onClose={() => setPreviewWork(null)}
       />
     </div>
   );

@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GraduationCap, Loader2 } from 'lucide-react';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
+import { AdminQueueToolbar, AdminStatusSummary } from '@/features/gestao/content/AdminQueueControls';
 import { getAllEnrollments, updateEnrollmentStatus } from '@/services/educacao.service';
 import { useToast } from '@/lib/toast-context';
 import type { Enrollment, EnrollmentStatus } from '@/types';
@@ -25,12 +27,18 @@ function getStatusLabel(status: EnrollmentStatus) {
   return STATUS_OPTIONS.find((item) => item.value === status)?.label || status;
 }
 
+function requiresConfirmation(status: EnrollmentStatus) {
+  return status === 'approved' || status === 'rejected';
+}
+
 export default function EnrollmentsAdmin() {
   const { toast } = useToast();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | EnrollmentStatus>('all');
+  const [search, setSearch] = useState('');
+  const [pendingStatus, setPendingStatus] = useState<{ enrollment: Enrollment; status: EnrollmentStatus } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -48,11 +56,32 @@ export default function EnrollmentsAdmin() {
   }, [load]);
 
   const filtered = useMemo(() => {
-    if (filter === 'all') return enrollments;
-    return enrollments.filter((enrollment) => enrollment.status === filter);
-  }, [enrollments, filter]);
+    const term = search.trim().toLowerCase();
+    return enrollments.filter((enrollment) => {
+      const searchable = [
+        enrollment.protocol,
+        enrollment.studentName,
+        enrollment.parentName,
+        enrollment.parentCpf,
+        enrollment.schoolPreference,
+        enrollment.address,
+        enrollment.cep,
+        getStatusLabel(enrollment.status),
+      ].join(' ').toLowerCase();
+      const matchesSearch = !term || searchable.includes(term);
+      const matchesStatus = filter === 'all' || enrollment.status === filter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [enrollments, filter, search]);
 
-  const handleStatusChange = async (enrollment: Enrollment, status: EnrollmentStatus) => {
+  const statusCounts = useMemo(() => {
+    return STATUS_OPTIONS.reduce<Record<string, number>>((acc, item) => {
+      acc[item.value] = enrollments.filter((enrollment) => enrollment.status === item.value).length;
+      return acc;
+    }, {});
+  }, [enrollments]);
+
+  const saveStatusChange = async (enrollment: Enrollment, status: EnrollmentStatus) => {
     if (enrollment.status === status) return;
     setSavingId(enrollment.id);
     try {
@@ -61,11 +90,21 @@ export default function EnrollmentsAdmin() {
         current.map((item) => (item.id === enrollment.id ? { ...item, status } : item)),
       );
       toast('Status da matricula atualizado.', 'success');
+      setPendingStatus(null);
     } catch {
       toast('Erro ao atualizar matricula.', 'error');
     } finally {
       setSavingId(null);
     }
+  };
+
+  const handleStatusChange = (enrollment: Enrollment, status: EnrollmentStatus) => {
+    if (enrollment.status === status) return;
+    if (requiresConfirmation(status)) {
+      setPendingStatus({ enrollment, status });
+      return;
+    }
+    saveStatusChange(enrollment, status);
   };
 
   return (
@@ -84,19 +123,30 @@ export default function EnrollmentsAdmin() {
           </div>
         </div>
 
-        <select
-          value={filter}
-          onChange={(event) => setFilter(event.target.value as 'all' | EnrollmentStatus)}
-          className="h-11 rounded-xl border border-border bg-white px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
-        >
-          <option value="all">Todos os status</option>
-          {STATUS_OPTIONS.map((item) => (
-            <option key={item.value} value={item.value}>
-              {item.label}
-            </option>
-          ))}
-        </select>
+        <div className="md:min-w-40" />
       </div>
+
+      <AdminQueueToolbar
+        search={search}
+        searchPlaceholder="Buscar por protocolo, aluno, responsavel, CPF ou escola"
+        filter={filter}
+        statusOptions={STATUS_OPTIONS}
+        loading={loading}
+        onSearchChange={setSearch}
+        onFilterChange={(value) => setFilter(value as 'all' | EnrollmentStatus)}
+        onRefresh={load}
+      />
+      <AdminStatusSummary
+        total={enrollments.length}
+        filter={filter}
+        statusOptions={STATUS_OPTIONS}
+        counts={statusCounts}
+        onFilterChange={(value) => setFilter(value as 'all' | EnrollmentStatus)}
+      />
+
+      <p className="mt-3 text-xs font-bold text-text-muted">
+        Mostrando {filtered.length} de {enrollments.length} matriculas.
+      </p>
 
       {loading ? (
         <div className="flex min-h-40 items-center justify-center">
@@ -145,6 +195,19 @@ export default function EnrollmentsAdmin() {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!pendingStatus}
+        title={pendingStatus ? `Confirmar ${getStatusLabel(pendingStatus.status).toLowerCase()}` : 'Confirmar status'}
+        description={pendingStatus ? `Esta acao vai marcar a matricula de ${pendingStatus.enrollment.studentName} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificacao ao responsavel.` : ''}
+        confirmLabel="Confirmar status"
+        loading={!!pendingStatus && savingId === pendingStatus.enrollment.id}
+        tone={pendingStatus?.status === 'rejected' ? 'danger' : 'default'}
+        onConfirm={() => {
+          if (pendingStatus) saveStatusChange(pendingStatus.enrollment, pendingStatus.status);
+        }}
+        onClose={() => setPendingStatus(null)}
+      />
     </section>
   );
 }

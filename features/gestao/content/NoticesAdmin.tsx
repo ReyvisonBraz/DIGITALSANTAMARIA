@@ -1,14 +1,25 @@
 'use client';
 
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Archive, Bell, Loader2, Pencil, Save, X } from 'lucide-react';
 import { createContentService } from '@/services/content.service';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
+import {
+  ContentListControls,
+  ContentQuickActions,
+  ContentPreviewDialog,
+  ContentStatusBadge,
+  ContentStatusFilter,
+  ContentStatusSelect,
+  type ContentListSort,
+} from '@/features/gestao/content/ContentWorkflowControls';
+import { tryCreateAdminAuditLog } from '@/services/admin-audit.service';
 import { useToast } from '@/lib/toast-context';
+import { useAuth } from '@/lib/auth-context';
 import { formatDate } from '@/lib/utils/formatters';
 import { cn } from '@/lib/utils';
-import type { Notice } from '@/types';
+import type { ContentStatus, Notice } from '@/types';
 
 const service = createContentService<Notice>('notices');
 
@@ -35,15 +46,22 @@ const PRIORITY_BADGE: Record<Notice['priority'], string> = {
 
 export default function NoticesAdmin() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const [archiving, setArchiving] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<ContentStatus | 'all'>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortMode, setSortMode] = useState<ContentListSort>('newest');
+  const [quickActionId, setQuickActionId] = useState<string | null>(null);
+  const [previewNotice, setPreviewNotice] = useState<Notice | null>(null);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [status, setStatus] = useState<ContentStatus>('published');
   const [type, setType] = useState<Notice['type']>('aviso');
   const [priority, setPriority] = useState<Notice['priority']>('medium');
   const [actionLabel, setActionLabel] = useState('');
@@ -52,7 +70,7 @@ export default function NoticesAdmin() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const list = await service.list();
+      const list = await service.listAdmin();
       setNotices(list);
     } catch {
       toast('Não foi possível carregar os avisos.', 'error');
@@ -68,6 +86,7 @@ export default function NoticesAdmin() {
   const resetForm = () => {
     setTitle('');
     setDescription('');
+    setStatus('published');
     setType('aviso');
     setPriority('medium');
     setActionLabel('');
@@ -79,6 +98,7 @@ export default function NoticesAdmin() {
     setEditingId(notice.id);
     setTitle(notice.title);
     setDescription(notice.description);
+    setStatus(notice.status);
     setType(notice.type);
     setPriority(notice.priority);
     setActionLabel(notice.actionLabel || '');
@@ -102,7 +122,7 @@ export default function NoticesAdmin() {
       const payload = {
         title: title.trim(),
         description: description.trim(),
-        status: 'published' as const,
+        status,
         type,
         priority,
         expiresAt: null,
@@ -114,7 +134,7 @@ export default function NoticesAdmin() {
         toast('Aviso atualizado.', 'success');
       } else {
         await service.create(payload);
-        toast('Aviso publicado.', 'success');
+        toast(status === 'published' ? 'Aviso publicado.' : 'Aviso salvo.', 'success');
       }
       resetForm();
       load();
@@ -139,6 +159,65 @@ export default function NoticesAdmin() {
       setArchiving(false);
     }
   };
+
+  const handleQuickStatus = async (notice: Notice, nextStatus: ContentStatus) => {
+    const noticeId = notice.id;
+    setQuickActionId(noticeId);
+    try {
+      if (nextStatus === 'archived') {
+        await service.archive(noticeId);
+      } else {
+        await service.setStatus(noticeId, nextStatus);
+      }
+      await tryCreateAdminAuditLog({
+        action: nextStatus === 'archived' ? 'content_archived' : 'content_status_changed',
+        collectionName: 'notices',
+        documentId: noticeId,
+        actorId: user?.uid || 'unknown',
+        actorName: user?.displayName || user?.email || 'Gestor',
+        previousValue: notice.status,
+        nextValue: nextStatus,
+        note: null,
+      });
+      toast('Status do aviso atualizado.', 'success');
+      load();
+    } catch {
+      toast('Erro ao atualizar status do aviso.', 'error');
+    } finally {
+      setQuickActionId(null);
+    }
+  };
+
+  const statusCounts = useMemo(() => {
+    return notices.reduce<Record<string, number>>((acc, notice) => {
+      acc[notice.status] = (acc[notice.status] || 0) + 1;
+      return acc;
+    }, {});
+  }, [notices]);
+
+  const visibleNotices = useMemo(() => {
+    const search = searchTerm.trim().toLowerCase();
+    return notices
+      .filter((notice) => {
+        const matchesStatus = statusFilter === 'all' || notice.status === statusFilter;
+        const searchable = [
+          notice.title,
+          notice.description,
+          notice.type,
+          notice.priority,
+          notice.actionLabel,
+          notice.actionURL,
+        ].join(' ').toLowerCase();
+        const matchesSearch = !search || searchable.includes(search);
+        return matchesStatus && matchesSearch;
+      })
+      .sort((a, b) => {
+        if (sortMode === 'title') return a.title.localeCompare(b.title);
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return sortMode === 'oldest' ? aTime - bTime : bTime - aTime;
+      });
+  }, [notices, searchTerm, sortMode, statusFilter]);
 
   return (
     <div className="space-y-6">
@@ -211,6 +290,8 @@ export default function NoticesAdmin() {
             </select>
           </label>
 
+          <ContentStatusSelect value={status} onChange={setStatus} />
+
           <label className="space-y-1.5">
             <span className="text-xs font-black uppercase tracking-widest text-text-muted">Rótulo do botão (opcional)</span>
             <input
@@ -251,7 +332,7 @@ export default function NoticesAdmin() {
               className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {editingId ? 'Salvar alteracoes' : 'Publicar'}
+              {editingId ? 'Salvar alteracoes' : status === 'published' ? 'Publicar' : 'Salvar'}
             </button>
           </div>
         </form>
@@ -260,9 +341,28 @@ export default function NoticesAdmin() {
       <section className="glass-panel p-5 md:p-6">
         <div className="mb-5 flex items-end justify-between border-b border-border pb-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Publicados</p>
-            <h3 className="text-lg font-semibold text-text-main">Avisos ativos ({notices.length})</h3>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Workflow editorial</p>
+            <h3 className="text-lg font-semibold text-text-main">Avisos cadastrados ({notices.length})</h3>
           </div>
+        </div>
+
+        <div className="mb-4">
+          <ContentStatusFilter
+            value={statusFilter}
+            counts={statusCounts}
+            total={notices.length}
+            onChange={setStatusFilter}
+          />
+        </div>
+
+        <div className="mb-4">
+          <ContentListControls
+            search={searchTerm}
+            sort={sortMode}
+            searchPlaceholder="Buscar por titulo, descricao, tipo ou prioridade"
+            onSearchChange={setSearchTerm}
+            onSortChange={setSortMode}
+          />
         </div>
 
         {loading ? (
@@ -271,18 +371,21 @@ export default function NoticesAdmin() {
           </div>
         ) : notices.length === 0 ? (
           <EmptyState
-            title="Nenhum aviso publicado"
+            title="Nenhum aviso cadastrado"
             description="Use o formulário acima para publicar o primeiro aviso da prefeitura."
           />
+        ) : visibleNotices.length === 0 ? (
+          <EmptyState title="Nenhum aviso encontrado" description="Ajuste a busca ou os filtros para ver mais registros." />
         ) : (
           <div className="space-y-3">
-            {notices.map((notice) => (
+            {visibleNotices.map((notice) => (
               <article key={notice.id} className="civic-card flex flex-col gap-3 p-4 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className={cn('rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest', PRIORITY_BADGE[notice.priority])}>
                       {notice.priority}
                     </span>
+                    <ContentStatusBadge status={notice.status} />
                     <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
                       {notice.type}
                     </span>
@@ -302,6 +405,20 @@ export default function NoticesAdmin() {
                   )}
                 </div>
                 <div className="flex flex-wrap gap-2">
+                  <ContentQuickActions
+                    status={notice.status}
+                    loading={quickActionId === notice.id}
+                    onPublish={() => handleQuickStatus(notice, 'published')}
+                    onDraft={() => handleQuickStatus(notice, 'draft')}
+                    onArchive={() => setArchiveId(notice.id)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setPreviewNotice(notice)}
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+                  >
+                    Preview
+                  </button>
                   <button
                     type="button"
                     onClick={() => startEdit(notice)}
@@ -334,6 +451,16 @@ export default function NoticesAdmin() {
         tone="danger"
         onConfirm={handleArchive}
         onClose={() => setArchiveId(null)}
+      />
+
+      <ContentPreviewDialog
+        isOpen={!!previewNotice}
+        title={previewNotice?.title || ''}
+        description={previewNotice?.description || ''}
+        meta={previewNotice ? [previewNotice.type, previewNotice.priority] : []}
+        actionLabel={previewNotice?.actionLabel}
+        actionURL={previewNotice?.actionURL}
+        onClose={() => setPreviewNotice(null)}
       />
     </div>
   );

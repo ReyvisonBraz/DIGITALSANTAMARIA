@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Bell,
   CalendarDays,
@@ -37,7 +37,7 @@ import EmergencyAlertsAdmin from '@/features/gestao/content/EmergencyAlertsAdmin
 import GenericCatalogAdmin, { type CatalogAdminConfig } from '@/features/gestao/content/GenericCatalogAdmin';
 import { cn } from '@/lib/utils';
 
-type ContentTab =
+export type ContentTab =
   | 'notices'
   | 'events'
   | 'works'
@@ -59,27 +59,37 @@ type ContentTab =
   | 'polls'
   | 'services';
 
-const TABS: { value: ContentTab; label: string; icon: LucideIcon }[] = [
-  { value: 'notices', label: 'Avisos', icon: Bell },
-  { value: 'events', label: 'Eventos', icon: CalendarDays },
-  { value: 'works', label: 'Obras', icon: HardHat },
-  { value: 'businesses', label: 'Comercio', icon: Store },
-  { value: 'traffic', label: 'Transito', icon: Car },
-  { value: 'health', label: 'Unidades', icon: Hospital },
-  { value: 'appointments', label: 'Consultas', icon: CalendarCheck },
-  { value: 'pharmacy', label: 'Farmacia', icon: Pill },
-  { value: 'jobs', label: 'Vagas', icon: Briefcase },
-  { value: 'applications', label: 'Candidaturas', icon: ClipboardList },
-  { value: 'education', label: 'Educacao', icon: GraduationCap },
-  { value: 'enrollments', label: 'Matriculas', icon: GraduationCap },
-  { value: 'community', label: 'Comunidade', icon: Users },
-  { value: 'safety', label: 'Seguranca', icon: Shield },
-  { value: 'emergency', label: 'Emergencias', icon: Siren },
-  { value: 'environment', label: 'Ambiente', icon: Leaf },
-  { value: 'social', label: 'Social', icon: Heart },
-  { value: 'taxes', label: 'Tributos', icon: FileText },
-  { value: 'polls', label: 'Votos', icon: Gavel },
-  { value: 'services', label: 'Servicos', icon: Layers },
+type ContentGroup = 'all' | 'publishing' | 'operations' | 'registries' | 'participation';
+
+const GROUPS: { value: ContentGroup; label: string; description: string }[] = [
+  { value: 'all', label: 'Todos', description: 'Todas as areas' },
+  { value: 'publishing', label: 'Publicacao', description: 'Informacoes publicas' },
+  { value: 'operations', label: 'Atendimento', description: 'Filas de trabalho' },
+  { value: 'registries', label: 'Cadastros', description: 'Bases municipais' },
+  { value: 'participation', label: 'Participacao', description: 'Comunidade e votos' },
+];
+
+const TABS: { value: ContentTab; label: string; icon: LucideIcon; group: Exclude<ContentGroup, 'all'> }[] = [
+  { value: 'notices', label: 'Avisos', icon: Bell, group: 'publishing' },
+  { value: 'events', label: 'Eventos', icon: CalendarDays, group: 'publishing' },
+  { value: 'works', label: 'Obras', icon: HardHat, group: 'publishing' },
+  { value: 'businesses', label: 'Comercio', icon: Store, group: 'publishing' },
+  { value: 'traffic', label: 'Transito', icon: Car, group: 'publishing' },
+  { value: 'appointments', label: 'Consultas', icon: CalendarCheck, group: 'operations' },
+  { value: 'applications', label: 'Candidaturas', icon: ClipboardList, group: 'operations' },
+  { value: 'enrollments', label: 'Matriculas', icon: GraduationCap, group: 'operations' },
+  { value: 'emergency', label: 'Emergencias', icon: Siren, group: 'operations' },
+  { value: 'health', label: 'Unidades', icon: Hospital, group: 'registries' },
+  { value: 'pharmacy', label: 'Farmacia', icon: Pill, group: 'registries' },
+  { value: 'jobs', label: 'Vagas', icon: Briefcase, group: 'registries' },
+  { value: 'education', label: 'Educacao', icon: GraduationCap, group: 'registries' },
+  { value: 'safety', label: 'Seguranca', icon: Shield, group: 'registries' },
+  { value: 'environment', label: 'Ambiente', icon: Leaf, group: 'registries' },
+  { value: 'social', label: 'Social', icon: Heart, group: 'registries' },
+  { value: 'taxes', label: 'Tributos', icon: FileText, group: 'registries' },
+  { value: 'services', label: 'Servicos', icon: Layers, group: 'registries' },
+  { value: 'community', label: 'Comunidade', icon: Users, group: 'participation' },
+  { value: 'polls', label: 'Votos', icon: Gavel, group: 'participation' },
 ];
 
 const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'businesses' | 'traffic' | 'health' | 'appointments' | 'jobs' | 'applications' | 'enrollments' | 'emergency'>, CatalogAdminConfig> = {
@@ -352,30 +362,75 @@ const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'bus
   },
 };
 
-export default function ContentAdminPanel() {
-  const [tab, setTab] = useState<ContentTab>('notices');
+interface ContentAdminPanelProps {
+  activeTab?: ContentTab;
+  onTabChange?: (tab: ContentTab) => void;
+}
+
+export default function ContentAdminPanel({ activeTab, onTabChange }: ContentAdminPanelProps) {
+  const [internalTab, setInternalTab] = useState<ContentTab>('notices');
+  const [group, setGroup] = useState<ContentGroup>('all');
+  const tab = activeTab ?? internalTab;
+  const visibleTabs = group === 'all' ? TABS : TABS.filter((item) => item.group === group);
+
+  const setTab = (nextTab: ContentTab) => {
+    setInternalTab(nextTab);
+    onTabChange?.(nextTab);
+  };
+
+  useEffect(() => {
+    if (!activeTab) return;
+    const activeItem = TABS.find((item) => item.value === activeTab);
+    if (activeItem) setGroup(activeItem.group);
+  }, [activeTab]);
 
   return (
     <div className="space-y-5">
-      <div className="glass-panel flex gap-1 overflow-x-auto p-1 custom-scrollbar">
-        {TABS.map((item) => {
-          const active = item.value === tab;
-          const Icon = item.icon;
-          return (
-            <button
-              key={item.value}
-              type="button"
-              onClick={() => setTab(item.value)}
-              className={cn(
-                'inline-flex min-w-max items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-semibold uppercase tracking-widest transition',
-                active ? 'bg-primary text-white' : 'text-text-muted hover:text-primary',
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              {item.label}
-            </button>
-          );
-        })}
+      <div className="glass-panel space-y-3 p-3">
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+          {GROUPS.map((item) => {
+            const active = item.value === group;
+            return (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => setGroup(item.value)}
+                className={cn(
+                  'rounded-xl border px-3 py-3 text-left transition',
+                  active
+                    ? 'admin-choice-active'
+                    : 'admin-choice-idle',
+                )}
+              >
+                <span className="block text-xs font-black uppercase tracking-widest">{item.label}</span>
+                <span className={cn('mt-1 block text-xs font-bold', active ? 'admin-choice-active-muted' : 'text-text-muted')}>
+                  {item.description}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex gap-1 overflow-x-auto custom-scrollbar">
+          {visibleTabs.map((item) => {
+            const active = item.value === tab;
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => setTab(item.value)}
+                className={cn(
+                  'inline-flex min-w-max items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-semibold uppercase tracking-widest transition',
+                  active ? 'admin-choice-active border' : 'admin-choice-idle border',
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {tab === 'notices' && <NoticesAdmin />}

@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loader2, Mail, Siren } from 'lucide-react';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
+import { AdminQueueToolbar, AdminStatusSummary } from '@/features/gestao/content/AdminQueueControls';
 import { getAllEmergencyAlerts, updateEmergencyAlertStatus } from '@/services/emergency.service';
 import { useToast } from '@/lib/toast-context';
 import type { EmergencyAlert, EmergencyAlertStatus, EmergencyAlertType } from '@/types';
@@ -34,12 +36,18 @@ function getStatusLabel(status: EmergencyAlertStatus) {
   return STATUS_OPTIONS.find((item) => item.value === status)?.label || status;
 }
 
+function requiresConfirmation(status: EmergencyAlertStatus) {
+  return status === 'resolved' || status === 'cancelled';
+}
+
 export default function EmergencyAlertsAdmin() {
   const { toast } = useToast();
   const [alerts, setAlerts] = useState<EmergencyAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | EmergencyAlertStatus>('active');
+  const [search, setSearch] = useState('');
+  const [pendingStatus, setPendingStatus] = useState<{ alert: EmergencyAlert; status: EmergencyAlertStatus } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -57,11 +65,31 @@ export default function EmergencyAlertsAdmin() {
   }, [load]);
 
   const filtered = useMemo(() => {
-    if (filter === 'all') return alerts;
-    return alerts.filter((alert) => alert.status === filter);
-  }, [alerts, filter]);
+    const term = search.trim().toLowerCase();
+    return alerts.filter((alert) => {
+      const searchable = [
+        alert.protocol,
+        alert.location,
+        alert.description,
+        alert.userName,
+        alert.userEmail,
+        TYPE_LABEL[alert.type],
+        getStatusLabel(alert.status),
+      ].join(' ').toLowerCase();
+      const matchesSearch = !term || searchable.includes(term);
+      const matchesStatus = filter === 'all' || alert.status === filter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [alerts, filter, search]);
 
-  const handleStatusChange = async (alert: EmergencyAlert, status: EmergencyAlertStatus) => {
+  const statusCounts = useMemo(() => {
+    return STATUS_OPTIONS.reduce<Record<string, number>>((acc, item) => {
+      acc[item.value] = alerts.filter((alert) => alert.status === item.value).length;
+      return acc;
+    }, {});
+  }, [alerts]);
+
+  const saveStatusChange = async (alert: EmergencyAlert, status: EmergencyAlertStatus) => {
     if (alert.status === status) return;
     setSavingId(alert.id);
     try {
@@ -70,11 +98,21 @@ export default function EmergencyAlertsAdmin() {
         current.map((item) => (item.id === alert.id ? { ...item, status } : item)),
       );
       toast('Status do alerta atualizado.', 'success');
+      setPendingStatus(null);
     } catch {
       toast('Erro ao atualizar alerta.', 'error');
     } finally {
       setSavingId(null);
     }
+  };
+
+  const handleStatusChange = (alert: EmergencyAlert, status: EmergencyAlertStatus) => {
+    if (alert.status === status) return;
+    if (requiresConfirmation(status)) {
+      setPendingStatus({ alert, status });
+      return;
+    }
+    saveStatusChange(alert, status);
   };
 
   return (
@@ -93,19 +131,30 @@ export default function EmergencyAlertsAdmin() {
           </div>
         </div>
 
-        <select
-          value={filter}
-          onChange={(event) => setFilter(event.target.value as 'all' | EmergencyAlertStatus)}
-          className="h-11 rounded-xl border border-border bg-white px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
-        >
-          <option value="all">Todos os status</option>
-          {STATUS_OPTIONS.map((item) => (
-            <option key={item.value} value={item.value}>
-              {item.label}
-            </option>
-          ))}
-        </select>
+        <div className="md:min-w-40" />
       </div>
+
+      <AdminQueueToolbar
+        search={search}
+        searchPlaceholder="Buscar por protocolo, local, cidadao, tipo ou descricao"
+        filter={filter}
+        statusOptions={STATUS_OPTIONS}
+        loading={loading}
+        onSearchChange={setSearch}
+        onFilterChange={(value) => setFilter(value as 'all' | EmergencyAlertStatus)}
+        onRefresh={load}
+      />
+      <AdminStatusSummary
+        total={alerts.length}
+        filter={filter}
+        statusOptions={STATUS_OPTIONS}
+        counts={statusCounts}
+        onFilterChange={(value) => setFilter(value as 'all' | EmergencyAlertStatus)}
+      />
+
+      <p className="mt-3 text-xs font-bold text-text-muted">
+        Mostrando {filtered.length} de {alerts.length} alertas.
+      </p>
 
       {loading ? (
         <div className="flex min-h-40 items-center justify-center">
@@ -158,6 +207,19 @@ export default function EmergencyAlertsAdmin() {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!pendingStatus}
+        title={pendingStatus ? `Confirmar ${getStatusLabel(pendingStatus.status).toLowerCase()}` : 'Confirmar status'}
+        description={pendingStatus ? `Esta acao vai marcar o alerta ${pendingStatus.alert.protocol} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificacao ao cidadao.` : ''}
+        confirmLabel="Confirmar status"
+        loading={!!pendingStatus && savingId === pendingStatus.alert.id}
+        tone={pendingStatus?.status === 'cancelled' ? 'danger' : 'default'}
+        onConfirm={() => {
+          if (pendingStatus) saveStatusChange(pendingStatus.alert, pendingStatus.status);
+        }}
+        onClose={() => setPendingStatus(null)}
+      />
     </section>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
   Archive,
   CheckCircle2,
@@ -23,9 +23,18 @@ import {
 } from '@/services/businesses.service';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
+import {
+  ContentQuickActions,
+  ContentPreviewDialog,
+  ContentStatusBadge,
+  ContentStatusFilter,
+  ContentStatusSelect,
+} from '@/features/gestao/content/ContentWorkflowControls';
+import { tryCreateAdminAuditLog } from '@/services/admin-audit.service';
 import { useToast } from '@/lib/toast-context';
+import { useAuth } from '@/lib/auth-context';
 import { formatDate } from '@/lib/utils/formatters';
-import type { Business } from '@/types';
+import type { Business, ContentStatus } from '@/types';
 
 const service = createContentService<Business>('businesses');
 
@@ -40,6 +49,7 @@ const CATEGORIES: { value: Business['category']; label: string }[] = [
 
 export default function BusinessesAdmin() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [pending, setPending] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,9 +60,13 @@ export default function BusinessesAdmin() {
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const [archiving, setArchiving] = useState(false);
   const [rejectNote, setRejectNote] = useState('');
+  const [statusFilter, setStatusFilter] = useState<ContentStatus | 'all'>('all');
+  const [quickActionId, setQuickActionId] = useState<string | null>(null);
+  const [previewBusiness, setPreviewBusiness] = useState<Business | null>(null);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [status, setStatus] = useState<ContentStatus>('published');
   const [category, setCategory] = useState<Business['category']>('restaurante');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
@@ -62,7 +76,7 @@ export default function BusinessesAdmin() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [list, pendingList] = await Promise.all([service.list(), listPendingBusinesses()]);
+      const [list, pendingList] = await Promise.all([service.listAdmin(), listPendingBusinesses()]);
       setBusinesses(list);
       setPending(pendingList);
     } catch {
@@ -77,6 +91,7 @@ export default function BusinessesAdmin() {
   const resetForm = () => {
     setTitle('');
     setDescription('');
+    setStatus('published');
     setCategory('restaurante');
     setAddress('');
     setPhone('');
@@ -89,6 +104,7 @@ export default function BusinessesAdmin() {
     setEditingId(business.id);
     setTitle(business.title);
     setDescription(business.description);
+    setStatus(business.status);
     setCategory(business.category);
     setAddress(business.address);
     setPhone(business.phone);
@@ -143,7 +159,7 @@ export default function BusinessesAdmin() {
       const payload = {
         title: title.trim(),
         description: description.trim(),
-        status: 'published' as const,
+        status,
         category,
         address: address.trim(),
         phone: phone.trim(),
@@ -163,7 +179,7 @@ export default function BusinessesAdmin() {
         toast('Comercio atualizado.', 'success');
       } else {
         await service.create(payload);
-        toast('Comercio publicado.', 'success');
+        toast(status === 'published' ? 'Comercio publicado.' : 'Comercio salvo.', 'success');
       }
 
       resetForm();
@@ -189,6 +205,46 @@ export default function BusinessesAdmin() {
       setArchiving(false);
     }
   };
+
+  const handleQuickStatus = async (business: Business, nextStatus: ContentStatus) => {
+    const businessId = business.id;
+    setQuickActionId(businessId);
+    try {
+      if (nextStatus === 'archived') {
+        await service.archive(businessId);
+      } else {
+        await service.setStatus(businessId, nextStatus);
+      }
+      await tryCreateAdminAuditLog({
+        action: nextStatus === 'archived' ? 'content_archived' : 'content_status_changed',
+        collectionName: 'businesses',
+        documentId: businessId,
+        actorId: user?.uid || 'unknown',
+        actorName: user?.displayName || user?.email || 'Gestor',
+        previousValue: business.status,
+        nextValue: nextStatus,
+        note: null,
+      });
+      toast('Status do comercio atualizado.', 'success');
+      load();
+    } catch {
+      toast('Erro ao atualizar status do comercio.', 'error');
+    } finally {
+      setQuickActionId(null);
+    }
+  };
+
+  const statusCounts = useMemo(() => {
+    return businesses.reduce<Record<string, number>>((acc, business) => {
+      acc[business.status] = (acc[business.status] || 0) + 1;
+      return acc;
+    }, {});
+  }, [businesses]);
+
+  const visibleBusinesses = useMemo(() => {
+    if (statusFilter === 'all') return businesses;
+    return businesses.filter((business) => business.status === statusFilter);
+  }, [businesses, statusFilter]);
 
   return (
     <div className="space-y-6">
@@ -260,6 +316,8 @@ export default function BusinessesAdmin() {
             />
           </label>
 
+          <ContentStatusSelect value={status} onChange={setStatus} />
+
           <label className="md:col-span-2 space-y-1.5">
             <span className="text-xs font-black uppercase tracking-widest text-text-muted">Endereco</span>
             <input
@@ -314,7 +372,7 @@ export default function BusinessesAdmin() {
               className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {editingId ? 'Salvar alteracoes' : 'Publicar'}
+              {editingId ? 'Salvar alteracoes' : status === 'published' ? 'Publicar' : 'Salvar'}
             </button>
           </div>
         </form>
@@ -451,9 +509,18 @@ export default function BusinessesAdmin() {
       <section className="glass-panel p-5 md:p-6">
         <div className="mb-5 flex items-end justify-between border-b border-border pb-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Cadastrados</p>
-            <h3 className="text-lg font-semibold text-text-main">Comercios ativos ({businesses.length})</h3>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Workflow editorial</p>
+            <h3 className="text-lg font-semibold text-text-main">Comercios cadastrados ({businesses.length})</h3>
           </div>
+        </div>
+
+        <div className="mb-4">
+          <ContentStatusFilter
+            value={statusFilter}
+            counts={statusCounts}
+            total={businesses.length}
+            onChange={setStatusFilter}
+          />
         </div>
 
         {loading ? (
@@ -462,15 +529,18 @@ export default function BusinessesAdmin() {
           </div>
         ) : businesses.length === 0 ? (
           <EmptyState title="Nenhum comercio cadastrado" description="Use o formulario acima para registrar o primeiro." />
+        ) : visibleBusinesses.length === 0 ? (
+          <EmptyState title="Nenhum comercio neste status" description="Use outro filtro de status para ver mais registros." />
         ) : (
           <div className="space-y-3">
-            {businesses.map((biz) => (
+            {visibleBusinesses.map((biz) => (
               <article key={biz.id} className="civic-card flex flex-col gap-3 p-4 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-dark">
                       {biz.category}
                     </span>
+                    <ContentStatusBadge status={biz.status} />
                     {biz.hours && (
                       <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
                         {biz.hours}
@@ -492,6 +562,20 @@ export default function BusinessesAdmin() {
                   )}
                 </div>
                 <div className="flex flex-wrap gap-2">
+                  <ContentQuickActions
+                    status={biz.status}
+                    loading={quickActionId === biz.id}
+                    onPublish={() => handleQuickStatus(biz, 'published')}
+                    onDraft={() => handleQuickStatus(biz, 'draft')}
+                    onArchive={() => setArchiveId(biz.id)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setPreviewBusiness(biz)}
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+                  >
+                    Preview
+                  </button>
                   <button
                     type="button"
                     onClick={() => startEdit(biz)}
@@ -524,6 +608,16 @@ export default function BusinessesAdmin() {
         tone="danger"
         onConfirm={handleArchive}
         onClose={() => setArchiveId(null)}
+      />
+
+      <ContentPreviewDialog
+        isOpen={!!previewBusiness}
+        title={previewBusiness?.title || ''}
+        description={previewBusiness?.description || ''}
+        meta={previewBusiness ? [previewBusiness.category, previewBusiness.hours, previewBusiness.address, previewBusiness.phone] : []}
+        actionLabel={previewBusiness?.whatsapp ? 'Chamar no WhatsApp' : null}
+        actionURL={previewBusiness?.whatsapp ? `https://wa.me/55${previewBusiness.whatsapp}` : null}
+        onClose={() => setPreviewBusiness(null)}
       />
     </div>
   );

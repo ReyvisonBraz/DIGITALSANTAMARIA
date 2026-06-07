@@ -57,6 +57,22 @@
       ]
     },
     {
+      "collectionGroup": "demand_messages",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "demandId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "report_messages",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "reportId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "job_applications",
       "queryScope": "COLLECTION",
       "fields": [

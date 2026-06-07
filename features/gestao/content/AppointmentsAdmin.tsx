@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CalendarCheck, Loader2 } from 'lucide-react';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
+import { AdminQueueToolbar, AdminStatusSummary } from '@/features/gestao/content/AdminQueueControls';
 import { getAllAppointments, updateAppointmentStatus } from '@/services/appointments.service';
 import { useToast } from '@/lib/toast-context';
 import type { Appointment, AppointmentStatus } from '@/types';
@@ -25,12 +27,18 @@ function getStatusLabel(status: AppointmentStatus) {
   return STATUS_OPTIONS.find((item) => item.value === status)?.label || status;
 }
 
+function requiresConfirmation(status: AppointmentStatus) {
+  return status === 'completed' || status === 'cancelled';
+}
+
 export default function AppointmentsAdmin() {
   const { toast } = useToast();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | AppointmentStatus>('all');
+  const [search, setSearch] = useState('');
+  const [pendingStatus, setPendingStatus] = useState<{ appointment: Appointment; status: AppointmentStatus } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -48,11 +56,31 @@ export default function AppointmentsAdmin() {
   }, [load]);
 
   const filtered = useMemo(() => {
-    if (filter === 'all') return appointments;
-    return appointments.filter((appointment) => appointment.status === filter);
-  }, [appointments, filter]);
+    const term = search.trim().toLowerCase();
+    return appointments.filter((appointment) => {
+      const searchable = [
+        appointment.userName,
+        appointment.specialty,
+        appointment.unitName,
+        appointment.date,
+        appointment.time,
+        appointment.notes,
+        getStatusLabel(appointment.status),
+      ].join(' ').toLowerCase();
+      const matchesSearch = !term || searchable.includes(term);
+      const matchesStatus = filter === 'all' || appointment.status === filter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [appointments, filter, search]);
 
-  const handleStatusChange = async (appointment: Appointment, status: AppointmentStatus) => {
+  const statusCounts = useMemo(() => {
+    return STATUS_OPTIONS.reduce<Record<string, number>>((acc, item) => {
+      acc[item.value] = appointments.filter((appointment) => appointment.status === item.value).length;
+      return acc;
+    }, {});
+  }, [appointments]);
+
+  const saveStatusChange = async (appointment: Appointment, status: AppointmentStatus) => {
     if (appointment.status === status) return;
     setSavingId(appointment.id);
     try {
@@ -61,11 +89,21 @@ export default function AppointmentsAdmin() {
         current.map((item) => (item.id === appointment.id ? { ...item, status } : item)),
       );
       toast('Status da consulta atualizado.', 'success');
+      setPendingStatus(null);
     } catch {
       toast('Erro ao atualizar consulta.', 'error');
     } finally {
       setSavingId(null);
     }
+  };
+
+  const handleStatusChange = (appointment: Appointment, status: AppointmentStatus) => {
+    if (appointment.status === status) return;
+    if (requiresConfirmation(status)) {
+      setPendingStatus({ appointment, status });
+      return;
+    }
+    saveStatusChange(appointment, status);
   };
 
   return (
@@ -84,19 +122,30 @@ export default function AppointmentsAdmin() {
           </div>
         </div>
 
-        <select
-          value={filter}
-          onChange={(event) => setFilter(event.target.value as 'all' | AppointmentStatus)}
-          className="h-11 rounded-xl border border-border bg-white px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
-        >
-          <option value="all">Todos os status</option>
-          {STATUS_OPTIONS.map((item) => (
-            <option key={item.value} value={item.value}>
-              {item.label}
-            </option>
-          ))}
-        </select>
+        <div className="md:min-w-40" />
       </div>
+
+      <AdminQueueToolbar
+        search={search}
+        searchPlaceholder="Buscar por cidadao, especialidade, unidade ou data"
+        filter={filter}
+        statusOptions={STATUS_OPTIONS}
+        loading={loading}
+        onSearchChange={setSearch}
+        onFilterChange={(value) => setFilter(value as 'all' | AppointmentStatus)}
+        onRefresh={load}
+      />
+      <AdminStatusSummary
+        total={appointments.length}
+        filter={filter}
+        statusOptions={STATUS_OPTIONS}
+        counts={statusCounts}
+        onFilterChange={(value) => setFilter(value as 'all' | AppointmentStatus)}
+      />
+
+      <p className="mt-3 text-xs font-bold text-text-muted">
+        Mostrando {filtered.length} de {appointments.length} consultas.
+      </p>
 
       {loading ? (
         <div className="flex min-h-40 items-center justify-center">
@@ -146,6 +195,19 @@ export default function AppointmentsAdmin() {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!pendingStatus}
+        title={pendingStatus ? `Confirmar ${getStatusLabel(pendingStatus.status).toLowerCase()}` : 'Confirmar status'}
+        description={pendingStatus ? `Esta acao vai marcar a consulta de ${pendingStatus.appointment.userName} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificacao ao cidadao.` : ''}
+        confirmLabel="Confirmar status"
+        loading={!!pendingStatus && savingId === pendingStatus.appointment.id}
+        tone={pendingStatus?.status === 'cancelled' ? 'danger' : 'default'}
+        onConfirm={() => {
+          if (pendingStatus) saveStatusChange(pendingStatus.appointment, pendingStatus.status);
+        }}
+        onClose={() => setPendingStatus(null)}
+      />
     </section>
   );
 }

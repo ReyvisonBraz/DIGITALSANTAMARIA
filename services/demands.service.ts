@@ -15,9 +15,18 @@ import { db } from '@/lib/firebase';
 import { demandConverter } from '@/lib/firebase/converters';
 import { generateDemandProtocolId } from '@/lib/utils/protocol';
 import { tryCreateNotification } from '@/services/notifications.service';
-import type { Demand, CreateDemandInput, DemandStatus, AdminAction, NotificationTone } from '@/types';
+import type {
+  Demand,
+  CreateDemandInput,
+  DemandMessage,
+  DemandMessageAuthorRole,
+  DemandStatus,
+  AdminAction,
+  NotificationTone,
+} from '@/types';
 
 const COLLECTION = 'demands';
+const MESSAGES_COLLECTION = 'demand_messages';
 
 const STATUS_LABEL: Record<DemandStatus, string> = {
   pending: 'pendente',
@@ -57,6 +66,43 @@ export async function createDemand(
     updatedAt: serverTimestamp(),
   });
   return { id: docRef.id, protocolId };
+}
+
+export async function createDemandMessage(input: {
+  demandId: string;
+  authorId: string;
+  authorName: string;
+  authorRole: DemandMessageAuthorRole;
+  message: string;
+}): Promise<string> {
+  const docRef = await addDoc(collection(db, MESSAGES_COLLECTION), {
+    demandId: input.demandId,
+    authorId: input.authorId,
+    authorName: input.authorName,
+    authorRole: input.authorRole,
+    message: input.message.trim(),
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+}
+
+function mapDemandMessage(id: string, data: Record<string, unknown>): DemandMessage {
+  return {
+    id,
+    demandId: String(data.demandId || ''),
+    authorId: String(data.authorId || ''),
+    authorName: String(data.authorName || ''),
+    authorRole: (data.authorRole || 'system') as DemandMessageAuthorRole,
+    message: String(data.message || ''),
+    createdAt: data.createdAt as DemandMessage['createdAt'],
+  };
+}
+
+export async function getDemandMessages(demandId: string): Promise<DemandMessage[]> {
+  const ref = collection(db, MESSAGES_COLLECTION);
+  const q = query(ref, where('demandId', '==', demandId), orderBy('createdAt', 'asc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((docSnap) => mapDemandMessage(docSnap.id, docSnap.data()));
 }
 
 export async function getDemandByProtocol(protocolId: string): Promise<Demand | null> {
@@ -115,6 +161,19 @@ export async function updateDemandStatus(
     },
     updatedAt: serverTimestamp(),
   });
+
+  const response = adminAction.response.trim();
+  const previousResponse = demand?.adminAction?.response?.trim() || '';
+
+  if (response && response !== previousResponse) {
+    await createDemandMessage({
+      demandId: id,
+      authorId: adminAction.clerkId,
+      authorName: adminAction.clerkName,
+      authorRole: 'staff',
+      message: response,
+    });
+  }
 
   if (demand && !demand.isAnonymous && demand.authorId) {
     await tryCreateNotification({

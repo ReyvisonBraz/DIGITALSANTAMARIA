@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ClipboardList, Loader2, Mail } from 'lucide-react';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
+import { AdminQueueToolbar, AdminStatusSummary } from '@/features/gestao/content/AdminQueueControls';
 import { getAllApplications, updateApplicationStatus } from '@/services/jobs.service';
 import { useToast } from '@/lib/toast-context';
 import type { ApplicationStatus, JobApplication } from '@/types';
@@ -27,12 +29,18 @@ function getStatusLabel(status: ApplicationStatus) {
   return STATUS_OPTIONS.find((item) => item.value === status)?.label || status;
 }
 
+function requiresConfirmation(status: ApplicationStatus) {
+  return status === 'hired' || status === 'rejected';
+}
+
 export default function ApplicationsAdmin() {
   const { toast } = useToast();
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | ApplicationStatus>('all');
+  const [search, setSearch] = useState('');
+  const [pendingStatus, setPendingStatus] = useState<{ application: JobApplication; status: ApplicationStatus } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -50,11 +58,29 @@ export default function ApplicationsAdmin() {
   }, [load]);
 
   const filtered = useMemo(() => {
-    if (filter === 'all') return applications;
-    return applications.filter((application) => application.status === filter);
-  }, [applications, filter]);
+    const term = search.trim().toLowerCase();
+    return applications.filter((application) => {
+      const searchable = [
+        application.jobTitle,
+        application.applicantName,
+        application.applicantEmail,
+        application.coverLetter,
+        getStatusLabel(application.status),
+      ].join(' ').toLowerCase();
+      const matchesSearch = !term || searchable.includes(term);
+      const matchesStatus = filter === 'all' || application.status === filter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [applications, filter, search]);
 
-  const handleStatusChange = async (application: JobApplication, status: ApplicationStatus) => {
+  const statusCounts = useMemo(() => {
+    return STATUS_OPTIONS.reduce<Record<string, number>>((acc, item) => {
+      acc[item.value] = applications.filter((application) => application.status === item.value).length;
+      return acc;
+    }, {});
+  }, [applications]);
+
+  const saveStatusChange = async (application: JobApplication, status: ApplicationStatus) => {
     if (application.status === status) return;
     setSavingId(application.id);
     try {
@@ -63,11 +89,21 @@ export default function ApplicationsAdmin() {
         current.map((item) => (item.id === application.id ? { ...item, status } : item)),
       );
       toast('Status da candidatura atualizado.', 'success');
+      setPendingStatus(null);
     } catch {
       toast('Erro ao atualizar candidatura.', 'error');
     } finally {
       setSavingId(null);
     }
+  };
+
+  const handleStatusChange = (application: JobApplication, status: ApplicationStatus) => {
+    if (application.status === status) return;
+    if (requiresConfirmation(status)) {
+      setPendingStatus({ application, status });
+      return;
+    }
+    saveStatusChange(application, status);
   };
 
   return (
@@ -86,19 +122,30 @@ export default function ApplicationsAdmin() {
           </div>
         </div>
 
-        <select
-          value={filter}
-          onChange={(event) => setFilter(event.target.value as 'all' | ApplicationStatus)}
-          className="h-11 rounded-xl border border-border bg-white px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
-        >
-          <option value="all">Todos os status</option>
-          {STATUS_OPTIONS.map((item) => (
-            <option key={item.value} value={item.value}>
-              {item.label}
-            </option>
-          ))}
-        </select>
+        <div className="md:min-w-40" />
       </div>
+
+      <AdminQueueToolbar
+        search={search}
+        searchPlaceholder="Buscar por vaga, candidato, email ou texto"
+        filter={filter}
+        statusOptions={STATUS_OPTIONS}
+        loading={loading}
+        onSearchChange={setSearch}
+        onFilterChange={(value) => setFilter(value as 'all' | ApplicationStatus)}
+        onRefresh={load}
+      />
+      <AdminStatusSummary
+        total={applications.length}
+        filter={filter}
+        statusOptions={STATUS_OPTIONS}
+        counts={statusCounts}
+        onFilterChange={(value) => setFilter(value as 'all' | ApplicationStatus)}
+      />
+
+      <p className="mt-3 text-xs font-bold text-text-muted">
+        Mostrando {filtered.length} de {applications.length} candidaturas.
+      </p>
 
       {loading ? (
         <div className="flex min-h-40 items-center justify-center">
@@ -150,6 +197,19 @@ export default function ApplicationsAdmin() {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!pendingStatus}
+        title={pendingStatus ? `Confirmar ${getStatusLabel(pendingStatus.status).toLowerCase()}` : 'Confirmar status'}
+        description={pendingStatus ? `Esta acao vai marcar a candidatura de ${pendingStatus.application.applicantName} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificacao ao candidato.` : ''}
+        confirmLabel="Confirmar status"
+        loading={!!pendingStatus && savingId === pendingStatus.application.id}
+        tone={pendingStatus?.status === 'rejected' ? 'danger' : 'default'}
+        onConfirm={() => {
+          if (pendingStatus) saveStatusChange(pendingStatus.application, pendingStatus.status);
+        }}
+        onClose={() => setPendingStatus(null)}
+      />
     </section>
   );
 }

@@ -17,9 +17,18 @@ import { reportConverter } from '@/lib/firebase/converters';
 import { generateProtocolId } from '@/lib/utils/protocol';
 import { uploadReportPhoto } from '@/services/storage.service';
 import { tryCreateNotification } from '@/services/notifications.service';
-import type { CreateReportInput, NotificationTone, Report, ReportStatus, StorageFile } from '@/types';
+import type {
+  CreateReportInput,
+  NotificationTone,
+  Report,
+  ReportMessage,
+  ReportMessageAuthorRole,
+  ReportStatus,
+  StorageFile,
+} from '@/types';
 
 const COLLECTION = 'reports';
+const MESSAGES_COLLECTION = 'report_messages';
 
 const STATUS_LABEL: Record<ReportStatus, string> = {
   pending: 'recebido',
@@ -69,6 +78,43 @@ export async function getReportById(id: string): Promise<Report | null> {
   return snap.exists() ? snap.data() : null;
 }
 
+export async function createReportMessage(input: {
+  reportId: string;
+  authorId: string;
+  authorName: string;
+  authorRole: ReportMessageAuthorRole;
+  message: string;
+}): Promise<string> {
+  const docRef = await addDoc(collection(db, MESSAGES_COLLECTION), {
+    reportId: input.reportId,
+    authorId: input.authorId,
+    authorName: input.authorName,
+    authorRole: input.authorRole,
+    message: input.message.trim(),
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+}
+
+function mapReportMessage(id: string, data: Record<string, unknown>): ReportMessage {
+  return {
+    id,
+    reportId: String(data.reportId || ''),
+    authorId: String(data.authorId || ''),
+    authorName: String(data.authorName || ''),
+    authorRole: (data.authorRole || 'system') as ReportMessageAuthorRole,
+    message: String(data.message || ''),
+    createdAt: data.createdAt as ReportMessage['createdAt'],
+  };
+}
+
+export async function getReportMessages(reportId: string): Promise<ReportMessage[]> {
+  const ref = collection(db, MESSAGES_COLLECTION);
+  const q = query(ref, where('reportId', '==', reportId), orderBy('createdAt', 'asc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((docSnap) => mapReportMessage(docSnap.id, docSnap.data()));
+}
+
 export async function getReportsByUser(userId: string): Promise<Report[]> {
   const ref = collection(db, COLLECTION).withConverter(reportConverter);
   const q = query(ref, where('reporterId', '==', userId), orderBy('createdAt', 'desc'));
@@ -112,6 +158,7 @@ export async function updateReportStatus(
   id: string,
   status: ReportStatus,
   clerkId: string,
+  clerkName: string,
   adminResponse?: string,
 ): Promise<void> {
   const ref = doc(db, COLLECTION, id).withConverter(reportConverter);
@@ -124,6 +171,19 @@ export async function updateReportStatus(
     ...(adminResponse !== undefined && { adminResponse }),
     updatedAt: serverTimestamp(),
   });
+
+  const response = adminResponse?.trim() || '';
+  const previousResponse = report?.adminResponse?.trim() || '';
+
+  if (response && response !== previousResponse) {
+    await createReportMessage({
+      reportId: id,
+      authorId: clerkId,
+      authorName: clerkName,
+      authorRole: 'staff',
+      message: response,
+    });
+  }
 
   if (report?.reporterId) {
     await tryCreateNotification({

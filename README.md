@@ -1,20 +1,58 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Digital Santa Maria
 
-# Run and deploy your AI Studio app
+Portal municipal com area publica, painel do cidadao, painel de gestao e integracao Firebase.
 
-This contains everything you need to run your app locally.
+## Comecar
 
-View your app in AI Studio: https://ai.studio/apps/cbf81fa4-073d-45d7-88fd-f054c5080e02
+```bash
+npm install
+npm.cmd run dev
+```
 
-## Run Locally
+A aplicacao local roda em:
 
-**Prerequisites:**  Node.js
+```text
+http://localhost:3000
+```
 
+## Validar
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Antes de entregar alteracoes:
+
+```bash
+npm.cmd run lint
+npm.cmd run build
+```
+
+## Firebase
+
+Scripts principais:
+
+```bash
+npm.cmd run firebase:rules:check
+npm.cmd run firebase:rules:deploy
+npm.cmd run firebase:indexes:check
+npm.cmd run firebase:indexes:deploy
+npm.cmd run firebase:functions:build
+npm.cmd run firebase:functions:deploy
+```
+
+## Documentacao
+
+Leia primeiro:
+
+- [Guia Tecnico do Desenvolvedor](./docs/GUIA_TECNICO_DESENVOLVEDOR.md)
+- [Plano do Painel de Gestao Profissional](./FINAL/PLANO_PAINEL_GESTAO_PROFISSIONAL.md)
+- [Indice Geral de Planejamento](./FINAL/PLANO_GERAL_INDEX.md)
+
+## Estrutura Rapida
+
+```text
+app/        rotas Next.js
+features/   modulos de negocio e telas compostas
+services/   acesso ao Firebase
+types/      contratos TypeScript
+functions/  Cloud Functions
+docs/       documentacao tecnica
+FINAL/      planejamento e backlog
+```

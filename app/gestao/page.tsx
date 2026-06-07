@@ -1,38 +1,100 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
-import { AlertCircle, FileText, Loader2, MapPin, Megaphone, Search, ShieldCheck } from 'lucide-react';
+import {
+  AlertCircle,
+  Building2,
+  Camera,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  FileText,
+  HeartHandshake,
+  Leaf,
+  Lightbulb,
+  Loader2,
+  MapPin,
+  Megaphone,
+  MessageSquareWarning,
+  ShieldAlert,
+  ShieldCheck,
+} from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import Skeleton from '@/components/ui/Skeleton';
-import ContentAdminPanel from '@/features/gestao/ContentAdminPanel';
+import AdminOverview from '@/features/gestao/AdminOverview';
+import AdminSectionNav, { type AdminMainSection } from '@/features/gestao/AdminSectionNav';
+import ContentAdminPanel, { type ContentTab } from '@/features/gestao/ContentAdminPanel';
+import { AdminQueueToolbar, AdminStatusSummary } from '@/features/gestao/content/AdminQueueControls';
 import MetricsDashboard from '@/features/gestao/MetricsDashboard';
 import PetitionsAdminPanel from '@/features/gestao/PetitionsAdminPanel';
 import ReportStatusUpdater from '@/features/gestao/ReportStatusUpdater';
 import StatusUpdater from '@/features/gestao/StatusUpdater';
 import UsersAdminPanel from '@/features/gestao/UsersAdminPanel';
 import { useAdminData } from '@/features/gestao/hooks/useAdminData';
+import DemandTimeline from '@/features/ouvidoria/DemandTimeline';
+import ReportTimeline from '@/features/relatar/ReportTimeline';
 import { useAuth } from '@/lib/auth-context';
+import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
-import type { DemandStatus, DemandType, ReportStatus, ReportType } from '@/types';
+import type { Demand, DemandStatus, DemandType, Report, ReportStatus, ReportType } from '@/types';
 
-const statusLabel: Record<DemandStatus, string> = {
+const demandStatusLabel: Record<DemandStatus, string> = {
   pending: 'Pendente',
   analyzing: 'Em analise',
   solved: 'Resolvida',
   rejected: 'Recusada',
 };
 
-const typeLabel: Record<DemandType, string> = {
+const demandTypeLabel: Record<DemandType, string> = {
   reclamacao: 'Reclamacao',
   sugestao: 'Solicitacao',
   denuncia: 'Denuncia',
   elogio: 'Elogio',
 };
 
+const demandTypeMeta = {
+  reclamacao: {
+    icon: MessageSquareWarning,
+    className: 'border-red-200 bg-red-50 text-red-700',
+    accentClassName: 'bg-red-600 text-white',
+  },
+  sugestao: {
+    icon: Lightbulb,
+    className: 'border-sky-200 bg-sky-50 text-sky-700',
+    accentClassName: 'bg-sky-600 text-white',
+  },
+  denuncia: {
+    icon: ShieldAlert,
+    className: 'border-purple-200 bg-purple-50 text-purple-700',
+    accentClassName: 'bg-purple-600 text-white',
+  },
+  elogio: {
+    icon: HeartHandshake,
+    className: 'border-green-200 bg-green-50 text-green-700',
+    accentClassName: 'bg-green-600 text-white',
+  },
+} satisfies Record<DemandType, { icon: typeof AlertCircle; className: string; accentClassName: string }>;
+
+const demandStatusMeta = {
+  pending: {
+    className: 'border-amber-200 bg-amber-50 text-amber-800',
+  },
+  analyzing: {
+    className: 'border-blue-200 bg-blue-50 text-blue-800',
+  },
+  solved: {
+    className: 'border-green-200 bg-green-50 text-green-800',
+  },
+  rejected: {
+    className: 'border-red-200 bg-red-50 text-red-800',
+  },
+} satisfies Record<DemandStatus, { className: string }>;
+
 const reportStatusLabel: Record<ReportStatus, string> = {
   pending: 'Pendente',
-  in_review: 'Em análise',
+  in_review: 'Em analise',
   resolved: 'Resolvido',
   rejected: 'Recusado',
 };
@@ -40,53 +102,670 @@ const reportStatusLabel: Record<ReportStatus, string> = {
 const reportTypeLabel: Record<ReportType, string> = {
   infrastructure: 'Infraestrutura',
   environment: 'Meio ambiente',
-  security: 'Segurança',
+  security: 'Seguranca',
   other: 'Outro',
 };
 
-type ActiveSection = 'demands' | 'reports' | 'content' | 'petitions' | 'users';
-type ReportStatusFilter = ReportStatus | 'all';
-type DemandSort = 'newest' | 'oldest' | 'pending';
-type StatusFilter = DemandStatus | 'all';
+const reportTypeMeta = {
+  infrastructure: {
+    icon: Building2,
+    className: 'border-orange-200 bg-orange-50 text-orange-800',
+    accentClassName: 'bg-orange-600 text-white',
+  },
+  environment: {
+    icon: Leaf,
+    className: 'border-green-200 bg-green-50 text-green-800',
+    accentClassName: 'bg-green-600 text-white',
+  },
+  security: {
+    icon: ShieldAlert,
+    className: 'border-red-200 bg-red-50 text-red-800',
+    accentClassName: 'bg-red-600 text-white',
+  },
+  other: {
+    icon: Megaphone,
+    className: 'border-sky-200 bg-sky-50 text-sky-800',
+    accentClassName: 'bg-sky-600 text-white',
+  },
+} satisfies Record<ReportType, { icon: typeof AlertCircle; className: string; accentClassName: string }>;
 
-function demandTime(value: { seconds?: number } | unknown) {
+const reportStatusMeta = {
+  pending: {
+    className: 'border-amber-200 bg-amber-50 text-amber-800',
+  },
+  in_review: {
+    className: 'border-blue-200 bg-blue-50 text-blue-800',
+  },
+  resolved: {
+    className: 'border-green-200 bg-green-50 text-green-800',
+  },
+  rejected: {
+    className: 'border-red-200 bg-red-50 text-red-800',
+  },
+} satisfies Record<ReportStatus, { className: string }>;
+
+const demandStatusOptions: { value: DemandStatus; label: string }[] = [
+  { value: 'pending', label: 'Pendente' },
+  { value: 'analyzing', label: 'Em analise' },
+  { value: 'solved', label: 'Resolvida' },
+  { value: 'rejected', label: 'Recusada' },
+];
+
+const reportStatusOptions: { value: ReportStatus; label: string }[] = [
+  { value: 'pending', label: 'Pendente' },
+  { value: 'in_review', label: 'Em analise' },
+  { value: 'resolved', label: 'Resolvido' },
+  { value: 'rejected', label: 'Recusado' },
+];
+
+type ActiveSection = AdminMainSection;
+type DemandSort = 'newest' | 'oldest' | 'pending';
+type DemandStatusFilter = DemandStatus | 'all';
+type ReportStatusFilter = ReportStatus | 'all';
+
+function timestampMillis(value: { seconds?: number } | unknown) {
   if (value && typeof value === 'object' && 'seconds' in value && typeof value.seconds === 'number') {
     return value.seconds * 1000;
   }
   return 0;
 }
 
+function buildDemandSearchText(demand: Demand) {
+  return [
+    demand.protocolId,
+    demand.subject,
+    demand.content.text,
+    demand.category,
+    demandStatusLabel[demand.status],
+    demandTypeLabel[demand.type],
+  ].join(' ').toLowerCase();
+}
+
+function buildReportSearchText(report: Report) {
+  return [
+    report.protocol,
+    report.title,
+    report.description,
+    report.reporterName,
+    reportTypeLabel[report.type],
+    reportStatusLabel[report.status],
+  ].join(' ').toLowerCase();
+}
+
+interface AuthGateProps {
+  authError: string | null;
+  loginError: string | null;
+  onLogin: () => void;
+}
+
+function LoginGate({ authError, loginError, onLogin }: AuthGateProps) {
+  return (
+    <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-4 text-center">
+      <AlertCircle className="h-12 w-12 text-primary" />
+      <h1 className="mt-4 text-3xl font-semibold tracking-normal text-text-main">Painel de Gestao</h1>
+      <p className="mt-3 text-base font-medium leading-7 text-text-muted">
+        Entre com uma conta autorizada para acessar solicitacoes, relatos e cadastros administrativos.
+      </p>
+      <button type="button" onClick={onLogin} className="action-button-primary mt-6">
+        Entrar
+      </button>
+      {(loginError || authError) && (
+        <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold leading-6 text-red-700">
+          {loginError || authError}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function RestrictedGate() {
+  return (
+    <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-4 text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-600">
+        <AlertCircle className="h-8 w-8" />
+      </div>
+      <h1 className="mt-5 text-3xl font-semibold tracking-normal text-text-main">Acesso restrito</h1>
+      <p className="mt-3 text-base font-medium leading-7 text-text-muted">
+        Sua conta nao tem permissao para acessar o painel administrativo.
+      </p>
+    </div>
+  );
+}
+
+function CopyProtocolButton({ protocol }: { protocol: string }) {
+  const { toast } = useToast();
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(protocol);
+      toast('Protocolo copiado.', 'success');
+    } catch {
+      toast('Nao foi possivel copiar o protocolo.', 'error');
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-white px-2 py-1 text-[10px] font-black uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
+      title="Copiar protocolo"
+    >
+      <Copy className="h-3.5 w-3.5" />
+      Copiar
+    </button>
+  );
+}
+
+interface DemandsSectionProps {
+  demands: Demand[];
+  loading: boolean;
+  error: string | null;
+  userId: string;
+  clerkName: string;
+  onRefresh: () => Promise<void>;
+}
+
+function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh }: DemandsSectionProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<DemandStatusFilter>('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [sortMode, setSortMode] = useState<DemandSort>('newest');
+  const [selectedDemandId, setSelectedDemandId] = useState<string | null>(null);
+
+  const metrics = {
+    total: demands.length,
+    pending: demands.filter((demand) => demand.status === 'pending').length,
+    analyzing: demands.filter((demand) => demand.status === 'analyzing').length,
+    solved: demands.filter((demand) => demand.status === 'solved').length,
+  };
+
+  const statusCounts = useMemo(() => {
+    return demandStatusOptions.reduce<Record<string, number>>((acc, item) => {
+      acc[item.value] = demands.filter((demand) => demand.status === item.value).length;
+      return acc;
+    }, {});
+  }, [demands]);
+
+  const categories = useMemo(() => {
+    return Array.from(new Set(demands.map((demand) => demand.category))).sort();
+  }, [demands]);
+
+  const filteredDemands = useMemo(() => {
+    const search = searchTerm.trim().toLowerCase();
+    return demands
+      .filter((demand) => {
+        const matchesSearch = !search || buildDemandSearchText(demand).includes(search);
+        const matchesStatus = statusFilter === 'all' || demand.status === statusFilter;
+        const matchesCategory = categoryFilter === 'all' || demand.category === categoryFilter;
+        return matchesSearch && matchesStatus && matchesCategory;
+      })
+      .sort((a, b) => {
+        if (sortMode === 'pending') {
+          const order: Record<DemandStatus, number> = { pending: 0, analyzing: 1, rejected: 2, solved: 3 };
+          return order[a.status] - order[b.status] || timestampMillis(b.createdAt) - timestampMillis(a.createdAt);
+        }
+        if (sortMode === 'oldest') return timestampMillis(a.createdAt) - timestampMillis(b.createdAt);
+        return timestampMillis(b.createdAt) - timestampMillis(a.createdAt);
+      });
+  }, [categoryFilter, demands, searchTerm, sortMode, statusFilter]);
+
+  const selectedDemandExists = filteredDemands.some((demand) => demand.id === selectedDemandId);
+  const activeDemandId = selectedDemandExists ? selectedDemandId : null;
+
+  return (
+    <>
+      <MetricsDashboard {...metrics} />
+
+      <div className="glass-panel p-4">
+        <AdminQueueToolbar
+          search={searchTerm}
+          searchPlaceholder="Buscar por protocolo, assunto, texto ou categoria"
+          filter={statusFilter}
+          statusOptions={demandStatusOptions}
+          loading={loading}
+          onSearchChange={setSearchTerm}
+          onFilterChange={(value) => setStatusFilter(value as DemandStatusFilter)}
+          onRefresh={onRefresh}
+        />
+
+        <AdminStatusSummary
+          total={demands.length}
+          filter={statusFilter}
+          statusOptions={demandStatusOptions}
+          counts={statusCounts}
+          onFilterChange={(value) => setStatusFilter(value as DemandStatusFilter)}
+        />
+
+        <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+          <select
+            value={categoryFilter}
+            onChange={(event) => setCategoryFilter(event.target.value)}
+            className="h-11 rounded-xl border border-border bg-white px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
+          >
+            <option value="all">Todas categorias</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+
+          <select
+            value={sortMode}
+            onChange={(event) => setSortMode(event.target.value as DemandSort)}
+            className="h-11 rounded-xl border border-border bg-white px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
+          >
+            <option value="newest">Mais recentes</option>
+            <option value="oldest">Mais antigas</option>
+            <option value="pending">Pendentes primeiro</option>
+          </select>
+        </div>
+
+        <p className="mt-3 text-xs font-bold text-text-muted">
+          Mostrando {filteredDemands.length} de {demands.length} solicitacoes.
+        </p>
+      </div>
+
+      {loading ? (
+        <div className="space-y-4">
+          <Skeleton variant="card" />
+          <Skeleton variant="card" />
+        </div>
+      ) : error ? (
+        <EmptyState title="Erro ao carregar" description={error} />
+      ) : demands.length === 0 ? (
+        <EmptyState title="Nenhuma solicitacao" description="Ainda nao ha solicitacoes registradas." />
+      ) : filteredDemands.length === 0 ? (
+        <EmptyState title="Nada encontrado" description="Tente limpar os filtros ou buscar outro termo." />
+      ) : (
+        <div className="space-y-4">
+          {filteredDemands.map((demand) => {
+            const typeMeta = demandTypeMeta[demand.type];
+            const statusMeta = demandStatusMeta[demand.status];
+            const TypeIcon = typeMeta.icon;
+            const isOpen = activeDemandId === demand.id;
+
+            return (
+              <article key={demand.id} className={`civic-card overflow-hidden ${isOpen ? 'ring-2 ring-primary/25' : ''}`}>
+                <div className="flex w-full flex-col gap-4 p-5 text-left md:p-6">
+                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-[auto_1fr_auto] lg:items-start">
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${typeMeta.accentClassName}`}>
+                      <TypeIcon className="h-6 w-6" />
+                    </div>
+
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${typeMeta.className}`}>
+                          {demandTypeLabel[demand.type]}
+                        </span>
+                        <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${statusMeta.className}`}>
+                          {demandStatusLabel[demand.status]}
+                        </span>
+                        <span className="rounded-full border border-border bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                          {demand.category}
+                        </span>
+                      </div>
+                      <h2 className="mt-3 text-lg font-semibold tracking-normal text-text-main md:text-xl">
+                        {demand.subject}
+                      </h2>
+                      <p className="mt-2 line-clamp-2 text-sm font-medium leading-6 text-text-muted">
+                        {demand.content.text}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-3 lg:min-w-64 lg:items-end">
+                      <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+                        <span className="font-mono text-xs font-black text-primary">{demand.protocolId}</span>
+                        <CopyProtocolButton protocol={demand.protocolId} />
+                      </div>
+                      <span className="text-xs font-bold text-text-muted">{formatDate(demand.createdAt)}</span>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDemandId(isOpen ? null : demand.id)}
+                        className="inline-flex w-fit items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-xs font-black text-primary transition hover:border-primary hover:bg-primary/10"
+                        aria-expanded={isOpen}
+                      >
+                        {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        {isOpen ? 'Fechar detalhe' : 'Abrir detalhe'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {isOpen && (
+                  <div className="border-t border-border bg-white p-5 md:p-6">
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_22rem]">
+                      <div className="space-y-4">
+                        <div className="rounded-xl border border-border bg-surface p-4">
+                          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted">
+                            <FileText className="h-4 w-4 text-primary" />
+                            Solicitacao original
+                          </div>
+                          <p className="mt-3 whitespace-pre-wrap text-sm font-medium leading-6 text-text-muted">
+                            {demand.content.text}
+                          </p>
+                          {demand.content.location && (
+                            <p className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-text-muted">
+                              <MapPin className="h-4 w-4 text-primary" />
+                              {demand.content.location.address || `${demand.content.location.lat}, ${demand.content.location.lng}`}
+                            </p>
+                          )}
+                        </div>
+
+                        <DemandTimeline demand={demand} compact />
+                      </div>
+
+                      <aside className="space-y-4">
+                        <div className="rounded-xl border border-border bg-surface p-4">
+                          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted">
+                            <ShieldCheck className="h-4 w-4 text-primary" />
+                            Dados do atendimento
+                          </div>
+                          <dl className="mt-3 space-y-3 text-sm">
+                            <div>
+                              <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Cidadao</dt>
+                              <dd className="mt-1 font-bold text-text-main">
+                                {demand.isAnonymous ? 'Anonimo' : demand.authorName || demand.authorId || 'Identificado'}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Criada em</dt>
+                              <dd className="mt-1 font-bold text-text-main">{formatDate(demand.createdAt)}</dd>
+                            </div>
+                            <div>
+                              <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Atualizada em</dt>
+                              <dd className="mt-1 font-bold text-text-main">{formatDate(demand.updatedAt)}</dd>
+                            </div>
+                          </dl>
+                        </div>
+
+                        <div className="rounded-xl border border-border bg-white p-4">
+                          <StatusUpdater
+                            demandId={demand.id}
+                            clerkId={userId}
+                            clerkName={clerkName}
+                            initialStatus={demand.status}
+                            initialResponse={demand.adminAction?.response || ''}
+                            onUpdate={onRefresh}
+                          />
+                        </div>
+                      </aside>
+                    </div>
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </>
+  );
+}
+
+interface ReportsSectionProps {
+  reports: Report[];
+  loading: boolean;
+  error: string | null;
+  userId: string;
+  clerkName: string;
+  onRefresh: () => Promise<void>;
+}
+
+function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh }: ReportsSectionProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<ReportStatusFilter>('all');
+  const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
+
+  const metrics = {
+    total: reports.length,
+    pending: reports.filter((report) => report.status === 'pending').length,
+    analyzing: reports.filter((report) => report.status === 'in_review').length,
+    solved: reports.filter((report) => report.status === 'resolved').length,
+  };
+
+  const statusCounts = useMemo(() => {
+    return reportStatusOptions.reduce<Record<string, number>>((acc, item) => {
+      acc[item.value] = reports.filter((report) => report.status === item.value).length;
+      return acc;
+    }, {});
+  }, [reports]);
+
+  const filteredReports = useMemo(() => {
+    const search = searchTerm.trim().toLowerCase();
+    return reports
+      .filter((report) => {
+        const matchesSearch = !search || buildReportSearchText(report).includes(search);
+        const matchesStatus = statusFilter === 'all' || report.status === statusFilter;
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => {
+        const order: Record<ReportStatus, number> = { pending: 0, in_review: 1, rejected: 2, resolved: 3 };
+        return order[a.status] - order[b.status] || timestampMillis(b.createdAt) - timestampMillis(a.createdAt);
+      });
+  }, [reports, searchTerm, statusFilter]);
+
+  const selectedReportExists = filteredReports.some((report) => report.id === selectedReportId);
+  const activeReportId = selectedReportExists ? selectedReportId : null;
+
+  return (
+    <>
+      <MetricsDashboard {...metrics} />
+
+      <div className="glass-panel p-4">
+        <AdminQueueToolbar
+          search={searchTerm}
+          searchPlaceholder="Buscar por protocolo, titulo, descricao ou cidadao"
+          filter={statusFilter}
+          statusOptions={reportStatusOptions}
+          loading={loading}
+          onSearchChange={setSearchTerm}
+          onFilterChange={(value) => setStatusFilter(value as ReportStatusFilter)}
+          onRefresh={onRefresh}
+        />
+
+        <AdminStatusSummary
+          total={reports.length}
+          filter={statusFilter}
+          statusOptions={reportStatusOptions}
+          counts={statusCounts}
+          onFilterChange={(value) => setStatusFilter(value as ReportStatusFilter)}
+        />
+
+        <p className="mt-3 text-xs font-bold text-text-muted">
+          Mostrando {filteredReports.length} de {reports.length} relatos.
+        </p>
+      </div>
+
+      {loading ? (
+        <div className="space-y-4">
+          <Skeleton variant="card" />
+          <Skeleton variant="card" />
+        </div>
+      ) : error ? (
+        <EmptyState title="Erro ao carregar" description={error} />
+      ) : reports.length === 0 ? (
+        <EmptyState title="Nenhum relato ainda" description="Quando alguem enviar um relato pela pagina /relatar, ele aparece aqui." />
+      ) : filteredReports.length === 0 ? (
+        <EmptyState title="Nada encontrado" description="Tente limpar os filtros ou buscar outro termo." />
+      ) : (
+        <div className="space-y-4">
+          {filteredReports.map((report) => {
+            const typeMeta = reportTypeMeta[report.type];
+            const statusMeta = reportStatusMeta[report.status];
+            const TypeIcon = typeMeta.icon;
+            const isOpen = activeReportId === report.id;
+
+            return (
+              <article key={report.id} className={`civic-card overflow-hidden ${isOpen ? 'ring-2 ring-primary/25' : ''}`}>
+                <div className="grid grid-cols-1 gap-4 p-5 md:p-6 lg:grid-cols-[auto_1fr_auto] lg:items-start">
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${typeMeta.accentClassName}`}>
+                    <TypeIcon className="h-6 w-6" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${typeMeta.className}`}>
+                        {reportTypeLabel[report.type]}
+                      </span>
+                      <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${statusMeta.className}`}>
+                        {reportStatusLabel[report.status]}
+                      </span>
+                      {report.photo?.url && (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-border bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                          <Camera className="h-3 w-3" />
+                          Foto
+                        </span>
+                      )}
+                    </div>
+                    <h2 className="mt-3 text-lg font-semibold tracking-normal text-text-main md:text-xl">{report.title}</h2>
+                    <p className="mt-2 line-clamp-2 text-sm font-medium leading-6 text-text-muted">
+                      {report.description}
+                    </p>
+                    {report.location?.address && (
+                      <p className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-text-muted">
+                        <MapPin className="h-3.5 w-3.5 text-primary" />
+                        {report.location.address}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-3 lg:min-w-64 lg:items-end">
+                    <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+                      <span className="break-all font-mono text-xs font-black text-primary">{report.protocol}</span>
+                      <CopyProtocolButton protocol={report.protocol} />
+                    </div>
+                    <span className="text-xs font-bold text-text-muted">{formatDate(report.createdAt)}</span>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedReportId(isOpen ? null : report.id)}
+                      className="inline-flex w-fit items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-xs font-black text-primary transition hover:border-primary hover:bg-primary/10"
+                      aria-expanded={isOpen}
+                    >
+                      {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      {isOpen ? 'Fechar detalhe' : 'Abrir detalhe'}
+                    </button>
+                  </div>
+                </div>
+
+                {isOpen && (
+                  <div className="border-t border-border bg-white p-5 md:p-6">
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_22rem]">
+                      <div className="space-y-4">
+                        {report.photo?.url && (
+                          <div className="relative h-72 w-full overflow-hidden rounded-xl border border-border bg-surface">
+                            <Image
+                              src={report.photo.url}
+                              alt={`Evidencia do relato ${report.title}`}
+                              fill
+                              sizes="(min-width: 1024px) 640px, 100vw"
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+
+                        <div className="rounded-xl border border-border bg-surface p-4">
+                          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted">
+                            <FileText className="h-4 w-4 text-primary" />
+                            Relato original
+                          </div>
+                          <p className="mt-3 whitespace-pre-wrap text-sm font-medium leading-6 text-text-muted">
+                            {report.description}
+                          </p>
+                          {report.location?.address && (
+                            <p className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-text-muted">
+                              <MapPin className="h-4 w-4 text-primary" />
+                              {report.location.address}
+                            </p>
+                          )}
+                        </div>
+
+                        <ReportTimeline report={report} compact />
+                      </div>
+
+                      <aside className="space-y-4">
+                        <div className="rounded-xl border border-border bg-surface p-4">
+                          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted">
+                            <ShieldCheck className="h-4 w-4 text-primary" />
+                            Dados do relato
+                          </div>
+                          <dl className="mt-3 space-y-3 text-sm">
+                            <div>
+                              <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Cidadao</dt>
+                              <dd className="mt-1 font-bold text-text-main">{report.reporterName || 'Identificado'}</dd>
+                            </div>
+                            <div>
+                              <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Criado em</dt>
+                              <dd className="mt-1 font-bold text-text-main">{formatDate(report.createdAt)}</dd>
+                            </div>
+                            <div>
+                              <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Atualizado em</dt>
+                              <dd className="mt-1 font-bold text-text-main">{formatDate(report.updatedAt)}</dd>
+                            </div>
+                            {report.location && (report.location.lat !== 0 || report.location.lng !== 0) && (
+                              <div>
+                                <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Coordenadas</dt>
+                                <dd className="mt-1 font-mono text-xs font-bold text-text-main">
+                                  {report.location.lat.toFixed(5)}, {report.location.lng.toFixed(5)}
+                                </dd>
+                              </div>
+                            )}
+                          </dl>
+                        </div>
+
+                        <ReportStatusUpdater
+                          reportId={report.id}
+                          clerkId={userId}
+                          clerkName={clerkName}
+                          initialStatus={report.status}
+                          initialResponse={report.adminResponse || ''}
+                          onUpdate={onRefresh}
+                        />
+                      </aside>
+                    </div>
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function GestaoPage() {
   const { user, userRole, loading: authLoading, authError, login } = useAuth();
   const isStaff = userRole === 'admin' || userRole === 'clerk';
-  const { demands, reports, loading, error, refresh } = useAdminData(!!user && isStaff);
-  const [activeSection, setActiveSection] = useState<ActiveSection>('demands');
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [sortMode, setSortMode] = useState<DemandSort>('newest');
-  const [reportSearch, setReportSearch] = useState('');
-  const [reportStatusFilter, setReportStatusFilter] = useState<ReportStatusFilter>('all');
   const canManageAdminCatalog = userRole === 'admin';
-  const visibleSection = canManageAdminCatalog || activeSection === 'demands' || activeSection === 'reports'
+  const { demands, reports, loading, error, refresh } = useAdminData(!!user && isStaff);
+  const [activeSection, setActiveSection] = useState<ActiveSection>('overview');
+  const [contentTab, setContentTab] = useState<ContentTab>('notices');
+  const [loginError, setLoginError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const allowedForClerk: ActiveSection[] = ['overview', 'demands', 'reports'];
+    if (!canManageAdminCatalog && !allowedForClerk.includes(activeSection)) {
+      setActiveSection('overview');
+    }
+  }, [activeSection, canManageAdminCatalog]);
+
+  const reportPendingCount = useMemo(() => {
+    return reports.filter((report) => report.status === 'pending').length;
+  }, [reports]);
+
+  const visibleSection: ActiveSection = canManageAdminCatalog || activeSection === 'overview' || activeSection === 'demands' || activeSection === 'reports'
     ? activeSection
-    : 'demands';
+    : 'overview';
+
+  const clerkName = user?.displayName || user?.email || 'Gestor';
 
   const handleLogin = async () => {
     setLoginError(null);
     try {
       await login();
-    } catch (error) {
-      setLoginError(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.');
+    } catch (loginProblem) {
+      setLoginError(loginProblem instanceof Error ? loginProblem.message : 'Nao foi possivel iniciar o login.');
     }
   };
-
-  useEffect(() => {
-    if (!canManageAdminCatalog && activeSection !== 'demands' && activeSection !== 'reports') {
-      setActiveSection('demands');
-    }
-  }, [activeSection, canManageAdminCatalog]);
 
   if (authLoading) {
     return (
@@ -97,104 +776,12 @@ export default function GestaoPage() {
   }
 
   if (!user) {
-    return (
-      <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-4 text-center">
-        <AlertCircle className="h-12 w-12 text-primary" />
-        <h1 className="mt-4 text-3xl font-semibold tracking-normal text-text-main">Painel de Gestao</h1>
-        <p className="mt-3 text-base font-medium leading-7 text-text-muted">
-          Entre com uma conta autorizada para acessar solicitacoes e peticoes.
-        </p>
-        <button
-          onClick={handleLogin}
-          className="action-button-primary mt-6"
-        >
-          Entrar
-        </button>
-        {(loginError || authError) && (
-          <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold leading-6 text-red-700">
-            {loginError || authError}
-          </p>
-        )}
-      </div>
-    );
+    return <LoginGate authError={authError} loginError={loginError} onLogin={handleLogin} />;
   }
 
   if (!isStaff) {
-    return (
-      <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-4 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-600">
-          <AlertCircle className="h-8 w-8" />
-        </div>
-        <h1 className="mt-5 text-3xl font-semibold tracking-normal text-text-main">Acesso restrito</h1>
-        <p className="mt-3 text-base font-medium leading-7 text-text-muted">
-          Sua conta nao tem permissao para acessar o painel administrativo.
-        </p>
-      </div>
-    );
+    return <RestrictedGate />;
   }
-
-  const metrics = {
-    total: demands.length,
-    pending: demands.filter((demand) => demand.status === 'pending').length,
-    analyzing: demands.filter((demand) => demand.status === 'analyzing').length,
-    solved: demands.filter((demand) => demand.status === 'solved').length,
-  };
-
-  const categories = Array.from(new Set(demands.map((demand) => demand.category))).sort();
-  const filteredDemands = demands
-    .filter((demand) => {
-      const search = searchTerm.trim().toLowerCase();
-      const searchable = [
-        demand.protocolId,
-        demand.subject,
-        demand.content.text,
-        demand.category,
-        statusLabel[demand.status],
-        typeLabel[demand.type],
-      ].join(' ').toLowerCase();
-
-      const matchesSearch = !search || searchable.includes(search);
-      const matchesStatus = statusFilter === 'all' || demand.status === statusFilter;
-      const matchesCategory = categoryFilter === 'all' || demand.category === categoryFilter;
-
-      return matchesSearch && matchesStatus && matchesCategory;
-    })
-    .sort((a, b) => {
-      if (sortMode === 'pending') {
-        const order: Record<DemandStatus, number> = { pending: 0, analyzing: 1, rejected: 2, solved: 3 };
-        return order[a.status] - order[b.status] || demandTime(b.createdAt) - demandTime(a.createdAt);
-      }
-      if (sortMode === 'oldest') return demandTime(a.createdAt) - demandTime(b.createdAt);
-      return demandTime(b.createdAt) - demandTime(a.createdAt);
-    });
-
-  const reportMetrics = {
-    total: reports.length,
-    pending: reports.filter((report) => report.status === 'pending').length,
-    analyzing: reports.filter((report) => report.status === 'in_review').length,
-    solved: reports.filter((report) => report.status === 'resolved').length,
-  };
-  const reportPendingCount = reportMetrics.pending;
-
-  const filteredReports = reports
-    .filter((report) => {
-      const search = reportSearch.trim().toLowerCase();
-      const searchable = [
-        report.protocol,
-        report.title,
-        report.description,
-        report.reporterName,
-        reportTypeLabel[report.type],
-        reportStatusLabel[report.status],
-      ].join(' ').toLowerCase();
-      const matchesSearch = !search || searchable.includes(search);
-      const matchesStatus = reportStatusFilter === 'all' || report.status === reportStatusFilter;
-      return matchesSearch && matchesStatus;
-    })
-    .sort((a, b) => {
-      const order: Record<ReportStatus, number> = { pending: 0, in_review: 1, rejected: 2, resolved: 3 };
-      return order[a.status] - order[b.status] || demandTime(b.createdAt) - demandTime(a.createdAt);
-    });
 
   return (
     <div className="page-shell">
@@ -202,308 +789,61 @@ export default function GestaoPage() {
         <div className="hero-panel p-5 sm:p-7 md:p-9">
           <div className="soft-chip">
             <ShieldCheck className="h-4 w-4" />
-            Gestão municipal
+            Gestao municipal
           </div>
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-text-main md:text-5xl" style={{ fontFamily: 'var(--font-display)' }}>
-            Painel de <span className="text-gradient">operação</span>
+            Painel de <span className="text-gradient">operacao</span>
           </h1>
           <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-            Acompanhe solicitações, responda protocolos, gerencie petições e atualize dados de usuários.
+            Acompanhe solicitacoes, responda protocolos, gerencie conteudo publico e mantenha os cadastros administrativos em ordem.
           </p>
         </div>
       </section>
 
       <main className="mx-auto w-full max-w-7xl space-y-5 px-4 py-7 sm:px-6 md:px-10 lg:px-12">
-        <div className="glass-panel grid grid-cols-2 p-1 md:grid-cols-5">
-          <button
-            onClick={() => setActiveSection('demands')}
-            className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
-              activeSection === 'demands' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
-            }`}
-          >
-            Solicitacoes ({demands.length})
-          </button>
-          <button
-            onClick={() => setActiveSection('reports')}
-            className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
-              activeSection === 'reports' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
-            }`}
-          >
-            Relatos ({reports.length}{reportPendingCount > 0 ? ` · ${reportPendingCount} novos` : ''})
-          </button>
-          {canManageAdminCatalog && (
-            <>
-          <button
-            onClick={() => setActiveSection('content')}
-            className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
-              activeSection === 'content' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
-            }`}
-          >
-            Conteúdo
-          </button>
-          <button
-            onClick={() => setActiveSection('petitions')}
-            className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
-              activeSection === 'petitions' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
-            }`}
-          >
-            Peticoes
-          </button>
-          <button
-            onClick={() => setActiveSection('users')}
-            className={`rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-widest transition ${
-              activeSection === 'users' ? 'bg-primary text-white' : 'text-text-muted hover:text-primary'
-            }`}
-          >
-            Usuarios
-          </button>
-            </>
-          )}
-        </div>
+        <AdminSectionNav
+          activeSection={visibleSection}
+          demandCount={demands.length}
+          reportCount={reports.length}
+          reportPendingCount={reportPendingCount}
+          canManageAdminCatalog={canManageAdminCatalog}
+          onChange={setActiveSection}
+        />
 
-        {visibleSection === 'demands' ? (
-          <>
-            <MetricsDashboard {...metrics} />
-
-            <div className="glass-panel p-4">
-              <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_180px_180px_180px]">
-                <label className="relative block">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-                  <input
-                    value={searchTerm}
-                    onChange={(event) => setSearchTerm(event.target.value)}
-                    placeholder="Buscar por protocolo, assunto, texto ou categoria"
-                    className="h-11 w-full rounded-xl border border-border bg-surface pl-10 pr-3 text-sm font-medium outline-none transition focus:border-primary"
-                  />
-                </label>
-
-                <select
-                  value={statusFilter}
-                  onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
-                  className="h-11 rounded-xl border border-border bg-surface px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
-                >
-                  <option value="all">Todos status</option>
-                  <option value="pending">Pendente</option>
-                  <option value="analyzing">Em analise</option>
-                  <option value="solved">Resolvida</option>
-                  <option value="rejected">Recusada</option>
-                </select>
-
-                <select
-                  value={categoryFilter}
-                  onChange={(event) => setCategoryFilter(event.target.value)}
-                  className="h-11 rounded-xl border border-border bg-surface px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
-                >
-                  <option value="all">Todas categorias</option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-
-                <select
-                  value={sortMode}
-                  onChange={(event) => setSortMode(event.target.value as DemandSort)}
-                  className="h-11 rounded-xl border border-border bg-surface px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
-                >
-                  <option value="newest">Mais recentes</option>
-                  <option value="oldest">Mais antigas</option>
-                  <option value="pending">Pendentes primeiro</option>
-                </select>
-              </div>
-
-              <p className="mt-3 text-xs font-bold text-text-muted">
-                Mostrando {filteredDemands.length} de {demands.length} solicitacoes.
-              </p>
-            </div>
-
-            {loading ? (
-              <div className="space-y-4">
-                <Skeleton variant="card" />
-                <Skeleton variant="card" />
-              </div>
-            ) : error ? (
-              <EmptyState title="Erro ao carregar" description={error} />
-            ) : demands.length === 0 ? (
-              <EmptyState title="Nenhuma solicitacao" description="Ainda nao ha solicitacoes registradas." />
-            ) : filteredDemands.length === 0 ? (
-              <EmptyState title="Nada encontrado" description="Tente limpar os filtros ou buscar outro termo." />
-            ) : (
-              <div className="space-y-4">
-                {filteredDemands.map((demand) => (
-                  <article key={demand.id} className="civic-card p-5 md:p-6">
-                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-primary">
-                            {typeLabel[demand.type]}
-                          </span>
-                          <span className="rounded-full bg-surface px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
-                            {statusLabel[demand.status]}
-                          </span>
-                          <span className="text-xs font-bold text-text-muted">{formatDate(demand.createdAt)}</span>
-                        </div>
-                        <h2 className="mt-3 text-xl font-semibold tracking-normal text-text-main">{demand.subject}</h2>
-                        <p className="mt-2 line-clamp-3 text-sm font-medium leading-6 text-text-muted">
-                          {demand.content.text}
-                        </p>
-                        <p className="mt-3 break-all font-mono text-xs font-bold text-primary">
-                          {demand.protocolId}
-                        </p>
-                      </div>
-
-                      <div className="rounded-xl border border-border bg-surface p-4 lg:min-w-64">
-                        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-text-muted">
-                          <FileText className="h-4 w-4 text-primary" />
-                          Cidadao
-                        </div>
-                        <p className="mt-2 text-sm font-bold text-text-main">
-                          {demand.isAnonymous ? 'Anonimo' : demand.authorName || demand.authorId || 'Identificado'}
-                        </p>
-                        <p className="mt-1 text-xs font-medium text-text-muted">
-                          Categoria: {demand.category}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-5 border-t border-border pt-5">
-                      <StatusUpdater
-                        demandId={demand.id}
-                        clerkId={user.uid}
-                        clerkName={user.displayName || user.email || 'Gestor'}
-                        initialStatus={demand.status}
-                        initialResponse={demand.adminAction?.response || ''}
-                        onUpdate={refresh}
-                      />
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </>
+        {visibleSection === 'overview' ? (
+          <AdminOverview
+            demands={demands}
+            reports={reports}
+            loadingBase={loading}
+            errorBase={error}
+            canManageCatalog={canManageAdminCatalog}
+            onNavigate={setActiveSection}
+            onOpenContentTab={(tab) => {
+              setContentTab(tab);
+              setActiveSection('content');
+            }}
+            onRefreshBase={refresh}
+          />
+        ) : visibleSection === 'demands' ? (
+          <DemandsSection
+            demands={demands}
+            loading={loading}
+            error={error}
+            userId={user.uid}
+            clerkName={clerkName}
+            onRefresh={refresh}
+          />
         ) : visibleSection === 'reports' ? (
-          <>
-            <MetricsDashboard {...reportMetrics} />
-
-            <div className="glass-panel p-4">
-              <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_220px]">
-                <label className="relative block">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-                  <input
-                    value={reportSearch}
-                    onChange={(event) => setReportSearch(event.target.value)}
-                    placeholder="Buscar por protocolo, título, descrição ou cidadão"
-                    className="h-11 w-full rounded-xl border border-border bg-surface pl-10 pr-3 text-sm font-medium outline-none transition focus:border-primary"
-                  />
-                </label>
-
-                <select
-                  value={reportStatusFilter}
-                  onChange={(event) => setReportStatusFilter(event.target.value as ReportStatusFilter)}
-                  className="h-11 rounded-xl border border-border bg-surface px-3 text-sm font-bold text-text-main outline-none focus:border-primary"
-                >
-                  <option value="all">Todos status</option>
-                  <option value="pending">Pendente</option>
-                  <option value="in_review">Em análise</option>
-                  <option value="resolved">Resolvido</option>
-                  <option value="rejected">Recusado</option>
-                </select>
-              </div>
-
-              <p className="mt-3 text-xs font-bold text-text-muted">
-                Mostrando {filteredReports.length} de {reports.length} relatos.
-              </p>
-            </div>
-
-            {loading ? (
-              <div className="space-y-4">
-                <Skeleton variant="card" />
-                <Skeleton variant="card" />
-              </div>
-            ) : error ? (
-              <EmptyState title="Erro ao carregar" description={error} />
-            ) : reports.length === 0 ? (
-              <EmptyState
-                title="Nenhum relato ainda"
-                description="Quando alguém enviar um relato pela página /relatar, ele aparece aqui."
-              />
-            ) : filteredReports.length === 0 ? (
-              <EmptyState title="Nada encontrado" description="Tente limpar os filtros ou buscar outro termo." />
-            ) : (
-              <div className="space-y-4">
-                {filteredReports.map((report) => (
-                  <article key={report.id} className="civic-card p-5 md:p-6">
-                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="inline-flex items-center gap-1 rounded-full bg-accent-success/12 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-accent-success">
-                            <Megaphone className="h-3 w-3" />
-                            {reportTypeLabel[report.type]}
-                          </span>
-                          <span className="rounded-full bg-surface px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
-                            {reportStatusLabel[report.status]}
-                          </span>
-                          <span className="text-xs font-bold text-text-muted">{formatDate(report.createdAt)}</span>
-                        </div>
-                        <h2 className="mt-3 text-xl font-semibold tracking-normal text-text-main">{report.title}</h2>
-                        <p className="mt-2 line-clamp-3 text-sm font-medium leading-6 text-text-muted">
-                          {report.description}
-                        </p>
-                        {report.location?.address && (
-                          <p className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-text-muted">
-                            <MapPin className="h-3.5 w-3.5 text-primary" />
-                            {report.location.address}
-                          </p>
-                        )}
-                        <p className="mt-3 break-all font-mono text-xs font-bold text-primary">
-                          {report.protocol}
-                        </p>
-                      </div>
-
-                      <div className="flex flex-col gap-3 lg:min-w-64">
-                        {report.photo?.url && (
-                          <div className="relative h-40 w-full overflow-hidden rounded-xl border border-border bg-surface">
-                            <Image
-                              src={report.photo.url}
-                              alt={`Evidência do relato ${report.title}`}
-                              fill
-                              sizes="(min-width: 1024px) 256px, 100vw"
-                              className="object-cover"
-                            />
-                          </div>
-                        )}
-                        <div className="rounded-xl border border-border bg-surface p-4">
-                          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-text-muted">
-                            <FileText className="h-4 w-4 text-primary" />
-                            Cidadão
-                          </div>
-                          <p className="mt-2 text-sm font-bold text-text-main">
-                            {report.reporterName || 'Identificado'}
-                          </p>
-                          {report.location && (report.location.lat !== 0 || report.location.lng !== 0) && (
-                            <p className="mt-1 font-mono text-[10px] font-bold text-text-muted">
-                              {report.location.lat.toFixed(5)}, {report.location.lng.toFixed(5)}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-5 border-t border-border pt-5">
-                      <ReportStatusUpdater
-                        reportId={report.id}
-                        clerkId={user.uid}
-                        initialStatus={report.status}
-                        initialResponse={report.adminResponse || ''}
-                        onUpdate={refresh}
-                      />
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </>
+          <ReportsSection
+            reports={reports}
+            loading={loading}
+            error={error}
+            userId={user.uid}
+            clerkName={clerkName}
+            onRefresh={refresh}
+          />
         ) : visibleSection === 'content' ? (
-          <ContentAdminPanel />
+          <ContentAdminPanel activeTab={contentTab} onTabChange={setContentTab} />
         ) : visibleSection === 'petitions' ? (
           <PetitionsAdminPanel />
         ) : (

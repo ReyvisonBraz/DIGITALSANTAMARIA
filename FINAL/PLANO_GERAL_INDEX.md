@@ -1,17 +1,21 @@
-# Plano Diretor de Evolução do Sistema (Civic Guardian)
+# Plano Diretor de Evolucao do Sistema (Civic Guardian)
 
-Este documento centraliza todas as análises componentes-a-componente situadas neste diretório.
+Este documento centraliza as analises e planos principais do projeto.
 
-## Índice Sistemático de Revisão:
-1. **[Core & Estrutura Base](./07_core_componentes.md)** - Garante que todas as peças se conectem. Modais omnichanel blindados, layout fluid, design global.
-2. **[Atendimento Municipal](./06_atendimento.md)** - Ouvidoria e sistema de upload de denúncias (buracos, lixo). Plano de uso de storage pesado.
-3. **[Participação Cidadã](./05_participacao.md)** - Votos, petições, eventos sociais e gamificação da relação político/cidadão.
-4. **[Gestão Urbana Interativa](./04_gestao_urbana.md)** - Transparência pública (obras), avisos governamentais e alertas da rota da cidade.
-5. **[Motor Econômico](./03_economia_tributos.md)** - Como os impostos, sistema de IPTU e classificados locais/empregos interagem entre si em UX.
-6. **[Central de Segurança Rápida](./02_seguranca.md)** - Botão de pânico, heatmaps de mancha criminosa e relatos anônimos sem comprometer o Auth.
-7. **[Central de Saúde](./01_saude.md)** - Agendamentos, tempos de espera de UPAs e carteira de vacinas vinculada à identidade.
+## Plano Operacional Atual
 
-### Conclusão das Análises Singulares
-Em todas as camadas, as funções base *já foram desenvolvidas no código-fonte principal* da pasta `/app`. Nenhum "mock cego" permanece em UI, pois todas as transições preparam a esteira de injeção de APIs. 
+- **[Painel de Gestao Profissional](./PLANO_PAINEL_GESTAO_PROFISSIONAL.md)** - Backlog vivo para evoluir `/gestao` como central administrativa completa, com filas, conteudo, permissoes, auditoria, Firebase e testes.
 
-**O Status é:** O Projeto Front-End / Edge está **COMPLETO e REDONDO**, necessitando daqui em diante exclusivamente das chaves reais em Backend para fluir dados em produção real ou preenchimento manual (Seed) do Firestore pelos administradores da prefeitura para dar vida ao esqueleto inteligente que criamos.
+## Indice Sistematico de Revisao
+
+1. **[Core & Estrutura Base](./07_core_componentes.md)** - Garante que todas as pecas se conectem. Modais omnichannel, layout fluido e design global.
+2. **[Atendimento Municipal](./06_atendimento.md)** - Ouvidoria e sistema de upload de denuncias, buracos, lixo e solicitacoes.
+3. **[Participacao Cidada](./05_participacao.md)** - Votos, peticoes, eventos sociais e gamificacao da relacao politica/cidadao.
+4. **[Gestao Urbana Interativa](./04_gestao_urbana.md)** - Transparencia publica, obras, avisos governamentais e alertas da cidade.
+5. **[Motor Economico](./03_economia_tributos.md)** - Impostos, IPTU, classificados locais, empregos e comercio.
+6. **[Central de Seguranca Rapida](./02_seguranca.md)** - Botao de panico, pontos de seguranca e relatos anonimos.
+7. **[Central de Saude](./01_saude.md)** - Agendamentos, tempos de espera, unidades de saude e carteira de vacinas.
+
+## Conclusao das Analises Singulares
+
+As funcoes base ja existem no codigo principal, mas o projeto agora precisa evoluir de prototipo funcional para operacao municipal consistente. A prioridade atual e transformar o painel administrativo em uma central profissional, com workflows claros, permissoes, auditoria, dados reais no Firebase e testes de ponta a ponta.

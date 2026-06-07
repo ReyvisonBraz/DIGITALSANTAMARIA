@@ -21,9 +21,11 @@ import type { ContentStatus } from '@/types';
 
 interface ContentService<T extends { id: string }> {
   list: (filters?: [string, WhereFilterOp, unknown][], max?: number) => Promise<T[]>;
+  listAdmin: (max?: number) => Promise<T[]>;
   getById: (id: string) => Promise<T | null>;
   create: (data: Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>) => Promise<string>;
   update: (id: string, data: Partial<T>) => Promise<void>;
+  setStatus: (id: string, status: ContentStatus) => Promise<void>;
   archive: (id: string) => Promise<void>;
 }
 
@@ -58,6 +60,12 @@ export function createContentService<T extends { id: string; status: ContentStat
       .filter((item) => !item.deletedAt);
   }
 
+  async function listAdmin(max = 100): Promise<T[]> {
+    const q = query(collection(db, collectionName), orderBy('createdAt', 'desc'), limit(max));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ ...d.data() as object, id: d.id } as unknown as T));
+  }
+
   async function getById(id: string): Promise<T | null> {
     const ref = doc(db, collectionName, id);
     const snap = await getDoc(ref);
@@ -83,10 +91,15 @@ export function createContentService<T extends { id: string; status: ContentStat
     await updateDoc(ref, { ...data, updatedAt: serverTimestamp() });
   }
 
-  async function archive(id: string): Promise<void> {
+  async function setStatus(id: string, status: ContentStatus): Promise<void> {
     const ref = doc(db, collectionName, id);
-    await updateDoc(ref, { deletedAt: serverTimestamp(), updatedAt: serverTimestamp() });
+    await updateDoc(ref, { status, updatedAt: serverTimestamp() });
   }
 
-  return { list, getById, create, update, archive };
+  async function archive(id: string): Promise<void> {
+    const ref = doc(db, collectionName, id);
+    await updateDoc(ref, { status: 'archived', deletedAt: serverTimestamp(), updatedAt: serverTimestamp() });
+  }
+
+  return { list, listAdmin, getById, create, update, setStatus, archive };
 }

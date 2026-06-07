@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Clock, FileText, Loader2, Search } from 'lucide-react';
 import { getDemandByProtocol } from '@/services/demands.service';
+import DemandTimeline from '@/features/ouvidoria/DemandTimeline';
+import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
 import type { Demand, DemandStatus, DemandType } from '@/types';
@@ -23,6 +25,7 @@ const typeLabel: Record<DemandType, string> = {
 
 export default function ProtocolSearch() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [protocolId, setProtocolId] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Demand | null>(null);
@@ -110,13 +113,14 @@ export default function ProtocolSearch() {
             <p className="mt-3 text-sm font-medium leading-6 text-text-muted">{result.content.text}</p>
           </div>
 
-          {result.adminAction && (
-            <div className="mt-5 rounded-xl border border-green-200 bg-green-50 p-4">
-              <p className="text-xs font-black uppercase tracking-widest text-green-700">Resposta da Prefeitura</p>
-              <p className="mt-2 text-sm font-medium leading-6 text-green-900">{result.adminAction.response}</p>
-              <p className="mt-2 text-xs font-bold text-green-700">Por {result.adminAction.clerkName}</p>
-            </div>
-          )}
+          <div className="mt-5">
+            <DemandTimeline
+              demand={result}
+              allowCitizenReply
+              currentUserId={user?.uid}
+              currentUserName={user?.displayName || user?.email || undefined}
+            />
+          </div>
         </article>
       )}
     </div>

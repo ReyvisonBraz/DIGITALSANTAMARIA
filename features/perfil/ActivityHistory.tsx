@@ -1,7 +1,11 @@
 'use client';
+'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { Briefcase, CalendarCheck, ClipboardList, Clock, FileText, GraduationCap, Loader2, Siren } from 'lucide-react';
+import { Briefcase, CalendarCheck, ChevronDown, ChevronUp, ClipboardList, Clock, FileText, GraduationCap, Loader2, Siren } from 'lucide-react';
+import DemandTimeline from '@/features/ouvidoria/DemandTimeline';
+import ReportTimeline from '@/features/relatar/ReportTimeline';
 import { formatDate } from '@/lib/utils/formatters';
 import type {
   ApplicationStatus,
@@ -79,6 +83,8 @@ function getMillis(value: ActivityDate) {
 interface ActivityHistoryProps {
   demands: Demand[];
   reports: Report[];
+  currentUserId?: string;
+  currentUserName?: string;
   appointments?: Appointment[];
   applications?: JobApplication[];
   enrollments?: Enrollment[];
@@ -89,15 +95,20 @@ interface ActivityHistoryProps {
 export default function ActivityHistory({
   demands,
   reports,
+  currentUserId = '',
+  currentUserName = '',
   appointments = [],
   applications = [],
   enrollments = [],
   emergencyAlerts = [],
   loading = false,
 }: ActivityHistoryProps) {
+  const [openItemId, setOpenItemId] = useState<string | null>(null);
+
   const activities = [
     ...demands.map((demand) => ({
       id: demand.id,
+      source: demand,
       protocol: demand.protocolId,
       type: 'Solicitação',
       title: demand.subject,
@@ -107,6 +118,7 @@ export default function ActivityHistory({
     })),
     ...reports.map((report) => ({
       id: report.id,
+      source: report,
       protocol: report.protocol,
       type: 'Relato',
       title: report.title,
@@ -116,6 +128,7 @@ export default function ActivityHistory({
     })),
     ...appointments.map((appointment) => ({
       id: appointment.id,
+      source: null,
       protocol: `${appointment.date} ${appointment.time}`,
       type: 'Consulta',
       title: `${appointment.specialty} - ${appointment.unitName}`,
@@ -125,6 +138,7 @@ export default function ActivityHistory({
     })),
     ...applications.map((application) => ({
       id: application.id,
+      source: null,
       protocol: `CAND-${application.id.slice(0, 6).toUpperCase()}`,
       type: 'Candidatura',
       title: application.jobTitle,
@@ -134,6 +148,7 @@ export default function ActivityHistory({
     })),
     ...enrollments.map((enrollment) => ({
       id: enrollment.id,
+      source: null,
       protocol: enrollment.protocol,
       type: 'Matricula',
       title: enrollment.studentName,
@@ -143,6 +158,7 @@ export default function ActivityHistory({
     })),
     ...emergencyAlerts.map((alert) => ({
       id: alert.id,
+      source: null,
       protocol: alert.protocol,
       type: 'Emergencia',
       title: alert.location,
@@ -187,29 +203,69 @@ export default function ActivityHistory({
 
   return (
     <div className="space-y-3">
-      {activities.slice(0, 8).map((item) => (
-        <div
-          key={`${item.type}-${item.id}`}
-          className="civic-card grid grid-cols-[auto_1fr] gap-3 p-4 sm:grid-cols-[auto_1fr_auto]"
-        >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <item.icon className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="truncate text-sm font-black text-text-main">{item.title}</p>
-              <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-text-muted">
-                {item.status}
-              </span>
+      {activities.slice(0, 8).map((item) => {
+        const itemKey = `${item.type}-${item.id}`;
+        const canOpen = item.type === 'SolicitaÃ§Ã£o' || item.type === 'Relato';
+        const isOpen = openItemId === itemKey;
+
+        return (
+          <div key={itemKey} className={`civic-card overflow-hidden ${isOpen ? 'ring-2 ring-primary/20' : ''}`}>
+            <div className="grid grid-cols-[auto_1fr] gap-3 p-4 sm:grid-cols-[auto_1fr_auto]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <item.icon className="h-5 w-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="truncate text-sm font-black text-text-main">{item.title}</p>
+                  <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                    {item.status}
+                  </span>
+                </div>
+                <p className="mt-1 break-all font-mono text-xs font-bold text-primary">{item.protocol}</p>
+              </div>
+              <div className="col-span-2 flex flex-wrap items-center gap-3 text-xs font-bold text-text-muted sm:col-span-1 sm:justify-end">
+                <span className="inline-flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  {formatDate(item.date)}
+                </span>
+                {canOpen && (
+                  <button
+                    type="button"
+                    onClick={() => setOpenItemId(isOpen ? null : itemKey)}
+                    className="inline-flex items-center gap-1 rounded-lg border border-border bg-white px-2 py-1 text-[10px] font-black uppercase tracking-widest text-primary hover:border-primary"
+                  >
+                    {isOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                    Conversa
+                  </button>
+                )}
+              </div>
             </div>
-            <p className="mt-1 break-all font-mono text-xs font-bold text-primary">{item.protocol}</p>
+
+            {isOpen && item.type === 'SolicitaÃ§Ã£o' && item.source && (
+              <div className="border-t border-border p-4">
+                <DemandTimeline
+                  demand={item.source as Demand}
+                  compact
+                  allowCitizenReply
+                  currentUserId={currentUserId}
+                  currentUserName={currentUserName}
+                />
+              </div>
+            )}
+            {isOpen && item.type === 'Relato' && item.source && (
+              <div className="border-t border-border p-4">
+                <ReportTimeline
+                  report={item.source as Report}
+                  compact
+                  allowCitizenReply
+                  currentUserId={currentUserId}
+                  currentUserName={currentUserName}
+                />
+              </div>
+            )}
           </div>
-          <div className="col-span-2 flex items-center gap-2 text-xs font-bold text-text-muted sm:col-span-1">
-            <Clock className="h-4 w-4" />
-            {formatDate(item.date)}
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

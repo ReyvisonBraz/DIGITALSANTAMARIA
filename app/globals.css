@@ -342,6 +342,33 @@
     border-bottom-color: var(--color-primary-dark);
   }
   .btn-primary-tactile:hover { background: var(--color-primary-dark); border-bottom-width: 4px; }
+
+  .admin-choice-active {
+    border-color: var(--color-primary-dark);
+    background: var(--color-primary-dark);
+    color: #ffffff;
+    box-shadow: 0 10px 24px rgba(14, 58, 140, 0.22);
+  }
+
+  .admin-choice-active,
+  .admin-choice-active * {
+    color: #ffffff;
+  }
+
+  .admin-choice-active-muted {
+    color: rgba(255, 255, 255, 0.86);
+  }
+
+  .admin-choice-idle {
+    border-color: var(--color-border);
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--color-text-main);
+  }
+
+  .admin-choice-idle:hover {
+    border-color: rgba(26, 86, 196, 0.48);
+    color: var(--color-primary-dark);
+  }
 }
 
 /* ─── Utilities & Movimento ──────────────────────────────────────── */

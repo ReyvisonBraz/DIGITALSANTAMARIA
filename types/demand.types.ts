@@ -43,6 +43,18 @@ export interface Demand {
   updatedAt: Timestamp;
 }
 
+export type DemandMessageAuthorRole = 'citizen' | 'staff' | 'system';
+
+export interface DemandMessage {
+  id: string;
+  demandId: string;
+  authorId: string;
+  authorName: string;
+  authorRole: DemandMessageAuthorRole;
+  message: string;
+  createdAt: Timestamp;
+}
+
 export type CreateDemandInput = {
   type: DemandType;
   category: DemandCategory;

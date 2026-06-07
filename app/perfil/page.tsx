@@ -251,6 +251,8 @@ export default function PerfilPage() {
             <ActivityHistory
               demands={demands}
               reports={reports}
+              currentUserId={user.uid}
+              currentUserName={displayName}
               appointments={appointments}
               applications={applications}
               enrollments={enrollments}

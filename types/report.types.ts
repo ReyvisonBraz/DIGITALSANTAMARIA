@@ -5,6 +5,8 @@ export type ReportType = 'infrastructure' | 'environment' | 'security' | 'other'
 
 export type ReportStatus = 'pending' | 'in_review' | 'resolved' | 'rejected';
 
+export type ReportMessageAuthorRole = 'citizen' | 'staff' | 'system';
+
 export interface Report {
   id: string;
   reporterId: string;
@@ -22,6 +24,16 @@ export interface Report {
   clerkId: string | null;
   createdAt: Timestamp;
   updatedAt: Timestamp;
+}
+
+export interface ReportMessage {
+  id: string;
+  reportId: string;
+  authorId: string;
+  authorName: string;
+  authorRole: ReportMessageAuthorRole;
+  message: string;
+  createdAt: Timestamp;
 }
 
 export type CreateReportInput = Pick<
