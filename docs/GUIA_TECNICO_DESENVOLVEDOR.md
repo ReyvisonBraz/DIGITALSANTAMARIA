@@ -353,6 +353,7 @@ Padrao atual:
 - Matriculas: confirmar `approved` e `rejected`.
 - Emergencias: confirmar `resolved` e `cancelled`.
 - Conteudo editorial: arquivamento deve passar por confirmacao.
+- Comercio pendente: aprovacao publica deve passar por confirmacao; reprovacao deve exigir segundo passo com motivo opcional.
 
 Mudancas intermediarias, como `analyzing`, `in_review`, `confirmed`, `interview`, `waiting_list` e `in_progress`, podem continuar diretas para manter velocidade operacional.
 

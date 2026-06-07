@@ -370,7 +370,7 @@ Resultado esperado: painel pronto para uso continuo.
 - [x] Adicionar filtros por status em avisos, eventos, obras e comercio.
 - [x] Adicionar acoes rapidas de publicar, rascunho, reativar e arquivar no workflow editorial.
 - [x] Adicionar preview reutilizavel para avisos, eventos, obras e comercio.
-- [x] Adicionar busca e ordenacao reutilizavel em listas editoriais principais.
+- [x] Adicionar busca e ordenacao reutilizavel em avisos, eventos, obras e comercio.
 - [x] Criar base de auditoria administrativa em `admin_audit_logs`.
 - [x] Registrar auditoria nas acoes rapidas editoriais de avisos, eventos, obras e comercio.
 - [x] Padronizar cards de solicitacoes para formato compacto com detalhe expansivel.
@@ -385,6 +385,7 @@ Resultado esperado: painel pronto para uso continuo.
 - [x] Adicionar contadores por status nas filas iniciais.
 - [x] Adicionar botao de atualizar nas filas iniciais.
 - [x] Adicionar confirmacao em finalizar/recusar/arquivar nas filas principais.
+- [x] Adicionar confirmacao antes de aprovar comercio pendente para publicacao.
 - [ ] Criar base de auditoria.
 - [ ] Revisar regras do Firestore por papel.
 - [ ] Criar seed inicial seguro.

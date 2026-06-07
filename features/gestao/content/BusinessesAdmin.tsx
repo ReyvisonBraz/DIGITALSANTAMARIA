@@ -24,11 +24,13 @@ import {
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
 import {
+  ContentListControls,
   ContentQuickActions,
   ContentPreviewDialog,
   ContentStatusBadge,
   ContentStatusFilter,
   ContentStatusSelect,
+  type ContentListSort,
 } from '@/features/gestao/content/ContentWorkflowControls';
 import { tryCreateAdminAuditLog } from '@/services/admin-audit.service';
 import { useToast } from '@/lib/toast-context';
@@ -57,10 +59,13 @@ export default function BusinessesAdmin() {
   const [actionId, setActionId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [approvingBusiness, setApprovingBusiness] = useState<Business | null>(null);
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const [archiving, setArchiving] = useState(false);
   const [rejectNote, setRejectNote] = useState('');
   const [statusFilter, setStatusFilter] = useState<ContentStatus | 'all'>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortMode, setSortMode] = useState<ContentListSort>('newest');
   const [quickActionId, setQuickActionId] = useState<string | null>(null);
   const [previewBusiness, setPreviewBusiness] = useState<Business | null>(null);
 
@@ -113,11 +118,13 @@ export default function BusinessesAdmin() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleApprove = async (id: string) => {
-    setActionId(id);
+  const handleApprove = async () => {
+    if (!approvingBusiness) return;
+    setActionId(approvingBusiness.id);
     try {
-      await approveBusiness(id);
+      await approveBusiness(approvingBusiness.id);
       toast('Cadastro aprovado e publicado.', 'success');
+      setApprovingBusiness(null);
       load();
     } catch {
       toast('Erro ao aprovar.', 'error');
@@ -242,9 +249,31 @@ export default function BusinessesAdmin() {
   }, [businesses]);
 
   const visibleBusinesses = useMemo(() => {
-    if (statusFilter === 'all') return businesses;
-    return businesses.filter((business) => business.status === statusFilter);
-  }, [businesses, statusFilter]);
+    const search = searchTerm.trim().toLowerCase();
+    return businesses
+      .filter((business) => {
+        const matchesStatus = statusFilter === 'all' || business.status === statusFilter;
+        const searchable = [
+          business.title,
+          business.description,
+          business.category,
+          business.address,
+          business.phone,
+          business.whatsapp,
+          business.hours,
+          business.ownerName,
+          business.reviewNote,
+        ].join(' ').toLowerCase();
+        const matchesSearch = !search || searchable.includes(search);
+        return matchesStatus && matchesSearch;
+      })
+      .sort((a, b) => {
+        if (sortMode === 'title') return a.title.localeCompare(b.title);
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return sortMode === 'oldest' ? aTime - bTime : bTime - aTime;
+      });
+  }, [businesses, searchTerm, sortMode, statusFilter]);
 
   return (
     <div className="space-y-6">
@@ -458,7 +487,7 @@ export default function BusinessesAdmin() {
                 <div className="flex flex-wrap gap-2 border-t border-border pt-3">
                   <button
                     type="button"
-                    onClick={() => handleApprove(biz.id)}
+                    onClick={() => setApprovingBusiness(biz)}
                     disabled={actionId === biz.id}
                     className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-accent-success px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
                   >
@@ -523,6 +552,16 @@ export default function BusinessesAdmin() {
           />
         </div>
 
+        <div className="mb-4">
+          <ContentListControls
+            search={searchTerm}
+            sort={sortMode}
+            searchPlaceholder="Buscar por negocio, endereco, categoria, telefone ou proprietario"
+            onSearchChange={setSearchTerm}
+            onSortChange={setSortMode}
+          />
+        </div>
+
         {loading ? (
           <div className="flex min-h-32 items-center justify-center">
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
@@ -530,7 +569,7 @@ export default function BusinessesAdmin() {
         ) : businesses.length === 0 ? (
           <EmptyState title="Nenhum comercio cadastrado" description="Use o formulario acima para registrar o primeiro." />
         ) : visibleBusinesses.length === 0 ? (
-          <EmptyState title="Nenhum comercio neste status" description="Use outro filtro de status para ver mais registros." />
+          <EmptyState title="Nenhum comercio encontrado" description="Ajuste a busca ou os filtros para ver mais registros." />
         ) : (
           <div className="space-y-3">
             {visibleBusinesses.map((biz) => (
@@ -598,6 +637,16 @@ export default function BusinessesAdmin() {
           </div>
         )}
       </section>
+
+      <ConfirmDialog
+        isOpen={!!approvingBusiness}
+        title="Aprovar comercio"
+        description={approvingBusiness ? `Este cadastro sera publicado em /comercio como "${approvingBusiness.title}". Confirme depois de revisar nome, endereco e contatos.` : ''}
+        confirmLabel="Aprovar e publicar"
+        loading={!!approvingBusiness && actionId === approvingBusiness.id}
+        onConfirm={handleApprove}
+        onClose={() => setApprovingBusiness(null)}
+      />
 
       <ConfirmDialog
         isOpen={!!archiveId}
