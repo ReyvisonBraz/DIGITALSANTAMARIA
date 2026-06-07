@@ -1,4 +1,4 @@
-# Digital Santa Maria
+# Conecta Santa Maria
 
 Portal municipal com area publica, painel do cidadao, painel de gestao e integracao Firebase.
 
@@ -6,53 +6,52 @@ Portal municipal com area publica, painel do cidadao, painel de gestao e integra
 
 ```bash
 npm install
-npm.cmd run dev
+npm run dev
 ```
 
-A aplicacao local roda em:
-
-```text
-http://localhost:3000
-```
+A aplicacao local roda em `http://localhost:3000`.
 
 ## Validar
 
 Antes de entregar alteracoes:
 
 ```bash
-npm.cmd run lint
-npm.cmd run build
+npm run lint
+npm run build
+npx tsc --noEmit
 ```
 
 ## Firebase
 
-Scripts principais:
-
 ```bash
-npm.cmd run firebase:rules:check
-npm.cmd run firebase:rules:deploy
-npm.cmd run firebase:indexes:check
-npm.cmd run firebase:indexes:deploy
-npm.cmd run firebase:functions:build
-npm.cmd run firebase:functions:deploy
+npm run firebase:rules:check
+npm run firebase:rules:deploy
+npm run firebase:indexes:check
+npm run firebase:indexes:deploy
+npm run firebase:functions:build
+npm run firebase:functions:deploy
 ```
 
 ## Documentacao
 
-Leia primeiro:
+- [Indice completo da documentacao](./docs/README.md)
+- [Visao geral do projeto](./docs/arquitetura/01_visao-geral.md)
+- [Setup local](./docs/guias/01_setup.md)
+- [Como adicionar um modulo](./docs/guias/02_novo-modulo.md)
 
-- [Guia Tecnico do Desenvolvedor](./docs/GUIA_TECNICO_DESENVOLVEDOR.md)
-- [Plano do Painel de Gestao Profissional](./FINAL/PLANO_PAINEL_GESTAO_PROFISSIONAL.md)
-- [Indice Geral de Planejamento](./FINAL/PLANO_GERAL_INDEX.md)
+Documentacao antiga de planejamento esta em [`historico/`](./historico/).
 
 ## Estrutura Rapida
 
 ```text
-app/        rotas Next.js
-features/   modulos de negocio e telas compostas
-services/   acesso ao Firebase
-types/      contratos TypeScript
-functions/  Cloud Functions
-docs/       documentacao tecnica
-FINAL/      planejamento e backlog
+app/          rotas Next.js (26 paginas)
+features/     componentes de dominio (41)
+services/     acesso ao Firebase (14)
+components/   UI reutilizavel (30)
+lib/          infraestrutura (contexts, hooks, utils)
+types/        contratos TypeScript (13 modulos)
+hooks/        hooks compartilhados
+functions/    Cloud Functions
+docs/         documentacao tecnica atualizada
+historico/    documentacao antiga de planejamento
 ```
