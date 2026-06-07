@@ -10,7 +10,12 @@ import { formatDate } from '@/lib/utils/formatters';
 import type { ContentStatus } from '@/types';
 import type { Timestamp } from 'firebase/firestore';
 
-type FieldType = 'text' | 'textarea' | 'number' | 'checkbox' | 'list' | 'options';
+type FieldType = 'text' | 'textarea' | 'number' | 'checkbox' | 'list' | 'options' | 'select';
+
+interface CatalogFieldOption {
+  value: string;
+  label: string;
+}
 
 export interface CatalogField {
   name: string;
@@ -19,6 +24,7 @@ export interface CatalogField {
   required?: boolean;
   placeholder?: string;
   defaultValue?: string | number | boolean | string[];
+  options?: CatalogFieldOption[];
 }
 
 export interface CatalogAdminConfig {
@@ -43,6 +49,20 @@ interface CatalogItem {
 }
 
 type FormState = Record<string, string | boolean>;
+
+interface CatalogOptionValue {
+  id?: string;
+  text?: string;
+  votes?: number;
+}
+
+function getOptionsVoteTotal(value: unknown): number {
+  if (!Array.isArray(value)) return 0;
+  return value.reduce((total, option) => {
+    if (!option || typeof option !== 'object') return total;
+    return total + Number((option as CatalogOptionValue).votes || 0);
+  }, 0);
+}
 
 const baseFields: CatalogField[] = [
   { name: 'title', label: 'Titulo', type: 'text', required: true, placeholder: 'Nome exibido ao cidadao' },
@@ -74,7 +94,7 @@ function itemToFieldValue(item: CatalogItem, field: CatalogField): string | bool
   return value === undefined || value === null ? '' : String(value);
 }
 
-function parseFieldValue(field: CatalogField, raw: string | boolean): unknown {
+function parseFieldValue(field: CatalogField, raw: string | boolean, currentItem?: CatalogItem | null): unknown {
   if (field.type === 'checkbox') return Boolean(raw);
   const text = String(raw).trim();
   if (field.type === 'number') return text ? Number(text) : 0;
@@ -85,11 +105,21 @@ function parseFieldValue(field: CatalogField, raw: string | boolean): unknown {
       .filter(Boolean);
   }
   if (field.type === 'options') {
+    const previousOptions = Array.isArray(currentItem?.[field.name])
+      ? (currentItem[field.name] as CatalogOptionValue[])
+      : [];
     return text
       .split(/\r?\n/)
       .map((item, index) => item.trim())
       .filter(Boolean)
-      .map((item, index) => ({ id: `opcao-${index + 1}`, text: item, votes: 0 }));
+      .map((item, index) => {
+        const previous = previousOptions.find((option) => option.text === item);
+        return {
+          id: previous?.id || `opcao-${index + 1}`,
+          text: item,
+          votes: Number(previous?.votes || 0),
+        };
+      });
   }
   return text;
 }
@@ -108,12 +138,14 @@ export default function GenericCatalogAdmin({ config }: { config: CatalogAdminCo
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingItem, setEditingItem] = useState<CatalogItem | null>(null);
   const [archiveId, setArchiveId] = useState<string | null>(null);
   const [archiving, setArchiving] = useState(false);
 
   const resetForm = useCallback(() => {
     setForm(createEmptyForm(fields));
     setEditingId(null);
+    setEditingItem(null);
   }, [fields]);
 
   const load = useCallback(async () => {
@@ -138,6 +170,7 @@ export default function GenericCatalogAdmin({ config }: { config: CatalogAdminCo
 
   const startEdit = (item: CatalogItem) => {
     setEditingId(item.id);
+    setEditingItem(item);
     setForm(Object.fromEntries(fields.map((field) => [field.name, itemToFieldValue(item, field)])));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -149,15 +182,30 @@ export default function GenericCatalogAdmin({ config }: { config: CatalogAdminCo
         toast(`Preencha ${field.label.toLowerCase()}.`, 'error');
         return;
       }
+      if (field.type === 'options') {
+        const options = String(form[field.name] ?? '')
+          .split(/\r?\n/)
+          .map((item) => item.trim())
+          .filter(Boolean);
+        if (options.length < 2) {
+          toast(`Informe pelo menos duas opcoes em ${field.label.toLowerCase()}.`, 'error');
+          return;
+        }
+        if (new Set(options.map((item) => item.toLowerCase())).size !== options.length) {
+          toast(`Remova opcoes duplicadas em ${field.label.toLowerCase()}.`, 'error');
+          return;
+        }
+      }
     }
 
     setSaving(true);
     try {
       const parsed = Object.fromEntries(
-        fields.map((field) => [field.name, parseFieldValue(field, form[field.name])]),
+        fields.map((field) => [field.name, parseFieldValue(field, form[field.name], editingItem)]),
       );
       const payload = {
         ...parsed,
+        ...(config.collection === 'polls' ? { totalVotes: getOptionsVoteTotal(parsed.options) } : {}),
         status: 'published' as const,
       };
 
@@ -226,6 +274,19 @@ export default function GenericCatalogAdmin({ config }: { config: CatalogAdminCo
                   onChange={(event) => updateField(field.name, event.target.checked)}
                   className="h-5 w-5 rounded border-border text-primary focus:ring-primary"
                 />
+              ) : field.type === 'select' ? (
+                <select
+                  value={String(form[field.name] ?? '')}
+                  onChange={(event) => updateField(field.name, event.target.value)}
+                  required={field.required}
+                  className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
+                >
+                  {field.options?.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               ) : (
                 <input
                   type={field.type === 'number' ? 'number' : 'text'}

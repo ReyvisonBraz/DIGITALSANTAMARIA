@@ -34,20 +34,91 @@ import AppointmentModal from '@/components/AppointmentModal';
 import HealthHistoryPanel from '@/components/HealthHistoryPanel';
 import Modal from '@/components/ui/Modal';
 import { useToast } from '@/lib/toast-context';
+import { useContent } from '@/lib/hooks/use-content';
 import { useHealthUnits } from '@/features/saude/hooks/useHealthUnits';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
-import type { HealthUnit } from '@/types';
+import type { HealthUnit, PharmacyItem } from '@/types';
 
 type HealthTab = 'unidades' | 'portal' | 'farmacia';
+
+type PharmacyDisplayItem = Pick<
+  PharmacyItem,
+  'id' | 'title' | 'description' | 'unit' | 'quantity' | 'stockStatus' | 'location' | 'requiresPrescription'
+>;
+
+const fallbackMedicines: PharmacyDisplayItem[] = [
+  {
+    id: 'fallback-amoxicilina',
+    title: 'Amoxicilina 500mg',
+    description: 'Antibiotico de uso controlado.',
+    unit: 'unidades',
+    quantity: 12,
+    stockStatus: 'available',
+    location: 'Farmacia Municipal',
+    requiresPrescription: true,
+  },
+  {
+    id: 'fallback-ibuprofeno',
+    title: 'Ibuprofeno 600mg',
+    description: 'Anti-inflamatorio.',
+    unit: 'unidades',
+    quantity: 0,
+    stockStatus: 'unavailable',
+    location: 'Farmacia Municipal',
+    requiresPrescription: false,
+  },
+  {
+    id: 'fallback-losartana',
+    title: 'Losartana 50mg',
+    description: 'Medicamento para controle de pressao.',
+    unit: 'unidades',
+    quantity: 540,
+    stockStatus: 'available',
+    location: 'Farmacia Municipal',
+    requiresPrescription: true,
+  },
+];
+
+const stockLabel: Record<PharmacyItem['stockStatus'], string> = {
+  available: 'Disponivel',
+  low_stock: 'Baixo estoque',
+  unavailable: 'Em falta',
+};
 
 export default function SaudePage() {
   const { toast } = useToast();
   const { units, status, error } = useHealthUnits();
+  const {
+    data: pharmacyItems,
+    loading: pharmacyLoading,
+    error: pharmacyError,
+    refresh: refreshPharmacy,
+  } = useContent<PharmacyItem>('pharmacy_items');
   const [selectedClinic, setSelectedClinic] = useState<HealthUnit | null>(null);
   const [activeTab, setActiveTab] = useState<HealthTab>('unidades');
   const [modalOpen, setModalOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const visiblePharmacyItems: PharmacyDisplayItem[] = pharmacyItems.length > 0 ? pharmacyItems : fallbackMedicines;
+
+  const exportVaccineCertificate = () => {
+    const content = [
+      'Conecta Santa Maria - Carteira de vacinacao digital',
+      `Emitido em: ${new Date().toLocaleString('pt-BR')}`,
+      'Status: Assinatura digital ativa',
+      'Identificador: DIGITAL-VAX-ID-2026-USER',
+      '',
+      'Documento demonstrativo gerado pelo portal municipal.',
+    ].join('\n');
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'carteira-vacinacao-digital.txt';
+    anchor.click();
+    URL.revokeObjectURL(url);
+    toast('Carteira digital exportada.', 'success');
+  };
 
   const categories: { id: HealthTab; label: string; icon: typeof Hospital }[] = [
     { id: 'unidades', label: 'Unidades', icon: Hospital },
@@ -152,7 +223,9 @@ export default function SaudePage() {
                               </div>
                               <div className="text-right">
                                  <p className="text-xl font-semibold text-text-main tabular-nums leading-none">{unit.waitTime}</p>
-                                 <p className="text-[8px] font-semibold text-text-muted uppercase tracking-widest opacity-60">{unit.type.toUpperCase()}</p>
+                                 <p className="text-[8px] font-semibold text-text-muted uppercase tracking-widest opacity-60">
+                                    {unit.isOpen ? unit.type.toUpperCase() : 'FECHADA'}
+                                 </p>
                               </div>
                            </div>
                           ))
@@ -209,7 +282,7 @@ export default function SaudePage() {
                            </div>
                         </div>
                         <button 
-                           onClick={() => toast('Configurando exportação do certificado internacional...', 'info')}
+                           onClick={exportVaccineCertificate}
                            className="w-full py-4 bg-sky-500/5 border-2 border-sky-500/20 rounded-2xl font-semibold text-[9px] uppercase tracking-widest text-sky-600 hover:bg-sky-500 hover:text-white transition-all flex items-center justify-center gap-2"
                         >
                            <Download className="w-4 h-4" />
@@ -230,24 +303,46 @@ export default function SaudePage() {
                            <Pill className="w-4 h-4 text-sky-500" />
                         </div>
                         
-                        {[
-                          { name: 'Amoxicilina 500mg', stock: 'Disponível', units: '12 unidades' },
-                          { name: 'Ibuprofeno 600mg', stock: 'Em falta', units: '0 unidades' },
-                          { name: 'Losartana 50mg', stock: 'Disponível', units: '540 unidades' }
-                        ].map((med) => (
-                           <div key={med.name} className="bg-white p-5 rounded-3xl border-2 border-border flex items-center justify-between group cursor-pointer hover:border-sky-500 transition-all">
-                              <div className="space-y-0.5">
-                                 <h4 className="text-sm font-semibold text-text-main uppercase">{med.name}</h4>
-                                 <p className="text-[9px] font-bold text-text-muted uppercase tracking-widest">{med.units}</p>
+                        {pharmacyLoading ? (
+                          <div className="flex items-center justify-center py-12">
+                            <Loader2 className="w-8 h-8 animate-spin text-sky-500" />
+                          </div>
+                        ) : pharmacyError ? (
+                          <div className="rounded-3xl border-2 border-border bg-white p-5 text-center">
+                            <AlertTriangle className="mx-auto h-8 w-8 text-sky-500" />
+                            <p className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+                              Nao foi possivel carregar o estoque.
+                            </p>
+                            <button
+                              type="button"
+                              onClick={refreshPharmacy}
+                              className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-[10px] font-black uppercase tracking-widest text-sky-600"
+                            >
+                              <RefreshCcw className="h-3.5 w-3.5" />
+                              Tentar novamente
+                            </button>
+                          </div>
+                        ) : (
+                          visiblePharmacyItems.map((med) => (
+                           <div key={med.id} className="bg-white p-5 rounded-3xl border-2 border-border flex items-center justify-between gap-4 group cursor-pointer hover:border-sky-500 transition-all">
+                              <div className="min-w-0 space-y-0.5">
+                                 <h4 className="text-sm font-semibold text-text-main uppercase">{med.title}</h4>
+                                 <p className="text-[9px] font-bold text-text-muted uppercase tracking-widest">
+                                    {med.quantity} {med.unit} - {med.location}
+                                 </p>
+                                 {med.requiresPrescription && (
+                                   <p className="text-[8px] font-bold uppercase tracking-widest text-sky-500">Exige receita</p>
+                                 )}
                               </div>
                               <span className={cn(
-                                 "px-3 py-1 rounded-full text-[8px] font-semibold uppercase tracking-widest",
-                                 med.stock === 'Disponível' ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+                                 "shrink-0 px-3 py-1 rounded-full text-[8px] font-semibold uppercase tracking-widest",
+                                 med.stockStatus === 'available' ? "bg-green-100 text-green-600" : (med.stockStatus === 'low_stock' ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-600")
                               )}>
-                                 {med.stock}
+                                 {stockLabel[med.stockStatus]}
                               </span>
                            </div>
-                        ))}
+                          ))
+                        )}
                      </div>
 
                      <div className="bg-sky-500 p-8 rounded-[3rem] text-white space-y-6 relative overflow-hidden group">
@@ -278,6 +373,8 @@ export default function SaudePage() {
                src="https://picsum.photos/seed/healthmap/1920/1080" 
                alt="Mapa da Saúde" 
                fill 
+               priority
+               sizes="(min-width: 768px) calc(100vw - 480px), 100vw"
                className="object-cover grayscale contrast-125 brightness-110"
                referrerPolicy="no-referrer"
             />
@@ -378,9 +475,10 @@ export default function SaudePage() {
                          <button
                             type="button"
                             onClick={() => setModalOpen(true)}
-                            className="flex-grow bg-sky-500 text-white px-8 py-4 rounded-2xl font-semibold text-[10px] uppercase tracking-widest shadow-xl shadow-sky-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3"
+                            disabled={!selectedClinic.isOpen}
+                            className="flex-grow bg-sky-500 text-white px-8 py-4 rounded-2xl font-semibold text-[10px] uppercase tracking-widest shadow-xl shadow-sky-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:cursor-not-allowed disabled:opacity-50"
                          >
-                            Agendar aqui
+                            {selectedClinic.isOpen ? 'Agendar aqui' : 'Unidade fechada'}
                             <ArrowRight className="w-4 h-4" />
                          </button>
                       </div>
@@ -397,7 +495,7 @@ export default function SaudePage() {
       <AppointmentModal 
         isOpen={modalOpen} 
         onClose={() => setModalOpen(false)} 
-        units={units}
+        units={units.filter((unit) => unit.isOpen)}
         initialUnit={selectedClinic}
       />
 

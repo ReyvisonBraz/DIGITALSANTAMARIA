@@ -218,7 +218,7 @@ service cloud.firestore {
     }
 
     match /emergency_alerts/{alertId} {
-      allow read: if isStaff();
+      allow read: if isOwner(resource.data.userId) || isStaff();
       allow create: if isSignedIn()
         && incoming().userId == request.auth.uid
         && incoming().status == 'active';
@@ -257,6 +257,8 @@ service cloud.firestore {
     match /traffic_alerts/{id}     { allow read: if true; allow write: if isAdmin(); }
     match /polls/{id}              { allow read: if true; allow write: if isAdmin(); }
     match /public_services/{id}    { allow read: if true; allow write: if isAdmin(); }
+    match /pharmacy_items/{id}     { allow read: if true; allow write: if isAdmin(); }
     match /works/{id}              { allow read: if true; allow write: if isAdmin(); }
+    match /education_schools/{id}  { allow read: if true; allow write: if isAdmin(); }
   }
 }

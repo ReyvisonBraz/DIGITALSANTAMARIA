@@ -1,12 +1,15 @@
 'use client';
 
-import React from 'react';
-import { Shield, Siren } from 'lucide-react';
+import { useState, type FormEvent } from 'react';
+import { Loader2, Shield, Siren } from 'lucide-react';
 import { useContent } from '@/lib/hooks/use-content';
 import ContentPage from '@/components/ui/ContentPage';
 import ContentHero from '@/components/ui/ContentHero';
 import ContentCard from '@/components/ui/ContentCard';
-import type { SafetyZone } from '@/types';
+import { createEmergencyAlert } from '@/services/emergency.service';
+import { useAuth } from '@/lib/auth-context';
+import { useToast } from '@/lib/toast-context';
+import type { EmergencyAlertType, SafetyZone } from '@/types';
 
 /**
  * SegurancaPage — Delegacias, postos policiais e serviços de emergência.
@@ -17,6 +20,48 @@ import type { SafetyZone } from '@/types';
 
 export default function SegurancaPage() {
   const { data, loading, error, refresh } = useContent<SafetyZone>('safety_zones');
+  const { user, login } = useAuth();
+  const { toast } = useToast();
+  const [submitting, setSubmitting] = useState(false);
+  const [alertType, setAlertType] = useState<EmergencyAlertType>('panic');
+  const [location, setLocation] = useState('');
+  const [description, setDescription] = useState('');
+
+  const handleEmergencySubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!location.trim() || !description.trim()) {
+      toast('Informe localizacao e descricao do alerta.', 'error');
+      return;
+    }
+
+    if (!user) {
+      try {
+        await login();
+      } catch (loginError) {
+        toast(loginError instanceof Error ? loginError.message : 'Nao foi possivel iniciar o login.', 'error');
+      }
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const protocol = await createEmergencyAlert({
+        userId: user.uid,
+        userName: user.displayName || user.email || 'Cidadao',
+        userEmail: user.email || '',
+        type: alertType,
+        location: location.trim(),
+        description: description.trim(),
+      });
+      setLocation('');
+      setDescription('');
+      toast(`Alerta enviado. Protocolo ${protocol}.`, 'success');
+    } catch {
+      toast('Nao foi possivel enviar o alerta agora.', 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 md:p-12 pb-32 gap-10">
@@ -28,6 +73,68 @@ export default function SegurancaPage() {
         subtitle="Delegacias, postos policiais e serviços de emergência."
         accent="primary-dark"
       />
+
+      <section className="grid gap-5 rounded-3xl border border-red-200 bg-red-50 p-5 md:grid-cols-[0.8fr_1.2fr] md:p-6">
+        <div className="flex items-start gap-3">
+          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-red-600 text-white">
+            <Siren className="h-6 w-6" />
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest text-red-700">Alerta emergencial</p>
+            <h2 className="mt-1 text-xl font-semibold text-text-main">Acione a equipe de seguranca</h2>
+            <p className="mt-2 text-sm font-medium leading-6 text-red-900/70">
+              Use este canal para registrar uma ocorrencia urgente com localizacao e descricao objetiva.
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleEmergencySubmit} className="grid gap-3 md:grid-cols-2">
+          <label className="space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Tipo</span>
+            <select
+              value={alertType}
+              onChange={(event) => setAlertType(event.target.value as EmergencyAlertType)}
+              className="h-11 w-full rounded-xl border border-red-200 bg-white px-3 text-sm font-bold outline-none focus:border-red-600"
+            >
+              <option value="panic">Panico</option>
+              <option value="violence">Violencia</option>
+              <option value="fire">Incendio</option>
+              <option value="medical">Atendimento medico</option>
+              <option value="flood">Alagamento</option>
+              <option value="other">Outro</option>
+            </select>
+          </label>
+          <label className="space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Localizacao</span>
+            <input
+              value={location}
+              onChange={(event) => setLocation(event.target.value)}
+              placeholder="Rua, bairro ou ponto de referencia"
+              className="h-11 w-full rounded-xl border border-red-200 bg-white px-3 text-sm font-medium outline-none focus:border-red-600"
+            />
+          </label>
+          <label className="space-y-1.5 md:col-span-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Descricao</span>
+            <textarea
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              rows={3}
+              placeholder="Descreva o que esta acontecendo"
+              className="w-full resize-none rounded-xl border border-red-200 bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-red-600"
+            />
+          </label>
+          <div className="md:col-span-2 flex justify-end">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-red-600 px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Siren className="h-4 w-4" />}
+              Enviar alerta
+            </button>
+          </div>
+        </form>
+      </section>
 
       <ContentPage
         loading={loading}

@@ -163,3 +163,13 @@ export interface PublicService extends BaseContent {
   onlineURL: string | null;
   steps: string[];
 }
+
+// Estoque da farmacia municipal
+export interface PharmacyItem extends BaseContent {
+  category: 'antibiotico' | 'analgesico' | 'pressao' | 'diabetes' | 'vacina' | 'outros';
+  unit: string;
+  quantity: number;
+  stockStatus: 'available' | 'low_stock' | 'unavailable';
+  location: string;
+  requiresPrescription: boolean;
+}

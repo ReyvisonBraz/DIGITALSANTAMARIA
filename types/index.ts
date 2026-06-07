@@ -6,5 +6,6 @@ export type * from './petition.types';
 export type * from './appointment.types';
 export type * from './job.types';
 export type * from './enrollment.types';
+export type * from './emergency.types';
 export type * from './content.types';
 export type * from './notification.types';

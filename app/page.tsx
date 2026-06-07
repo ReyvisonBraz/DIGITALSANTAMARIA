@@ -132,7 +132,7 @@ export default function Home() {
                   className="block"
                 >
                   Sua cidade
-                </motion.span>
+                </motion.span>{' '}
                 <motion.span
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}

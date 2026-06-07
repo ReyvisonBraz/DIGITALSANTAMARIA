@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { 
   School, 
   BookOpen, 
@@ -27,9 +27,13 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/lib/toast-context';
 import Modal from '@/components/ui/Modal';
+import { useContent } from '@/lib/hooks/use-content';
+import type { ContentStatus } from '@/types';
+import type { Timestamp } from 'firebase/firestore';
 
 const schools = [
   {
@@ -64,10 +68,57 @@ const schools = [
   }
 ];
 
+interface EducationSchool {
+  id: string;
+  title: string;
+  description: string;
+  status: ContentStatus;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  deletedAt: Timestamp | null;
+  type: string;
+  address: string;
+  availabilityStatus: string;
+  rating: number;
+  ideb: number;
+  imageURL: string | null;
+}
+
 export default function EducacaoPage() {
   const { toast } = useToast();
-  const [selectedSchool, setSelectedSchool] = useState<any>(null);
+  const { data: educationSchools } = useContent<EducationSchool>('education_schools');
+  const [selectedSchool, setSelectedSchool] = useState<EducationSchool | null>(null);
   const [activeTab, setActiveTab] = useState<'academy' | 'dashboard' | 'resources'>('academy');
+  const [schoolSearch, setSchoolSearch] = useState('');
+
+  const fallbackSchools = useMemo<EducationSchool[]>(() => schools.map((school) => ({
+    id: school.id,
+    title: school.name,
+    description: school.type,
+    status: 'published' as const,
+    createdAt: { seconds: 0, nanoseconds: 0 } as Timestamp,
+    updatedAt: { seconds: 0, nanoseconds: 0 } as Timestamp,
+    deletedAt: null,
+    type: school.type,
+    address: school.address,
+    availabilityStatus: school.status,
+    rating: school.rating,
+    ideb: school.ideb,
+    imageURL: school.image,
+  })), []);
+
+  const visibleSchools = educationSchools.length > 0 ? educationSchools : fallbackSchools;
+  const filteredSchools = useMemo(() => {
+    const search = schoolSearch.trim().toLowerCase();
+    if (!search) return visibleSchools;
+    return visibleSchools.filter((school) => [
+      school.title,
+      school.description,
+      school.type,
+      school.address,
+      school.availabilityStatus,
+    ].join(' ').toLowerCase().includes(search));
+  }, [schoolSearch, visibleSchools]);
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 md:p-12 pb-32 gap-12 bg-background">
@@ -86,18 +137,18 @@ export default function EducacaoPage() {
                A jornada acadêmica do seu filho em um só lugar — do ensino fundamental à mentoria profissional, com matrícula e acompanhamento online.
             </p>
             <div className="flex flex-wrap gap-4 justify-center md:justify-start pt-4">
-               <button
-                 onClick={() => toast('Iniciando matrícula digital...', 'success')}
+               <Link
+                 href="/educacao/matricula"
                  className="bg-white text-blue-600 px-10 py-4 rounded-2xl font-semibold text-sm shadow-xl hover:scale-105 active:scale-95 transition-all shrink-0"
                >
                   Matrícula online
-               </button>
-               <button
-                 onClick={() => toast('Acessando o portal do aluno...', 'info')}
+               </Link>
+               <Link
+                 href="/perfil"
                  className="bg-blue-700/50 text-white border border-white/20 px-9 py-4 rounded-2xl font-semibold text-sm shadow-lg hover:bg-blue-700 transition-all shrink-0"
                >
                   Portal do aluno
-               </button>
+               </Link>
             </div>
          </div>
          <div className="relative mt-16 md:mt-0 hidden xl:block">
@@ -161,6 +212,8 @@ export default function EducacaoPage() {
                      <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-text-muted group-focus-within:text-blue-600 transition-colors" />
                      <input 
                         type="text" 
+                        value={schoolSearch}
+                        onChange={(event) => setSchoolSearch(event.target.value)}
                         placeholder="Buscar unidade por geolocalização ou nome..." 
                         className="w-full bg-surface border-2 border-border p-6 pl-16 rounded-[2rem] outline-none focus:border-blue-600 transition-all font-semibold placeholder:opacity-40 shadow-inner"
                      />
@@ -168,24 +221,31 @@ export default function EducacaoPage() {
                </div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                  {schools.map((school) => (
+                  {filteredSchools.map((school) => (
                     <motion.article 
                       key={school.id}
                       whileHover={{ y: -10 }}
                       className="bg-white rounded-[4rem] border-2 border-border shadow-sm overflow-hidden group hover:border-blue-600 transition-all flex flex-col relative"
                     >
                        <div className="relative h-64 overflow-hidden">
-                          <Image 
-                            src={school.image} 
-                            alt={school.name} 
-                            fill 
-                            className="object-cover group-hover:scale-110 transition-transform duration-[2s] brightness-90 group-hover:brightness-100" 
-                            referrerPolicy="no-referrer"
-                          />
+                          {school.imageURL ? (
+                            <Image
+                              src={school.imageURL}
+                              alt={school.title}
+                              fill
+                              sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                              className="object-cover group-hover:scale-110 transition-transform duration-[2s] brightness-90 group-hover:brightness-100"
+                              referrerPolicy="no-referrer"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-blue-600/10 text-blue-600">
+                              <School className="h-20 w-20 opacity-40" />
+                            </div>
+                          )}
                           <div className="absolute top-8 left-8">
                              <div className="px-5 py-2.5 bg-white/95 rounded-full text-[10px] font-semibold uppercase tracking-widest shadow-2xl border-2 border-border flex items-center gap-2">
-                                <div className={cn("w-2 h-2 rounded-full", school.status === 'Vagas Abertas' ? 'bg-green-500' : 'bg-blue-600')} />
-                                {school.status}
+                                <div className={cn("w-2 h-2 rounded-full", school.availabilityStatus === 'Vagas Abertas' ? 'bg-green-500' : 'bg-blue-600')} />
+                                {school.availabilityStatus}
                              </div>
                           </div>
                           <div className="absolute bottom-6 right-6">
@@ -207,7 +267,7 @@ export default function EducacaoPage() {
                                 </div>
                                 <span className="text-[10px] font-semibold text-text-muted uppercase tracking-widest leading-none">{school.type}</span>
                              </div>
-                             <h3 className="text-2xl font-semibold text-text-main tracking-tight leading-snug group-hover:text-blue-600 transition-colors" style={{ fontFamily: 'var(--font-display)' }}>{school.name}</h3>
+                             <h3 className="text-2xl font-semibold text-text-main tracking-tight leading-snug group-hover:text-blue-600 transition-colors" style={{ fontFamily: 'var(--font-display)' }}>{school.title}</h3>
                              <p className="text-sm font-medium text-text-muted flex items-center gap-3 leading-relaxed border-l-2 border-blue-600/20 pl-4">
                                 {school.address}
                              </p>
@@ -429,11 +489,24 @@ export default function EducacaoPage() {
         {selectedSchool && (
           <div className="space-y-8 p-4">
              <div className="relative h-56 rounded-[2.5rem] overflow-hidden border-4 border-white shadow-2xl group">
-                <Image src={selectedSchool.image} alt={selectedSchool.name} fill className="object-cover group-hover:scale-110 transition-transform duration-[5s]" referrerPolicy="no-referrer" />
+                {selectedSchool.imageURL ? (
+                  <Image
+                    src={selectedSchool.imageURL}
+                    alt={selectedSchool.title}
+                    fill
+                    sizes="(min-width: 768px) 420px, 100vw"
+                    className="object-cover group-hover:scale-110 transition-transform duration-[5s]"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-blue-600/10 text-blue-600">
+                    <School className="h-16 w-16 opacity-40" />
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-6 left-6 text-white">
                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] opacity-80 mb-1">Unidade #{selectedSchool.id}</p>
-                   <h3 className="text-3xl font-semibold leading-[1.05] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>{selectedSchool.name}</h3>
+                   <h3 className="text-3xl font-semibold leading-[1.05] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>{selectedSchool.title}</h3>
                 </div>
              </div>
 
@@ -454,8 +527,8 @@ export default function EducacaoPage() {
                       <span className="text-[10px] font-semibold uppercase text-text-muted tracking-widest">Status de Vagas</span>
                    </div>
                    <div className="flex items-baseline gap-2">
-                      <span className={cn("text-xl font-semibold uppercase leading-none", selectedSchool.status === 'Vagas Abertas' ? 'text-green-600' : 'text-blue-600')}>
-                         {selectedSchool.status}
+                      <span className={cn("text-xl font-semibold uppercase leading-none", selectedSchool.availabilityStatus === 'Vagas Abertas' ? 'text-green-600' : 'text-blue-600')}>
+                         {selectedSchool.availabilityStatus}
                       </span>
                    </div>
                 </div>

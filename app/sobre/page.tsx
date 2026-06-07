@@ -66,6 +66,8 @@ export default function SobrePage() {
                 src="https://picsum.photos/seed/tech/800/800" 
                 alt="Innovation" 
                 fill 
+                priority
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
                 referrerPolicy="no-referrer"
               />

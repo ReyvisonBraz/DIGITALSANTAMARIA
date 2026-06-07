@@ -1,9 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { ClipboardList, Clock, FileText, Loader2 } from 'lucide-react';
+import { Briefcase, CalendarCheck, ClipboardList, Clock, FileText, GraduationCap, Loader2, Siren } from 'lucide-react';
 import { formatDate } from '@/lib/utils/formatters';
-import type { Demand, DemandStatus, Report, ReportStatus } from '@/types';
+import type {
+  ApplicationStatus,
+  Appointment,
+  AppointmentStatus,
+  Demand,
+  DemandStatus,
+  EmergencyAlert,
+  EmergencyAlertStatus,
+  Enrollment,
+  EnrollmentStatus,
+  JobApplication,
+  Report,
+  ReportStatus,
+} from '@/types';
 
 const demandStatusLabel: Record<DemandStatus, string> = {
   pending: 'Pendente',
@@ -19,7 +32,44 @@ const reportStatusLabel: Record<ReportStatus, string> = {
   rejected: 'Recusado',
 };
 
-function getMillis(value: Demand['createdAt'] | Report['createdAt']) {
+const appointmentStatusLabel: Record<AppointmentStatus, string> = {
+  scheduled: 'Agendada',
+  confirmed: 'Confirmada',
+  completed: 'Concluida',
+  cancelled: 'Cancelada',
+};
+
+const applicationStatusLabel: Record<ApplicationStatus, string> = {
+  applied: 'Recebida',
+  viewed: 'Visualizada',
+  interview: 'Entrevista',
+  hired: 'Aprovada',
+  rejected: 'Rejeitada',
+};
+
+const enrollmentStatusLabel: Record<EnrollmentStatus, string> = {
+  pending: 'Pendente',
+  approved: 'Aprovada',
+  rejected: 'Rejeitada',
+  waiting_list: 'Lista de espera',
+};
+
+const emergencyStatusLabel: Record<EmergencyAlertStatus, string> = {
+  active: 'Ativo',
+  in_progress: 'Em atendimento',
+  resolved: 'Resolvido',
+  cancelled: 'Cancelado',
+};
+
+type ActivityDate =
+  | Demand['createdAt']
+  | Report['createdAt']
+  | Appointment['createdAt']
+  | JobApplication['createdAt']
+  | Enrollment['createdAt']
+  | EmergencyAlert['createdAt'];
+
+function getMillis(value: ActivityDate) {
   if (value && typeof value === 'object' && 'seconds' in value) {
     return value.seconds * 1000;
   }
@@ -29,10 +79,22 @@ function getMillis(value: Demand['createdAt'] | Report['createdAt']) {
 interface ActivityHistoryProps {
   demands: Demand[];
   reports: Report[];
+  appointments?: Appointment[];
+  applications?: JobApplication[];
+  enrollments?: Enrollment[];
+  emergencyAlerts?: EmergencyAlert[];
   loading?: boolean;
 }
 
-export default function ActivityHistory({ demands, reports, loading = false }: ActivityHistoryProps) {
+export default function ActivityHistory({
+  demands,
+  reports,
+  appointments = [],
+  applications = [],
+  enrollments = [],
+  emergencyAlerts = [],
+  loading = false,
+}: ActivityHistoryProps) {
   const activities = [
     ...demands.map((demand) => ({
       id: demand.id,
@@ -51,6 +113,42 @@ export default function ActivityHistory({ demands, reports, loading = false }: A
       status: reportStatusLabel[report.status],
       date: report.createdAt,
       icon: FileText,
+    })),
+    ...appointments.map((appointment) => ({
+      id: appointment.id,
+      protocol: `${appointment.date} ${appointment.time}`,
+      type: 'Consulta',
+      title: `${appointment.specialty} - ${appointment.unitName}`,
+      status: appointmentStatusLabel[appointment.status],
+      date: appointment.createdAt,
+      icon: CalendarCheck,
+    })),
+    ...applications.map((application) => ({
+      id: application.id,
+      protocol: `CAND-${application.id.slice(0, 6).toUpperCase()}`,
+      type: 'Candidatura',
+      title: application.jobTitle,
+      status: applicationStatusLabel[application.status],
+      date: application.createdAt,
+      icon: Briefcase,
+    })),
+    ...enrollments.map((enrollment) => ({
+      id: enrollment.id,
+      protocol: enrollment.protocol,
+      type: 'Matricula',
+      title: enrollment.studentName,
+      status: enrollmentStatusLabel[enrollment.status],
+      date: enrollment.createdAt,
+      icon: GraduationCap,
+    })),
+    ...emergencyAlerts.map((alert) => ({
+      id: alert.id,
+      protocol: alert.protocol,
+      type: 'Emergencia',
+      title: alert.location,
+      status: emergencyStatusLabel[alert.status],
+      date: alert.createdAt,
+      icon: Siren,
     })),
   ].sort((a, b) => getMillis(b.date) - getMillis(a.date));
 

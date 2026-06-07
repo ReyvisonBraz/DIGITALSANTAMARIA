@@ -6,6 +6,7 @@ import Link from 'next/link';
 import {
   ArrowRight,
   Building2,
+  CalendarCheck,
   ClipboardList,
   FileText,
   Loader2,
@@ -25,7 +26,11 @@ import { useToast } from '@/lib/toast-context';
 import { listenToUserDemands } from '@/services/demands.service';
 import { listenToUserReports } from '@/services/reports.service';
 import { getUserProfile } from '@/services/users.service';
-import type { Demand, Report, UserProfile } from '@/types';
+import { getAppointmentsByUser } from '@/services/appointments.service';
+import { getUserApplications } from '@/services/jobs.service';
+import { getEnrollmentsByUser } from '@/services/educacao.service';
+import { getEmergencyAlertsByUser } from '@/services/emergency.service';
+import type { Appointment, Demand, EmergencyAlert, Enrollment, JobApplication, Report, UserProfile } from '@/types';
 
 export default function PerfilPage() {
   const { user, userRole, login, logout } = useAuth();
@@ -33,8 +38,13 @@ export default function PerfilPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [demands, setDemands] = useState<Demand[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [applications, setApplications] = useState<JobApplication[]>([]);
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [emergencyAlerts, setEmergencyAlerts] = useState<EmergencyAlert[]>([]);
   const [profileLoading, setProfileLoading] = useState(true);
   const [activityLoading, setActivityLoading] = useState(true);
+  const [operationsLoading, setOperationsLoading] = useState(true);
   const [settingsMode, setSettingsMode] = useState<'edit' | 'preferences' | null>(null);
 
   const loadProfile = useCallback(() => {
@@ -92,11 +102,38 @@ export default function PerfilPage() {
     };
   }, [user, toast]);
 
+  useEffect(() => {
+    if (!user) {
+      setAppointments([]);
+      setApplications([]);
+      setEnrollments([]);
+      setEmergencyAlerts([]);
+      setOperationsLoading(false);
+      return;
+    }
+
+    setOperationsLoading(true);
+    Promise.all([
+      getAppointmentsByUser(user.uid),
+      getUserApplications(user.uid),
+      getEnrollmentsByUser(user.uid),
+      getEmergencyAlertsByUser(user.uid),
+    ])
+      .then(([nextAppointments, nextApplications, nextEnrollments, nextEmergencyAlerts]) => {
+        setAppointments(nextAppointments);
+        setApplications(nextApplications);
+        setEnrollments(nextEnrollments);
+        setEmergencyAlerts(nextEmergencyAlerts);
+      })
+      .catch(() => toast('Nao foi possivel carregar seus processos agora.', 'error'))
+      .finally(() => setOperationsLoading(false));
+  }, [user, toast]);
+
   const displayName = profile?.displayName || user?.displayName || 'Cidadao';
   const email = profile?.email || user?.email || '';
   const photoURL = profile?.photoURL || user?.photoURL || null;
   const isStaff = userRole === 'admin' || userRole === 'clerk';
-  const loading = profileLoading || activityLoading;
+  const loading = profileLoading || activityLoading || operationsLoading;
   const handleLogin = async () => {
     try {
       await login();
@@ -108,8 +145,9 @@ export default function PerfilPage() {
   const stats = useMemo(() => [
     { label: 'Solicitacoes', value: demands.length, icon: ClipboardList },
     { label: 'Relatos', value: reports.length, icon: MessageSquare },
+    { label: 'Processos', value: appointments.length + applications.length + enrollments.length + emergencyAlerts.length, icon: CalendarCheck },
     { label: 'Pontos', value: profile?.points ?? 0, icon: ShieldCheck },
-  ], [demands.length, reports.length, profile?.points]);
+  ], [applications.length, appointments.length, demands.length, emergencyAlerts.length, enrollments.length, reports.length, profile?.points]);
 
   if (!user) {
     return (
@@ -186,7 +224,7 @@ export default function PerfilPage() {
 
       <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 md:px-10 lg:grid-cols-[1fr_0.38fr] lg:px-12">
         <section className="space-y-6">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((stat) => (
               <div key={stat.label} className="civic-card p-5">
                 <div className="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-primary">
@@ -210,7 +248,15 @@ export default function PerfilPage() {
                 Consultar protocolo
               </Link>
             </div>
-            <ActivityHistory demands={demands} reports={reports} loading={activityLoading} />
+            <ActivityHistory
+              demands={demands}
+              reports={reports}
+              appointments={appointments}
+              applications={applications}
+              enrollments={enrollments}
+              emergencyAlerts={emergencyAlerts}
+              loading={activityLoading || operationsLoading}
+            />
           </div>
 
           <MyBusinessesSection />

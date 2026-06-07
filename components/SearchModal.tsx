@@ -5,22 +5,13 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   ArrowRight,
-  Briefcase,
-  Calendar,
-  DollarSign,
-  HardHat,
-  Heart,
-  Megaphone,
-  MessageSquare,
-  Navigation,
-  School,
   Search,
-  Store,
   X,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { createLogger } from '@/lib/logger';
 import { useKeyboardShortcut } from '@/lib/hooks/use-keyboard-shortcut';
+import { NAV_LINKS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
 const log = createLogger('SearchModal');
@@ -33,23 +24,23 @@ interface SearchResult {
   icon: LucideIcon;
 }
 
+const EXTRA_RESULTS: readonly SearchResult[] = [
+  { id: 'extra-matricula', title: 'Matricula escolar', category: 'Educacao', href: '/educacao/matricula', icon: ArrowRight },
+  { id: 'extra-protocolo', title: 'Consultar protocolo', category: 'Atendimento', href: '/perfil', icon: Search },
+];
+
 const RESULTS: readonly SearchResult[] = [
-  { id: '1', title: 'Abrir solicitacao', category: 'Protocolos', href: '/ouvidoria', icon: MessageSquare },
-  { id: '2', title: 'Relatar problema', category: 'Protocolos', href: '/relatar', icon: Megaphone },
-  { id: '13', title: 'Consultar protocolo', category: 'Protocolos', href: '/perfil', icon: Search },
-  { id: '3', title: 'Peticoes publicas', category: 'Peticoes', href: '/peticoes', icon: ArrowRight },
-  { id: '4', title: 'Painel do Cidadao', category: 'Conta', href: '/perfil', icon: MessageSquare },
-  { id: '5', title: 'Unidades de saude', category: 'Saude', href: '/saude', icon: Heart },
-  { id: '6', title: 'Matricula escolar', category: 'Educacao', href: '/educacao', icon: School },
-  { id: '7', title: 'Vagas de emprego', category: 'Empregos', href: '/empregos', icon: Briefcase },
-  { id: '8', title: 'Comercio local', category: 'Economia', href: '/comercio', icon: Store },
-  { id: '9', title: 'Segunda via de tributos', category: 'Tributos', href: '/tributos', icon: DollarSign },
-  { id: '10', title: 'Transito e mobilidade', category: 'Mobilidade', href: '/transito', icon: Navigation },
-  { id: '11', title: 'Eventos da cidade', category: 'Eventos', href: '/eventos', icon: Calendar },
-  { id: '12', title: 'Obras publicas', category: 'Obras', href: '/obras', icon: HardHat },
+  ...NAV_LINKS.map((link) => ({
+    id: link.href,
+    title: link.label,
+    category: link.category,
+    href: link.href,
+    icon: link.icon,
+  })),
+  ...EXTRA_RESULTS,
 ] as const;
 
-const FILTERS = ['Todas', 'Protocolos', 'Peticoes', 'Saude', 'Educacao'] as const;
+const FILTERS = ['Todas', ...Array.from(new Set(RESULTS.map((result) => result.category)))] as const;
 
 interface SearchModalProps {
   isOpen: boolean;

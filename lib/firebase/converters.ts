@@ -13,6 +13,8 @@ import type {
   HealthUnit,
   Job,
   JobApplication,
+  Enrollment,
+  EmergencyAlert,
   Notification,
 } from '@/types';
 
@@ -37,4 +39,6 @@ export const appointmentConverter = converter<Appointment>();
 export const healthUnitConverter = converter<HealthUnit>();
 export const jobConverter = converter<Job>();
 export const jobApplicationConverter = converter<JobApplication>();
+export const enrollmentConverter = converter<Enrollment>();
+export const emergencyAlertConverter = converter<EmergencyAlert>();
 export const notificationConverter = converter<Notification>();

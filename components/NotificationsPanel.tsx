@@ -2,7 +2,20 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { BellOff, Clock, FileText, Heart, Loader2, MessageSquare, Store, Vote } from 'lucide-react';
+import {
+  BellOff,
+  Briefcase,
+  CalendarCheck,
+  Clock,
+  FileText,
+  GraduationCap,
+  Heart,
+  Loader2,
+  MessageSquare,
+  Siren,
+  Store,
+  Vote,
+} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import SidePanel from '@/components/ui/SidePanel';
@@ -27,6 +40,10 @@ const KIND_ICONS: Record<NotificationKind, LucideIcon> = {
   report_update: FileText,
   petition_update: Vote,
   business_update: Store,
+  appointment_update: CalendarCheck,
+  application_update: Briefcase,
+  enrollment_update: GraduationCap,
+  emergency_update: Siren,
   system: Heart,
 };
 

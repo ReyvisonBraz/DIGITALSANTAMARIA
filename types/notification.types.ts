@@ -1,11 +1,20 @@
 import type { Timestamp } from 'firebase/firestore';
 
-export type NotificationKind = 'demand_update' | 'report_update' | 'petition_update' | 'business_update' | 'system';
+export type NotificationKind =
+  | 'demand_update'
+  | 'report_update'
+  | 'petition_update'
+  | 'business_update'
+  | 'appointment_update'
+  | 'application_update'
+  | 'enrollment_update'
+  | 'emergency_update'
+  | 'system';
 
 export type NotificationTone = 'success' | 'alert' | 'update';
 
 export interface NotificationSource {
-  type: 'demand' | 'report' | 'petition' | 'business';
+  type: 'demand' | 'report' | 'petition' | 'business' | 'appointment' | 'application' | 'enrollment' | 'emergency';
   id: string;
   protocol?: string;
 }
