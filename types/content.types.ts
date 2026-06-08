@@ -173,3 +173,14 @@ export interface PharmacyItem extends BaseContent {
   location: string;
   requiresPrescription: boolean;
 }
+
+// Escolas municipais
+export interface EducationSchool extends BaseContent {
+  type: string;
+  address: string;
+  phone?: string;
+  availabilityStatus: string;
+  rating: number;
+  ideb: number;
+  imageURL: string | null;
+}

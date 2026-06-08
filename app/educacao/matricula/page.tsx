@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -19,6 +19,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/lib/toast-context';
 import { useAuth } from '@/lib/auth-context';
+import { useContent } from '@/lib/hooks/use-content';
+import type { EducationSchool } from '@/types';
 import { createEnrollment } from '@/services/educacao.service';
 import { cn } from '@/lib/utils';
 
@@ -30,7 +32,7 @@ const steps = [
   { id: 5, title: 'Confirmacao', icon: CheckCircle2 },
 ] as const;
 
-const schools = [
+const FALLBACK_SCHOOLS = [
   'E.M.E.F. Monteiro Lobato',
   'E.M. Joao Paulo II',
   'C.E.I. Ciranda da Crianca',
@@ -55,9 +57,18 @@ export default function MatriculaPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { user, login } = useAuth();
+  const { data: firestoreSchools } = useContent<EducationSchool>('education_schools');
   const [currentStep, setCurrentStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  const schools = useMemo(
+    () =>
+      firestoreSchools && firestoreSchools.length > 0
+        ? firestoreSchools.map((s) => s.title)
+        : FALLBACK_SCHOOLS,
+    [firestoreSchools],
+  );
   const [protocol, setProtocol] = useState('');
   const [formData, setFormData] = useState<FormData>(emptyForm);
 

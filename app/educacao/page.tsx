@@ -32,7 +32,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/lib/toast-context';
 import Modal from '@/components/ui/Modal';
 import { useContent } from '@/lib/hooks/use-content';
-import type { ContentStatus } from '@/types';
+import type { EducationSchool } from '@/types';
 import type { Timestamp } from 'firebase/firestore';
 
 const schools = [
@@ -67,22 +67,6 @@ const schools = [
     image: 'https://picsum.photos/seed/edu_school3/800/400'
   }
 ];
-
-interface EducationSchool {
-  id: string;
-  title: string;
-  description: string;
-  status: ContentStatus;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-  deletedAt: Timestamp | null;
-  type: string;
-  address: string;
-  availabilityStatus: string;
-  rating: number;
-  ideb: number;
-  imageURL: string | null;
-}
 
 export default function EducacaoPage() {
   const { toast } = useToast();

@@ -92,6 +92,30 @@ const demandStatusMeta = {
   },
 } satisfies Record<DemandStatus, { className: string }>;
 
+function normalizeDemandStatus(status: string): DemandStatus {
+  if (status === 'in_review') return 'analyzing';
+  if (status === 'pending' || status === 'analyzing' || status === 'solved' || status === 'rejected') {
+    return status;
+  }
+  return 'pending';
+}
+
+function normalizeDemandType(type: string): DemandType {
+  if (type === 'solicitacao') return 'sugestao';
+  if (type === 'reclamacao' || type === 'sugestao' || type === 'denuncia' || type === 'elogio') {
+    return type;
+  }
+  return 'reclamacao';
+}
+
+function getDemandStatusLabel(status: string) {
+  return demandStatusLabel[normalizeDemandStatus(status)];
+}
+
+function getDemandTypeLabel(type: string) {
+  return demandTypeLabel[normalizeDemandType(type)];
+}
+
 const reportStatusLabel: Record<ReportStatus, string> = {
   pending: 'Pendente',
   in_review: 'Em analise',
@@ -176,8 +200,8 @@ function buildDemandSearchText(demand: Demand) {
     demand.subject,
     demand.content.text,
     demand.category,
-    demandStatusLabel[demand.status],
-    demandTypeLabel[demand.type],
+    getDemandStatusLabel(String(demand.status)),
+    getDemandTypeLabel(String(demand.type)),
   ].join(' ').toLowerCase();
 }
 
@@ -275,14 +299,14 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
 
   const metrics = {
     total: demands.length,
-    pending: demands.filter((demand) => demand.status === 'pending').length,
-    analyzing: demands.filter((demand) => demand.status === 'analyzing').length,
-    solved: demands.filter((demand) => demand.status === 'solved').length,
+    pending: demands.filter((demand) => normalizeDemandStatus(String(demand.status)) === 'pending').length,
+    analyzing: demands.filter((demand) => normalizeDemandStatus(String(demand.status)) === 'analyzing').length,
+    solved: demands.filter((demand) => normalizeDemandStatus(String(demand.status)) === 'solved').length,
   };
 
   const statusCounts = useMemo(() => {
     return demandStatusOptions.reduce<Record<string, number>>((acc, item) => {
-      acc[item.value] = demands.filter((demand) => demand.status === item.value).length;
+      acc[item.value] = demands.filter((demand) => normalizeDemandStatus(String(demand.status)) === item.value).length;
       return acc;
     }, {});
   }, [demands]);
@@ -296,14 +320,17 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
     return demands
       .filter((demand) => {
         const matchesSearch = !search || buildDemandSearchText(demand).includes(search);
-        const matchesStatus = statusFilter === 'all' || demand.status === statusFilter;
+        const demandStatus = normalizeDemandStatus(String(demand.status));
+        const matchesStatus = statusFilter === 'all' || demandStatus === statusFilter;
         const matchesCategory = categoryFilter === 'all' || demand.category === categoryFilter;
         return matchesSearch && matchesStatus && matchesCategory;
       })
       .sort((a, b) => {
         if (sortMode === 'pending') {
           const order: Record<DemandStatus, number> = { pending: 0, analyzing: 1, rejected: 2, solved: 3 };
-          return order[a.status] - order[b.status] || timestampMillis(b.createdAt) - timestampMillis(a.createdAt);
+          const statusA = normalizeDemandStatus(String(a.status));
+          const statusB = normalizeDemandStatus(String(b.status));
+          return order[statusA] - order[statusB] || timestampMillis(b.createdAt) - timestampMillis(a.createdAt);
         }
         if (sortMode === 'oldest') return timestampMillis(a.createdAt) - timestampMillis(b.createdAt);
         return timestampMillis(b.createdAt) - timestampMillis(a.createdAt);
@@ -379,8 +406,10 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
       ) : (
         <div className="space-y-4">
           {filteredDemands.map((demand) => {
-            const typeMeta = demandTypeMeta[demand.type];
-            const statusMeta = demandStatusMeta[demand.status];
+            const safeType = normalizeDemandType(String(demand.type));
+            const safeStatus = normalizeDemandStatus(String(demand.status));
+            const typeMeta = demandTypeMeta[safeType];
+            const statusMeta = demandStatusMeta[safeStatus];
             const TypeIcon = typeMeta.icon;
             const isOpen = activeDemandId === demand.id;
 
@@ -395,10 +424,10 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${typeMeta.className}`}>
-                          {demandTypeLabel[demand.type]}
+                          {getDemandTypeLabel(String(demand.type))}
                         </span>
                         <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${statusMeta.className}`}>
-                          {demandStatusLabel[demand.status]}
+                          {getDemandStatusLabel(String(demand.status))}
                         </span>
                         <span className="rounded-full border border-border bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
                           {demand.category}
@@ -483,7 +512,7 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
                             demandId={demand.id}
                             clerkId={userId}
                             clerkName={clerkName}
-                            initialStatus={demand.status}
+                            initialStatus={safeStatus}
                             initialResponse={demand.adminAction?.response || ''}
                             onUpdate={onRefresh}
                           />
