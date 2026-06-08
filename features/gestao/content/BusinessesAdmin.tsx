@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
-  Archive,
   CheckCircle2,
   Clock3,
   Loader2,
@@ -123,6 +122,16 @@ export default function BusinessesAdmin() {
     setActionId(approvingBusiness.id);
     try {
       await approveBusiness(approvingBusiness.id);
+      await tryCreateAdminAuditLog({
+        action: 'content_status_changed',
+        collectionName: 'businesses',
+        documentId: approvingBusiness.id,
+        actorId: user?.uid || 'unknown',
+        actorName: user?.displayName || user?.email || 'Gestor',
+        previousValue: approvingBusiness.status,
+        nextValue: 'published',
+        note: 'Cadastro aprovado pela fila de comercios.',
+      });
       toast('Cadastro aprovado e publicado.', 'success');
       setApprovingBusiness(null);
       load();
@@ -140,9 +149,28 @@ export default function BusinessesAdmin() {
 
   const handleReject = async () => {
     if (!rejectingId) return;
+    const note = rejectNote.trim();
+    if (note.length < 10) {
+      toast('Informe um motivo com pelo menos 10 caracteres para orientar o cidadao.', 'error');
+      return;
+    }
+
+    const rejectedBusiness = pending.find((business) => business.id === rejectingId)
+      || businesses.find((business) => business.id === rejectingId);
+
     setActionId(rejectingId);
     try {
-      await rejectBusiness(rejectingId, rejectNote.trim());
+      await rejectBusiness(rejectingId, note);
+      await tryCreateAdminAuditLog({
+        action: 'content_status_changed',
+        collectionName: 'businesses',
+        documentId: rejectingId,
+        actorId: user?.uid || 'unknown',
+        actorName: user?.displayName || user?.email || 'Gestor',
+        previousValue: rejectedBusiness?.status || 'pending_approval',
+        nextValue: 'archived',
+        note,
+      });
       toast('Cadastro reprovado.', 'success');
       setRejectingId(null);
       setRejectNote('');
@@ -183,9 +211,29 @@ export default function BusinessesAdmin() {
 
       if (editingId) {
         await service.update(editingId, payload);
+        await tryCreateAdminAuditLog({
+          action: 'content_updated',
+          collectionName: 'businesses',
+          documentId: editingId,
+          actorId: user?.uid || 'unknown',
+          actorName: user?.displayName || user?.email || 'Gestor',
+          previousValue: null,
+          nextValue: status,
+          note: null,
+        });
         toast('Comercio atualizado.', 'success');
       } else {
-        await service.create(payload);
+        const newId = await service.create(payload);
+        await tryCreateAdminAuditLog({
+          action: 'content_created',
+          collectionName: 'businesses',
+          documentId: newId,
+          actorId: user?.uid || 'unknown',
+          actorName: user?.displayName || user?.email || 'Gestor',
+          previousValue: null,
+          nextValue: status,
+          note: null,
+        });
         toast(status === 'published' ? 'Comercio publicado.' : 'Comercio salvo.', 'success');
       }
 
@@ -200,9 +248,20 @@ export default function BusinessesAdmin() {
 
   const handleArchive = async () => {
     if (!archiveId) return;
+    const archivedBusiness = businesses.find((business) => business.id === archiveId);
     setArchiving(true);
     try {
       await service.archive(archiveId);
+      await tryCreateAdminAuditLog({
+        action: 'content_archived',
+        collectionName: 'businesses',
+        documentId: archiveId,
+        actorId: user?.uid || 'unknown',
+        actorName: user?.displayName || user?.email || 'Gestor',
+        previousValue: archivedBusiness?.status || null,
+        nextValue: 'archived',
+        note: null,
+      });
       toast('Comercio arquivado.', 'success');
       setArchiveId(null);
       load();
@@ -477,9 +536,10 @@ export default function BusinessesAdmin() {
                         onChange={(event) => setRejectNote(event.target.value)}
                         rows={3}
                         maxLength={300}
-                        placeholder="Opcional, fica visivel para o lojista."
+                        placeholder="Explique o que precisa ser corrigido. Esse texto fica visivel para o lojista."
                         className="w-full resize-none rounded-xl border border-rose-200 bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-rose-400"
                       />
+                      <span className="block text-[11px] font-bold text-rose-700">{rejectNote.trim().length}/300</span>
                     </label>
                   </div>
                 )}
@@ -601,13 +661,19 @@ export default function BusinessesAdmin() {
                   )}
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <ContentQuickActions
-                    status={biz.status}
-                    loading={quickActionId === biz.id}
-                    onPublish={() => handleQuickStatus(biz, 'published')}
-                    onDraft={() => handleQuickStatus(biz, 'draft')}
-                    onArchive={() => setArchiveId(biz.id)}
-                  />
+                  {biz.status === 'pending_approval' ? (
+                    <span className="inline-flex min-h-9 items-center rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-800">
+                      Revise na fila de aprovacao
+                    </span>
+                  ) : (
+                    <ContentQuickActions
+                      status={biz.status}
+                      loading={quickActionId === biz.id}
+                      onPublish={() => handleQuickStatus(biz, 'published')}
+                      onDraft={() => handleQuickStatus(biz, 'draft')}
+                      onArchive={() => setArchiveId(biz.id)}
+                    />
+                  )}
                   <button
                     type="button"
                     onClick={() => setPreviewBusiness(biz)}
@@ -622,14 +688,6 @@ export default function BusinessesAdmin() {
                   >
                     <Pencil className="h-3.5 w-3.5" />
                     Editar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setArchiveId(biz.id)}
-                    className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-muted transition hover:border-rose-300 hover:text-rose-600"
-                  >
-                    <Archive className="h-3.5 w-3.5" />
-                    Arquivar
                   </button>
                 </div>
               </article>

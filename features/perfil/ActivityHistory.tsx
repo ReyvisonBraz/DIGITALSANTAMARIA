@@ -1,9 +1,19 @@
 'use client';
-'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Briefcase, CalendarCheck, ChevronDown, ChevronUp, ClipboardList, Clock, FileText, GraduationCap, Loader2, Siren } from 'lucide-react';
+import {
+  Briefcase,
+  CalendarCheck,
+  ChevronDown,
+  ChevronUp,
+  ClipboardList,
+  Clock,
+  FileText,
+  GraduationCap,
+  Loader2,
+  Siren,
+} from 'lucide-react';
 import DemandTimeline from '@/features/ouvidoria/DemandTimeline';
 import ReportTimeline from '@/features/relatar/ReportTimeline';
 import { formatDate } from '@/lib/utils/formatters';
@@ -24,14 +34,14 @@ import type {
 
 const demandStatusLabel: Record<DemandStatus, string> = {
   pending: 'Pendente',
-  analyzing: 'Em análise',
+  analyzing: 'Em analise',
   solved: 'Resolvida',
   rejected: 'Recusada',
 };
 
 const reportStatusLabel: Record<ReportStatus, string> = {
   pending: 'Pendente',
-  in_review: 'Em análise',
+  in_review: 'Em analise',
   resolved: 'Resolvido',
   rejected: 'Recusado',
 };
@@ -73,6 +83,41 @@ type ActivityDate =
   | Enrollment['createdAt']
   | EmergencyAlert['createdAt'];
 
+type ActivityItem =
+  | {
+      id: string;
+      source: Demand;
+      protocol: string;
+      type: 'Solicitacao';
+      title: string;
+      status: string;
+      unreadByCitizen: boolean;
+      date: ActivityDate;
+      icon: typeof ClipboardList;
+    }
+  | {
+      id: string;
+      source: Report;
+      protocol: string;
+      type: 'Relato';
+      title: string;
+      status: string;
+      unreadByCitizen: boolean;
+      date: ActivityDate;
+      icon: typeof FileText;
+    }
+  | {
+      id: string;
+      source: null;
+      protocol: string;
+      type: 'Consulta' | 'Candidatura' | 'Matricula' | 'Emergencia';
+      title: string;
+      status: string;
+      unreadByCitizen: false;
+      date: ActivityDate;
+      icon: typeof CalendarCheck;
+    };
+
 function getMillis(value: ActivityDate) {
   if (value && typeof value === 'object' && 'seconds' in value) {
     return value.seconds * 1000;
@@ -105,64 +150,70 @@ export default function ActivityHistory({
 }: ActivityHistoryProps) {
   const [openItemId, setOpenItemId] = useState<string | null>(null);
 
-  const activities = [
-    ...demands.map((demand) => ({
+  const activities: ActivityItem[] = [
+    ...demands.map((demand): ActivityItem => ({
       id: demand.id,
       source: demand,
       protocol: demand.protocolId,
-      type: 'Solicitação',
+      type: 'Solicitacao',
       title: demand.subject,
       status: demandStatusLabel[demand.status],
+      unreadByCitizen: demand.conversation?.unreadByCitizen === true,
       date: demand.createdAt,
       icon: ClipboardList,
     })),
-    ...reports.map((report) => ({
+    ...reports.map((report): ActivityItem => ({
       id: report.id,
       source: report,
       protocol: report.protocol,
       type: 'Relato',
       title: report.title,
       status: reportStatusLabel[report.status],
+      unreadByCitizen: report.conversation?.unreadByCitizen === true,
       date: report.createdAt,
       icon: FileText,
     })),
-    ...appointments.map((appointment) => ({
+    ...appointments.map((appointment): ActivityItem => ({
       id: appointment.id,
       source: null,
       protocol: `${appointment.date} ${appointment.time}`,
       type: 'Consulta',
       title: `${appointment.specialty} - ${appointment.unitName}`,
       status: appointmentStatusLabel[appointment.status],
+      unreadByCitizen: false,
       date: appointment.createdAt,
       icon: CalendarCheck,
     })),
-    ...applications.map((application) => ({
+    ...applications.map((application): ActivityItem => ({
       id: application.id,
       source: null,
       protocol: `CAND-${application.id.slice(0, 6).toUpperCase()}`,
       type: 'Candidatura',
       title: application.jobTitle,
       status: applicationStatusLabel[application.status],
+      unreadByCitizen: false,
       date: application.createdAt,
       icon: Briefcase,
     })),
-    ...enrollments.map((enrollment) => ({
+    ...enrollments.map((enrollment): ActivityItem => ({
       id: enrollment.id,
       source: null,
       protocol: enrollment.protocol,
       type: 'Matricula',
       title: enrollment.studentName,
       status: enrollmentStatusLabel[enrollment.status],
+      unreadByCitizen: false,
       date: enrollment.createdAt,
       icon: GraduationCap,
     })),
-    ...emergencyAlerts.map((alert) => ({
+    ...emergencyAlerts.map((alert): ActivityItem => ({
       id: alert.id,
       source: null,
       protocol: alert.protocol,
       type: 'Emergencia',
       title: alert.location,
       status: emergencyStatusLabel[alert.status],
+      unreadByCitizen: false,
       date: alert.createdAt,
       icon: Siren,
     })),
@@ -181,14 +232,14 @@ export default function ActivityHistory({
       <div className="rounded-xl border border-dashed border-border bg-surface p-6 text-center">
         <p className="text-sm font-black uppercase tracking-widest text-text-main">Nenhum protocolo ainda</p>
         <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-          Abra uma solicitação ou registre um relato — eles aparecerão aqui automaticamente.
+          Abra uma solicitacao ou registre um relato. Eles aparecerao aqui automaticamente.
         </p>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           <Link
             href="/ouvidoria"
             className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white"
           >
-            Abrir solicitação
+            Abrir solicitacao
           </Link>
           <Link
             href="/relatar"
@@ -205,14 +256,20 @@ export default function ActivityHistory({
     <div className="space-y-3">
       {activities.slice(0, 8).map((item) => {
         const itemKey = `${item.type}-${item.id}`;
-        const canOpen = item.type === 'SolicitaÃ§Ã£o' || item.type === 'Relato';
+        const canOpen = item.type === 'Solicitacao' || item.type === 'Relato';
         const isOpen = openItemId === itemKey;
+        const Icon = item.icon;
 
         return (
-          <div key={itemKey} className={`civic-card overflow-hidden ${isOpen ? 'ring-2 ring-primary/20' : ''}`}>
+          <div
+            key={itemKey}
+            className={`civic-card overflow-hidden ${isOpen ? 'ring-2 ring-primary/20' : ''} ${
+              item.unreadByCitizen ? 'border-primary/40 bg-blue-50/40' : ''
+            }`}
+          >
             <div className="grid grid-cols-[auto_1fr] gap-3 p-4 sm:grid-cols-[auto_1fr_auto]">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <item.icon className="h-5 w-5" />
+                <Icon className="h-5 w-5" />
               </div>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
@@ -220,6 +277,11 @@ export default function ActivityHistory({
                   <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-text-muted">
                     {item.status}
                   </span>
+                  {item.unreadByCitizen && (
+                    <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-blue-800">
+                      Nova resposta
+                    </span>
+                  )}
                 </div>
                 <p className="mt-1 break-all font-mono text-xs font-bold text-primary">{item.protocol}</p>
               </div>
@@ -241,10 +303,10 @@ export default function ActivityHistory({
               </div>
             </div>
 
-            {isOpen && item.type === 'SolicitaÃ§Ã£o' && item.source && (
+            {isOpen && item.type === 'Solicitacao' && (
               <div className="border-t border-border p-4">
                 <DemandTimeline
-                  demand={item.source as Demand}
+                  demand={item.source}
                   compact
                   allowCitizenReply
                   currentUserId={currentUserId}
@@ -252,10 +314,10 @@ export default function ActivityHistory({
                 />
               </div>
             )}
-            {isOpen && item.type === 'Relato' && item.source && (
+            {isOpen && item.type === 'Relato' && (
               <div className="border-t border-border p-4">
                 <ReportTimeline
-                  report={item.source as Report}
+                  report={item.source}
                   compact
                   allowCitizenReply
                   currentUserId={currentUserId}

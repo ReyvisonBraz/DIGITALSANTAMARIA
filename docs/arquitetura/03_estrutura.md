@@ -68,6 +68,7 @@ DIGITALSANTAMARIA/
 │
 ├── features/                     # Componentes de dominio
 │   ├── gestao/                   # Painel admin
+│   │   ├── AdminAuditPanel.tsx   # Auditoria administrativa
 │   │   ├── AdminOverview.tsx     # Dashboard de visão geral
 │   │   ├── AdminSectionNav.tsx   # Navegação entre seções
 │   │   ├── ContentAdminPanel.tsx # Painel mestre de conteúdo

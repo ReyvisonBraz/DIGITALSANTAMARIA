@@ -1,15 +1,13 @@
-# Firestore — Schema de Colecoes
+# Firestore - Schema de Colecoes
 
-22+ colecoes no Firestore. Schema declarativo em `firebase-blueprint.json`.
+Referencia pratica das colecoes usadas pelo app. Os tipos completos ficam em `types/` e os conversores em `lib/firebase/converters.ts`.
 
----
-
-## Colecoes com service dedicado
+## Usuarios e permissoes
 
 ### `users`
 | Campo | Tipo |
 |---|---|
-| `uid` | string (PK) |
+| `uid` | string |
 | `email` | string |
 | `displayName` | string |
 | `photoURL` | string |
@@ -23,41 +21,16 @@
 ### `admins`
 | Campo | Tipo |
 |---|---|
-| `uid` | string (PK, mesmo do `users`) |
-| `role` | `'admin' \| 'clerk'` |
+| `uid` | string |
+| `role` | `admin` ou `clerk` |
 | `department` | Department |
 
-### `reports`
-| Campo | Tipo |
-|---|---|
-| `id` | string |
-| `reporterId` | string (FK → users) |
-| `reporterName` | string |
-| `type` | ReportType |
-| `status` | ReportStatus |
-| `description` | string |
-| `location` | GeoLocation |
-| `photoURL` | string |
-| `votes` | number |
-| `protocol` | string |
-| `createdAt` | Timestamp |
-| `updatedAt` | Timestamp |
-
-### `report_messages`
-| Campo | Tipo |
-|---|---|
-| `reportId` | string (FK) |
-| `authorId` | string |
-| `authorName` | string |
-| `authorRole` | ReportMessageAuthorRole |
-| `text` | string |
-| `createdAt` | Timestamp |
+## Atendimento
 
 ### `demands`
 | Campo | Tipo |
 |---|---|
-| `id` | string |
-| `authorId` | string (FK -> users, vazio quando anonimo) |
+| `authorId` | string, vazio quando anonimo |
 | `authorName` | string \| null |
 | `type` | DemandType |
 | `category` | string |
@@ -66,7 +39,7 @@
 | `content.text` | string |
 | `content.mediaFiles` | string[] |
 | `content.location` | GeoLocation \| null |
-| `protocolId` | string (OUV-...) |
+| `protocolId` | string |
 | `adminAction` | AdminAction \| null |
 | `isAnonymous` | boolean |
 | `consent` | boolean |
@@ -74,57 +47,94 @@
 | `createdAt` | Timestamp |
 | `updatedAt` | Timestamp |
 
-#### `demands.conversation`
-| Campo | Tipo |
-|---|---|
-| `lastMessageAt` | Timestamp |
-| `lastMessageAuthorName` | string |
-| `lastMessageAuthorRole` | DemandMessageAuthorRole |
-| `unreadByCitizen` | boolean |
-| `unreadByStaff` | boolean |
-
 ### `demand_messages`
 | Campo | Tipo |
 |---|---|
-| `demandId` | string (FK) |
+| `demandId` | string |
 | `authorId` | string |
 | `authorName` | string |
 | `authorRole` | DemandMessageAuthorRole |
 | `message` | string |
 | `createdAt` | Timestamp |
 
+### `reports`
+| Campo | Tipo |
+|---|---|
+| `reporterId` | string |
+| `reporterName` | string |
+| `type` | ReportType |
+| `title` | string |
+| `description` | string |
+| `status` | ReportStatus |
+| `protocol` | string |
+| `location` | GeoLocation \| null |
+| `photo` | StorageFile \| null |
+| `votes` | number |
+| `isPetition` | boolean |
+| `adminResponse` | string \| null |
+| `clerkId` | string \| null |
+| `conversation` | ReportConversationSummary \| undefined |
+| `createdAt` | Timestamp |
+| `updatedAt` | Timestamp |
+
+### `report_messages`
+| Campo | Tipo |
+|---|---|
+| `reportId` | string |
+| `authorId` | string |
+| `authorName` | string |
+| `authorRole` | ReportMessageAuthorRole |
+| `message` | string |
+| `createdAt` | Timestamp |
+
+### Resumo de conversa
+
+`demands.conversation` e `reports.conversation` seguem o mesmo formato:
+
+| Campo | Tipo |
+|---|---|
+| `lastMessageAt` | Timestamp |
+| `lastMessageAuthorName` | string |
+| `lastMessageAuthorRole` | `citizen`, `staff` ou `system` |
+| `unreadByCitizen` | boolean |
+| `unreadByStaff` | boolean |
+
+## Participacao
+
 ### `petitions`
 | Campo | Tipo |
 |---|---|
-| `id` | string |
-| `creatorId` | string (FK → users) |
+| `creatorId` | string |
 | `creatorName` | string |
+| `creatorPhotoURL` | string |
 | `title` | string |
 | `description` | string |
 | `category` | string |
 | `goal` | number |
 | `signaturesCount` | number |
 | `status` | PetitionStatus |
-| `coverURL` | string |
+| `officialReply` | PetitionOfficialReply \| null |
+| `coverImageURL` | string |
 | `createdAt` | Timestamp |
 | `updatedAt` | Timestamp |
 
 ### `petition_signatures`
 | Campo | Tipo |
 |---|---|
-| `petitionId` | string (FK) |
-| `userId` | string (FK → users) |
+| `petitionId` | string |
+| `userId` | string |
 | `userName` | string |
 | `createdAt` | Timestamp |
 
-> **Composite key:** `petitionId_userId` (usado em `hasUserSigned`)
+O ID do documento usa `petitionId_userId`.
+
+## Servicos operacionais
 
 ### `appointments`
 | Campo | Tipo |
 |---|---|
-| `id` | string |
-| `userId` | string (FK → users) |
-| `unitId` | string (FK → health_units) |
+| `userId` | string |
+| `unitId` | string |
 | `specialty` | string |
 | `date` | string |
 | `time` | string |
@@ -134,7 +144,6 @@
 ### `health_units`
 | Campo | Tipo |
 |---|---|
-| `id` | string |
 | `name` | string |
 | `type` | HealthUnitType |
 | `address` | string |
@@ -148,8 +157,7 @@
 ### `jobs`
 | Campo | Tipo |
 |---|---|
-| `id` | string |
-| `employerId` | string (FK → users) |
+| `employerId` | string |
 | `title` | string |
 | `description` | string |
 | `type` | JobType |
@@ -163,9 +171,8 @@
 ### `job_applications`
 | Campo | Tipo |
 |---|---|
-| `id` | string |
-| `jobId` | string (FK → jobs) |
-| `applicantId` | string (FK → users) |
+| `jobId` | string |
+| `applicantId` | string |
 | `coverLetter` | string |
 | `status` | ApplicationStatus |
 | `createdAt` | Timestamp |
@@ -173,8 +180,7 @@
 ### `enrollments`
 | Campo | Tipo |
 |---|---|
-| `id` | string |
-| `userId` | string (FK → users) |
+| `userId` | string |
 | `parentName` | string |
 | `parentCpf` | string |
 | `studentName` | string |
@@ -183,38 +189,36 @@
 | `cep` | string |
 | `schoolPreference` | string |
 | `status` | EnrollmentStatus |
-| `protocol` | string (MAT-...) |
+| `protocol` | string |
 | `createdAt` | Timestamp |
 
 ### `emergency_alerts`
 | Campo | Tipo |
 |---|---|
-| `id` | string |
-| `userId` | string (FK → users) |
+| `userId` | string |
 | `type` | EmergencyAlertType |
 | `location` | GeoLocation |
 | `description` | string |
 | `status` | EmergencyAlertStatus |
-| `protocol` | string (SEG-...) |
+| `protocol` | string |
 | `createdAt` | Timestamp |
 
 ### `notifications`
 | Campo | Tipo |
 |---|---|
-| `id` | string |
-| `userId` | string (FK → users) |
+| `recipientId` | string |
 | `kind` | NotificationKind |
 | `tone` | NotificationTone |
 | `title` | string |
 | `message` | string |
-| `sourceId` | string |
+| `href` | string |
+| `source` | NotificationSource |
 | `read` | boolean |
 | `createdAt` | Timestamp |
 
 ### `admin_audit_logs`
 | Campo | Tipo |
 |---|---|
-| `id` | string |
 | `adminId` | string |
 | `adminName` | string |
 | `collection` | string |
@@ -223,40 +227,23 @@
 | `details` | string |
 | `createdAt` | Timestamp |
 
----
+## Catalogos publicos
 
-## Colecoes de catalogo (`content.service.ts`)
+As colecoes abaixo usam o padrao de `content.service.ts`: `status`, `createdAt`, `updatedAt` e `deletedAt`.
 
-Todas seguem a interface `BaseContent`:
-
-| Colecao | Tipo TypeScript | Campos extras |
-|---|---|---|
-| `works` | `Work` | `budget, progress, location, updates[]` |
-| `events` | `Event` | `date, time, location, price, category` |
-| `notices` | `Notice` | `type, priority, expiresAt` |
-| `businesses` | `Business` | `category, phone, whatsapp, address, hours` |
-| `community_groups` | `CommunityGroup` | `category, members, location` |
-| `safety_zones` | `SafetyZone` | `riskLevel, location` |
-| `environment_data` | `EnvironmentData` | `type, value, unit, location` |
-| `social_programs` | `SocialProgram` | `category, requirements, location` |
-| `tax_records` | `TaxRecord` | `type, amount, dueDate` |
-| `traffic_alerts` | `TrafficAlert` | `type, severity, location, validUntil` |
-| `polls` | `Poll` | `question, options[{ id, text, votes }]` |
-| `public_services` | `PublicService` | `category, department, location, hours` |
-| `pharmacy_items` | `PharmacyItem` | `name, category, price, pharmacyId` |
-| `education_schools` | `EducationSchool` | `name, type, address, phone, grades` |
-
-### Campos base (todas as colecoes de catalogo):
-
-| Campo | Tipo | Descricao |
-|---|---|---|
-| `id` | string | Auto-generated |
-| `status` | ContentStatus | `published \| draft \| archived \| pending_approval` |
-| `createdAt` | Timestamp | Auto na criacao |
-| `updatedAt` | Timestamp | Auto no update |
-| `deletedAt` | Timestamp \| null | Soft-delete (`null` = ativo) |
-
-### Filtro padrao do `content.service`:
-- `list()` → `where('status', '==', 'published')` + `orderBy('createdAt', 'desc')`
-- `listAdmin()` → sem filtro de status
-- Ambos ignoram documentos com `deletedAt != null`
+| Colecao | Tipo principal |
+|---|---|
+| `works` | Work |
+| `events` | Event |
+| `notices` | Notice |
+| `businesses` | Business |
+| `community_groups` | CommunityGroup |
+| `safety_zones` | SafetyZone |
+| `environment_data` | EnvironmentData |
+| `social_programs` | SocialProgram |
+| `tax_records` | TaxRecord |
+| `traffic_alerts` | TrafficAlert |
+| `polls` | Poll |
+| `public_services` | PublicService |
+| `pharmacy_items` | PharmacyItem |
+| `education_schools` | EducationSchool |

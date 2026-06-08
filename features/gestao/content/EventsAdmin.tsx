@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Archive, CalendarDays, Loader2, MapPin, Pencil, Save, X } from 'lucide-react';
+import { CalendarDays, Loader2, MapPin, Pencil, Save, X } from 'lucide-react';
 import { createContentService } from '@/services/content.service';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import EmptyState from '@/components/ui/EmptyState';
@@ -482,14 +482,6 @@ export default function EventsAdmin() {
                   >
                     <Pencil className="h-3.5 w-3.5" />
                     Editar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setArchiveId(event.id)}
-                    className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-muted transition hover:border-rose-300 hover:text-rose-600"
-                  >
-                    <Archive className="h-3.5 w-3.5" />
-                    Arquivar
                   </button>
                 </div>
               </article>

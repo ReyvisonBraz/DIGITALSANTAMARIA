@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, CheckCircle2, Clock, Loader2, MessageSquare, Send, ShieldCheck, UserRound } from 'lucide-react';
-import { createReportMessage, getReportMessages } from '@/services/reports.service';
+import { createReportMessage, getReportMessages, markReportReadByCitizen } from '@/services/reports.service';
 import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
 import type { Report, ReportMessage } from '@/types';
@@ -70,6 +70,16 @@ export default function ReportTimeline({
       mounted = false;
     };
   }, [report.id, report.updatedAt, refreshTick]);
+
+  useEffect(() => {
+    if (!allowCitizenReply || currentUserId !== report.reporterId || !report.conversation?.unreadByCitizen) {
+      return;
+    }
+
+    markReportReadByCitizen(report.id).catch(() => {
+      // A leitura visual da conversa nao deve falhar se a marcacao de lido nao sincronizar.
+    });
+  }, [allowCitizenReply, currentUserId, report.conversation?.unreadByCitizen, report.id, report.reporterId]);
 
   const timeline = useMemo(() => {
     const base: TimelineMessage[] = [

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import Skeleton from '@/components/ui/Skeleton';
+import AdminAuditPanel from '@/features/gestao/AdminAuditPanel';
 import AdminOverview from '@/features/gestao/AdminOverview';
 import AdminSectionNav, { type AdminMainSection } from '@/features/gestao/AdminSectionNav';
 import ContentAdminPanel, { type ContentTab } from '@/features/gestao/ContentAdminPanel';
@@ -39,6 +40,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
 import { markDemandReadByStaff } from '@/services/demands.service';
+import { markReportReadByStaff } from '@/services/reports.service';
 import type { Demand, DemandStatus, DemandType, Report, ReportStatus, ReportType } from '@/types';
 
 const demandStatusLabel: Record<DemandStatus, string> = {
@@ -186,6 +188,7 @@ const reportStatusOptions: { value: ReportStatus; label: string }[] = [
 type ActiveSection = AdminMainSection;
 type DemandSort = 'newest' | 'oldest' | 'pending' | 'needs_reply';
 type DemandStatusFilter = DemandStatus | 'all';
+type ReportSort = 'newest' | 'oldest' | 'pending' | 'needs_reply';
 type ReportStatusFilter = ReportStatus | 'all';
 
 function timestampMillis(value: { seconds?: number } | unknown) {
@@ -197,6 +200,10 @@ function timestampMillis(value: { seconds?: number } | unknown) {
 
 function hasUnreadStaffMessage(demand: Demand) {
   return demand.conversation?.unreadByStaff === true;
+}
+
+function hasUnreadReportStaffMessage(report: Report) {
+  return report.conversation?.unreadByStaff === true;
 }
 
 function buildDemandSearchText(demand: Demand) {
@@ -220,6 +227,8 @@ function buildReportSearchText(report: Report) {
     report.reporterName,
     reportTypeLabel[report.type],
     reportStatusLabel[report.status],
+    report.conversation?.lastMessageAuthorName,
+    hasUnreadReportStaffMessage(report) ? 'nova resposta cidadao' : '',
   ].join(' ').toLowerCase();
 }
 
@@ -594,6 +603,7 @@ interface ReportsSectionProps {
 function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh }: ReportsSectionProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<ReportStatusFilter>('all');
+  const [sortMode, setSortMode] = useState<ReportSort>('newest');
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
 
   const metrics = {
@@ -602,6 +612,7 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
     analyzing: reports.filter((report) => report.status === 'in_review').length,
     solved: reports.filter((report) => report.status === 'resolved').length,
   };
+  const unreadByStaffCount = reports.filter(hasUnreadReportStaffMessage).length;
 
   const statusCounts = useMemo(() => {
     return reportStatusOptions.reduce<Record<string, number>>((acc, item) => {
@@ -619,13 +630,40 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
         return matchesSearch && matchesStatus;
       })
       .sort((a, b) => {
+        if (sortMode === 'needs_reply') {
+          const unreadA = hasUnreadReportStaffMessage(a) ? 0 : 1;
+          const unreadB = hasUnreadReportStaffMessage(b) ? 0 : 1;
+          const messageTimeA = timestampMillis(a.conversation?.lastMessageAt) || timestampMillis(a.updatedAt);
+          const messageTimeB = timestampMillis(b.conversation?.lastMessageAt) || timestampMillis(b.updatedAt);
+          return unreadA - unreadB || messageTimeB - messageTimeA;
+        }
+        if (sortMode === 'newest') return timestampMillis(b.createdAt) - timestampMillis(a.createdAt);
+        if (sortMode === 'oldest') return timestampMillis(a.createdAt) - timestampMillis(b.createdAt);
         const order: Record<ReportStatus, number> = { pending: 0, in_review: 1, rejected: 2, resolved: 3 };
         return order[a.status] - order[b.status] || timestampMillis(b.createdAt) - timestampMillis(a.createdAt);
       });
-  }, [reports, searchTerm, statusFilter]);
+  }, [reports, searchTerm, sortMode, statusFilter]);
 
   const selectedReportExists = filteredReports.some((report) => report.id === selectedReportId);
   const activeReportId = selectedReportExists ? selectedReportId : null;
+
+  const handleReportToggle = async (report: Report, isOpen: boolean) => {
+    if (isOpen) {
+      setSelectedReportId(null);
+      return;
+    }
+
+    setSelectedReportId(report.id);
+
+    if (!hasUnreadReportStaffMessage(report)) return;
+
+    try {
+      await markReportReadByStaff(report.id);
+      await onRefresh();
+    } catch {
+      // O detalhe continua acessivel mesmo se a sincronizacao de leitura falhar.
+    }
+  };
 
   return (
     <>
@@ -651,8 +689,26 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
           onFilterChange={(value) => setStatusFilter(value as ReportStatusFilter)}
         />
 
+        <div className="mt-3">
+          <select
+            value={sortMode}
+            onChange={(event) => setSortMode(event.target.value as ReportSort)}
+            className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold text-text-main outline-none focus:border-primary md:max-w-sm"
+          >
+            <option value="newest">Mais recentes</option>
+            <option value="oldest">Mais antigos</option>
+            <option value="needs_reply">Novas respostas primeiro</option>
+            <option value="pending">Pendentes primeiro</option>
+          </select>
+        </div>
+
         <p className="mt-3 text-xs font-bold text-text-muted">
           Mostrando {filteredReports.length} de {reports.length} relatos.
+          {unreadByStaffCount > 0 && (
+            <span className="ml-2 text-primary-dark">
+              {unreadByStaffCount} com nova resposta do cidadao.
+            </span>
+          )}
         </p>
       </div>
 
@@ -674,9 +730,10 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
             const statusMeta = reportStatusMeta[report.status];
             const TypeIcon = typeMeta.icon;
             const isOpen = activeReportId === report.id;
+            const needsStaffReply = hasUnreadReportStaffMessage(report);
 
             return (
-              <article key={report.id} className={`civic-card overflow-hidden ${isOpen ? 'ring-2 ring-primary/25' : ''}`}>
+              <article key={report.id} className={`civic-card overflow-hidden ${isOpen ? 'ring-2 ring-primary/25' : ''} ${needsStaffReply ? 'border-primary/45 bg-blue-50/50' : ''}`}>
                 <div className="grid grid-cols-1 gap-4 p-5 md:p-6 lg:grid-cols-[auto_1fr_auto] lg:items-start">
                   <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${typeMeta.accentClassName}`}>
                     <TypeIcon className="h-6 w-6" />
@@ -696,6 +753,11 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
                           Foto
                         </span>
                       )}
+                      {needsStaffReply && (
+                        <span className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-blue-800">
+                          Nova resposta
+                        </span>
+                      )}
                     </div>
                     <h2 className="mt-3 text-lg font-semibold tracking-normal text-text-main md:text-xl">{report.title}</h2>
                     <p className="mt-2 line-clamp-2 text-sm font-medium leading-6 text-text-muted">
@@ -705,6 +767,12 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
                       <p className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-text-muted">
                         <MapPin className="h-3.5 w-3.5 text-primary" />
                         {report.location.address}
+                      </p>
+                    )}
+                    {report.conversation?.lastMessageAuthorRole === 'citizen' && report.conversation.lastMessageAuthorName && (
+                      <p className="mt-2 text-xs font-bold text-text-muted">
+                        Ultima mensagem de {report.conversation.lastMessageAuthorName}
+                        {report.conversation.lastMessageAt ? ` em ${formatDate(report.conversation.lastMessageAt)}` : ''}
                       </p>
                     )}
                   </div>
@@ -717,7 +785,7 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
                     <span className="text-xs font-bold text-text-muted">{formatDate(report.createdAt)}</span>
                     <button
                       type="button"
-                      onClick={() => setSelectedReportId(isOpen ? null : report.id)}
+                      onClick={() => void handleReportToggle(report, isOpen)}
                       className="inline-flex w-fit items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-xs font-black text-primary transition hover:border-primary hover:bg-primary/10"
                       aria-expanded={isOpen}
                     >
@@ -824,7 +892,7 @@ export default function GestaoPage() {
   const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
-    const allowedForClerk: ActiveSection[] = ['overview', 'demands', 'reports'];
+    const allowedForClerk: ActiveSection[] = ['overview', 'demands', 'reports', 'content'];
     if (!canManageAdminCatalog && !allowedForClerk.includes(activeSection)) {
       setActiveSection('overview');
     }
@@ -834,7 +902,7 @@ export default function GestaoPage() {
     return reports.filter((report) => report.status === 'pending').length;
   }, [reports]);
 
-  const visibleSection: ActiveSection = canManageAdminCatalog || activeSection === 'overview' || activeSection === 'demands' || activeSection === 'reports'
+  const visibleSection: ActiveSection = canManageAdminCatalog || activeSection === 'overview' || activeSection === 'demands' || activeSection === 'reports' || activeSection === 'content'
     ? activeSection
     : 'overview';
 
@@ -925,9 +993,11 @@ export default function GestaoPage() {
             onRefresh={refresh}
           />
         ) : visibleSection === 'content' ? (
-          <ContentAdminPanel activeTab={contentTab} onTabChange={setContentTab} />
+          <ContentAdminPanel activeTab={contentTab} canManageCatalog={canManageAdminCatalog} onTabChange={setContentTab} />
         ) : visibleSection === 'petitions' ? (
           <PetitionsAdminPanel />
+        ) : visibleSection === 'audit' ? (
+          <AdminAuditPanel />
         ) : (
           <UsersAdminPanel />
         )}

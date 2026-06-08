@@ -1,6 +1,6 @@
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import type { CreateAdminAuditLogInput } from '@/types';
+import type { AdminAuditLog, CreateAdminAuditLogInput } from '@/types';
 
 const COLLECTION = 'admin_audit_logs';
 
@@ -18,4 +18,14 @@ export async function tryCreateAdminAuditLog(input: CreateAdminAuditLogInput): P
   } catch (error) {
     console.warn('[admin-audit] Falha ao registrar auditoria', error);
   }
+}
+
+export async function getAdminAuditLogs(max = 100): Promise<AdminAuditLog[]> {
+  const ref = collection(db, COLLECTION);
+  const q = query(ref, orderBy('createdAt', 'desc'), limit(max));
+  const snap = await getDocs(q);
+  return snap.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data(),
+  }) as AdminAuditLog);
 }

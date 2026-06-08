@@ -1,34 +1,34 @@
-# Painel do Cidadao — `/perfil`
+# Painel do Cidadao - `/perfil`
 
-Central de acompanhamento do cidadao. Historico, notificacoes, perfil.
+Central de acompanhamento do cidadao. Reune historico de protocolos, processos, negocios cadastrados e dados de perfil.
 
-**Dados:** Firestore real (multiplas colecoes)
+**Dados:** Firestore real em multiplas colecoes
 **Features:** `ActivityHistory`, `AvatarUpload`, `EditProfileForm`, `MyBusinessesSection`
 **Services:** `users.service`, `reports.service`, `demands.service`, `appointments.service`, `jobs.service`, `educacao.service`, `emergency.service`
 
----
-
 ## Secoes
 
-### Resumo / Metricas
-- Pontos de cidadania (do perfil `users/{uid}`)
-- Contadores: relatos, demandas, agendamentos, matriculas, candidaturas
-- Dados em tempo real via listeners
+### Resumo e metricas
+- Contadores de solicitacoes, relatos, processos e pontos
+- Dados carregados por listeners ou consultas do usuario logado
 
 ### Historico de Atividades (`ActivityHistory`)
-Feed unificado em tempo real com todas as atividades do cidadao:
-- Demandas (com status)
-- Relatos (com status)
+Feed unificado das atividades do cidadao:
+- Solicitacoes da Ouvidoria
+- Relatos urbanos
 - Agendamentos
 - Alertas de emergencia
 - Candidaturas a empregos
 - Matriculas escolares
+- Badge `Nova resposta` quando `conversation.unreadByCitizen` esta ativo
+- Abrir a conversa chama `markDemandReadByCitizen()` ou `markReportReadByCitizen()`
 
 ### Meus Negocios (`MyBusinessesSection`)
-- Lista negocios cadastrados (listener em tempo real)
-- Status visivel: pendente, aprovado, rejeitado
-- Botao para cadastrar novo negocio
-- Edicao de dados do negocio
+- Lista negocios cadastrados pelo usuario
+- Mostra status: aguardando aprovacao, publicado, nao aprovado ou rascunho
+- Permite cadastrar novo negocio
+- Permite editar dados do negocio do proprio usuario
+- Cadastro reprovado pode ser corrigido e reenviado para a fila de aprovacao
 
 ### Editar Perfil (`EditProfileForm`)
 - Nome de exibicao
@@ -37,27 +37,25 @@ Feed unificado em tempo real com todas as atividades do cidadao:
 - Salva via `updateUserProfile()`
 
 ### Avatar (`AvatarUpload`)
-- Upload de foto de perfil (max 2MB, JPEG/PNG/WebP)
-- Armazenado em `avatars/{uid}/{filename}` no Firebase Storage
+- Upload de foto de perfil
+- Limite de 2 MB
+- Formatos aceitos: JPEG, PNG e WebP
+- Armazena em `avatars/{uid}/{filename}`
 - Atualiza `photoURL` no perfil
 
 ### Configuracoes (`ProfileSettingsPanel`)
-- Acessibilidade: tamanho da fonte, escala, alto contraste
-- Links para Sobre, Legal
-
----
+- Preferencias visuais
+- Links institucionais e legais
 
 ## Listeners em tempo real
 
 | Listener | Escopo |
 |---|---|
-| `listenToUserDemands` | Demandas do usuario |
+| `listenToUserDemands` | Solicitacoes do usuario |
 | `listenToUserReports` | Relatos do usuario |
 | `listenToOwnedBusinesses` | Negocios do usuario |
-| `listenToUserNotifications` | Notificacoes (via NotificationsContext) |
-
----
+| `listenToUserNotifications` | Notificacoes via `NotificationsContext` |
 
 ## Colecoes acessadas
 
-`users`, `demands`, `reports`, `appointments`, `job_applications`, `enrollments`, `emergency_alerts`, `businesses`, `notifications`
+`users`, `demands`, `demand_messages`, `reports`, `report_messages`, `appointments`, `job_applications`, `enrollments`, `emergency_alerts`, `businesses`, `notifications`

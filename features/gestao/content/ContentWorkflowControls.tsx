@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { Archive, Eye, FileEdit, Loader2, Send, X } from 'lucide-react';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import type { ContentStatus } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -152,52 +154,72 @@ export function ContentQuickActions({
   onDraft,
   onArchive,
 }: ContentQuickActionsProps) {
+  const [publishConfirmationOpen, setPublishConfirmationOpen] = useState(false);
+  const publishLabel = status === 'archived' ? 'Reativar' : 'Publicar';
+
+  const confirmPublish = () => {
+    setPublishConfirmationOpen(false);
+    onPublish();
+  };
+
   return (
-    <div className="flex flex-wrap gap-2">
-      {status !== 'published' && (
-        <button
-          type="button"
-          onClick={onPublish}
-          disabled={loading}
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-emerald-200 bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-emerald-700 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
-          Publicar
-        </button>
-      )}
-      {status !== 'draft' && status !== 'archived' && (
-        <button
-          type="button"
-          onClick={onDraft}
-          disabled={loading}
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileEdit className="h-3.5 w-3.5" />}
-          Rascunho
-        </button>
-      )}
-      {status === 'archived' ? (
-        <button
-          type="button"
-          onClick={onPublish}
-          disabled={loading}
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-primary/30 bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary transition hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Eye className="h-3.5 w-3.5" />}
-          Reativar
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={onArchive}
-          disabled={loading}
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-muted transition hover:border-rose-300 hover:text-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Archive className="h-3.5 w-3.5" />}
-          Arquivar
-        </button>
-      )}
-    </div>
+    <>
+      <div className="flex flex-wrap gap-2">
+        {status !== 'published' && (
+          <button
+            type="button"
+            onClick={() => setPublishConfirmationOpen(true)}
+            disabled={loading}
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-emerald-200 bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-emerald-700 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+            Publicar
+          </button>
+        )}
+        {status !== 'draft' && status !== 'archived' && (
+          <button
+            type="button"
+            onClick={onDraft}
+            disabled={loading}
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileEdit className="h-3.5 w-3.5" />}
+            Rascunho
+          </button>
+        )}
+        {status === 'archived' ? (
+          <button
+            type="button"
+            onClick={() => setPublishConfirmationOpen(true)}
+            disabled={loading}
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-primary/30 bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-primary transition hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Eye className="h-3.5 w-3.5" />}
+            Reativar
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onArchive}
+            disabled={loading}
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-text-muted transition hover:border-rose-300 hover:text-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Archive className="h-3.5 w-3.5" />}
+            Arquivar
+          </button>
+        )}
+      </div>
+
+      <ConfirmDialog
+        isOpen={publishConfirmationOpen}
+        title={`${publishLabel} conteudo`}
+        description="Esta acao torna o item visivel nas paginas publicas do site. Confirme apenas depois de revisar titulo, texto, data e links."
+        confirmLabel={publishLabel}
+        loading={loading}
+        onConfirm={confirmPublish}
+        onClose={() => setPublishConfirmationOpen(false)}
+      />
+    </>
   );
 }
 

@@ -7,6 +7,14 @@ export type ReportStatus = 'pending' | 'in_review' | 'resolved' | 'rejected';
 
 export type ReportMessageAuthorRole = 'citizen' | 'staff' | 'system';
 
+export interface ReportConversationSummary {
+  lastMessageAt: Timestamp;
+  lastMessageAuthorName: string;
+  lastMessageAuthorRole: ReportMessageAuthorRole;
+  unreadByCitizen: boolean;
+  unreadByStaff: boolean;
+}
+
 export interface Report {
   id: string;
   reporterId: string;
@@ -22,6 +30,7 @@ export interface Report {
   isPetition: boolean;
   adminResponse: string | null;
   clerkId: string | null;
+  conversation?: ReportConversationSummary;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }

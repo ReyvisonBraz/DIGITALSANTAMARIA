@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Bell,
   CalendarDays,
@@ -91,6 +91,8 @@ const TABS: { value: ContentTab; label: string; icon: LucideIcon; group: Exclude
   { value: 'community', label: 'Comunidade', icon: Users, group: 'participation' },
   { value: 'polls', label: 'Votos', icon: Gavel, group: 'participation' },
 ];
+
+const OPERATION_TABS: ContentTab[] = ['appointments', 'applications', 'enrollments', 'emergency'];
 
 const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'businesses' | 'traffic' | 'health' | 'appointments' | 'jobs' | 'applications' | 'enrollments' | 'emergency'>, CatalogAdminConfig> = {
   community: {
@@ -364,31 +366,42 @@ const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'bus
 
 interface ContentAdminPanelProps {
   activeTab?: ContentTab;
+  canManageCatalog?: boolean;
   onTabChange?: (tab: ContentTab) => void;
 }
 
-export default function ContentAdminPanel({ activeTab, onTabChange }: ContentAdminPanelProps) {
+export default function ContentAdminPanel({ activeTab, canManageCatalog = true, onTabChange }: ContentAdminPanelProps) {
   const [internalTab, setInternalTab] = useState<ContentTab>('notices');
   const [group, setGroup] = useState<ContentGroup>('all');
   const tab = activeTab ?? internalTab;
-  const visibleTabs = group === 'all' ? TABS : TABS.filter((item) => item.group === group);
+  const allowedTabs = canManageCatalog ? TABS : TABS.filter((item) => OPERATION_TABS.includes(item.value));
+  const activeTabAllowed = allowedTabs.some((item) => item.value === tab);
+  const safeTab = activeTabAllowed ? tab : allowedTabs[0].value;
+  const availableGroups = canManageCatalog ? GROUPS : GROUPS.filter((item) => item.value === 'operations');
+  const visibleTabs = (group === 'all' ? allowedTabs : allowedTabs.filter((item) => item.group === group));
 
-  const setTab = (nextTab: ContentTab) => {
+  const setTab = useCallback((nextTab: ContentTab) => {
+    if (!canManageCatalog && !OPERATION_TABS.includes(nextTab)) return;
     setInternalTab(nextTab);
     onTabChange?.(nextTab);
-  };
+  }, [canManageCatalog, onTabChange]);
 
   useEffect(() => {
-    if (!activeTab) return;
-    const activeItem = TABS.find((item) => item.value === activeTab);
+    if (!canManageCatalog) {
+      setGroup('operations');
+      if (!OPERATION_TABS.includes(tab)) setTab(OPERATION_TABS[0]);
+      return;
+    }
+
+    const activeItem = TABS.find((item) => item.value === tab);
     if (activeItem) setGroup(activeItem.group);
-  }, [activeTab]);
+  }, [canManageCatalog, setTab, tab]);
 
   return (
     <div className="space-y-5">
       <div className="glass-panel space-y-3 p-3">
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-          {GROUPS.map((item) => {
+          {availableGroups.map((item) => {
             const active = item.value === group;
             return (
               <button
@@ -433,26 +446,26 @@ export default function ContentAdminPanel({ activeTab, onTabChange }: ContentAdm
         </div>
       </div>
 
-      {tab === 'notices' && <NoticesAdmin />}
-      {tab === 'events' && <EventsAdmin />}
-      {tab === 'works' && <WorksAdmin />}
-      {tab === 'businesses' && <BusinessesAdmin />}
-      {tab === 'traffic' && <TrafficAdmin />}
-      {tab === 'health' && <HealthUnitsAdmin />}
-      {tab === 'appointments' && <AppointmentsAdmin />}
-      {tab === 'pharmacy' && <GenericCatalogAdmin config={CATALOGS.pharmacy} />}
-      {tab === 'jobs' && <JobsAdmin />}
-      {tab === 'applications' && <ApplicationsAdmin />}
-      {tab === 'enrollments' && <EnrollmentsAdmin />}
-      {tab === 'community' && <GenericCatalogAdmin config={CATALOGS.community} />}
-      {tab === 'safety' && <GenericCatalogAdmin config={CATALOGS.safety} />}
-      {tab === 'emergency' && <EmergencyAlertsAdmin />}
-      {tab === 'environment' && <GenericCatalogAdmin config={CATALOGS.environment} />}
-      {tab === 'social' && <GenericCatalogAdmin config={CATALOGS.social} />}
-      {tab === 'taxes' && <GenericCatalogAdmin config={CATALOGS.taxes} />}
-      {tab === 'polls' && <GenericCatalogAdmin config={CATALOGS.polls} />}
-      {tab === 'services' && <GenericCatalogAdmin config={CATALOGS.services} />}
-      {tab === 'education' && <GenericCatalogAdmin config={CATALOGS.education} />}
+      {safeTab === 'notices' && <NoticesAdmin />}
+      {safeTab === 'events' && <EventsAdmin />}
+      {safeTab === 'works' && <WorksAdmin />}
+      {safeTab === 'businesses' && <BusinessesAdmin />}
+      {safeTab === 'traffic' && <TrafficAdmin />}
+      {safeTab === 'health' && <HealthUnitsAdmin />}
+      {safeTab === 'appointments' && <AppointmentsAdmin />}
+      {safeTab === 'pharmacy' && <GenericCatalogAdmin config={CATALOGS.pharmacy} />}
+      {safeTab === 'jobs' && <JobsAdmin />}
+      {safeTab === 'applications' && <ApplicationsAdmin />}
+      {safeTab === 'enrollments' && <EnrollmentsAdmin />}
+      {safeTab === 'community' && <GenericCatalogAdmin config={CATALOGS.community} />}
+      {safeTab === 'safety' && <GenericCatalogAdmin config={CATALOGS.safety} />}
+      {safeTab === 'emergency' && <EmergencyAlertsAdmin />}
+      {safeTab === 'environment' && <GenericCatalogAdmin config={CATALOGS.environment} />}
+      {safeTab === 'social' && <GenericCatalogAdmin config={CATALOGS.social} />}
+      {safeTab === 'taxes' && <GenericCatalogAdmin config={CATALOGS.taxes} />}
+      {safeTab === 'polls' && <GenericCatalogAdmin config={CATALOGS.polls} />}
+      {safeTab === 'services' && <GenericCatalogAdmin config={CATALOGS.services} />}
+      {safeTab === 'education' && <GenericCatalogAdmin config={CATALOGS.education} />}
     </div>
   );
 }

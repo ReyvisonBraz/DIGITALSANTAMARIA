@@ -11,6 +11,7 @@ import {
   serverTimestamp,
   updateDoc,
   where,
+  writeBatch,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { reportConverter } from '@/lib/firebase/converters';
@@ -85,15 +86,33 @@ export async function createReportMessage(input: {
   authorRole: ReportMessageAuthorRole;
   message: string;
 }): Promise<string> {
-  const docRef = await addDoc(collection(db, MESSAGES_COLLECTION), {
+  const messageRef = doc(collection(db, MESSAGES_COLLECTION));
+  const reportRef = doc(db, COLLECTION, input.reportId);
+  const batch = writeBatch(db);
+  const message = input.message.trim();
+
+  batch.set(messageRef, {
     reportId: input.reportId,
     authorId: input.authorId,
     authorName: input.authorName,
     authorRole: input.authorRole,
-    message: input.message.trim(),
+    message,
     createdAt: serverTimestamp(),
   });
-  return docRef.id;
+
+  batch.update(reportRef, {
+    conversation: {
+      lastMessageAt: serverTimestamp(),
+      lastMessageAuthorName: input.authorName,
+      lastMessageAuthorRole: input.authorRole,
+      unreadByCitizen: input.authorRole === 'staff',
+      unreadByStaff: input.authorRole === 'citizen',
+    },
+    updatedAt: serverTimestamp(),
+  });
+
+  await batch.commit();
+  return messageRef.id;
 }
 
 function mapReportMessage(id: string, data: Record<string, unknown>): ReportMessage {
@@ -152,6 +171,20 @@ export async function getAllReports(): Promise<Report[]> {
   const q = query(ref, orderBy('createdAt', 'desc'));
   const snap = await getDocs(q);
   return snap.docs.map((d) => d.data());
+}
+
+export async function markReportReadByStaff(id: string): Promise<void> {
+  await updateDoc(doc(db, COLLECTION, id), {
+    'conversation.unreadByStaff': false,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function markReportReadByCitizen(id: string): Promise<void> {
+  await updateDoc(doc(db, COLLECTION, id), {
+    'conversation.unreadByCitizen': false,
+    updatedAt: serverTimestamp(),
+  });
 }
 
 export async function updateReportStatus(

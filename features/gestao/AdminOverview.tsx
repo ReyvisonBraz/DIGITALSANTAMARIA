@@ -94,6 +94,8 @@ export default function AdminOverview({
     const demandUnread = demands.filter((item) => item.conversation?.unreadByStaff === true).length;
     const demandActionable = demands.filter((item) => item.status === 'pending' || item.conversation?.unreadByStaff === true).length;
     const reportPending = reports.filter((item) => item.status === 'pending').length;
+    const reportUnread = reports.filter((item) => item.conversation?.unreadByStaff === true).length;
+    const reportActionable = reports.filter((item) => item.status === 'pending' || item.conversation?.unreadByStaff === true).length;
     const appointmentPending = queues.appointments.filter((item) => item.status === 'scheduled').length;
     const applicationPending = queues.applications.filter((item) => item.status === 'applied').length;
     const enrollmentPending = queues.enrollments.filter((item) => item.status === 'pending').length;
@@ -102,7 +104,7 @@ export default function AdminOverview({
     return {
       totalPending:
         demandActionable +
-        reportPending +
+        reportActionable +
         appointmentPending +
         applicationPending +
         enrollmentPending +
@@ -121,9 +123,11 @@ export default function AdminOverview({
         },
         {
           label: 'Relatos',
-          value: reportPending,
+          value: reportActionable,
           total: reports.length,
-          helper: `${pendingRatio(reportPending, reports.length)} pendentes`,
+          helper: reportUnread > 0
+            ? `${reportUnread} novas respostas, ${reportPending} pendentes`
+            : `${pendingRatio(reportPending, reports.length)} pendentes`,
           icon: Megaphone,
           color: 'border-orange-200 bg-orange-50 text-orange-800',
           section: 'reports' as MainSection,
@@ -214,7 +218,9 @@ export default function AdminOverview({
               </div>
             </div>
             <p className="mt-4 text-sm font-medium leading-6 text-text-muted">
-              Priorize emergencias, solicitacoes e relatos pendentes antes de editar cadastros publicos.
+              {canManageCatalog
+                ? 'Priorize emergencias, solicitacoes e relatos pendentes antes de editar cadastros publicos.'
+                : 'Priorize emergencias, solicitacoes e relatos pendentes para manter as filas em dia.'}
             </p>
           </div>
 
@@ -226,7 +232,7 @@ export default function AdminOverview({
                   key={item.label}
                   type="button"
                   onClick={() => {
-                    if (item.section === 'content' && canManageCatalog && item.contentTab) {
+                    if (item.section === 'content' && item.contentTab) {
                       onOpenContentTab(item.contentTab);
                       return;
                     }
@@ -235,7 +241,7 @@ export default function AdminOverview({
                     }
                   }}
                   className={`rounded-xl border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-sm ${item.color} ${
-                    item.section === 'content' && !canManageCatalog ? 'cursor-default opacity-80' : ''
+                    ''
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -256,7 +262,7 @@ export default function AdminOverview({
 
       {error && <EmptyState title="Indicadores incompletos" description={error} />}
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className={`grid gap-4 ${canManageCatalog ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
         <div className="civic-card p-5">
           <p className="text-xs font-semibold uppercase tracking-widest text-primary">Atendimento</p>
           <h3 className="mt-2 text-lg font-semibold text-text-main">Responder primeiro</h3>
@@ -265,19 +271,30 @@ export default function AdminOverview({
           </p>
         </div>
         <div className="civic-card p-5">
-          <p className="text-xs font-semibold uppercase tracking-widest text-primary">Conteudo</p>
-          <h3 className="mt-2 text-lg font-semibold text-text-main">Publicar com controle</h3>
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary">Filas operacionais</p>
+          <h3 className="mt-2 text-lg font-semibold text-text-main">Resolver com contexto</h3>
           <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-            Avisos, eventos, obras e comercios precisam de workflow de rascunho, publicacao e arquivamento.
+            Consultas, candidaturas, matriculas e emergencias ficam agrupadas para atendimento rapido.
           </p>
         </div>
-        <div className="civic-card p-5">
-          <p className="text-xs font-semibold uppercase tracking-widest text-primary">Seguranca</p>
-          <h3 className="mt-2 text-lg font-semibold text-text-main">Registrar acoes</h3>
-          <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-            A proxima camada deve adicionar confirmacoes, permissoes refinadas e auditoria administrativa.
-          </p>
-        </div>
+        {canManageCatalog && (
+          <>
+            <div className="civic-card p-5">
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary">Conteudo</p>
+              <h3 className="mt-2 text-lg font-semibold text-text-main">Publicar com controle</h3>
+              <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
+                Avisos, eventos, obras e comercios precisam de workflow de rascunho, publicacao e arquivamento.
+              </p>
+            </div>
+            <div className="civic-card p-5">
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary">Seguranca</p>
+              <h3 className="mt-2 text-lg font-semibold text-text-main">Registrar acoes</h3>
+              <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
+                Acoes sensiveis devem ficar documentadas em auditoria administrativa.
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

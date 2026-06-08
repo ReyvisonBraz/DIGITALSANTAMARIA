@@ -60,6 +60,36 @@ service cloud.firestore {
         && incoming().conversation.unreadByStaff == true;
     }
 
+    function validDemandCitizenReadUpdate() {
+      return isOwner(existing().authorId)
+        && existing().isAnonymous == false
+        && incoming().diff(existing()).affectedKeys().hasOnly(['conversation', 'updatedAt'])
+        && incoming().conversation.diff(existing().conversation).affectedKeys().hasOnly(['unreadByCitizen'])
+        && incoming().conversation.unreadByCitizen == false;
+    }
+
+    function validReportCitizenConversationUpdate() {
+      return isOwner(existing().reporterId)
+        && incoming().diff(existing()).affectedKeys().hasOnly(['conversation', 'updatedAt'])
+        && incoming().conversation.keys().hasOnly([
+          'lastMessageAt',
+          'lastMessageAuthorName',
+          'lastMessageAuthorRole',
+          'unreadByCitizen',
+          'unreadByStaff'
+        ])
+        && incoming().conversation.lastMessageAuthorRole == 'citizen'
+        && incoming().conversation.unreadByCitizen == false
+        && incoming().conversation.unreadByStaff == true;
+    }
+
+    function validReportCitizenReadUpdate() {
+      return isOwner(existing().reporterId)
+        && incoming().diff(existing()).affectedKeys().hasOnly(['conversation', 'updatedAt'])
+        && incoming().conversation.diff(existing().conversation).affectedKeys().hasOnly(['unreadByCitizen'])
+        && incoming().conversation.unreadByCitizen == false;
+    }
+
     function validPetitionSignatureUpdate() {
       return isSignedIn()
         && incoming().diff(existing()).changedKeys().hasOnly(['signaturesCount', 'updatedAt'])
@@ -146,6 +176,26 @@ service cloud.firestore {
         ]);
     }
 
+    function validBusinessOwnerResubmit() {
+      return isOwner(resource.data.ownerId)
+        && existing().status == 'archived'
+        && incoming().status == 'pending_approval'
+        && incoming().reviewNote == null
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'title',
+          'description',
+          'category',
+          'address',
+          'phone',
+          'whatsapp',
+          'hours',
+          'isOpen',
+          'status',
+          'reviewNote',
+          'updatedAt'
+        ]);
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
@@ -168,7 +218,7 @@ service cloud.firestore {
       allow create: if isSignedIn()
         && incoming().reporterId == request.auth.uid
         && incoming().status == 'pending';
-      allow update: if isStaff();
+      allow update: if isStaff() || validReportCitizenConversationUpdate() || validReportCitizenReadUpdate();
     }
 
     match /report_messages/{messageId} {
@@ -189,7 +239,7 @@ service cloud.firestore {
         || isOwner(resource.data.authorId)
         || resource.data.isAnonymous == true;
       allow create: if isSignedIn() && validDemandCreate();
-      allow update: if isStaff() || validDemandCitizenConversationUpdate();
+      allow update: if isStaff() || validDemandCitizenConversationUpdate() || validDemandCitizenReadUpdate();
       allow delete: if isAdmin();
     }
 
@@ -233,7 +283,7 @@ service cloud.firestore {
 
     match /health_units/{unitId} {
       allow read: if true;
-      allow write: if isStaff();
+      allow write: if isAdmin();
     }
 
     match /enrollments/{enrollmentId} {
@@ -248,7 +298,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if isSignedIn()
         && incoming().employerId == request.auth.uid;
-      allow update: if isOwner(resource.data.employerId) || isStaff();
+      allow update: if isOwner(resource.data.employerId) || isAdmin();
       allow delete: if isAdmin();
     }
 
@@ -278,7 +328,7 @@ service cloud.firestore {
     }
 
     match /admin_audit_logs/{logId} {
-      allow read: if isStaff();
+      allow read: if isAdmin();
       allow create: if isStaff();
       allow update, delete: if false;
     }
@@ -295,7 +345,8 @@ service cloud.firestore {
       allow create: if isAdmin()
         || (isSignedIn() && validBusinessCitizenCreate());
       allow update: if isAdmin()
-        || validBusinessOwnerUpdate();
+        || validBusinessOwnerUpdate()
+        || validBusinessOwnerResubmit();
       allow delete: if false;
     }
 

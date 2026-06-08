@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, CheckCircle2, Clock, Loader2, MessageSquare, Send, ShieldCheck, UserRound } from 'lucide-react';
-import { createDemandMessage, getDemandMessages } from '@/services/demands.service';
+import { createDemandMessage, getDemandMessages, markDemandReadByCitizen } from '@/services/demands.service';
 import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
 import type { Demand, DemandMessage } from '@/types';
@@ -70,6 +70,16 @@ export default function DemandTimeline({
       mounted = false;
     };
   }, [demand.id, demand.updatedAt, refreshTick]);
+
+  useEffect(() => {
+    if (!allowCitizenReply || demand.isAnonymous || currentUserId !== demand.authorId || !demand.conversation?.unreadByCitizen) {
+      return;
+    }
+
+    markDemandReadByCitizen(demand.id).catch(() => {
+      // A leitura visual da conversa nao deve falhar se a marcacao de lido nao sincronizar.
+    });
+  }, [allowCitizenReply, currentUserId, demand.authorId, demand.conversation?.unreadByCitizen, demand.id, demand.isAnonymous]);
 
   const timeline = useMemo(() => {
     const base: TimelineMessage[] = [

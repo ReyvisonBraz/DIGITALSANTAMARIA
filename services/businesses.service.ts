@@ -61,6 +61,20 @@ export async function updateOwnedBusiness(
   await updateDoc(ref, { ...patch, updatedAt: serverTimestamp() });
 }
 
+/** Dono corrige um cadastro reprovado e reenvia para analise da prefeitura. */
+export async function resubmitOwnedBusiness(
+  id: string,
+  patch: Partial<Pick<Business, 'title' | 'description' | 'category' | 'address' | 'phone' | 'whatsapp' | 'hours' | 'isOpen'>>,
+): Promise<void> {
+  const ref = doc(db, COLLECTION, id);
+  await updateDoc(ref, {
+    ...patch,
+    status: 'pending_approval',
+    reviewNote: null,
+    updatedAt: serverTimestamp(),
+  });
+}
+
 /** Admin aprova um cadastro pendente, deixando visivel em /comercio. */
 export async function approveBusiness(id: string): Promise<void> {
   const business = await readBusiness(id);

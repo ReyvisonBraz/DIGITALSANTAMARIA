@@ -9,19 +9,19 @@
 | # | Service | Colecoes | Operacoes |
 |---|---|---|---|
 | 1 | `content.service.ts` | Qualquer colecao | Factory generico CRUD |
-| 2 | `reports.service.ts` | `reports`, `report_messages` | 10 funcoes |
-| 3 | `demands.service.ts` | `demands`, `demand_messages` | 9 funcoes |
+| 2 | `reports.service.ts` | `reports`, `report_messages` | 12 funcoes |
+| 3 | `demands.service.ts` | `demands`, `demand_messages` | 10 funcoes |
 | 4 | `petitions.service.ts` | `petitions`, `petition_signatures` | 7 funcoes |
 | 5 | `appointments.service.ts` | `appointments`, `health_units` | 7 funcoes |
 | 6 | `jobs.service.ts` | `jobs`, `job_applications` | 9 funcoes |
-| 7 | `businesses.service.ts` | `businesses` | 6 funcoes |
+| 7 | `businesses.service.ts` | `businesses` | 7 funcoes |
 | 8 | `educacao.service.ts` | `enrollments` | 4 funcoes |
 | 9 | `emergency.service.ts` | `emergency_alerts` | 4 funcoes |
 | 10 | `polls.service.ts` | — (Cloud Function) | 1 funcao |
 | 11 | `notifications.service.ts` | `notifications` | 4 funcoes |
 | 12 | `users.service.ts` | `users`, `admins` | 6 funcoes |
 | 13 | `storage.service.ts` | — (Firebase Storage) | 4 funcoes |
-| 14 | `admin-audit.service.ts` | `admin_audit_logs` | 2 funcoes |
+| 14 | `admin-audit.service.ts` | `admin_audit_logs` | 3 funcoes |
 
 ---
 
@@ -55,12 +55,14 @@ createContentService<T>(collectionName: string)
 |---|---|---|
 | `createReport(input)` | `addDoc` | Cria relato, opcionalmente faz upload de foto |
 | `getReportById(id)` | `getDoc` | Busca relato por ID |
-| `createReportMessage(input)` | `addDoc` | Adiciona mensagem ao relato |
+| `createReportMessage(input)` | `writeBatch` | Adiciona mensagem e atualiza `reports.conversation` |
 | `getReportMessages(reportId)` | `getDocs` | Lista mensagens de um relato |
 | `getReportsByUser(userId)` | `getDocs` | Lista relatos do usuario |
 | `listenToUserReports(userId, onChange, onError?)` | `onSnapshot` | Listener em tempo real |
 | `getPendingReports()` | `getDocs` | Lista relatos pendentes |
 | `getAllReports()` | `getDocs` | Lista todos os relatos |
+| `markReportReadByStaff(id)` | `updateDoc` | Limpa `conversation.unreadByStaff` quando o gestor abre o detalhe |
+| `markReportReadByCitizen(id)` | `updateDoc` | Limpa `conversation.unreadByCitizen` quando o cidadao abre a conversa |
 | `updateReportStatus(id, status, clerkId, clerkName, response?)` | `updateDoc` | Atualiza status + cria mensagem + notificacao |
 | `getTopReports(max?)` | `getDocs` | Top relatos por votos |
 
@@ -82,6 +84,7 @@ createContentService<T>(collectionName: string)
 | `listenToUserDemands(userId, onChange, onError?)` | `onSnapshot` | Listener em tempo real |
 | `getAllDemands()` | `getDocs` | Lista todas as demandas |
 | `markDemandReadByStaff(id)` | `updateDoc` | Limpa `conversation.unreadByStaff` quando o gestor abre o detalhe |
+| `markDemandReadByCitizen(id)` | `updateDoc` | Limpa `conversation.unreadByCitizen` quando o cidadao abre a conversa |
 | `updateDemandStatus(id, status, adminAction)` | `updateDoc` | Atualiza status + cria mensagem + notificacao |
 
 **Listener em tempo real:** `listenToUserDemands` usa `onSnapshot`
@@ -146,6 +149,7 @@ createContentService<T>(collectionName: string)
 |---|---|---|
 | `registerBusiness(input)` | Factory `create` | Cria com status `pending_approval` |
 | `updateOwnedBusiness(id, patch)` | `updateDoc` | Dono edita seu negocio |
+| `resubmitOwnedBusiness(id, patch)` | `updateDoc` | Dono corrige cadastro reprovado e reenvia para aprovacao |
 | `approveBusiness(id)` | `updateDoc` | Admin aprova → `published` + notificacao |
 | `rejectBusiness(id, note?)` | `updateDoc` | Admin reprova → `archived` + notificacao |
 | `listPendingBusinesses()` | `getDocs` | Lista pendentes de aprovacao |
@@ -241,6 +245,7 @@ createContentService<T>(collectionName: string)
 
 | Funcao | Tipo | Descricao |
 |---|---|---|
+| `getAdminAuditLogs(max?)` | `getDocs` | Lista logs administrativos mais recentes para o painel |
 | `createAdminAuditLog(input)` | `addDoc` | Registra acao administrativa |
 | `tryCreateAdminAuditLog(input)` | `addDoc` | Registra acao (silencia erros) |
 

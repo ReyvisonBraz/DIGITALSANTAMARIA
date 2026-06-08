@@ -191,6 +191,13 @@ export async function markDemandReadByStaff(id: string): Promise<void> {
   });
 }
 
+export async function markDemandReadByCitizen(id: string): Promise<void> {
+  await updateDoc(doc(db, COLLECTION, id), {
+    'conversation.unreadByCitizen': false,
+    updatedAt: serverTimestamp(),
+  });
+}
+
 export async function updateDemandStatus(
   id: string,
   status: DemandStatus,

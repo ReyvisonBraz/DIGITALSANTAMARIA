@@ -1,9 +1,9 @@
 'use client';
 
-import { BarChart3, FileText, Megaphone, ShieldCheck, Users } from 'lucide-react';
+import { BarChart3, FileText, Megaphone, ScrollText, ShieldCheck, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export type AdminMainSection = 'overview' | 'demands' | 'reports' | 'content' | 'petitions' | 'users';
+export type AdminMainSection = 'overview' | 'demands' | 'reports' | 'content' | 'petitions' | 'users' | 'audit';
 
 interface AdminSectionNavProps {
   activeSection: AdminMainSection;
@@ -32,14 +32,21 @@ export default function AdminSectionNav({
       count: reportPendingCount > 0 ? `${reportCount} / ${reportPendingCount} novos` : reportCount,
       restricted: false,
     },
-    { value: 'content' as const, label: 'Conteudo', icon: ShieldCheck, count: null, restricted: true },
+    {
+      value: 'content' as const,
+      label: canManageAdminCatalog ? 'Conteudo' : 'Atendimentos',
+      icon: ShieldCheck,
+      count: null,
+      restricted: false,
+    },
     { value: 'petitions' as const, label: 'Peticoes', icon: FileText, count: null, restricted: true },
     { value: 'users' as const, label: 'Usuarios', icon: Users, count: null, restricted: true },
+    { value: 'audit' as const, label: 'Auditoria', icon: ScrollText, count: null, restricted: true },
   ].filter((item) => !item.restricted || canManageAdminCatalog);
 
   return (
     <nav className="glass-panel p-2" aria-label="Secoes do painel administrativo">
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7">
         {items.map((item) => {
           const Icon = item.icon;
           const active = activeSection === item.value;

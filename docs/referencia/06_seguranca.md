@@ -1,81 +1,92 @@
-# Seguranca — Autenticacao e Firestore Rules
+# Seguranca - Autenticacao e Firestore Rules
 
 ## Autenticacao
 
 **Provedor:** Google OAuth via Firebase Auth (`signInWithPopup`)
 
 **Fluxo:**
-1. Usuario clica "Login" → popup Google OAuth
-2. Firebase Auth cria/autentica usuario
-3. `AuthProvider` (`lib/auth-context.tsx`) sincroniza:
-   - Cria/atualiza perfil em `users/{uid}` via `createUserProfile`
-   - Busca role em `admins/{uid}` via `getUserRole`
-4. Context expoe: `{ user, userRole, loading, authError, login, logout }`
+1. Usuario clica em login e abre o popup do Google OAuth
+2. Firebase Auth cria ou autentica o usuario
+3. `AuthProvider` (`lib/auth-context.tsx`) sincroniza o perfil em `users/{uid}`
+4. `AuthProvider` busca a role em `admins/{uid}`
+5. O contexto expoe `{ user, userRole, loading, authError, login, logout }`
 
 **Roles:**
+
 | Role | Acesso |
 |---|---|
 | `citizen` | Paginas publicas + painel do cidadao |
-| `clerk` | Painel de gestao (visao de filas) |
-| `admin` | Painel de gestao completo + gestao de usuarios |
+| `clerk` | Painel de gestao focado nas filas de atendimento |
+| `admin` | Painel de gestao completo, catalogos, usuarios e auditoria |
 
-**Protecao de rota:** `useAuthGuard(role?)` redireciona para `/` se nao autorizado.
+No painel `/gestao`, `clerk` ve apenas as abas de atendimento operacional. Catalogos, usuarios, peticoes administrativas e auditoria ficam visiveis apenas para `admin`.
 
----
-
-## Firestore Rules (`firestore.rules`)
+## Firestore Rules
 
 Arquivo: [`firestore.rules`](../../firestore.rules)
 
 ### Principios
 
-- **Deny by default** — leitura/escrita negada por padrao
-- **Owner-based isolation** — usuario so le/escreve seus proprios documentos
-- **Role-based access** — `isAdmin()` verifica existencia em `admins/{uid}`
-- **Validacao de campos** — tipos restritos nos reports, campos imutaveis
+- **Deny by default:** leitura e escrita sao negadas por padrao.
+- **Owner-based isolation:** usuario comum so le ou altera seus proprios documentos.
+- **Role-based access:** `isStaff()` cobre `admin` e `clerk`; `isAdmin()` restringe catalogos e permissoes sensiveis.
+- **Validacao de campos:** updates de cidadao sao limitados a campos esperados.
+- **Soft delete:** catalogos usam `status`/`deletedAt`; exclusao fisica fica bloqueada na maioria das colecoes.
 
 ### Regras por colecao
 
 | Colecao | Leitura | Escrita |
 |---|---|---|
-| `users` | Dono ou admin | Dono ou admin |
-| `admins` | Autenticado (so `get`) | Apenas admin |
-| `reports` | Dono ou admin | Dono (criar), admin (update status) |
-| `report_messages` | Participante ou admin | Participante ou admin |
-| `demands` | Dono ou clerk/admin | Dono (criar), clerk/admin (update) |
-| `demand_messages` | Participante ou clerk/admin | Participante ou clerk/admin |
-| `petitions` | Publico (leitura), dono/admin (update) | Autenticado (criar), admin (update) |
-| `petition_signatures` | Publico | Autenticado |
-| `appointments` | Dono ou admin | Dono (criar), admin (update) |
-| `health_units` | Publico | Admin |
-| `jobs` | Publico | Admin |
-| `job_applications` | Dono ou admin | Dono (criar), admin (update) |
-| `enrollments` | Dono ou admin | Dono (criar), admin (update) |
-| `emergency_alerts` | Dono ou admin | Autenticado (criar), admin (update) |
-| `notifications` | Dono | Sistema (criar), dono (marcar lida) |
-| `admin_audit_logs` | Admin | Sistema |
-| Colecoes de catalogo | Publico (leitura `published`) | Admin (CRUD) |
+| `users` | Dono ou admin | Dono em campos limitados, ou admin |
+| `admins` | Clerk/admin | Apenas admin |
+| `reports` | Dono ou clerk/admin | Dono cria, clerk/admin atualiza status/conversa |
+| `report_messages` | Participante ou clerk/admin | Participante ou clerk/admin cria mensagens |
+| `demands` | Dono, anonima ou clerk/admin | Dono cria, clerk/admin atualiza |
+| `demand_messages` | Participante, anonima ou clerk/admin | Participante ou clerk/admin cria mensagens |
+| `petitions` | Publico | Cidadao cria, assinatura atomica, admin modera |
+| `petition_signatures` | Publico | Usuario autenticado assina uma vez |
+| `appointments` | Dono ou clerk/admin | Dono cria/cancela, clerk/admin atualiza |
+| `health_units` | Publico | Apenas admin |
+| `jobs` | Publico | Dono empregador ou admin atualiza; delete apenas admin |
+| `job_applications` | Dono ou clerk/admin | Dono cria, clerk/admin atualiza status |
+| `enrollments` | Dono ou clerk/admin | Dono cria, clerk/admin atualiza status |
+| `emergency_alerts` | Dono ou clerk/admin | Dono cria, clerk/admin atualiza status |
+| `notifications` | Dono | Clerk/admin cria, dono marca como lida |
+| `admin_audit_logs` | Apenas admin | Clerk/admin cria, ninguem altera |
+| Catalogos publicos | Publico | Apenas admin |
 
-### Catalogo — regra generica
+### Catalogos
 
 Colecoes gerenciadas por `content.service.ts`:
-- Leitura publica: `status == 'published'` + sem `deletedAt`
-- Leitura admin: qualquer status
-- Escrita: apenas admin (`isAdmin()`)
 
----
+- `notices`
+- `events`
+- `works`
+- `businesses`
+- `traffic_alerts`
+- `health_units`
+- `jobs`
+- `safety_zones`
+- `environment_data`
+- `social_programs`
+- `tax_records`
+- `public_services`
+- `pharmacy_items`
+- `education_schools`
+- `community_groups`
+- `polls`
 
-## Storage Rules (`storage.rules`)
+Leitura publica acontece nas paginas do site. Escrita administrativa deve ficar limitada a `admin`.
 
-- `reports/{userId}/**` — usuario autenticado (upload), publico (leitura)
-- `petitions/{userId}/**` — usuario autenticado (upload), publico (leitura)
-- `avatars/{userId}/**` — dono (upload), publico (leitura)
+## Storage Rules
 
----
+- `reports/{userId}/**`: usuario autenticado envia, leitura publica.
+- `petitions/{userId}/**`: usuario autenticado envia, leitura publica.
+- `avatars/{userId}/**`: dono envia, leitura publica.
 
 ## Boas praticas aplicadas
 
-- Nenhum email/ID hardcoded no codigo (admin validado via `admins` collection)
-- API keys do Firebase em variaveis de ambiente (`.env.local`), nao versionadas
-- `handleFirestoreError()` captura erros de permissao com contexto
-- Campos `createdAt` e `role` sao imutaveis apos criacao (validado nas rules)
+- Admin nao fica hardcoded no codigo; a role vem de `admins/{uid}`.
+- Chaves locais e service accounts ficam ignoradas pelo Git.
+- Fluxos sensiveis do painel usam confirmacao antes de publicar, reativar ou arquivar.
+- Logs administrativos ficam em `admin_audit_logs` e nao podem ser editados.
