@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Loader2, Save } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { ChevronDown, ChevronUp, Loader2, Save, Zap } from 'lucide-react';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { updateDemandStatus } from '@/services/demands.service';
 import { useToast } from '@/lib/toast-context';
+import { getResponsesForCategory } from '@/lib/constants/respostas-rapidas';
 import type { DemandStatus } from '@/types';
 
 interface StatusUpdaterProps {
@@ -13,6 +14,7 @@ interface StatusUpdaterProps {
   clerkName: string;
   initialStatus: DemandStatus;
   initialResponse?: string;
+  category?: string;
   onUpdate: () => void;
 }
 
@@ -37,6 +39,7 @@ export default function StatusUpdater({
   clerkName,
   initialStatus,
   initialResponse = '',
+  category = 'outros',
   onUpdate,
 }: StatusUpdaterProps) {
   const { toast } = useToast();
@@ -44,11 +47,21 @@ export default function StatusUpdater({
   const [response, setResponse] = useState(initialResponse);
   const [loading, setLoading] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [showQuickResponses, setShowQuickResponses] = useState(false);
+
+  const quickResponses = useMemo(
+    () => getResponsesForCategory(category),
+    [category],
+  );
 
   useEffect(() => {
     setStatus(initialStatus);
     setResponse(initialResponse);
   }, [initialStatus, initialResponse]);
+
+  const applyTemplate = (text: string) => {
+    setResponse((prev) => (prev ? prev + '\n\n' + text : text));
+  };
 
   const saveStatus = async () => {
     setLoading(true);
@@ -100,13 +113,58 @@ export default function StatusUpdater({
           </label>
 
           <label className="space-y-2">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Resposta oficial</span>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase tracking-widest text-text-muted">Resposta oficial</span>
+              <button
+                type="button"
+                onClick={() => setShowQuickResponses((v) => !v)}
+                className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary-dark transition-colors"
+              >
+                <Zap className="h-3 w-3" />
+                Respostas rapidas
+                {showQuickResponses ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+              </button>
+            </div>
+
+            {showQuickResponses && (
+              <div className="rounded-xl border border-border bg-surface/50 p-3 space-y-2">
+                {(['solicitar_dados', 'encaminhamento', 'resolucao', 'rejeicao'] as const).map((group) => {
+                  const groupItems = quickResponses.filter((r) => r.group === group);
+                  if (groupItems.length === 0) return null;
+                  const groupLabel = {
+                    solicitar_dados: 'Solicitar dados',
+                    encaminhamento: 'Encaminhamento',
+                    resolucao: 'Resolucao',
+                    rejeicao: 'Rejeicao',
+                  }[group];
+                  return (
+                    <div key={group}>
+                      <span className="text-[10px] font-black uppercase tracking-[0.15em] text-text-muted/60">{groupLabel}</span>
+                      <div className="mt-1 flex flex-wrap gap-1.5">
+                        {groupItems.map((item) => (
+                          <button
+                            key={item.label}
+                            type="button"
+                            onClick={() => applyTemplate(item.text)}
+                            className="inline-block rounded-lg border border-border bg-white px-2.5 py-1.5 text-left text-[11px] font-semibold leading-snug text-text-main hover:border-primary hover:bg-primary/5 transition-colors"
+                            title={item.label}
+                          >
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
             <textarea
               value={response}
               onChange={(event) => setResponse(event.target.value)}
-              rows={3}
+              rows={6}
               placeholder="Escreva a resposta que o cidadao vera na consulta do protocolo."
-              className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary"
+              className="w-full resize-y rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary min-h-[120px]"
             />
           </label>
         </div>

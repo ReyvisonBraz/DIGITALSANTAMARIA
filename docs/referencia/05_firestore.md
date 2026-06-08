@@ -57,17 +57,31 @@
 | Campo | Tipo |
 |---|---|
 | `id` | string |
-| `userId` | string (FK → users) |
-| `userName` | string |
+| `authorId` | string (FK -> users, vazio quando anonimo) |
+| `authorName` | string \| null |
 | `type` | DemandType |
-| `category` | DemandCategory |
+| `category` | string |
 | `status` | DemandStatus |
-| `title` | string |
-| `description` | string |
-| `location` | GeoLocation |
-| `protocol` | string (OUV-...) |
+| `subject` | string |
+| `content.text` | string |
+| `content.mediaFiles` | string[] |
+| `content.location` | GeoLocation \| null |
+| `protocolId` | string (OUV-...) |
+| `adminAction` | AdminAction \| null |
+| `isAnonymous` | boolean |
+| `consent` | boolean |
+| `conversation` | DemandConversationSummary \| undefined |
 | `createdAt` | Timestamp |
 | `updatedAt` | Timestamp |
+
+#### `demands.conversation`
+| Campo | Tipo |
+|---|---|
+| `lastMessageAt` | Timestamp |
+| `lastMessageAuthorName` | string |
+| `lastMessageAuthorRole` | DemandMessageAuthorRole |
+| `unreadByCitizen` | boolean |
+| `unreadByStaff` | boolean |
 
 ### `demand_messages`
 | Campo | Tipo |
@@ -76,7 +90,7 @@
 | `authorId` | string |
 | `authorName` | string |
 | `authorRole` | DemandMessageAuthorRole |
-| `text` | string |
+| `message` | string |
 | `createdAt` | Timestamp |
 
 ### `petitions`

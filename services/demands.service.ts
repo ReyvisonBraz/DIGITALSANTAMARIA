@@ -6,6 +6,7 @@ import {
   getDocs,
   onSnapshot,
   updateDoc,
+  writeBatch,
   query,
   where,
   orderBy,
@@ -75,15 +76,33 @@ export async function createDemandMessage(input: {
   authorRole: DemandMessageAuthorRole;
   message: string;
 }): Promise<string> {
-  const docRef = await addDoc(collection(db, MESSAGES_COLLECTION), {
+  const messageRef = doc(collection(db, MESSAGES_COLLECTION));
+  const demandRef = doc(db, COLLECTION, input.demandId);
+  const batch = writeBatch(db);
+  const message = input.message.trim();
+
+  batch.set(messageRef, {
     demandId: input.demandId,
     authorId: input.authorId,
     authorName: input.authorName,
     authorRole: input.authorRole,
-    message: input.message.trim(),
+    message,
     createdAt: serverTimestamp(),
   });
-  return docRef.id;
+
+  batch.update(demandRef, {
+    conversation: {
+      lastMessageAt: serverTimestamp(),
+      lastMessageAuthorName: input.authorName,
+      lastMessageAuthorRole: input.authorRole,
+      unreadByCitizen: input.authorRole === 'staff',
+      unreadByStaff: input.authorRole === 'citizen',
+    },
+    updatedAt: serverTimestamp(),
+  });
+
+  await batch.commit();
+  return messageRef.id;
 }
 
 function mapDemandMessage(id: string, data: Record<string, unknown>): DemandMessage {
@@ -163,6 +182,13 @@ export async function getAllDemands(): Promise<Demand[]> {
   const q = query(ref, orderBy('createdAt', 'desc'));
   const snap = await getDocs(q);
   return snap.docs.map((d) => d.data());
+}
+
+export async function markDemandReadByStaff(id: string): Promise<void> {
+  await updateDoc(doc(db, COLLECTION, id), {
+    'conversation.unreadByStaff': false,
+    updatedAt: serverTimestamp(),
+  });
 }
 
 export async function updateDemandStatus(

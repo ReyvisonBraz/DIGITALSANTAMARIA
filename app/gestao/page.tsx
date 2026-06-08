@@ -38,6 +38,7 @@ import ReportTimeline from '@/features/relatar/ReportTimeline';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
+import { markDemandReadByStaff } from '@/services/demands.service';
 import type { Demand, DemandStatus, DemandType, Report, ReportStatus, ReportType } from '@/types';
 
 const demandStatusLabel: Record<DemandStatus, string> = {
@@ -183,7 +184,7 @@ const reportStatusOptions: { value: ReportStatus; label: string }[] = [
 ];
 
 type ActiveSection = AdminMainSection;
-type DemandSort = 'newest' | 'oldest' | 'pending';
+type DemandSort = 'newest' | 'oldest' | 'pending' | 'needs_reply';
 type DemandStatusFilter = DemandStatus | 'all';
 type ReportStatusFilter = ReportStatus | 'all';
 
@@ -194,6 +195,10 @@ function timestampMillis(value: { seconds?: number } | unknown) {
   return 0;
 }
 
+function hasUnreadStaffMessage(demand: Demand) {
+  return demand.conversation?.unreadByStaff === true;
+}
+
 function buildDemandSearchText(demand: Demand) {
   return [
     demand.protocolId,
@@ -202,6 +207,8 @@ function buildDemandSearchText(demand: Demand) {
     demand.category,
     getDemandStatusLabel(String(demand.status)),
     getDemandTypeLabel(String(demand.type)),
+    demand.conversation?.lastMessageAuthorName,
+    hasUnreadStaffMessage(demand) ? 'nova resposta cidadao' : '',
   ].join(' ').toLowerCase();
 }
 
@@ -303,6 +310,7 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
     analyzing: demands.filter((demand) => normalizeDemandStatus(String(demand.status)) === 'analyzing').length,
     solved: demands.filter((demand) => normalizeDemandStatus(String(demand.status)) === 'solved').length,
   };
+  const unreadByStaffCount = demands.filter(hasUnreadStaffMessage).length;
 
   const statusCounts = useMemo(() => {
     return demandStatusOptions.reduce<Record<string, number>>((acc, item) => {
@@ -326,6 +334,13 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
         return matchesSearch && matchesStatus && matchesCategory;
       })
       .sort((a, b) => {
+        if (sortMode === 'needs_reply') {
+          const unreadA = hasUnreadStaffMessage(a) ? 0 : 1;
+          const unreadB = hasUnreadStaffMessage(b) ? 0 : 1;
+          const messageTimeA = timestampMillis(a.conversation?.lastMessageAt) || timestampMillis(a.updatedAt);
+          const messageTimeB = timestampMillis(b.conversation?.lastMessageAt) || timestampMillis(b.updatedAt);
+          return unreadA - unreadB || messageTimeB - messageTimeA;
+        }
         if (sortMode === 'pending') {
           const order: Record<DemandStatus, number> = { pending: 0, analyzing: 1, rejected: 2, solved: 3 };
           const statusA = normalizeDemandStatus(String(a.status));
@@ -339,6 +354,24 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
 
   const selectedDemandExists = filteredDemands.some((demand) => demand.id === selectedDemandId);
   const activeDemandId = selectedDemandExists ? selectedDemandId : null;
+
+  const handleDemandToggle = async (demand: Demand, isOpen: boolean) => {
+    if (isOpen) {
+      setSelectedDemandId(null);
+      return;
+    }
+
+    setSelectedDemandId(demand.id);
+
+    if (!hasUnreadStaffMessage(demand)) return;
+
+    try {
+      await markDemandReadByStaff(demand.id);
+      await onRefresh();
+    } catch {
+      // A conversa continua acessivel mesmo se a sincronizacao de leitura falhar.
+    }
+  };
 
   return (
     <>
@@ -383,12 +416,18 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
           >
             <option value="newest">Mais recentes</option>
             <option value="oldest">Mais antigas</option>
+            <option value="needs_reply">Novas respostas primeiro</option>
             <option value="pending">Pendentes primeiro</option>
           </select>
         </div>
 
         <p className="mt-3 text-xs font-bold text-text-muted">
           Mostrando {filteredDemands.length} de {demands.length} solicitacoes.
+          {unreadByStaffCount > 0 && (
+            <span className="ml-2 text-primary-dark">
+              {unreadByStaffCount} com nova resposta do cidadao.
+            </span>
+          )}
         </p>
       </div>
 
@@ -412,9 +451,10 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
             const statusMeta = demandStatusMeta[safeStatus];
             const TypeIcon = typeMeta.icon;
             const isOpen = activeDemandId === demand.id;
+            const needsStaffReply = hasUnreadStaffMessage(demand);
 
             return (
-              <article key={demand.id} className={`civic-card overflow-hidden ${isOpen ? 'ring-2 ring-primary/25' : ''}`}>
+              <article key={demand.id} className={`civic-card overflow-hidden ${isOpen ? 'ring-2 ring-primary/25' : ''} ${needsStaffReply ? 'border-primary/45 bg-blue-50/50' : ''}`}>
                 <div className="flex w-full flex-col gap-4 p-5 text-left md:p-6">
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-[auto_1fr_auto] lg:items-start">
                     <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${typeMeta.accentClassName}`}>
@@ -432,6 +472,11 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
                         <span className="rounded-full border border-border bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
                           {demand.category}
                         </span>
+                        {needsStaffReply && (
+                          <span className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-blue-800">
+                            Nova resposta
+                          </span>
+                        )}
                       </div>
                       <h2 className="mt-3 text-lg font-semibold tracking-normal text-text-main md:text-xl">
                         {demand.subject}
@@ -439,6 +484,12 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
                       <p className="mt-2 line-clamp-2 text-sm font-medium leading-6 text-text-muted">
                         {demand.content.text}
                       </p>
+                      {demand.conversation?.lastMessageAuthorRole === 'citizen' && demand.conversation.lastMessageAuthorName && (
+                        <p className="mt-2 text-xs font-bold text-text-muted">
+                          Ultima mensagem de {demand.conversation.lastMessageAuthorName}
+                          {demand.conversation.lastMessageAt ? ` em ${formatDate(demand.conversation.lastMessageAt)}` : ''}
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex flex-col gap-3 lg:min-w-64 lg:items-end">
@@ -449,7 +500,7 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
                       <span className="text-xs font-bold text-text-muted">{formatDate(demand.createdAt)}</span>
                       <button
                         type="button"
-                        onClick={() => setSelectedDemandId(isOpen ? null : demand.id)}
+                        onClick={() => void handleDemandToggle(demand, isOpen)}
                         className="inline-flex w-fit items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-xs font-black text-primary transition hover:border-primary hover:bg-primary/10"
                         aria-expanded={isOpen}
                       >
@@ -514,6 +565,7 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
                             clerkName={clerkName}
                             initialStatus={safeStatus}
                             initialResponse={demand.adminAction?.response || ''}
+                            category={demand.category}
                             onUpdate={onRefresh}
                           />
                         </div>
@@ -746,6 +798,7 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
                           clerkName={clerkName}
                           initialStatus={report.status}
                           initialResponse={report.adminResponse || ''}
+                          reportType={report.type}
                           onUpdate={onRefresh}
                         />
                       </aside>

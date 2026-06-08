@@ -44,6 +44,22 @@ service cloud.firestore {
         );
     }
 
+    function validDemandCitizenConversationUpdate() {
+      return isOwner(existing().authorId)
+        && existing().isAnonymous == false
+        && incoming().diff(existing()).affectedKeys().hasOnly(['conversation', 'updatedAt'])
+        && incoming().conversation.keys().hasOnly([
+          'lastMessageAt',
+          'lastMessageAuthorName',
+          'lastMessageAuthorRole',
+          'unreadByCitizen',
+          'unreadByStaff'
+        ])
+        && incoming().conversation.lastMessageAuthorRole == 'citizen'
+        && incoming().conversation.unreadByCitizen == false
+        && incoming().conversation.unreadByStaff == true;
+    }
+
     function validPetitionSignatureUpdate() {
       return isSignedIn()
         && incoming().diff(existing()).changedKeys().hasOnly(['signaturesCount', 'updatedAt'])
@@ -173,7 +189,7 @@ service cloud.firestore {
         || isOwner(resource.data.authorId)
         || resource.data.isAnonymous == true;
       allow create: if isSignedIn() && validDemandCreate();
-      allow update: if isStaff();
+      allow update: if isStaff() || validDemandCitizenConversationUpdate();
       allow delete: if isAdmin();
     }
 

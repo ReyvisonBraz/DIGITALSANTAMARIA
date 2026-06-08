@@ -10,7 +10,7 @@
 |---|---|---|---|
 | 1 | `content.service.ts` | Qualquer colecao | Factory generico CRUD |
 | 2 | `reports.service.ts` | `reports`, `report_messages` | 10 funcoes |
-| 3 | `demands.service.ts` | `demands`, `demand_messages` | 7 funcoes |
+| 3 | `demands.service.ts` | `demands`, `demand_messages` | 9 funcoes |
 | 4 | `petitions.service.ts` | `petitions`, `petition_signatures` | 7 funcoes |
 | 5 | `appointments.service.ts` | `appointments`, `health_units` | 7 funcoes |
 | 6 | `jobs.service.ts` | `jobs`, `job_applications` | 9 funcoes |
@@ -75,12 +75,13 @@ createContentService<T>(collectionName: string)
 | Funcao | Tipo | Descricao |
 |---|---|---|
 | `createDemand(input)` | `addDoc` | Cria demanda com protocolo OUV-... |
-| `createDemandMessage(input)` | `addDoc` | Adiciona mensagem |
+| `createDemandMessage(input)` | `writeBatch` | Adiciona mensagem e atualiza `demands.conversation` |
 | `getDemandMessages(demandId)` | `getDocs` | Lista mensagens da demanda |
-| `getDemandByProtocol(protocolId)` | `getDocs` | Busca por numero de protocolo |
+| `getDemandByProtocol(protocolId, userId?)` | `getDocs` | Busca por protocolo do usuario logado ou protocolo anonimo |
 | `getDemandsByUser(userId)` | `getDocs` | Lista demandas do usuario |
 | `listenToUserDemands(userId, onChange, onError?)` | `onSnapshot` | Listener em tempo real |
 | `getAllDemands()` | `getDocs` | Lista todas as demandas |
+| `markDemandReadByStaff(id)` | `updateDoc` | Limpa `conversation.unreadByStaff` quando o gestor abre o detalhe |
 | `updateDemandStatus(id, status, adminAction)` | `updateDoc` | Atualiza status + cria mensagem + notificacao |
 
 **Listener em tempo real:** `listenToUserDemands` usa `onSnapshot`

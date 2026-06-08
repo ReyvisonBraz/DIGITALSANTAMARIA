@@ -22,6 +22,14 @@ export interface AdminAction {
   updatedAt: Timestamp;
 }
 
+export interface DemandConversationSummary {
+  lastMessageAt: Timestamp;
+  lastMessageAuthorName: string;
+  lastMessageAuthorRole: DemandMessageAuthorRole;
+  unreadByCitizen: boolean;
+  unreadByStaff: boolean;
+}
+
 export interface Demand {
   id: string;
   protocolId: string;
@@ -37,6 +45,7 @@ export interface Demand {
     location: GeoLocation | null;
   };
   adminAction: AdminAction | null;
+  conversation?: DemandConversationSummary;
   isAnonymous: boolean;
   consent: boolean;
   createdAt: Timestamp;

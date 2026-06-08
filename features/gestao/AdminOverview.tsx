@@ -91,6 +91,8 @@ export default function AdminOverview({
 
   const stats = useMemo(() => {
     const demandPending = demands.filter((item) => item.status === 'pending').length;
+    const demandUnread = demands.filter((item) => item.conversation?.unreadByStaff === true).length;
+    const demandActionable = demands.filter((item) => item.status === 'pending' || item.conversation?.unreadByStaff === true).length;
     const reportPending = reports.filter((item) => item.status === 'pending').length;
     const appointmentPending = queues.appointments.filter((item) => item.status === 'scheduled').length;
     const applicationPending = queues.applications.filter((item) => item.status === 'applied').length;
@@ -99,7 +101,7 @@ export default function AdminOverview({
 
     return {
       totalPending:
-        demandPending +
+        demandActionable +
         reportPending +
         appointmentPending +
         applicationPending +
@@ -108,9 +110,11 @@ export default function AdminOverview({
       rows: [
         {
           label: 'Solicitacoes',
-          value: demandPending,
+          value: demandActionable,
           total: demands.length,
-          helper: `${pendingRatio(demandPending, demands.length)} pendentes`,
+          helper: demandUnread > 0
+            ? `${demandUnread} novas respostas, ${demandPending} pendentes`
+            : `${pendingRatio(demandPending, demands.length)} pendentes`,
           icon: FileText,
           color: 'border-amber-200 bg-amber-50 text-amber-800',
           section: 'demands' as MainSection,
