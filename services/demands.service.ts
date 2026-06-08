@@ -105,11 +105,32 @@ export async function getDemandMessages(demandId: string): Promise<DemandMessage
   return snap.docs.map((docSnap) => mapDemandMessage(docSnap.id, docSnap.data()));
 }
 
-export async function getDemandByProtocol(protocolId: string): Promise<Demand | null> {
+async function findDemandByProtocol(filters: [string, unknown][]): Promise<Demand | null> {
   const ref = collection(db, COLLECTION).withConverter(demandConverter);
-  const q = query(ref, where('protocolId', '==', protocolId));
+  const q = query(
+    ref,
+    ...filters.map(([field, value]) => where(field, '==', value)),
+  );
   const snap = await getDocs(q);
   return snap.empty ? null : snap.docs[0].data();
+}
+
+export async function getDemandByProtocol(protocolId: string, userId?: string): Promise<Demand | null> {
+  const normalizedProtocol = protocolId.trim();
+
+  if (userId) {
+    const ownedDemand = await findDemandByProtocol([
+      ['protocolId', normalizedProtocol],
+      ['authorId', userId],
+    ]);
+
+    if (ownedDemand) return ownedDemand;
+  }
+
+  return findDemandByProtocol([
+    ['protocolId', normalizedProtocol],
+    ['isAnonymous', true],
+  ]);
 }
 
 export async function getDemandsByUser(userId: string): Promise<Demand[]> {

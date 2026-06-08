@@ -38,7 +38,7 @@ export default function ProtocolSearch() {
     setLoading(true);
     setResult(null);
     try {
-      const demand = await getDemandByProtocol(search);
+      const demand = await getDemandByProtocol(search, user?.uid);
       if (!demand) {
         toast('Protocolo nao encontrado.', 'error');
         return;
