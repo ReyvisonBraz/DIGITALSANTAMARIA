@@ -26,10 +26,12 @@ export default function EmpregosPage() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     getActiveJobs()
-      .then(setJobs)
-      .catch(() => toast('Erro ao carregar vagas', 'error'))
-      .finally(() => setLoading(false));
+      .then((data) => { if (!cancelled) setJobs(data); })
+      .catch(() => { if (!cancelled) toast('Erro ao carregar vagas', 'error'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [toast]);
 
   const filteredJobs = jobs.filter((j) =>

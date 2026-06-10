@@ -15,7 +15,8 @@
     "firebase:storage:deploy": "firebase deploy --only storage --project digitalsantamaria-2ced4",
     "firebase:functions:build": "npm --prefix functions run build",
     "firebase:functions:deploy": "firebase deploy --only functions --project digitalsantamaria-2ced4",
-    "firebase:seed": "ts-node scripts/seed.ts"
+    "firebase:seed": "ts-node scripts/seed.ts",
+    "emulators": "firebase emulators:start --only firestore,auth,functions,storage"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

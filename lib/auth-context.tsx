@@ -122,6 +122,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           email: fbUser.email || '',
         });
         setUser(fbUser);
+        // Cookie para middleware de protecao server-side
+        document.cookie = 'firebase-auth=true; path=/; max-age=86400; SameSite=Lax';
         try {
           await syncUserProfile(fbUser);
           const role = await fetchUserRole(fbUser.uid);
@@ -133,6 +135,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         authLogger.info('Auth state: no user (logged out)');
         setUser(null);
         setUserRole('citizen');
+        // Remove cookie
+        document.cookie = 'firebase-auth=; path=/; max-age=0';
       }
       setLoading(false);
     });

@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { classifyReport } from '@/lib/gemini/gemini';
+import { isRateLimited, getRateLimitHeaders } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: 'Muitas requisições. Tente novamente em instantes.' },
+      { status: 429, headers: getRateLimitHeaders(ip) },
+    );
+  }
+
   try {
     const { title, description } = await request.json();
     if (!title || !description) {
@@ -9,7 +19,7 @@ export async function POST(request: NextRequest) {
     }
 
     const type = await classifyReport(String(title), String(description));
-    return NextResponse.json({ type });
+    return NextResponse.json({ type }, { headers: getRateLimitHeaders(ip) });
   } catch (error) {
     console.error('[/api/classify-report]', error);
     return NextResponse.json({ type: 'other' });

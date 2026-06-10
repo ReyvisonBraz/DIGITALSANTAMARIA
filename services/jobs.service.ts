@@ -1,14 +1,15 @@
 import {
-  collection,
   addDoc,
+  collection,
   doc,
   getDoc,
   getDocs,
-  query,
-  where,
   orderBy,
+  query,
   serverTimestamp,
+  setDoc,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { jobConverter, jobApplicationConverter } from '@/lib/firebase/converters';
@@ -44,7 +45,9 @@ export async function applyForJob(
     applicantEmail: string;
   }
 ): Promise<string> {
-  const docRef = await addDoc(collection(db, APPLICATIONS_COL), {
+  const applicationId = `${input.jobId}_${input.applicantId}`;
+  const ref = doc(db, APPLICATIONS_COL, applicationId);
+  await setDoc(ref, {
     jobId: input.jobId,
     jobTitle: input.jobTitle,
     applicantId: input.applicantId,
@@ -55,8 +58,7 @@ export async function applyForJob(
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
-
-  return docRef.id;
+  return applicationId;
 }
 
 export async function hasUserApplied(jobId: string, userId: string): Promise<boolean> {

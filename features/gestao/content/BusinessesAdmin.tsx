@@ -71,6 +71,7 @@ export default function BusinessesAdmin() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<ContentStatus>('published');
+  const [isOpen, setIsOpen] = useState(true);
   const [category, setCategory] = useState<Business['category']>('restaurante');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
@@ -101,6 +102,7 @@ export default function BusinessesAdmin() {
     setPhone('');
     setWhatsapp('');
     setHours('');
+    setIsOpen(true);
     setEditingId(null);
   };
 
@@ -114,6 +116,7 @@ export default function BusinessesAdmin() {
     setPhone(business.phone);
     setWhatsapp(business.whatsapp);
     setHours(business.hours);
+    setIsOpen(business.isOpen);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -201,7 +204,7 @@ export default function BusinessesAdmin() {
         whatsapp: whatsapp.trim(),
         hours: hours.trim(),
         imageURL: null,
-        isOpen: true,
+        isOpen,
         lat: null,
         lng: null,
         ownerId: '',
@@ -321,7 +324,7 @@ export default function BusinessesAdmin() {
           business.whatsapp,
           business.hours,
           business.ownerName,
-          business.reviewNote,
+          business.reviewNote || '',
         ].join(' ').toLowerCase();
         const matchesSearch = !search || searchable.includes(search);
         return matchesStatus && matchesSearch;
@@ -441,6 +444,16 @@ export default function BusinessesAdmin() {
               placeholder="91999990000"
               className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
             />
+           </label>
+
+          <label className="flex cursor-pointer items-center gap-3">
+            <input
+              type="checkbox"
+              checked={isOpen}
+              onChange={(event) => setIsOpen(event.target.checked)}
+              className="h-4 w-4 accent-primary"
+            />
+            <span className="text-sm font-medium text-text-main">Aberto no momento</span>
           </label>
 
           <div className="md:col-span-2 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -723,7 +736,7 @@ export default function BusinessesAdmin() {
         description={previewBusiness?.description || ''}
         meta={previewBusiness ? [previewBusiness.category, previewBusiness.hours, previewBusiness.address, previewBusiness.phone] : []}
         actionLabel={previewBusiness?.whatsapp ? 'Chamar no WhatsApp' : null}
-        actionURL={previewBusiness?.whatsapp ? `https://wa.me/55${previewBusiness.whatsapp}` : null}
+        actionURL={previewBusiness?.whatsapp ? `https://wa.me/${previewBusiness.whatsapp}` : null}
         onClose={() => setPreviewBusiness(null)}
       />
     </div>

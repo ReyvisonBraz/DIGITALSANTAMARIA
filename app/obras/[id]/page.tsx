@@ -1,87 +1,85 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, HardHat, Building2, Calendar, MapPin, DollarSign } from 'lucide-react';
-import { useContent } from '@/lib/hooks/use-content';
+import { ArrowLeft, Building2, HardHat } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import ContentPage from '@/components/ui/ContentPage';
 import ContentHero from '@/components/ui/ContentHero';
 import ContentCard from '@/components/ui/ContentCard';
 import type { Work } from '@/types';
 
-/**
- * ObraDetalhesPage — Detalhes completos de uma obra pública.
- *
- * Carrega os dados da obra específica via useContent() e exibe
- * informações completas com ContentHero + ContentCard.
- */
-
 export default function ObraDetalhesPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { data, loading, error, refresh } = useContent<Work>('works');
-  const work = data.find((w) => w.id === id) || null;
+  const [work, setWork] = useState<Work | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchWork = () => {
+    setLoading(true);
+    setError(null);
+    getDoc(doc(db, 'works', id))
+      .then((snap) => {
+        if (!snap.exists()) {
+          setWork(null);
+        } else {
+          const data = snap.data() as Work;
+          if (data.deletedAt) {
+            setWork(null);
+          } else {
+            setWork({ ...data, id: snap.id });
+          }
+        }
+      })
+      .catch(() => setError('Erro ao carregar a obra.'))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchWork();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   return (
-    <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 md:p-12 pb-32 gap-10">
+    <div className="page-shell">
+      <main className="mx-auto grid w-full max-w-4xl gap-8 px-4 py-7 sm:px-6 md:px-10 lg:px-12">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="inline-flex w-fit items-center gap-2 text-xs font-semibold uppercase tracking-widest text-text-muted transition hover:text-primary"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Voltar
+        </button>
 
-      <button
-        onClick={() => router.back()}
-        className="flex items-center gap-2 text-sm font-semibold text-text-muted uppercase tracking-widest hover:text-primary transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Voltar
-      </button>
-
-      <ContentHero
-        icon={HardHat}
-        label="Infraestrutura"
-        title={work?.title || 'Obra'}
-        subtitle={work?.description || 'Carregando detalhes da obra...'}
-        accent="accent"
-      />
-
-      <ContentPage
-        loading={loading}
-        error={error}
-        onRetry={refresh}
-        emptyMessage="Obra não encontrada."
-      >
-        {work && (
-          <ContentCard
-            key={work.id}
-            title={work.title}
-            description={work.description}
-            imageURL={work.imageURL || null}
-            badge={{ text: work.category, color: 'bg-amber-500/10 text-amber-600 border border-amber-500/20' }}
-            status={work.progress >= 100 ? 'Concluída' : 'Em andamento'}
-            address={work.address}
-            stats={[
-              { label: 'Progresso', value: `${work.progress}%` },
-              { label: 'Orçamento', value: `R$ ${work.budget.toLocaleString('pt-BR')}` },
-              { label: 'Início', value: work.startDate },
-              { label: 'Previsão', value: work.endDate },
-            ]}
-            extra={
-              <div className="space-y-3 pt-2">
-                <div className="w-full h-3 bg-surface rounded-full overflow-hidden border border-border">
-                  <div
-                    className="h-full bg-amber-500 rounded-full transition-all"
-                    style={{ width: `${work.progress}%` }}
-                  />
-                </div>
-                <p className="text-[10px] font-semibold text-text-muted uppercase">
-                  Contratada: {work.contractor}
-                </p>
-                <p className="text-[10px] font-semibold text-text-muted uppercase">
-                  Bairro: {work.neighborhood}
-                </p>
-              </div>
-            }
-          />
-        )}
-      </ContentPage>
-
+        <ContentPage
+          loading={loading}
+          error={error}
+          onRetry={fetchWork}
+          emptyMessage="Obra não encontrada."
+        >
+          {!loading && !error && !work ? null : work && (
+            <>
+              <ContentHero icon={HardHat} label={work.category} title={work.title} subtitle={work.neighborhood} accent="primary-dark" />
+              <ContentCard
+                title={work.title}
+                description={work.description}
+                imageURL={work.imageURL}
+                address={work.address}
+                badge={{ text: `${work.progress}% concluído`, color: 'bg-blue-100 text-blue-800' }}
+                stats={[
+                  { label: 'Orçamento', value: `R$ ${work.budget.toLocaleString('pt-BR')}` },
+                  { label: 'Início', value: work.startDate },
+                  { label: 'Previsão', value: work.endDate },
+                  { label: 'Contratada', value: work.contractor },
+                ]}
+              />
+            </>
+          )}
+        </ContentPage>
+      </main>
     </div>
   );
 }

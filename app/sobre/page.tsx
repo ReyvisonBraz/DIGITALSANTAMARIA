@@ -63,8 +63,8 @@ export default function SobrePage() {
            <div className="absolute inset-0 bg-tertiary/10 rounded-[4rem] -rotate-3 scale-95" />
            <div className="relative w-full h-full rounded-[4rem] overflow-hidden border-8 border-white shadow-2xl shadow-primary/20">
               <Image 
-                src="https://picsum.photos/seed/tech/800/800" 
-                alt="Innovation" 
+                 src="https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=800&h=800&fit=crop" 
+                 alt="Cidade de Santa Maria do Pará" 
                 fill 
                 priority
                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -141,12 +141,13 @@ export default function SobrePage() {
                >
                   Enviar feedback
                </button>
-               <button
-                onClick={() => toast('Abrindo o portal de transparência municipal...', 'info')}
-                className="bg-transparent border border-white/30 text-white px-8 py-4 rounded-2xl font-semibold text-sm hover:bg-white/10 transition-all active:scale-95"
-               >
-                  Transparência
-               </button>
+                <button
+                 onClick={() => window.open('https://www.santamariadopara.pa.gov.br/portal-da-transparencia', '_blank', 'noopener,noreferrer')}
+                 className="bg-transparent border border-white/30 text-white px-8 py-4 rounded-2xl font-semibold text-sm hover:bg-white/10 transition-all active:scale-95"
+                 aria-label="Acessar portal da transparencia municipal"
+                >
+                   Transparência
+                </button>
             </div>
          </div>
          <div aria-hidden className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-secondary/25 blur-3xl" />

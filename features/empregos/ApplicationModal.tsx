@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CheckCircle2, Loader2, Send } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import { useAuth } from '@/lib/auth-context';
-import { applyForJob, hasUserApplied } from '@/services/jobs.service';
+import { applyForJob } from '@/services/jobs.service';
 import { useToast } from '@/lib/toast-context';
 
 interface ApplicationModalProps {
@@ -20,39 +20,49 @@ export default function ApplicationModal({ isOpen, onClose, jobId, jobTitle }: A
   const [coverLetter, setCoverLetter] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const pendingSubmit = useRef(false);
+
+  useEffect(() => {
+    if (user && pendingSubmit.current) {
+      pendingSubmit.current = false;
+      submitApplication();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  const submitApplication = async () => {
+    setLoading(true);
+    try {
+      await applyForJob({
+        jobId,
+        jobTitle,
+        applicantId: user!.uid,
+        applicantName: user!.displayName || user!.email || 'Candidato',
+        applicantEmail: user!.email || '',
+        coverLetter: coverLetter.trim() || undefined,
+      });
+      setSuccess(true);
+      toast('Candidatura enviada com sucesso.', 'success');
+    } catch {
+      toast('Erro ao se candidatar. Tente novamente.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!user) {
+      pendingSubmit.current = true;
       try {
         await login();
       } catch (error) {
+        pendingSubmit.current = false;
         toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
       }
       return;
     }
 
-    setLoading(true);
-    try {
-      const alreadyApplied = await hasUserApplied(jobId, user.uid);
-      if (alreadyApplied) {
-        toast('Voce ja se candidatou a esta vaga.', 'error');
-        return;
-      }
-      await applyForJob({
-        jobId,
-        jobTitle,
-        applicantId: user.uid,
-        applicantName: user.displayName || 'Candidato',
-        applicantEmail: user.email || '',
-        coverLetter: coverLetter || undefined,
-      });
-      setSuccess(true);
-      toast('Candidatura enviada com sucesso.', 'success');
-    } catch {
-      toast('Erro ao se candidatar.', 'error');
-    } finally {
-      setLoading(false);
-    }
+    submitApplication();
   };
 
   return (
@@ -74,11 +84,13 @@ export default function ApplicationModal({ isOpen, onClose, jobId, jobTitle }: A
               </label>
               <textarea
                 rows={6}
+                maxLength={2000}
                 placeholder="Conte um pouco sobre voce e por que se interessa pela vaga..."
                 value={coverLetter}
                 onChange={(event) => setCoverLetter(event.target.value)}
                 className="font-ui w-full resize-none rounded-xl border-2 border-border bg-surface p-4 font-bold shadow-inner outline-none transition-all placeholder:opacity-30 focus:border-primary"
               />
+              <p className="text-right text-[10px] font-bold text-text-muted">{coverLetter.length}/2000</p>
             </div>
             <button
               type="button"

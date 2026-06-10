@@ -1,5 +1,9 @@
 # Comercio Local — `/comercio`
 
+> ⚠️ **BLOQUEIO ATIVO (10/06/2026):** Feature 5 pausada.
+> Antes de continuar, ler `docs/planejamento/auditoria-arquitetura.md` e resolver os itens críticos #1 (API key no git) e #2 (middleware server-side).
+> Issues de medio impacto (#5 protocolos, #6 converters) afetam diretamente `businesses.service.ts`.
+
 Vitrine de negocios locais. Cidadaos podem cadastrar seus negocios.
 
 **Dados:** Firestore real (`businesses`)

@@ -19,7 +19,6 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getFunctions } from 'firebase/functions';
 import { createLogger } from './logger';
-import fireaseConfig from '../firebase-applet-config.json';
 
 const firebaseLogger = createLogger('Firebase');
 
@@ -39,13 +38,19 @@ function getFirebaseConfig() {
     return { config: { projectId, appId, apiKey, authDomain, storageBucket, messagingSenderId, measurementId }, databaseId };
   }
 
-  if (fireaseConfig?.projectId && fireaseConfig?.appId) {
-    return { config: fireaseConfig, databaseId: fireaseConfig.firestoreDatabaseId || '(default)' };
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const jsonConfig = require('../firebase-applet-config.json') as Record<string, string>;
+    if (jsonConfig?.projectId && jsonConfig?.appId) {
+      return { config: jsonConfig, databaseId: jsonConfig.firestoreDatabaseId || '(default)' };
+    }
+  } catch {
+    // fallback file not present — env vars required
   }
 
   throw new Error(
     'Firebase não configurado. Defina NEXT_PUBLIC_FIREBASE_* no .env.local ' +
-    'ou preencha firebase-applet-config.json'
+    'ou crie firebase-applet-config.json (veja .example)'
   );
 }
 

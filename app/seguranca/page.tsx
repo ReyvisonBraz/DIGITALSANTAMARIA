@@ -89,9 +89,10 @@ export default function SegurancaPage() {
         </div>
 
         <form onSubmit={handleEmergencySubmit} className="grid gap-3 md:grid-cols-2">
-          <label className="space-y-1.5">
+          <label htmlFor="alert-type" className="space-y-1.5">
             <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Tipo</span>
             <select
+              id="alert-type"
               value={alertType}
               onChange={(event) => setAlertType(event.target.value as EmergencyAlertType)}
               className="h-11 w-full rounded-xl border border-red-200 bg-white px-3 text-sm font-bold outline-none focus:border-red-600"
@@ -104,21 +105,25 @@ export default function SegurancaPage() {
               <option value="other">Outro</option>
             </select>
           </label>
-          <label className="space-y-1.5">
+          <label htmlFor="alert-location" className="space-y-1.5">
             <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Localizacao</span>
             <input
+              id="alert-location"
               value={location}
               onChange={(event) => setLocation(event.target.value)}
+              maxLength={200}
               placeholder="Rua, bairro ou ponto de referencia"
               className="h-11 w-full rounded-xl border border-red-200 bg-white px-3 text-sm font-medium outline-none focus:border-red-600"
             />
           </label>
-          <label className="space-y-1.5 md:col-span-2">
+          <label htmlFor="alert-description" className="space-y-1.5 md:col-span-2">
             <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Descricao</span>
             <textarea
+              id="alert-description"
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               rows={3}
+              maxLength={2000}
               placeholder="Descreva o que esta acontecendo"
               className="w-full resize-none rounded-xl border border-red-200 bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-red-600"
             />

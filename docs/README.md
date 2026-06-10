@@ -50,6 +50,11 @@
 | [`referencia/05_firestore.md`](referencia/05_firestore.md) | Schema das colecoes no Firestore |
 | [`referencia/06_seguranca.md`](referencia/06_seguranca.md) | Regras de seguranca e autenticacao |
 
+### Planejamento
+| Arquivo | Conteudo |
+|---|---|
+| [`planejamento/auditoria-arquitetura.md`](planejamento/auditoria-arquitetura.md) | 🔴 Auditoria de seguranca e arquitetura (Jun 2026) — ler antes de novas features |
+
 ### Guias
 | Arquivo | Conteudo |
 |---|---|
