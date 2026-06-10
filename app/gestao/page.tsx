@@ -221,7 +221,7 @@ function buildDemandSearchText(demand: Demand) {
 
 function buildReportSearchText(report: Report) {
   return [
-    report.protocol,
+    report.protocolId,
     report.title,
     report.description,
     report.reporterName,
@@ -779,8 +779,8 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
 
                   <div className="flex flex-col gap-3 lg:min-w-64 lg:items-end">
                     <div className="flex flex-wrap items-center gap-2 lg:justify-end">
-                      <span className="break-all font-mono text-xs font-black text-primary">{report.protocol}</span>
-                      <CopyProtocolButton protocol={report.protocol} />
+                      <span className="break-all font-mono text-xs font-black text-primary">{report.protocolId}</span>
+                      <CopyProtocolButton protocol={report.protocolId} />
                     </div>
                     <span className="text-xs font-bold text-text-muted">{formatDate(report.createdAt)}</span>
                     <button

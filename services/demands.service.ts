@@ -100,8 +100,10 @@ export function waitForDemandProtocol(
       }
     },
     () => {
-      // on error: fallback immediately
+      if (resolved) return;
+      resolved = true;
       clearTimeout(timeoutId);
+      onProtocol(generateDemandProtocolId());
     },
   );
 

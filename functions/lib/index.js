@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.votePollCallable = exports.signPetitionCallable = exports.onReportStatusChanged = exports.onDemandStatusChanged = exports.onJobApplicationCreated = exports.onDemandCreated = void 0;
+exports.votePollCallable = exports.signPetitionCallable = exports.onReportStatusChanged = exports.onDemandStatusChanged = exports.onJobApplicationCreated = exports.onReportCreated = exports.onDemandCreated = void 0;
 var onDemandCreated_1 = require("./onDemandCreated");
 Object.defineProperty(exports, "onDemandCreated", { enumerable: true, get: function () { return onDemandCreated_1.onDemandCreated; } });
+var onReportCreated_1 = require("./onReportCreated");
+Object.defineProperty(exports, "onReportCreated", { enumerable: true, get: function () { return onReportCreated_1.onReportCreated; } });
 var onJobApplicationCreated_1 = require("./onJobApplicationCreated");
 Object.defineProperty(exports, "onJobApplicationCreated", { enumerable: true, get: function () { return onJobApplicationCreated_1.onJobApplicationCreated; } });
 var onStatusChanged_1 = require("./onStatusChanged");

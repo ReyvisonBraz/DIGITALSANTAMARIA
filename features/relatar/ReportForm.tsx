@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -15,7 +15,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
-import { createReport } from '@/services/reports.service';
+import { createReport, waitForReportProtocol } from '@/services/reports.service';
 import { createLogger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import PhotoUpload from './PhotoUpload';
@@ -47,6 +47,13 @@ export default function ReportForm() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [createdProtocol, setCreatedProtocol] = useState<string | null>(null);
+  const protocolCleanup = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (protocolCleanup.current) protocolCleanup.current();
+    };
+  }, []);
 
   const resetForm = () => {
     setTitle('');
@@ -101,12 +108,17 @@ export default function ReportForm() {
         photoFile: photoFile || undefined,
       });
       log.info('Report created', { id, type });
-      setCreatedProtocol(id);
-      toast('Relato enviado. Acompanhe pelo seu painel.', 'success');
+
+      // Aguarda protocolo real da Cloud Function
+      protocolCleanup.current = waitForReportProtocol(id, (protocol) => {
+        setCreatedProtocol(protocol);
+        setSubmitting(false);
+        toast('Relato enviado. Acompanhe pelo seu painel.', 'success');
+      });
+      return;
     } catch (error) {
       log.error('Failed to create report', {}, error);
       toast('Nao foi possivel enviar agora. Tente novamente em instantes.', 'error');
-    } finally {
       setSubmitting(false);
     }
   };

@@ -4,23 +4,41 @@ import type { NextRequest } from 'next/server';
 /**
  * Middleware de protecao server-side para rotas administrativas.
  *
- * Verifica a existencia de cookie de sessao Firebase Auth antes de servir
- * o bundle JS do painel de gestao. A protecao real de dados e feita pelas
- * Firestore Security Rules; este middleware previne a exposicao desnecessaria
- * do codigo admin para usuarios nao autenticados.
+ * Verifica a existencia de cookie com Firebase ID token antes de servir
+ * o bundle JS do painel de gestao. Decodifica o JWT para validar payload
+ * e expiracao.
  */
 
 const ADMIN_ROUTES = ['/gestao'];
+
+function decodeJwtPayload(token: string): { exp?: number; sub?: string } | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf-8'));
+    return payload;
+  } catch {
+    return null;
+  }
+}
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (ADMIN_ROUTES.some((route) => pathname.startsWith(route))) {
-    const authCookie =
-      request.cookies.get('firebase-auth')?.value ||
-      request.cookies.get('__session')?.value;
+    const token = request.cookies.get('firebase-auth-token')?.value;
 
-    if (!authCookie) {
+    if (!token) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    const payload = decodeJwtPayload(token);
+    if (!payload?.sub || !payload?.exp) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    // Verifica expiracao
+    if (payload.exp * 1000 < Date.now()) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   }

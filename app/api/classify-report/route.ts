@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { classifyReport } from '@/lib/gemini/gemini';
 import { isRateLimited, getRateLimitHeaders } from '@/lib/rate-limit';
+import { getAuthUserId } from '@/lib/api-auth';
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+
+  if (!getAuthUserId(request)) {
+    return NextResponse.json({ error: 'Autenticacao necessaria.' }, { status: 401 });
+  }
 
   if (isRateLimited(ip)) {
     return NextResponse.json(

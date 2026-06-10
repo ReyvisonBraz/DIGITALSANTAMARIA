@@ -31,6 +31,7 @@ import type {
 
 const COLLECTION = 'reports';
 const MESSAGES_COLLECTION = 'report_messages';
+const PROTOCOL_TIMEOUT_MS = 12_000;
 
 const STATUS_LABEL: Record<ReportStatus, string> = {
   pending: 'recebido',
@@ -61,7 +62,6 @@ export async function createReport(
     title: input.title,
     description: input.description,
     status: 'pending',
-    protocol: generateProtocolId(),
     location: input.location || null,
     photo,
     votes: 0,
@@ -72,6 +72,50 @@ export async function createReport(
     updatedAt: serverTimestamp(),
   });
   return docRef.id;
+}
+
+/**
+ * Aguarda o protocolId real gerado pela Cloud Function (onReportCreated).
+ * Se a CF falhar ou demorar, gera fallback local.
+ */
+export function waitForReportProtocol(
+  reportId: string,
+  onProtocol: (protocolId: string) => void,
+): () => void {
+  const ref = doc(db, COLLECTION, reportId);
+  let resolved = false;
+
+  const timeoutId = setTimeout(() => {
+    if (resolved) return;
+    resolved = true;
+    unsubscribe();
+    onProtocol(generateProtocolId('REP'));
+  }, PROTOCOL_TIMEOUT_MS);
+
+  const unsubscribe = onSnapshot(
+    ref,
+    (snap) => {
+      if (resolved) return;
+      const data = snap.data() as { protocolId?: string } | undefined;
+      if (data?.protocolId) {
+        resolved = true;
+        clearTimeout(timeoutId);
+        onProtocol(data.protocolId);
+        unsubscribe();
+      }
+    },
+    () => {
+      if (resolved) return;
+      resolved = true;
+      clearTimeout(timeoutId);
+      onProtocol(generateProtocolId('REP'));
+    },
+  );
+
+  return () => {
+    clearTimeout(timeoutId);
+    unsubscribe();
+  };
 }
 
 export async function getReportById(id: string): Promise<Report | null> {
@@ -270,7 +314,7 @@ export async function updateReportStatus(
           title: `Relato ${STATUS_LABEL[status]}`,
           message: response || `Seu relato "${r.title}" foi atualizado para ${STATUS_LABEL[status]}.`,
           href: '/perfil',
-          source: { type: 'report', id, protocol: r.protocol },
+          source: { type: 'report', id, protocol: r.protocolId },
         });
       }
     }

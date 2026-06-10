@@ -165,7 +165,7 @@ export default function ActivityHistory({
     ...reports.map((report): ActivityItem => ({
       id: report.id,
       source: report,
-      protocol: report.protocol,
+      protocol: report.protocolId,
       type: 'Relato',
       title: report.title,
       status: reportStatusLabel[report.status],

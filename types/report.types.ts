@@ -23,7 +23,7 @@ export interface Report {
   title: string;
   description: string;
   status: ReportStatus;
-  protocol: string;
+  protocolId: string;
   location: GeoLocation | null;
   photo: StorageFile | null;
   votes: number;
