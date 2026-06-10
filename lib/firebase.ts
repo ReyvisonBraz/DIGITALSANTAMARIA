@@ -20,6 +20,11 @@ import { getFirestore } from 'firebase/firestore';
 import { getFunctions } from 'firebase/functions';
 import { createLogger } from './logger';
 
+// Config estática importada pelo Next.js no build (não versionada no git)
+// O arquivo firebase-applet-config.json DEVE existir localmente.
+// Copie de firebase-applet-config.example.json e preencha com seus dados.
+import appletConfig from '../firebase-applet-config.json';
+
 const firebaseLogger = createLogger('Firebase');
 
 function getFirebaseConfig() {
@@ -38,19 +43,14 @@ function getFirebaseConfig() {
     return { config: { projectId, appId, apiKey, authDomain, storageBucket, messagingSenderId, measurementId }, databaseId };
   }
 
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const jsonConfig = require('../firebase-applet-config.json') as Record<string, string>;
-    if (jsonConfig?.projectId && jsonConfig?.appId) {
-      return { config: jsonConfig, databaseId: jsonConfig.firestoreDatabaseId || '(default)' };
-    }
-  } catch {
-    // fallback file not present — env vars required
+  const config = appletConfig as Record<string, string>;
+  if (config?.projectId && config?.appId) {
+    return { config, databaseId: config.firestoreDatabaseId || '(default)' };
   }
 
   throw new Error(
     'Firebase não configurado. Defina NEXT_PUBLIC_FIREBASE_* no .env.local ' +
-    'ou crie firebase-applet-config.json (veja .example)'
+    'ou crie firebase-applet-config.json (veja firebase-applet-config.example.json)'
   );
 }
 
