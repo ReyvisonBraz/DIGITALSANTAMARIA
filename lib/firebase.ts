@@ -1,70 +1,94 @@
 /**
  * @module firebase
- * @description Inicialização centralizada do Firebase para o Digital Santa Maria.
+ * @description Inicializacao centralizada do Firebase.
  *
- * Configuração carregada por prioridade:
- * 1. Variáveis de ambiente `NEXT_PUBLIC_FIREBASE_*` (.env.local)
- * 2. Arquivo `firebase-applet-config.json` (fallback)
- *
- * Exporta:
- * - `app` — Instância do Firebase App (singleton)
- * - `auth` — Instância do Firebase Auth
- * - `db` — Instância do Firestore (com database ID customizado)
- * - `FirestoreError` — Classe de erro customizada para operações Firestore
- * - `handleFirestoreError` — Handler centralizado de erros Firestore
+ * Configuracao carregada por prioridade:
+ * 1. NEXT_PUBLIC_FIREBASE_* (Vercel/producao)
+ * 2. firebase-applet-config.json (dev local)
  */
 
-import { initializeApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getFunctions } from 'firebase/functions';
+import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
+import { getAuth, type Auth } from 'firebase/auth';
+import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getFunctions, type Functions } from 'firebase/functions';
 import { createLogger } from './logger';
-
-// Config estática importada pelo Next.js no build (não versionada no git)
-// O arquivo firebase-applet-config.json DEVE existir localmente.
-// Copie de firebase-applet-config.example.json e preencha com seus dados.
-import appletConfig from '../firebase-applet-config.json';
 
 const firebaseLogger = createLogger('Firebase');
 
-function getFirebaseConfig() {
-  const env = (typeof process !== 'undefined' ? process.env : {}) as Record<string, string | undefined>;
+let _app: FirebaseApp | null = null;
+let _auth: Auth | null = null;
+let _db: Firestore | null = null;
+let _functions: Functions | null = null;
+let _initialized = false;
+let _initError: Error | null = null;
 
+function readEnvConfig(): { config: Record<string, string>; databaseId: string } | null {
+  const env = (typeof process !== 'undefined' ? process.env : {}) as Record<string, string | undefined>;
   const projectId = env['NEXT_PUBLIC_FIREBASE_PROJECT_ID'];
   const appId = env['NEXT_PUBLIC_FIREBASE_APP_ID'];
   const apiKey = env['NEXT_PUBLIC_FIREBASE_API_KEY'];
+  if (!apiKey || !projectId || !appId) return null;
+
+  const config: Record<string, string> = { projectId, appId, apiKey };
   const authDomain = env['NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN'];
-  const databaseId = env['NEXT_PUBLIC_FIREBASE_DATABASE_ID'] || '(default)';
   const storageBucket = env['NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET'];
-  const messagingSenderId = env['NEXT_PUBLIC_FIREBASE_SENDER_ID'];
-  const measurementId = env['NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID'] || '';
+  const senderId = env['NEXT_PUBLIC_FIREBASE_SENDER_ID'];
+  const measurementId = env['NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID'];
+  if (authDomain) config.authDomain = authDomain;
+  if (storageBucket) config.storageBucket = storageBucket;
+  if (senderId) config.messagingSenderId = senderId;
+  if (measurementId) config.measurementId = measurementId;
 
-  if (apiKey && projectId && appId) {
-    return { config: { projectId, appId, apiKey, authDomain, storageBucket, messagingSenderId, measurementId }, databaseId };
+  return {
+    config,
+    databaseId: env['NEXT_PUBLIC_FIREBASE_DATABASE_ID'] || '(default)',
+  };
+}
+
+function initFromConfig(config: Record<string, string>, databaseId: string) {
+  _app = getApps().length === 0 ? initializeApp(config) : getApps()[0];
+  _auth = getAuth(_app);
+  _db = getFirestore(_app, databaseId);
+  _functions = getFunctions(_app, 'us-central1');
+  _initialized = true;
+  firebaseLogger.info('Firebase initialized', { projectId: config.projectId, databaseId });
+}
+
+// Inicializacao sincrona (env vars ou arquivo local)
+function tryInitSync() {
+  const envResult = readEnvConfig();
+  if (envResult) {
+    initFromConfig(envResult.config, envResult.databaseId);
+    return;
   }
 
-  const config = appletConfig as Record<string, string>;
-  if (config?.projectId && config?.appId) {
-    return { config, databaseId: config.firestoreDatabaseId || '(default)' };
+  // Fallback: arquivo JSON local (import estatico — Next.js empacota no build)
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const json = require('../firebase-applet-config.json');
+    if (json?.projectId && json?.appId) {
+      initFromConfig(json, json.firestoreDatabaseId || '(default)');
+      return;
+    }
+  } catch {
+    // Arquivo nao existe — esperado em producao sem env vars
   }
 
-  throw new Error(
-    'Firebase não configurado. Defina NEXT_PUBLIC_FIREBASE_* no .env.local ' +
-    'ou crie firebase-applet-config.json (veja firebase-applet-config.example.json)'
+  _initError = new Error(
+    'Firebase nao configurado. Defina NEXT_PUBLIC_FIREBASE_* nas variaveis de ambiente.'
   );
 }
 
-const { config, databaseId } = getFirebaseConfig();
+tryInitSync();
 
-export const app = getApps().length === 0 ? initializeApp(config) : getApps()[0];
-export const auth = getAuth(app);
-export const db = getFirestore(app, databaseId);
-export const functions = getFunctions(app, 'us-central1');
+if (!_initialized) {
+  throw _initError || new Error('Firebase nao inicializado.');
+}
 
-firebaseLogger.info('Firebase initialized', {
-  projectId: config.projectId,
-  databaseId,
-});
+export const app: FirebaseApp = _app!;
+export const auth: Auth = _auth!;
+export const db: Firestore = _db!;
+export const functions: Functions = _functions!;
 
 export class FirestoreError extends Error {
   public operationType: string;
@@ -105,12 +129,13 @@ export function handleFirestoreError(
   userId?: string
 ): never {
   const errorMessage = error instanceof Error ? error.message : String(error);
+  const a = auth;
   const authInfo = {
-    userId: userId || auth.currentUser?.uid || 'anonymous',
-    email: auth.currentUser?.email || '',
-    emailVerified: auth.currentUser?.emailVerified || false,
-    isAnonymous: auth.currentUser?.isAnonymous || true,
-    providerInfo: auth.currentUser?.providerData.map(p => ({
+    userId: userId || a.currentUser?.uid || 'anonymous',
+    email: a.currentUser?.email || '',
+    emailVerified: a.currentUser?.emailVerified || false,
+    isAnonymous: a.currentUser?.isAnonymous || true,
+    providerInfo: a.currentUser?.providerData.map(p => ({
       providerId: p.providerId,
       displayName: p.displayName || '',
       email: p.email || '',
