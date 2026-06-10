@@ -1,16 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   ArrowLeft,
+  Camera,
   CheckCircle2,
   ChevronRight,
+  ImagePlus,
   Loader2,
   Megaphone,
   Send,
   ShieldCheck,
   Target,
+  X,
 } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import { useToast } from '@/lib/toast-context';
@@ -28,6 +31,10 @@ interface CreatePetitionModalProps {
 }
 
 const categories = ['Infraestrutura', 'Seguranca', 'Cultura', 'Saude', 'Meio Ambiente'];
+const MAX_TITLE = 120;
+const MAX_DESC = 5000;
+const MAX_COVER_SIZE = 5 * 1024 * 1024;
+const ACCEPTED_COVER = ['image/jpeg', 'image/png', 'image/webp'];
 
 export default function CreatePetitionModal({ isOpen, onClose, onCreated }: CreatePetitionModalProps) {
   const { user, login } = useAuth();
@@ -41,6 +48,9 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
     goal: '500',
     description: '',
   });
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const resetAndClose = () => {
     setShowSuccess(false);
@@ -51,7 +61,29 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
       goal: '500',
       description: '',
     });
+    if (coverPreview) URL.revokeObjectURL(coverPreview);
+    setCoverFile(null);
+    setCoverPreview(null);
     onClose();
+  };
+
+  const handleCoverChange = (file: File | null) => {
+    if (coverPreview) URL.revokeObjectURL(coverPreview);
+    if (!file) {
+      setCoverFile(null);
+      setCoverPreview(null);
+      return;
+    }
+    if (file.size > MAX_COVER_SIZE) {
+      toast('Imagem de capa deve ter no maximo 5MB.', 'error');
+      return;
+    }
+    if (!ACCEPTED_COVER.includes(file.type)) {
+      toast('Formato nao suportado. Use JPEG, PNG ou WebP.', 'error');
+      return;
+    }
+    setCoverFile(file);
+    setCoverPreview(URL.createObjectURL(file));
   };
 
   const nextStep = () => setStep((prev) => prev + 1);
@@ -69,22 +101,39 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
       return;
     }
 
-    if (!formData.title.trim() || !formData.description.trim()) {
+    const title = formData.title.trim();
+    const description = formData.description.trim();
+    const goal = parseInt(formData.goal, 10);
+
+    if (!title || !description) {
       toast('Preencha titulo e descricao.', 'error');
+      return;
+    }
+    if (title.length > MAX_TITLE) {
+      toast(`Titulo deve ter no maximo ${MAX_TITLE} caracteres.`, 'error');
+      return;
+    }
+    if (description.length > MAX_DESC) {
+      toast(`Descricao deve ter no maximo ${MAX_DESC} caracteres.`, 'error');
+      return;
+    }
+    if (!Number.isFinite(goal) || goal < 1) {
+      toast('Informe uma meta valida (minimo 1 assinatura).', 'error');
       return;
     }
 
     setLoading(true);
     try {
       await createPetition({
-        title: formData.title.trim(),
+        title,
         category: formData.category,
-        goal: parseInt(formData.goal, 10) || 500,
-        description: formData.description.trim(),
+        goal,
+        description,
         creatorId: user.uid,
-        creatorName: user.displayName || 'Cidadao',
+        creatorName: user.displayName || user.email || 'Cidadao',
+        coverFile,
       });
-      log.info('Petition created', { title: formData.title });
+      log.info('Petition created', { title });
       onCreated?.();
       setShowSuccess(true);
     } catch (err) {
@@ -140,6 +189,38 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
                 </span>
               </label>
             </div>
+
+            <label className="block space-y-2">
+              <span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">Imagem de capa (opcional)</span>
+              <input
+                ref={coverInputRef}
+                type="file"
+                accept={ACCEPTED_COVER.join(',')}
+                className="hidden"
+                onChange={(event) => handleCoverChange(event.target.files?.[0] || null)}
+              />
+              {coverPreview ? (
+                <div className="group relative h-36 overflow-hidden rounded-xl border-2 border-border">
+                  <img src={coverPreview} alt="Preview da capa" className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => handleCoverChange(null)}
+                    className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => coverInputRef.current?.click()}
+                  className="flex h-24 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 bg-white transition-all hover:border-primary/50"
+                >
+                  <ImagePlus className="h-5 w-5 text-text-muted" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Adicionar capa</span>
+                </button>
+              )}
+            </label>
 
             <button
               type="button"

@@ -37,6 +37,7 @@ import { useToast } from '@/lib/toast-context';
 import { useContent } from '@/lib/hooks/use-content';
 import { useHealthUnits } from '@/features/saude/hooks/useHealthUnits';
 import { motion, AnimatePresence } from 'motion/react';
+import DevBanner from '@/components/ui/DevBanner';
 import { cn } from '@/lib/utils';
 import type { HealthUnit, PharmacyItem } from '@/types';
 
@@ -255,8 +256,12 @@ export default function SaudePage() {
                         <Activity className="absolute -right-8 -bottom-8 w-48 h-48 opacity-[0.05] rotate-12 group-hover:scale-110 transition-transform" />
                      </div>
 
-                     <div className="bg-white p-8 rounded-[3rem] border-2 border-border border-dashed space-y-6 shadow-sm">
-                        <div className="flex items-center gap-4">
+                  <div className="bg-white p-8 rounded-[3rem] border-2 border-border border-dashed space-y-6 shadow-sm">
+                     <DevBanner
+                        title="Carteira de vacinação digital em desenvolvimento"
+                        description="A emissao do certificado vacinal real com QR code validavel e exportacao oficial estara disponivel em breve. Consulte a unidade de saude mais proxima enquanto isso."
+                     />
+                     <div className="flex items-center gap-4">
                            <div className="w-14 h-14 bg-sky-500/10 text-sky-500 rounded-2xl flex items-center justify-center border-2 border-sky-500/20 shadow-inner">
                               <Syringe className="w-8 h-8" />
                            </div>

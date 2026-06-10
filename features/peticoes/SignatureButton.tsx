@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { CheckCircle2, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { CheckCircle2, Loader2, PenLine } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
 import { hasUserSigned, signPetition } from '@/services/petitions.service';
@@ -17,6 +17,20 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
   const { user, login } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [signed, setSigned] = useState(false);
+  const [checkingSignature, setCheckingSignature] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setSigned(false);
+      return;
+    }
+    setCheckingSignature(true);
+    hasUserSigned(petitionId, user.uid)
+      .then(setSigned)
+      .catch(() => setSigned(false))
+      .finally(() => setCheckingSignature(false));
+  }, [petitionId, user]);
 
   const handleSign = async () => {
     if (!user) {
@@ -30,35 +44,41 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
 
     setLoading(true);
     try {
-      const alreadySigned = await hasUserSigned(petitionId, user.uid);
-      if (alreadySigned) {
-        toast('Voce ja assinou esta peticao!', 'error');
-        return;
-      }
-
-      await signPetition(petitionId, user.displayName || 'Cidadao');
+      await signPetition(petitionId, user.displayName || user.email || 'Cidadao');
+      setSigned(true);
       toast(`Assinatura registrada em "${petitionTitle}"!`, 'success');
       onSign();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao assinar';
-      toast(message, 'error');
+    } catch {
+      toast('Nao foi possivel registrar a assinatura.', 'error');
     } finally {
       setLoading(false);
     }
   };
 
+  if (signed) {
+    return (
+      <button
+        disabled
+        className={`flex items-center justify-center gap-2 rounded-xl bg-green-600 px-10 py-4 text-[10px] font-black uppercase tracking-widest text-white opacity-90 cursor-default ${className || ''}`}
+      >
+        <CheckCircle2 className="h-4 w-4" />
+        Assinado
+      </button>
+    );
+  }
+
   return (
     <button
       onClick={handleSign}
-      disabled={loading}
+      disabled={loading || checkingSignature}
       className={`flex items-center justify-center gap-2 rounded-xl bg-tertiary px-10 py-4 text-[10px] font-black uppercase tracking-widest text-white shadow-xl shadow-tertiary/20 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 ${className || ''}`}
     >
-      {loading ? (
+      {loading || checkingSignature ? (
         <Loader2 className="h-4 w-4 animate-spin" />
       ) : (
-        <CheckCircle2 className="h-4 w-4" />
+        <PenLine className="h-4 w-4" />
       )}
-      {loading ? 'Assinando...' : 'Assinar Agora'}
+      {loading ? 'Assinando...' : checkingSignature ? 'Verificando...' : 'Assinar Agora'}
     </button>
   );
 }

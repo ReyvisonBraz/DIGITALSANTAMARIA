@@ -34,6 +34,7 @@ import Modal from '@/components/ui/Modal';
 import { useContent } from '@/lib/hooks/use-content';
 import type { EducationSchool } from '@/types';
 import type { Timestamp } from 'firebase/firestore';
+import DevBanner from '@/components/ui/DevBanner';
 
 const schools = [
   {
@@ -283,8 +284,14 @@ export default function EducacaoPage() {
                initial={{ opacity: 0, x: -20 }}
                animate={{ opacity: 1, x: 0 }}
                exit={{ opacity: 0, x: 20 }}
-               className="grid grid-cols-1 lg:grid-cols-12 gap-10"
+               className="grid grid-cols-1 lg:grid-cols-12 gap-10 py-8"
             >
+               <div className="lg:col-span-12">
+                  <DevBanner
+                     title="Dashboard do aluno em desenvolvimento"
+                     description="Notas, frequencia, cardapio e transporte escolar terao dados reais da Secretaria de Educacao em breve. As escolas e matriculas ja estao funcionando normalmente."
+                  />
+               </div>
                {/* Quick Student Status Panel */}
                <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[4rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">

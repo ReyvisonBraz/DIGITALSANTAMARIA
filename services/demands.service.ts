@@ -7,6 +7,7 @@ import {
   onSnapshot,
   updateDoc,
   writeBatch,
+  runTransaction,
   query,
   where,
   orderBy,
@@ -28,6 +29,7 @@ import type {
 
 const COLLECTION = 'demands';
 const MESSAGES_COLLECTION = 'demand_messages';
+const PROTOCOL_TIMEOUT_MS = 12_000;
 
 const STATUS_LABEL: Record<DemandStatus, string> = {
   pending: 'pendente',
@@ -44,13 +46,11 @@ const STATUS_TONE: Record<DemandStatus, NotificationTone> = {
 };
 
 export async function createDemand(
-  input: CreateDemandInput & { authorId: string }
-): Promise<{ id: string; protocolId: string }> {
-  const protocolId = generateDemandProtocolId();
+  input: CreateDemandInput & { authorId: string; authorName: string }
+): Promise<{ id: string }> {
   const docRef = await addDoc(collection(db, COLLECTION), {
-    protocolId,
     authorId: input.isAnonymous ? '' : input.authorId,
-    authorName: input.isAnonymous ? 'Anônimo' : null,
+    authorName: input.isAnonymous ? 'Anônimo' : input.authorName || 'Cidadão',
     type: input.type,
     category: input.category,
     subject: input.subject,
@@ -66,7 +66,49 @@ export async function createDemand(
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
-  return { id: docRef.id, protocolId };
+  return { id: docRef.id };
+}
+
+/**
+ * Aguarda o protocolId real gerado pela Cloud Function (onDemandCreated).
+ * Se a CF falhar ou demorar mais que PROTOCOL_TIMEOUT_MS, gera fallback local.
+ */
+export function waitForDemandProtocol(
+  demandId: string,
+  onProtocol: (protocolId: string) => void,
+): () => void {
+  const ref = doc(db, COLLECTION, demandId);
+  let resolved = false;
+
+  const timeoutId = setTimeout(() => {
+    if (resolved) return;
+    resolved = true;
+    unsubscribe();
+    onProtocol(generateDemandProtocolId());
+  }, PROTOCOL_TIMEOUT_MS);
+
+  const unsubscribe = onSnapshot(
+    ref,
+    (snap) => {
+      if (resolved) return;
+      const data = snap.data() as { protocolId?: string } | undefined;
+      if (data?.protocolId) {
+        resolved = true;
+        clearTimeout(timeoutId);
+        onProtocol(data.protocolId);
+        unsubscribe();
+      }
+    },
+    () => {
+      // on error: fallback immediately
+      clearTimeout(timeoutId);
+    },
+  );
+
+  return () => {
+    clearTimeout(timeoutId);
+    unsubscribe();
+  };
 }
 
 export async function createDemandMessage(input: {
@@ -122,6 +164,24 @@ export async function getDemandMessages(demandId: string): Promise<DemandMessage
   const q = query(ref, where('demandId', '==', demandId), orderBy('createdAt', 'asc'));
   const snap = await getDocs(q);
   return snap.docs.map((docSnap) => mapDemandMessage(docSnap.id, docSnap.data()));
+}
+
+export function listenToDemandMessages(
+  demandId: string,
+  onChange: (messages: DemandMessage[]) => void,
+  onError?: (error: unknown) => void,
+): () => void {
+  const ref = collection(db, MESSAGES_COLLECTION);
+  const q = query(ref, where('demandId', '==', demandId), orderBy('createdAt', 'asc'));
+  return onSnapshot(
+    q,
+    (snap) => {
+      onChange(snap.docs.map((d) => mapDemandMessage(d.id, d.data())));
+    },
+    (error) => {
+      onError?.(error);
+    },
+  );
 }
 
 async function findDemandByProtocol(filters: [string, unknown][]): Promise<Demand | null> {
@@ -203,41 +263,68 @@ export async function updateDemandStatus(
   status: DemandStatus,
   adminAction: Omit<AdminAction, 'updatedAt'>
 ): Promise<void> {
-  const ref = doc(db, COLLECTION, id).withConverter(demandConverter);
-  const snap = await getDoc(ref);
-  const demand = snap.exists() ? snap.data() : null;
+  const demandRef = doc(db, COLLECTION, id);
+  const response = adminAction.response.trim();
 
-  await updateDoc(doc(db, COLLECTION, id), {
-    status,
-    adminAction: {
-      ...adminAction,
+  await runTransaction(db, async (tx) => {
+    const demandSnap = await tx.get(demandRef);
+    if (!demandSnap.exists()) {
+      throw new Error('Demand not found');
+    }
+
+    const demand = demandSnap.data() as Demand;
+    const previousResponse = demand.adminAction?.response?.trim() || '';
+
+    tx.update(demandRef, {
+      status,
+      adminAction: {
+        ...adminAction,
+        updatedAt: serverTimestamp(),
+      },
       updatedAt: serverTimestamp(),
-    },
-    updatedAt: serverTimestamp(),
+    });
+
+    if (response && response !== previousResponse) {
+      const msgRef = doc(collection(db, MESSAGES_COLLECTION));
+      tx.set(msgRef, {
+        demandId: id,
+        authorId: adminAction.clerkId,
+        authorName: adminAction.clerkName,
+        authorRole: 'staff' as const,
+        message: response,
+        createdAt: serverTimestamp(),
+      });
+
+      tx.update(demandRef, {
+        conversation: {
+          lastMessageAt: serverTimestamp(),
+          lastMessageAuthorName: adminAction.clerkName,
+          lastMessageAuthorRole: 'staff',
+          unreadByCitizen: true,
+          unreadByStaff: false,
+        },
+      });
+    }
   });
 
-  const response = adminAction.response.trim();
-  const previousResponse = demand?.adminAction?.response?.trim() || '';
-
-  if (response && response !== previousResponse) {
-    await createDemandMessage({
-      demandId: id,
-      authorId: adminAction.clerkId,
-      authorName: adminAction.clerkName,
-      authorRole: 'staff',
-      message: response,
-    });
-  }
-
-  if (demand && !demand.isAnonymous && demand.authorId) {
-    await tryCreateNotification({
-      recipientId: demand.authorId,
-      kind: 'demand_update',
-      tone: STATUS_TONE[status],
-      title: `Solicitação ${STATUS_LABEL[status]}`,
-      message: adminAction.response?.trim() || `Sua solicitação "${demand.subject}" foi atualizada para ${STATUS_LABEL[status]}.`,
-      href: '/perfil',
-      source: { type: 'demand', id, protocol: demand.protocolId },
-    });
+  // Notificacao fora da transacao (fire-and-forget, nao deve bloquear)
+  try {
+    const snap = await getDoc(demandRef);
+    if (snap.exists()) {
+      const d = snap.data() as Demand;
+      if (!d.isAnonymous && d.authorId) {
+        await tryCreateNotification({
+          recipientId: d.authorId,
+          kind: 'demand_update',
+          tone: STATUS_TONE[status],
+          title: `Solicitacao ${STATUS_LABEL[status]}`,
+          message: response || `Sua solicitacao "${d.subject}" foi atualizada para ${STATUS_LABEL[status]}.`,
+          href: '/perfil',
+          source: { type: 'demand', id, protocol: d.protocolId },
+        });
+      }
+    }
+  } catch {
+    // silencioso
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Camera, X } from 'lucide-react';
 import { useToast } from '@/lib/toast-context';
@@ -11,12 +11,19 @@ interface PhotoUploadProps {
   onFileChange: (file: File | null, previewUrl: string | null) => void;
 }
 
+const FILE_INPUT_ID = 'report-photo-input';
 const MAX_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 export default function PhotoUpload({ previewUrl, onFileChange }: PhotoUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   const handleFile = (selected: File | null) => {
     if (!selected) return;
@@ -42,11 +49,12 @@ export default function PhotoUpload({ previewUrl, onFileChange }: PhotoUploadPro
 
   return (
     <div className="space-y-2">
-      <label className="text-[11px] font-black uppercase tracking-widest text-text-main">
+      <label htmlFor={FILE_INPUT_ID} className="text-[11px] font-black uppercase tracking-widest text-text-main">
         Evidencia visual (opcional)
       </label>
       <input
         ref={inputRef}
+        id={FILE_INPUT_ID}
         type="file"
         accept={ACCEPTED_TYPES.join(',')}
         className="hidden"

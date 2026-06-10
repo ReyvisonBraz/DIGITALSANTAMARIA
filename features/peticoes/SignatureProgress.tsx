@@ -18,7 +18,14 @@ export default function SignatureProgress({ current, goal }: SignatureProgressPr
         </span>
         <span className="text-text-muted">{percentage}%</span>
       </div>
-      <div className="h-2.5 w-full bg-surface border border-border rounded-full p-0.5 overflow-hidden">
+      <div
+        role="progressbar"
+        aria-valuenow={current}
+        aria-valuemin={0}
+        aria-valuemax={goal}
+        aria-label={`${current} de ${goal} assinaturas`}
+        className="h-2.5 w-full bg-surface border border-border rounded-full p-0.5 overflow-hidden"
+      >
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}

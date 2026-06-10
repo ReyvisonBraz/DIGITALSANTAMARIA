@@ -35,6 +35,8 @@ import ApplicationsAdmin from '@/features/gestao/content/ApplicationsAdmin';
 import EnrollmentsAdmin from '@/features/gestao/content/EnrollmentsAdmin';
 import EmergencyAlertsAdmin from '@/features/gestao/content/EmergencyAlertsAdmin';
 import GenericCatalogAdmin, { type CatalogAdminConfig } from '@/features/gestao/content/GenericCatalogAdmin';
+import { FEATURE_STATUS, type FeatureEntry } from '@/lib/constants/feature-status';
+import DevBadge from '@/components/ui/DevBadge';
 import { cn } from '@/lib/utils';
 
 export type ContentTab =
@@ -428,6 +430,7 @@ export default function ContentAdminPanel({ activeTab, canManageCatalog = true, 
           {visibleTabs.map((item) => {
             const active = item.value === tab;
             const Icon = item.icon;
+            const featureStatus = FEATURE_STATUS.find((f) => f.adminTab === item.value);
             return (
               <button
                 key={item.value}
@@ -440,6 +443,9 @@ export default function ContentAdminPanel({ activeTab, canManageCatalog = true, 
               >
                 <Icon className="h-4 w-4" />
                 {item.label}
+                {featureStatus && featureStatus.status !== 'complete' && (
+                  <DevBadge status={featureStatus.status} className="ml-1" />
+                )}
               </button>
             );
           })}

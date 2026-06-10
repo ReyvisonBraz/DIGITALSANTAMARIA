@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Loader2, MapPin, Navigation } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { GeoLocation } from '@/types';
@@ -14,6 +14,8 @@ interface LocationPickerProps {
 export default function LocationPicker({ value, location, onChange }: LocationPickerProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const mountedRef = useRef(true);
+  const abortRef = useRef<AbortController | null>(null);
 
   const getCurrentPosition = () => {
     setError(null);
@@ -27,30 +29,43 @@ export default function LocationPicker({ value, location, onChange }: LocationPi
     setLoading(true);
     navigator.geolocation.getCurrentPosition(
       async (position) => {
+        if (!mountedRef.current) return;
+
         const { latitude: lat, longitude: lng } = position.coords;
 
         try {
+          const controller = new AbortController();
+          abortRef.current = controller;
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=pt`,
+            { signal: controller.signal },
           );
+
+          if (!mountedRef.current) return;
 
           if (!response.ok) {
             throw new Error('Reverse geocoding failed');
           }
 
-          const data = await response.json() as { display_name?: string };
-          const address = data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+          const data = await response.json();
+          const address = typeof data?.display_name === 'string'
+            ? data.display_name
+            : `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
           onChange(address, { lat, lng, address });
-        } catch {
+        } catch (err) {
+          if (err instanceof DOMException && err.name === 'AbortError') return;
+          if (!mountedRef.current) return;
           const fallbackAddress = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
           onChange(fallbackAddress, { lat, lng, address: fallbackAddress });
         } finally {
-          setLoading(false);
+          if (mountedRef.current) setLoading(false);
         }
       },
       () => {
-        setLoading(false);
-        setError('Nao foi possivel obter sua localizacao. Informe o endereco manualmente.');
+        if (mountedRef.current) {
+          setLoading(false);
+          setError('Nao foi possivel obter sua localizacao. Informe o endereco manualmente.');
+        }
       },
       { enableHighAccuracy: true, timeout: 10000 },
     );

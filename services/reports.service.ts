@@ -8,6 +8,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
   updateDoc,
   where,
@@ -134,6 +135,24 @@ export async function getReportMessages(reportId: string): Promise<ReportMessage
   return snap.docs.map((docSnap) => mapReportMessage(docSnap.id, docSnap.data()));
 }
 
+export function listenToReportMessages(
+  reportId: string,
+  onChange: (messages: ReportMessage[]) => void,
+  onError?: (error: unknown) => void,
+): () => void {
+  const ref = collection(db, MESSAGES_COLLECTION);
+  const q = query(ref, where('reportId', '==', reportId), orderBy('createdAt', 'asc'));
+  return onSnapshot(
+    q,
+    (snap) => {
+      onChange(snap.docs.map((d) => mapReportMessage(d.id, d.data())));
+    },
+    (error) => {
+      onError?.(error);
+    },
+  );
+}
+
 export async function getReportsByUser(userId: string): Promise<Report[]> {
   const ref = collection(db, COLLECTION).withConverter(reportConverter);
   const q = query(ref, where('reporterId', '==', userId), orderBy('createdAt', 'desc'));
@@ -194,40 +213,69 @@ export async function updateReportStatus(
   clerkName: string,
   adminResponse?: string,
 ): Promise<void> {
-  const ref = doc(db, COLLECTION, id).withConverter(reportConverter);
-  const snap = await getDoc(ref);
-  const report = snap.exists() ? snap.data() : null;
+  const reportRef = doc(db, COLLECTION, id);
+  const response = (adminResponse ?? '').trim();
 
-  await updateDoc(doc(db, COLLECTION, id), {
-    status,
-    clerkId,
-    ...(adminResponse !== undefined && { adminResponse }),
-    updatedAt: serverTimestamp(),
+  await runTransaction(db, async (tx) => {
+    const reportSnap = await tx.get(reportRef);
+    if (!reportSnap.exists()) {
+      throw new Error('Report not found');
+    }
+
+    const report = reportSnap.data() as Report;
+    const previousResponse = (report.adminResponse ?? '').trim();
+
+    const updateData: Record<string, unknown> = {
+      status,
+      clerkId,
+      adminResponse: adminResponse ?? null,
+      updatedAt: serverTimestamp(),
+    };
+
+    tx.update(reportRef, updateData);
+
+    if (response && response !== previousResponse) {
+      const msgRef = doc(collection(db, MESSAGES_COLLECTION));
+      tx.set(msgRef, {
+        reportId: id,
+        authorId: clerkId,
+        authorName: clerkName,
+        authorRole: 'staff' as const,
+        message: response,
+        createdAt: serverTimestamp(),
+      });
+
+      tx.update(reportRef, {
+        conversation: {
+          lastMessageAt: serverTimestamp(),
+          lastMessageAuthorName: clerkName,
+          lastMessageAuthorRole: 'staff',
+          unreadByCitizen: true,
+          unreadByStaff: false,
+        },
+      });
+    }
   });
 
-  const response = adminResponse?.trim() || '';
-  const previousResponse = report?.adminResponse?.trim() || '';
-
-  if (response && response !== previousResponse) {
-    await createReportMessage({
-      reportId: id,
-      authorId: clerkId,
-      authorName: clerkName,
-      authorRole: 'staff',
-      message: response,
-    });
-  }
-
-  if (report?.reporterId) {
-    await tryCreateNotification({
-      recipientId: report.reporterId,
-      kind: 'report_update',
-      tone: STATUS_TONE[status],
-      title: `Relato ${STATUS_LABEL[status]}`,
-      message: adminResponse?.trim() || `Seu relato "${report.title}" foi atualizado para ${STATUS_LABEL[status]}.`,
-      href: '/perfil',
-      source: { type: 'report', id, protocol: report.protocol },
-    });
+  // Notificacao fora da transacao (fire-and-forget)
+  try {
+    const snap = await getDoc(reportRef);
+    if (snap.exists()) {
+      const r = snap.data() as Report;
+      if (r.reporterId) {
+        await tryCreateNotification({
+          recipientId: r.reporterId,
+          kind: 'report_update',
+          tone: STATUS_TONE[status],
+          title: `Relato ${STATUS_LABEL[status]}`,
+          message: response || `Seu relato "${r.title}" foi atualizado para ${STATUS_LABEL[status]}.`,
+          href: '/perfil',
+          source: { type: 'report', id, protocol: r.protocol },
+        });
+      }
+    }
+  } catch {
+    // silencioso
   }
 }
 

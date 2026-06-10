@@ -260,13 +260,12 @@ service cloud.firestore {
     match /petitions/{petitionId} {
       allow read: if true;
       allow create: if isSignedIn() && validPetitionCreate();
-      allow update: if isAdmin()
-        || validPetitionSignatureUpdate();
+      allow update: if isAdmin();
       allow delete: if isAdmin();
     }
 
     match /petition_signatures/{sigId} {
-      allow read: if true;
+      allow read: if isSignedIn();
       allow create: if isSignedIn()
         && incoming().userId == request.auth.uid
         && sigId == incoming().petitionId + '_' + request.auth.uid;

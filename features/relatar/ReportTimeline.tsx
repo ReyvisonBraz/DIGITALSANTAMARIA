@@ -1,19 +1,19 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle2, Clock, Loader2, MessageSquare, Send, ShieldCheck, UserRound } from 'lucide-react';
-import { createReportMessage, getReportMessages, markReportReadByCitizen } from '@/services/reports.service';
+import { createReportMessage, listenToReportMessages, markReportReadByCitizen } from '@/services/reports.service';
 import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
 import type { Report, ReportMessage } from '@/types';
 
-const roleLabel: Record<ReportMessage['authorRole'], string> = {
+const ROLE_LABEL: Record<ReportMessage['authorRole'], string> = {
   citizen: 'Cidadao',
   staff: 'Prefeitura',
   system: 'Sistema',
 };
 
-const roleIcon = {
+const ROLE_ICON: Record<ReportMessage['authorRole'], typeof UserRound> = {
   citizen: UserRound,
   staff: ShieldCheck,
   system: CheckCircle2,
@@ -46,41 +46,50 @@ export default function ReportTimeline({
   const [submitting, setSubmitting] = useState(false);
   const [reply, setReply] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [refreshTick, setRefreshTick] = useState(0);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const firstLoadRef = useRef(true);
 
+  // Real-time listener
   useEffect(() => {
-    let mounted = true;
+    setLoading(true);
+    setError(null);
 
-    async function loadMessages() {
-      setLoading(true);
-      setError(null);
-      try {
-        const items = await getReportMessages(report.id);
-        if (mounted) setMessages(items);
-      } catch {
-        if (mounted) setError('Nao foi possivel carregar a conversa deste relato.');
-      } finally {
-        if (mounted) setLoading(false);
-      }
+    const unsubscribe = listenToReportMessages(
+      report.id,
+      (items) => {
+        setMessages(items);
+        setLoading(false);
+        setError(null);
+      },
+      () => {
+        setError('Nao foi possivel carregar a conversa deste relato.');
+        setLoading(false);
+      },
+    );
+
+    return () => unsubscribe();
+  }, [report.id]);
+
+  // Auto-scroll
+  useEffect(() => {
+    if (messages.length > 0) {
+      bottomRef.current?.scrollIntoView({ behavior: firstLoadRef.current ? 'auto' : 'smooth' });
+      firstLoadRef.current = false;
     }
+  }, [messages.length]);
 
-    loadMessages();
-
-    return () => {
-      mounted = false;
-    };
-  }, [report.id, report.updatedAt, refreshTick]);
-
+  // Marcar como lido
   useEffect(() => {
     if (!allowCitizenReply || currentUserId !== report.reporterId || !report.conversation?.unreadByCitizen) {
       return;
     }
 
     markReportReadByCitizen(report.id).catch(() => {
-      // A leitura visual da conversa nao deve falhar se a marcacao de lido nao sincronizar.
+      // silencioso
     });
   }, [allowCitizenReply, currentUserId, report.conversation?.unreadByCitizen, report.id, report.reporterId]);
 
+  // Timeline
   const timeline = useMemo(() => {
     const base: TimelineMessage[] = [
       {
@@ -93,10 +102,16 @@ export default function ReportTimeline({
       ...messages,
     ];
 
-    const hasLegacyResponse = report.adminResponse?.trim()
-      && !messages.some((message) => message.authorRole === 'staff' && message.message === report.adminResponse);
+    const legacyResponse = report.adminResponse?.trim();
+    const alreadyInMessages = legacyResponse
+      ? messages.some(
+          (m) =>
+            m.authorRole === 'staff' &&
+            m.message.trim() === legacyResponse,
+        )
+      : true;
 
-    if (hasLegacyResponse) {
+    if (legacyResponse && !alreadyInMessages) {
       base.push({
         id: `legacy-response-${report.id}`,
         authorName: 'Prefeitura',
@@ -107,9 +122,10 @@ export default function ReportTimeline({
     }
 
     return base;
-  }, [report, messages]);
+  }, [report.id, report.reporterName, report.description, report.createdAt, report.adminResponse, report.updatedAt, messages]);
 
-  const canReply = allowCitizenReply && currentUserId === report.reporterId;
+  const isClosed = report.status === 'resolved' || report.status === 'rejected';
+  const canReply = allowCitizenReply && currentUserId === report.reporterId && !isClosed;
 
   const handleReply = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -126,7 +142,6 @@ export default function ReportTimeline({
         message,
       });
       setReply('');
-      setRefreshTick((current) => current + 1);
       toast('Resposta enviada para a conversa.', 'success');
     } catch {
       toast('Nao foi possivel enviar a resposta.', 'error');
@@ -152,9 +167,9 @@ export default function ReportTimeline({
         </div>
       )}
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-4 space-y-3" role="log" aria-live="polite" aria-label="Conversa do relato">
         {timeline.map((message) => {
-          const Icon = roleIcon[message.authorRole];
+          const Icon = ROLE_ICON[message.authorRole];
           const isStaff = message.authorRole === 'staff';
 
           return (
@@ -168,9 +183,9 @@ export default function ReportTimeline({
                     <Icon className="h-4 w-4" />
                   </span>
                   <div>
-                    <p className="text-sm font-black text-text-main">{message.authorName || roleLabel[message.authorRole]}</p>
+                    <p className="text-sm font-black text-text-main">{message.authorName || ROLE_LABEL[message.authorRole]}</p>
                     <p className="text-[10px] font-black uppercase tracking-widest text-text-muted">
-                      {roleLabel[message.authorRole]}
+                      {ROLE_LABEL[message.authorRole]}
                     </p>
                   </div>
                 </div>
@@ -183,6 +198,7 @@ export default function ReportTimeline({
             </article>
           );
         })}
+        <div ref={bottomRef} />
       </div>
 
       {canReply && (
@@ -195,6 +211,7 @@ export default function ReportTimeline({
               rows={3}
               maxLength={800}
               placeholder="Escreva uma nova informacao ou resposta sobre este relato"
+              aria-label="Mensagem de resposta ao relato"
               className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 text-text-main outline-none transition focus:border-primary"
             />
           </label>

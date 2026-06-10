@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import DevBanner from '@/components/ui/DevBanner';
 
 export default function LegalPage() {
   const [activeTab, setActiveTab] = useState<'termos' | 'privacidade'>('termos');
@@ -160,10 +161,13 @@ export default function LegalPage() {
             <Info className="w-5 h-5 text-text-muted" />
             <span className="text-[10px] font-semibold text-text-muted uppercase tracking-[0.2em]">Última atualização: 10 de Janeiro de 2026</span>
          </div>
-         <button className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-widest hover:underline">
-            Baixar PDF Completo
-            <ChevronRight className="w-4 h-4" />
-         </button>
+         <div className="flex flex-col items-end gap-2">
+            <button className="flex items-center gap-2 text-xs font-semibold text-amber-700 uppercase tracking-widest opacity-60 cursor-not-allowed" disabled>
+               Baixar PDF Completo
+               <ChevronRight className="w-4 h-4" />
+            </button>
+            <span className="text-[10px] font-semibold text-amber-600/70">Em desenvolvimento</span>
+         </div>
       </div>
 
     </div>

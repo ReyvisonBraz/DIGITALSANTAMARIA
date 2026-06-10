@@ -1,14 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, CalendarDays, Loader2, Share2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, CalendarDays, FileQuestion, Loader2, Share2, ShieldCheck } from 'lucide-react';
 import SignatureButton from '@/features/peticoes/SignatureButton';
 import SignatureProgress from '@/features/peticoes/SignatureProgress';
 import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
-import { getPetitionById } from '@/services/petitions.service';
+import { listenToPetition } from '@/services/petitions.service';
 import type { Petition } from '@/types';
 
 export default function PetitionDetailPage() {
@@ -17,27 +17,34 @@ export default function PetitionDetailPage() {
   const { toast } = useToast();
   const [petition, setPetition] = useState<Petition | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const loadPetition = useCallback(() => {
+  useEffect(() => {
     const id = params.id as string;
     if (!id) return;
     setLoading(true);
-    getPetitionById(id)
-      .then((data) => {
-        if (!data) {
-          toast('Peticao nao encontrada.', 'error');
-          router.push('/peticoes');
-          return;
-        }
-        setPetition(data);
-      })
-      .catch(() => toast('Nao foi possivel carregar a peticao.', 'error'))
-      .finally(() => setLoading(false));
-  }, [params.id, router, toast]);
+    setError(null);
 
-  useEffect(() => {
-    loadPetition();
-  }, [loadPetition]);
+    const unsubscribe = listenToPetition(
+      id,
+      (data) => {
+        if (!data) {
+          setError('Peticao nao encontrada.');
+          toast('Peticao nao encontrada.', 'error');
+        } else {
+          setPetition(data);
+          setError(null);
+        }
+        setLoading(false);
+      },
+      () => {
+        setError('Nao foi possivel carregar a peticao.');
+        setLoading(false);
+      },
+    );
+
+    return () => unsubscribe();
+  }, [params.id, toast]);
 
   const handleShare = async () => {
     try {
@@ -56,7 +63,18 @@ export default function PetitionDetailPage() {
     );
   }
 
-  if (!petition) return null;
+  if (!petition) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+        <FileQuestion className="h-12 w-12 text-text-muted" />
+        <h2 className="text-xl font-semibold text-text-main">Peticao nao encontrada</h2>
+        <p className="text-sm font-medium text-text-muted">{error || 'Verifique o link e tente novamente.'}</p>
+        <Link href="/peticoes" className="text-sm font-bold text-primary hover:underline">
+          Voltar para peticoes
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="page-shell">
@@ -123,7 +141,7 @@ export default function PetitionDetailPage() {
               <SignatureButton
                 petitionId={petition.id}
                 petitionTitle={petition.title}
-                onSign={loadPetition}
+                onSign={() => {}}
                 className="w-full"
               />
             </div>

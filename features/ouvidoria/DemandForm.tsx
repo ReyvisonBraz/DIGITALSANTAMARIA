@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CheckCircle2, Loader2, Send } from 'lucide-react';
-import { createDemand } from '@/services/demands.service';
+import { createDemand, waitForDemandProtocol } from '@/services/demands.service';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
 import type { DemandCategory, DemandType } from '@/types';
@@ -41,6 +41,56 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
     isAnonymous: false,
     consent: false,
   });
+  const pendingSubmit = useRef(false);
+  const protocolUnsubscribe = useRef<(() => void) | null>(null);
+
+  // Re-submete apos login (M2 fix)
+  useEffect(() => {
+    if (user && pendingSubmit.current) {
+      pendingSubmit.current = false;
+      submitDemand();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  // Cleanup do listener de protocolo ao desmontar
+  useEffect(() => {
+    return () => {
+      if (protocolUnsubscribe.current) {
+        protocolUnsubscribe.current();
+      }
+    };
+  }, []);
+
+  const submitDemand = async () => {
+    setLoading(true);
+    try {
+      const result = await createDemand({
+        ...formData,
+        subject: formData.subject.trim(),
+        text: formData.text.trim(),
+        authorId: user!.uid,
+        authorName: user!.displayName || user!.email || '',
+      });
+
+      // Aguarda o protocolId real da Cloud Function
+      protocolUnsubscribe.current = waitForDemandProtocol(result.id, (protocolId) => {
+        setLoading(false);
+        onSuccess(protocolId);
+        setFormData({
+          type: 'reclamacao',
+          category: 'outros',
+          subject: '',
+          text: '',
+          isAnonymous: false,
+          consent: false,
+        });
+      });
+    } catch {
+      toast('Nao foi possivel enviar a solicitacao agora.', 'error');
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -56,36 +106,17 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
     }
 
     if (!user) {
+      pendingSubmit.current = true;
       try {
         await login();
       } catch (error) {
+        pendingSubmit.current = false;
         toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
       }
       return;
     }
 
-    setLoading(true);
-    try {
-      const demand = await createDemand({
-        ...formData,
-        subject: formData.subject.trim(),
-        text: formData.text.trim(),
-        authorId: user.uid,
-      });
-      onSuccess(demand.protocolId);
-      setFormData({
-        type: 'reclamacao',
-        category: 'outros',
-        subject: '',
-        text: '',
-        isAnonymous: false,
-        consent: false,
-      });
-    } catch {
-      toast('Nao foi possivel enviar a solicitacao agora.', 'error');
-    } finally {
-      setLoading(false);
-    }
+    submitDemand();
   };
 
   return (
@@ -124,6 +155,7 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
           value={formData.subject}
           onChange={(event) => setFormData({ ...formData, subject: event.target.value })}
           placeholder="Ex: Iluminacao apagada na rua principal"
+          maxLength={200}
           className="h-12 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold text-text-main outline-none transition placeholder:font-medium focus:border-primary"
         />
       </label>
@@ -135,7 +167,8 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
           onChange={(event) => setFormData({ ...formData, text: event.target.value })}
           placeholder="Descreva o que aconteceu, onde aconteceu e qualquer detalhe importante."
           rows={6}
-          className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 text-text-main outline-none transition focus:border-primary"
+          maxLength={4000}
+          className="w-full resize-y rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 text-text-main outline-none transition focus:border-primary min-h-[120px]"
         />
       </label>
 

@@ -1,9 +1,11 @@
 const DIGITS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 function generateCode(length: number): string {
+  const array = new Uint8Array(length);
+  crypto.getRandomValues(array);
   let code = '';
   for (let i = 0; i < length; i++) {
-    code += DIGITS[Math.floor(Math.random() * DIGITS.length)];
+    code += DIGITS[array[i] % DIGITS.length];
   }
   return code;
 }

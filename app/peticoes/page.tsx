@@ -1,35 +1,51 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, FileText, Loader2, Plus, Search, Users } from 'lucide-react';
+import { AlertCircle, ArrowRight, FileText, Loader2, Plus, Search, Users } from 'lucide-react';
 import CreatePetitionModal from '@/components/CreatePetitionModal';
 import SignatureButton from '@/features/peticoes/SignatureButton';
 import SignatureProgress from '@/features/peticoes/SignatureProgress';
 import { useToast } from '@/lib/toast-context';
-import { getActivePetitions } from '@/services/petitions.service';
+import { listenToActivePetitions } from '@/services/petitions.service';
 import type { Petition } from '@/types';
 
 export default function PeticoesPage() {
   const { toast } = useToast();
   const [petitions, setPetitions] = useState<Petition[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-
-  const loadPetitions = useCallback(() => {
-    setLoading(true);
-    getActivePetitions()
-      .then(setPetitions)
-      .catch(() => {
-        toast('Nao foi possivel carregar as peticoes.', 'error');
-      })
-      .finally(() => setLoading(false));
-  }, [toast]);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    loadPetitions();
-  }, [loadPetitions]);
+    setLoading(true);
+    setError(null);
+    const unsubscribe = listenToActivePetitions(
+      (data) => {
+        setPetitions(data);
+        setLoading(false);
+        setError(null);
+      },
+      () => {
+        setError('Nao foi possivel carregar as peticoes.');
+        setLoading(false);
+      },
+    );
+    return () => unsubscribe();
+  }, []);
+
+  const loadPetitions = useCallback(() => {
+    // mantido para compatibilidade com onCreated
+  }, []);
+
+  const handleSearchChange = (value: string) => {
+    setSearchInput(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setQuery(value), 300);
+  };
 
   const filteredPetitions = useMemo(() => {
     const search = query.trim().toLowerCase();
@@ -70,18 +86,25 @@ export default function PeticoesPage() {
         <div className="glass-panel p-4">
           <label className="relative block">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Buscar por titulo, categoria ou descricao"
-              className="h-12 w-full rounded-xl border border-border bg-white/80 pl-10 pr-3 text-sm font-medium text-text-main shadow-inner outline-none transition focus:border-primary"
-            />
+              <input
+                value={searchInput}
+                onChange={(event) => handleSearchChange(event.target.value)}
+                placeholder="Buscar por titulo, categoria ou descricao"
+                aria-label="Buscar peticoes"
+                className="h-12 w-full rounded-xl border border-border bg-white/80 pl-10 pr-3 text-sm font-medium text-text-main shadow-inner outline-none transition focus:border-primary"
+              />
           </label>
         </div>
 
         {loading ? (
           <div className="glass-panel flex min-h-64 items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : error ? (
+          <div className="glass-panel flex min-h-64 flex-col items-center justify-center gap-4 p-8">
+            <AlertCircle className="h-10 w-10 text-red-500" />
+            <h2 className="text-xl font-semibold text-text-main">Erro ao carregar</h2>
+            <p className="text-sm font-medium text-text-muted">{error}</p>
           </div>
         ) : filteredPetitions.length === 0 ? (
           <div className="glass-panel border-dashed p-8 text-center">

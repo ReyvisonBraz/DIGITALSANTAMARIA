@@ -1,19 +1,19 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle2, Clock, Loader2, MessageSquare, Send, ShieldCheck, UserRound } from 'lucide-react';
-import { createDemandMessage, getDemandMessages, markDemandReadByCitizen } from '@/services/demands.service';
+import { createDemandMessage, listenToDemandMessages, markDemandReadByCitizen } from '@/services/demands.service';
 import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
 import type { Demand, DemandMessage } from '@/types';
 
-const roleLabel: Record<DemandMessage['authorRole'], string> = {
+const ROLE_LABEL: Record<DemandMessage['authorRole'], string> = {
   citizen: 'Cidadao',
   staff: 'Prefeitura',
   system: 'Sistema',
 };
 
-const roleIcon = {
+const ROLE_ICON: Record<DemandMessage['authorRole'], typeof UserRound> = {
   citizen: UserRound,
   staff: ShieldCheck,
   system: CheckCircle2,
@@ -46,41 +46,62 @@ export default function DemandTimeline({
   const [submitting, setSubmitting] = useState(false);
   const [reply, setReply] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [refreshTick, setRefreshTick] = useState(0);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const firstLoadRef = useRef(true);
 
+  // B2: Listener em tempo real
   useEffect(() => {
-    let mounted = true;
+    setLoading(true);
+    setError(null);
 
-    async function loadMessages() {
-      setLoading(true);
-      setError(null);
-      try {
-        const items = await getDemandMessages(demand.id);
-        if (mounted) setMessages(items);
-      } catch {
-        if (mounted) setError('Nao foi possivel carregar a conversa deste protocolo.');
-      } finally {
-        if (mounted) setLoading(false);
-      }
+    const unsubscribe = listenToDemandMessages(
+      demand.id,
+      (items) => {
+        setMessages(items);
+        setLoading(false);
+        setError(null);
+      },
+      () => {
+        setError('Nao foi possivel carregar a conversa deste protocolo.');
+        setLoading(false);
+      },
+    );
+
+    return () => unsubscribe();
+  }, [demand.id]);
+
+  // Auto-scroll para ultima mensagem
+  useEffect(() => {
+    if (messages.length > 0) {
+      bottomRef.current?.scrollIntoView({ behavior: firstLoadRef.current ? 'auto' : 'smooth' });
+      firstLoadRef.current = false;
     }
+  }, [messages.length]);
 
-    loadMessages();
-
-    return () => {
-      mounted = false;
-    };
-  }, [demand.id, demand.updatedAt, refreshTick]);
-
+  // Marcar como lido
   useEffect(() => {
-    if (!allowCitizenReply || demand.isAnonymous || currentUserId !== demand.authorId || !demand.conversation?.unreadByCitizen) {
+    if (
+      !allowCitizenReply ||
+      demand.isAnonymous ||
+      currentUserId !== demand.authorId ||
+      !demand.conversation?.unreadByCitizen
+    ) {
       return;
     }
 
     markDemandReadByCitizen(demand.id).catch(() => {
-      // A leitura visual da conversa nao deve falhar se a marcacao de lido nao sincronizar.
+      // silencioso — nao deve bloquear a UI
     });
-  }, [allowCitizenReply, currentUserId, demand.authorId, demand.conversation?.unreadByCitizen, demand.id, demand.isAnonymous]);
+  }, [
+    allowCitizenReply,
+    currentUserId,
+    demand.authorId,
+    demand.conversation?.unreadByCitizen,
+    demand.id,
+    demand.isAnonymous,
+  ]);
 
+  // Timeline: mensagem inicial + mensagens reais + resposta legada
   const timeline = useMemo(() => {
     const base: TimelineMessage[] = [
       {
@@ -93,10 +114,17 @@ export default function DemandTimeline({
       ...messages,
     ];
 
-    const hasLegacyResponse = demand.adminAction?.response?.trim()
-      && !messages.some((message) => message.authorRole === 'staff' && message.message === demand.adminAction?.response);
+    const legacyResponse = demand.adminAction?.response?.trim();
+    // M7 fix: comparacao com trim() em ambos os lados
+    const alreadyInMessages = legacyResponse
+      ? messages.some(
+          (m) =>
+            m.authorRole === 'staff' &&
+            m.message.trim() === legacyResponse,
+        )
+      : true;
 
-    if (hasLegacyResponse && demand.adminAction) {
+    if (legacyResponse && !alreadyInMessages && demand.adminAction) {
       base.push({
         id: `legacy-response-${demand.id}`,
         authorName: demand.adminAction.clerkName,
@@ -107,9 +135,11 @@ export default function DemandTimeline({
     }
 
     return base;
-  }, [demand, messages]);
+  }, [demand.id, demand.authorName, demand.isAnonymous, demand.content.text, demand.createdAt, demand.adminAction, demand.updatedAt, messages]);
 
-  const canReply = allowCitizenReply && !demand.isAnonymous && currentUserId === demand.authorId;
+  // M9 fix: bloquear resposta em demandas resolvidas/rejeitadas
+  const isClosed = demand.status === 'solved' || demand.status === 'rejected';
+  const canReply = allowCitizenReply && !demand.isAnonymous && currentUserId === demand.authorId && !isClosed;
 
   const handleReply = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -126,7 +156,6 @@ export default function DemandTimeline({
         message,
       });
       setReply('');
-      setRefreshTick((current) => current + 1);
       toast('Resposta enviada para a conversa.', 'success');
     } catch {
       toast('Nao foi possivel enviar a resposta.', 'error');
@@ -152,9 +181,9 @@ export default function DemandTimeline({
         </div>
       )}
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-4 space-y-3" role="log" aria-live="polite" aria-label="Conversa do protocolo">
         {timeline.map((message) => {
-          const Icon = roleIcon[message.authorRole];
+          const Icon = ROLE_ICON[message.authorRole];
           const isStaff = message.authorRole === 'staff';
 
           return (
@@ -176,9 +205,9 @@ export default function DemandTimeline({
                     <Icon className="h-4 w-4" />
                   </span>
                   <div>
-                    <p className="text-sm font-black text-text-main">{message.authorName || roleLabel[message.authorRole]}</p>
+                    <p className="text-sm font-black text-text-main">{message.authorName || ROLE_LABEL[message.authorRole]}</p>
                     <p className="text-[10px] font-black uppercase tracking-widest text-text-muted">
-                      {roleLabel[message.authorRole]}
+                      {ROLE_LABEL[message.authorRole]}
                     </p>
                   </div>
                 </div>
@@ -191,6 +220,7 @@ export default function DemandTimeline({
             </article>
           );
         })}
+        <div ref={bottomRef} />
       </div>
 
       {canReply && (
@@ -203,6 +233,7 @@ export default function DemandTimeline({
               rows={3}
               maxLength={800}
               placeholder="Escreva uma nova informacao ou resposta sobre este protocolo"
+              aria-label="Mensagem de resposta ao protocolo"
               className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 text-text-main outline-none transition focus:border-primary"
             />
           </label>
