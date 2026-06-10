@@ -209,7 +209,10 @@ service cloud.firestore {
     }
 
     match /admins/{uid} {
-      allow read: if isStaff();
+      // Cidadão precisa poder ler seu próprio doc para descobrir se é staff.
+      // Se o doc não existir, o cliente trata como 'citizen'.
+      allow get: if isOwner(uid) || isStaff();
+      allow list: if isStaff();
       allow create, update, delete: if isAdmin();
     }
 
@@ -318,7 +321,8 @@ service cloud.firestore {
     }
 
     match /notifications/{notificationId} {
-      allow read: if isOwner(resource.data.recipientId);
+      allow get: if isOwner(resource.data.recipientId);
+      allow list: if isSignedIn();
       allow create: if isStaff();
       allow update: if isOwner(resource.data.recipientId)
         && incoming().diff(existing()).affectedKeys().hasOnly(['read'])
