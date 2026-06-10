@@ -16,7 +16,9 @@
     "firebase:functions:build": "npm --prefix functions run build",
     "firebase:functions:deploy": "firebase deploy --only functions --project digitalsantamaria-2ced4",
     "firebase:seed": "ts-node scripts/seed.ts",
-    "emulators": "firebase emulators:start --only firestore,auth,functions,storage"
+    "emulators": "firebase emulators:start --only firestore,auth,functions,storage",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -35,6 +37,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.4",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
@@ -43,9 +46,11 @@
     "eslint-config-next": "^16.0.0",
     "firebase-admin": "^12.7.0",
     "firebase-tools": "^15.19.1",
+    "jest": "^30.4.2",
     "playwright": "^1.60.0",
     "postcss": "^8.5.10",
     "tailwindcss": "^4.2.4",
+    "ts-jest": "^29.4.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.0.0"
   }
