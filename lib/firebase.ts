@@ -2,55 +2,40 @@
  * @module firebase
  * @description Inicializacao centralizada do Firebase.
  *
- * Configuracao carregada por prioridade:
- * 1. NEXT_PUBLIC_FIREBASE_* (Vercel/producao) — acesso estatico para inline no client bundle
- * 2. firebase-applet-config.json (dev local — import ESM estatico)
+ * Configuracao exclusiva via NEXT_PUBLIC_FIREBASE_* (env vars).
+ * Next.js faz inline automatico de process.env.NEXT_PUBLIC_* no client bundle.
  */
 
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
-import firebaseConfig from '../firebase-applet-config.json';
 import { createLogger } from './logger';
 
 const firebaseLogger = createLogger('Firebase');
 
-function buildConfig(): { config: Record<string, string>; databaseId: string } {
-  const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
-  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-  const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
+const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
 
-  if (apiKey && projectId && appId) {
-    const config: Record<string, string> = { projectId, appId, apiKey };
-    const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
-    const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
-    const senderId = process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID;
-    const measurementId = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
-    if (authDomain) config.authDomain = authDomain;
-    if (storageBucket) config.storageBucket = storageBucket;
-    if (senderId) config.messagingSenderId = senderId;
-    if (measurementId) config.measurementId = measurementId;
-
-    return {
-      config,
-      databaseId: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID || '(default)',
-    };
-  }
-
-  if (firebaseConfig?.projectId && firebaseConfig?.appId) {
-    return {
-      config: firebaseConfig as unknown as Record<string, string>,
-      databaseId: (firebaseConfig as Record<string, unknown>).firestoreDatabaseId as string || '(default)',
-    };
-  }
-
+if (!apiKey || !projectId || !appId) {
   throw new Error(
-    'Firebase nao configurado. Defina NEXT_PUBLIC_FIREBASE_* nas variaveis de ambiente ou forneça firebase-applet-config.json.'
+    'Firebase nao configurado. Defina NEXT_PUBLIC_FIREBASE_API_KEY, NEXT_PUBLIC_FIREBASE_PROJECT_ID e NEXT_PUBLIC_FIREBASE_APP_ID nas variaveis de ambiente (.env.local ou Vercel dashboard).'
   );
 }
 
-const { config, databaseId } = buildConfig();
+const config: Record<string, string> = { projectId, appId, apiKey };
+
+const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+const senderId = process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID;
+const measurementId = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
+if (authDomain) config.authDomain = authDomain;
+if (storageBucket) config.storageBucket = storageBucket;
+if (senderId) config.messagingSenderId = senderId;
+if (measurementId) config.measurementId = measurementId;
+
+const databaseId = process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID || '(default)';
 
 const app: FirebaseApp = getApps().length === 0 ? initializeApp(config) : getApps()[0];
 const auth: Auth = getAuth(app);
