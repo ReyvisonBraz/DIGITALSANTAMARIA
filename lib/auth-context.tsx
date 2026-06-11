@@ -165,7 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(message);
       }
       if (err.code === 'auth/unauthorized-domain') {
-        const message = 'Dominio local nao autorizado no Firebase. Adicione localhost em Authentication > Settings > Authorized domains.';
+        const message = 'Dominio nao autorizado no Firebase. Adicione este dominio em Authentication > Settings > Authorized domains.';
         setAuthError(message);
         authLogger.error('Unauthorized OAuth domain', {});
         throw new Error(message);
