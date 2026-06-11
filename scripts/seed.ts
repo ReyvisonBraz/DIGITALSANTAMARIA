@@ -29,11 +29,11 @@ const rootDir = join(currentDir, '..');
 // Auto-detect service account key file
 const files = readdirSync(rootDir);
 const saFile = files.find(
-  (f) => f.startsWith('digitalsantamaria') && f.endsWith('.json') && f.includes('adminsdk')
+  (f) => f.startsWith('conectasantamaria') && f.endsWith('.json') && f.includes('adminsdk')
 );
 if (!saFile) {
   console.error('❌ Service account key não encontrada na raiz do projeto.');
-  console.error('   Baixe-a em: https://console.firebase.google.com/project/digitalsantamaria-2ced4/settings/serviceaccounts/adminsdk');
+  console.error('   Baixe-a em: https://console.firebase.google.com/project/conectasantamaria-pa/settings/serviceaccounts/adminsdk');
   process.exit(1);
 }
 
