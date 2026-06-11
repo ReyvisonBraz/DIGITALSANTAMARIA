@@ -3,92 +3,63 @@
  * @description Inicializacao centralizada do Firebase.
  *
  * Configuracao carregada por prioridade:
- * 1. NEXT_PUBLIC_FIREBASE_* (Vercel/producao)
- * 2. firebase-applet-config.json (dev local)
+ * 1. NEXT_PUBLIC_FIREBASE_* (Vercel/producao) — acesso estatico para inline no client bundle
+ * 2. firebase-applet-config.json (dev local — import ESM estatico)
  */
 
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
+import firebaseConfig from '../firebase-applet-config.json';
 import { createLogger } from './logger';
 
 const firebaseLogger = createLogger('Firebase');
 
-let _app: FirebaseApp | null = null;
-let _auth: Auth | null = null;
-let _db: Firestore | null = null;
-let _functions: Functions | null = null;
-let _initialized = false;
-let _initError: Error | null = null;
+function buildConfig(): { config: Record<string, string>; databaseId: string } {
+  const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+  const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
 
-function readEnvConfig(): { config: Record<string, string>; databaseId: string } | null {
-  const env = (typeof process !== 'undefined' ? process.env : {}) as Record<string, string | undefined>;
-  const projectId = env['NEXT_PUBLIC_FIREBASE_PROJECT_ID'];
-  const appId = env['NEXT_PUBLIC_FIREBASE_APP_ID'];
-  const apiKey = env['NEXT_PUBLIC_FIREBASE_API_KEY'];
-  if (!apiKey || !projectId || !appId) return null;
+  if (apiKey && projectId && appId) {
+    const config: Record<string, string> = { projectId, appId, apiKey };
+    const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+    const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+    const senderId = process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID;
+    const measurementId = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
+    if (authDomain) config.authDomain = authDomain;
+    if (storageBucket) config.storageBucket = storageBucket;
+    if (senderId) config.messagingSenderId = senderId;
+    if (measurementId) config.measurementId = measurementId;
 
-  const config: Record<string, string> = { projectId, appId, apiKey };
-  const authDomain = env['NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN'];
-  const storageBucket = env['NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET'];
-  const senderId = env['NEXT_PUBLIC_FIREBASE_SENDER_ID'];
-  const measurementId = env['NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID'];
-  if (authDomain) config.authDomain = authDomain;
-  if (storageBucket) config.storageBucket = storageBucket;
-  if (senderId) config.messagingSenderId = senderId;
-  if (measurementId) config.measurementId = measurementId;
-
-  return {
-    config,
-    databaseId: env['NEXT_PUBLIC_FIREBASE_DATABASE_ID'] || '(default)',
-  };
-}
-
-function initFromConfig(config: Record<string, string>, databaseId: string) {
-  _app = getApps().length === 0 ? initializeApp(config) : getApps()[0];
-  _auth = getAuth(_app);
-  _db = getFirestore(_app, databaseId);
-  _functions = getFunctions(_app, 'us-central1');
-  _initialized = true;
-  firebaseLogger.info('Firebase initialized', { projectId: config.projectId, databaseId });
-}
-
-// Inicializacao sincrona (env vars ou arquivo local)
-function tryInitSync() {
-  const envResult = readEnvConfig();
-  if (envResult) {
-    initFromConfig(envResult.config, envResult.databaseId);
-    return;
+    return {
+      config,
+      databaseId: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_ID || '(default)',
+    };
   }
 
-  // Fallback: arquivo JSON local (import estatico — Next.js empacota no build)
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const json = require('../firebase-applet-config.json');
-    if (json?.projectId && json?.appId) {
-      initFromConfig(json, json.firestoreDatabaseId || '(default)');
-      return;
-    }
-  } catch {
-    // Arquivo nao existe — esperado em producao sem env vars
+  if (firebaseConfig?.projectId && firebaseConfig?.appId) {
+    return {
+      config: firebaseConfig as unknown as Record<string, string>,
+      databaseId: (firebaseConfig as Record<string, unknown>).firestoreDatabaseId as string || '(default)',
+    };
   }
 
-  _initError = new Error(
-    'Firebase nao configurado. Defina NEXT_PUBLIC_FIREBASE_* nas variaveis de ambiente.'
+  throw new Error(
+    'Firebase nao configurado. Defina NEXT_PUBLIC_FIREBASE_* nas variaveis de ambiente ou forneça firebase-applet-config.json.'
   );
 }
 
-tryInitSync();
+const { config, databaseId } = buildConfig();
 
-if (!_initialized) {
-  throw _initError || new Error('Firebase nao inicializado.');
-}
+const app: FirebaseApp = getApps().length === 0 ? initializeApp(config) : getApps()[0];
+const auth: Auth = getAuth(app);
+const db: Firestore = getFirestore(app, databaseId);
+const functions: Functions = getFunctions(app, 'us-central1');
 
-export const app: FirebaseApp = _app!;
-export const auth: Auth = _auth!;
-export const db: Firestore = _db!;
-export const functions: Functions = _functions!;
+firebaseLogger.info('Firebase initialized', { projectId: config.projectId, databaseId });
+
+export { app, auth, db, functions };
 
 export class FirestoreError extends Error {
   public operationType: string;
