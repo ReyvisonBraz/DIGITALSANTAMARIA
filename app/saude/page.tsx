@@ -426,10 +426,10 @@ export default function SaudePage() {
 
          <div className="absolute bottom-8 right-8 flex flex-col gap-3 z-10">
             <div className="bg-white rounded-2xl border-2 border-border shadow-2xl flex flex-col overflow-hidden text-sky-500">
-               <button className="p-4 hover:bg-sky-50 border-b-2 border-border transition-colors"><Plus className="w-6 h-6" /></button>
-               <button className="p-4 hover:bg-sky-50 transition-colors"><ChevronRight className="w-6 h-6 rotate-90" /></button>
+               <button aria-label="Ampliar mapa" className="p-4 hover:bg-sky-50 border-b-2 border-border transition-colors"><Plus className="w-6 h-6" /></button>
+               <button aria-label="Reduzir mapa" className="p-4 hover:bg-sky-50 transition-colors"><ChevronRight className="w-6 h-6 rotate-90" /></button>
             </div>
-            <button className="p-4 bg-sky-500 text-white rounded-2xl shadow-2xl hover:scale-105 transition-transform active:scale-95">
+            <button aria-label="Acionar emergência" className="p-4 bg-sky-500 text-white rounded-2xl shadow-2xl hover:scale-105 transition-transform active:scale-95">
                <Siren className="w-6 h-6" />
             </button>
          </div>

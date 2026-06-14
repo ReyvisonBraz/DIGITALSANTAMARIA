@@ -102,6 +102,7 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
                 </button>
                 <button
                   onClick={handleDismiss}
+                  aria-label="Fechar aviso"
                   className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/50 hover:text-white"
                   title="Fechar"
                 >

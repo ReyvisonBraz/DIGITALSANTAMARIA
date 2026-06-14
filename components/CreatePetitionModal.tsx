@@ -252,6 +252,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
               <button
                 type="button"
                 onClick={prevStep}
+                aria-label="Voltar"
                 className="inline-flex min-h-12 w-16 items-center justify-center rounded-xl border border-border bg-surface text-text-muted"
               >
                 <ArrowLeft className="h-5 w-5" />
@@ -291,6 +292,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
               <button
                 type="button"
                 onClick={prevStep}
+                aria-label="Voltar"
                 className="inline-flex min-h-12 w-16 items-center justify-center rounded-xl border border-border bg-surface text-text-muted"
               >
                 <ArrowLeft className="h-5 w-5" />

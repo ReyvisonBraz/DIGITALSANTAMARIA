@@ -51,6 +51,7 @@ export default function SidePanel({ isOpen, onClose, title, children, className 
                 {/* Mobile back button feels more native than an X on the right sometimes, but we keep X for consistency */}
                 <button
                   onClick={onClose}
+                  aria-label="Fechar painel"
                   className="p-2 -ml-2 text-text-muted hover:text-text-main hover:bg-surface rounded-full transition-colors md:hidden"
                 >
                   <ArrowLeft className="w-5 h-5" />
@@ -60,7 +61,7 @@ export default function SidePanel({ isOpen, onClose, title, children, className 
               <button
                 onClick={onClose}
                 className="hidden md:flex p-2 -mr-2 text-text-muted hover:text-text-main hover:bg-surface rounded-full transition-colors"
-                aria-label="Sair"
+                aria-label="Fechar painel"
               >
                 <X className="w-6 h-6" />
               </button>

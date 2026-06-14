@@ -376,10 +376,10 @@ function ControlRow({
         <span>{value}</span>
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <button onClick={onDecrease} className="inline-flex h-10 items-center justify-center rounded-xl border border-border bg-surface text-text-main">
+        <button onClick={onDecrease} aria-label="Diminuir tamanho do texto" className="inline-flex h-10 items-center justify-center rounded-xl border border-border bg-surface text-text-main">
           <Minus className="h-4 w-4" />
         </button>
-        <button onClick={onIncrease} className="inline-flex h-10 items-center justify-center rounded-xl border border-border bg-surface text-text-main">
+        <button onClick={onIncrease} aria-label="Aumentar tamanho do texto" className="inline-flex h-10 items-center justify-center rounded-xl border border-border bg-surface text-text-main">
           <Plus className="h-4 w-4" />
         </button>
       </div>

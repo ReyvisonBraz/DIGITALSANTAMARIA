@@ -209,7 +209,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
         ) : step === 2 ? (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
             <div className="mb-2 flex items-center gap-2">
-              <button type="button" onClick={() => setStep(1)} className="rounded-lg p-2 text-text-muted hover:bg-surface">
+              <button type="button" onClick={() => setStep(1)} aria-label="Voltar para escolha de serviço" className="rounded-lg p-2 text-text-muted hover:bg-surface">
                 <ArrowLeft className="h-5 w-5" />
               </button>
               <h4 className="text-xs font-semibold uppercase tracking-widest text-text-muted">Unidade de atendimento</h4>
@@ -253,7 +253,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
         ) : step === 3 ? (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
             <div className="mb-2 flex items-center gap-2">
-              <button type="button" onClick={() => setStep(2)} className="rounded-lg p-2 text-text-muted hover:bg-surface">
+              <button type="button" onClick={() => setStep(2)} aria-label="Voltar para escolha de unidade" className="rounded-lg p-2 text-text-muted hover:bg-surface">
                 <ArrowLeft className="h-5 w-5" />
               </button>
               <h4 className="text-xs font-semibold uppercase tracking-widest text-text-muted">Escolha data e hora</h4>
@@ -302,7 +302,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
         ) : (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
             <div className="mb-2 flex items-center gap-2">
-              <button type="button" onClick={() => setStep(3)} className="rounded-lg p-2 text-text-muted hover:bg-surface">
+              <button type="button" onClick={() => setStep(3)} aria-label="Voltar para escolha de data" className="rounded-lg p-2 text-text-muted hover:bg-surface">
                 <ArrowLeft className="h-5 w-5" />
               </button>
               <h4 className="text-xs font-semibold uppercase tracking-widest text-text-muted">Confirmar agendamento</h4>
