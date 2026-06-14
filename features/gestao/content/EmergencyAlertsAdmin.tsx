@@ -27,7 +27,7 @@ const TYPE_LABEL: Record<EmergencyAlertType, string> = {
   panic: 'Panico',
   violence: 'Violencia',
   fire: 'Incendio',
-  medical: 'Atendimento medico',
+  medical: 'Atendimento médico',
   flood: 'Alagamento',
   other: 'Outro',
 };

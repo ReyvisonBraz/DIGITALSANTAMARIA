@@ -553,7 +553,7 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
                             <div>
                               <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Cidadão</dt>
                               <dd className="mt-1 font-bold text-text-main">
-                                {demand.isAnonymous ? 'Anonimo' : demand.authorName || demand.authorId || 'Identificado'}
+                                {demand.isAnonymous ? 'Anônimo' : demand.authorName || demand.authorId || 'Identificado'}
                               </dd>
                             </div>
                             <div>
@@ -945,7 +945,7 @@ export default function GestãoPage() {
             Painel de <span className="text-gradient">operação</span>
           </h1>
           <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-            Acompanhe solicitações, responda protocolos, gerencie conteudo publico e mantenha os cadastros administrativos em ordem.
+            Acompanhe solicitações, responda protocolos, gerencie conteúdo público e mantenha os cadastros administrativos em ordem.
           </p>
         </div>
       </section>

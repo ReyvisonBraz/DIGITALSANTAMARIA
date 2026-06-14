@@ -52,7 +52,7 @@ export default function OuvidoriaPage() {
               {[
                 {
                   icon: FileText,
-                  text: 'Informe o maximo de detalhes possivel para acelerar o encaminhamento.',
+                  text: 'Informe o máximo de detalhes possível para acelerar o encaminhamento.',
                 },
                 {
                   icon: Phone,
@@ -110,7 +110,7 @@ export default function OuvidoriaPage() {
             <p className="relative z-10 text-xs font-semibold uppercase tracking-widest text-text-muted">Prazo de resposta</p>
             <p className="relative z-10 mt-2 text-3xl font-semibold text-text-main">Ate 20 dias uteis</p>
             <p className="relative z-10 mt-2 text-sm font-medium leading-6 text-text-muted">
-              O prazo pode variar conforme a complexidade e o setor responsavel.
+              O prazo pode variar conforme a complexidade e o setor responsável.
             </p>
           </div>
           <div className="rounded-[1.25rem] bg-gradient-to-br from-text-main to-primary-dark p-5 text-white shadow-[0_18px_48px_rgba(15,23,42,0.16)]">

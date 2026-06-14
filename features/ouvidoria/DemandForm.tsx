@@ -202,7 +202,7 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
         <div className="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-blue-800">
           <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
           <p className="text-sm font-medium leading-6">
-            Para protocolar, entre com sua conta Google. Se marcar anonimo, seus dados nao aparecerao no atendimento.
+            Para protocolar, entre com sua conta Google. Se marcar anônimo, seus dados não aparecerão no atendimento.
           </p>
         </div>
       )}

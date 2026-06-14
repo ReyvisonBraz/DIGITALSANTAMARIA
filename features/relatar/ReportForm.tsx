@@ -158,7 +158,7 @@ export default function ReportForm() {
               {createdProtocol}
             </p>
             <p className="mt-2 text-xs font-medium leading-5 text-green-900/80">
-              A equipe responsavel recebeu o aviso. Voce acompanha a resposta no seu painel.
+              A equipe responsável recebeu o aviso. Você acompanha a resposta no seu painel.
             </p>
           </div>
         </div>

@@ -25,7 +25,7 @@ import { createEnrollment } from '@/services/educacao.service';
 import { cn } from '@/lib/utils';
 
 const steps = [
-  { id: 1, title: 'Responsavel', icon: User },
+  { id: 1, title: 'Responsável', icon: User },
   { id: 2, title: 'Aluno(a)', icon: FileText },
   { id: 3, title: 'Endereco', icon: Home },
   { id: 4, title: 'Unidade', icon: School },
@@ -203,7 +203,7 @@ export default function MatriculaPage() {
             className="flex-grow space-y-8"
           >
             {currentStep === 1 && (
-              <FormStep title="Dados do responsavel">
+              <FormStep title="Dados do responsável">
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <TextField
                     label="Nome completo"
@@ -212,7 +212,7 @@ export default function MatriculaPage() {
                     onChange={(value) => updateField('parentName', value)}
                   />
                   <TextField
-                    label="CPF do responsavel"
+                    label="CPF do responsável"
                     placeholder="000.000.000-00"
                     value={formData.parentCpf}
                     onChange={(value) => updateField('parentCpf', value)}
@@ -335,7 +335,7 @@ export default function MatriculaPage() {
                 </>
               ) : (
                 <>
-                  Proximo passo
+                  Próximo passo
                   <ChevronRight className="h-4 w-4" />
                 </>
               )}
@@ -396,7 +396,7 @@ function ReviewView({ formData }: { formData: FormData }) {
         </p>
       </div>
       <div className="space-y-2 rounded-3xl border-2 border-dashed border-border bg-surface p-4 text-left">
-        <ReviewRow label="Responsavel" value={formData.parentName} />
+        <ReviewRow label="Responsável" value={formData.parentName} />
         <ReviewRow label="Aluno(a)" value={formData.studentName} />
         <ReviewRow label="Nascimento" value={formData.studentBirth} />
         <ReviewRow label="Escola" value={formData.schoolPreference} />

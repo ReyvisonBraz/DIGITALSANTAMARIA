@@ -100,7 +100,7 @@ export default function SegurancaPage() {
               <option value="panic">Panico</option>
               <option value="violence">Violencia</option>
               <option value="fire">Incendio</option>
-              <option value="medical">Atendimento medico</option>
+              <option value="medical">Atendimento médico</option>
               <option value="flood">Alagamento</option>
               <option value="other">Outro</option>
             </select>
@@ -124,7 +124,7 @@ export default function SegurancaPage() {
               onChange={(event) => setDescription(event.target.value)}
               rows={3}
               maxLength={2000}
-              placeholder="Descreva o que esta acontecendo"
+              placeholder="Descreva o que está acontecendo"
               className="w-full resize-none rounded-xl border border-red-200 bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-red-600"
             />
           </label>

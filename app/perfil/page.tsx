@@ -325,7 +325,7 @@ export default function PerfilPage() {
             <FileText className="h-6 w-6 text-primary-light" />
             <h2 className="mt-3 text-lg font-semibold tracking-normal">Como usar o painel</h2>
             <p className="mt-2 text-sm font-medium leading-6 text-white/70">
-              Solicitações abertas com login aparecem aqui automaticamente. Solicitações anônimas podem ser acompanhadas pelo numero de protocolo.
+              Solicitações abertas com login aparecem aqui automaticamente. Solicitações anônimas podem ser acompanhadas pelo número de protocolo.
             </p>
           </div>
         </aside>

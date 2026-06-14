@@ -119,7 +119,7 @@ export default function VotosPage() {
                     Participação aberta
                   </span>
                 ) : (
-                  <span>Periodo encerrado</span>
+                  <span>Período encerrado</span>
                 )}
               </div>
             </article>
