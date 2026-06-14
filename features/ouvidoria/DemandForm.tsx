@@ -20,9 +20,9 @@ const demandTypes: { label: string; value: DemandType }[] = [
 
 const categories: { label: string; value: DemandCategory }[] = [
   { label: 'Infraestrutura', value: 'infraestrutura' },
-  { label: 'Saude', value: 'saude' },
-  { label: 'Educacao', value: 'educacao' },
-  { label: 'Seguranca', value: 'seguranca' },
+  { label: 'Saúde', value: 'saude' },
+  { label: 'Educação', value: 'educacao' },
+  { label: 'Segurança', value: 'seguranca' },
   { label: 'Meio ambiente', value: 'meio_ambiente' },
   { label: 'Transporte', value: 'transporte' },
   { label: 'Tributos', value: 'tributos' },

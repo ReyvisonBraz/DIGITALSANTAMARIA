@@ -8,9 +8,9 @@ import type { Business } from '@/types';
 
 const CATEGORY_LABEL: Record<Business['category'], string> = {
   restaurante: 'Restaurante',
-  farmacia: 'Farmacia',
+  farmacia: 'Farmácia',
   mercado: 'Mercado',
-  servico: 'Servico',
+  servico: 'Serviço',
   loja: 'Loja',
   outros: 'Outros',
 };

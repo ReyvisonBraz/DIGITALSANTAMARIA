@@ -324,7 +324,7 @@ export default function TrafficAdmin() {
       <ConfirmDialog
         isOpen={!!archiveId}
         title="Encerrar alerta"
-        description="Este alerta deixa de aparecer na pagina publica, mas o registro continua salvo no Firebase."
+        description="Este alerta deixa de aparecer na página pública, mas o registro continua salvo no Firebase."
         confirmLabel="Encerrar"
         loading={archiving}
         tone="danger"

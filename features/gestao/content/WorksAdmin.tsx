@@ -424,7 +424,7 @@ export default function WorksAdmin() {
       <ConfirmDialog
         isOpen={!!archiveId}
         title="Arquivar obra"
-        description="Esta obra deixa de aparecer na pagina publica, mas o registro continua salvo no Firebase."
+        description="Esta obra deixa de aparecer na página pública, mas o registro continua salvo no Firebase."
         confirmLabel="Arquivar"
         loading={archiving}
         tone="danger"

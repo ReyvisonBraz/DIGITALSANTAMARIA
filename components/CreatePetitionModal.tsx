@@ -30,7 +30,7 @@ interface CreatePetitionModalProps {
   onCreated?: () => void;
 }
 
-const categories = ['Infraestrutura', 'Seguranca', 'Cultura', 'Saude', 'Meio Ambiente'];
+const categories = ['Infraestrutura', 'Segurança', 'Cultura', 'Saúde', 'Meio Ambiente'];
 const MAX_TITLE = 120;
 const MAX_DESC = 5000;
 const MAX_COVER_SIZE = 5 * 1024 * 1024;

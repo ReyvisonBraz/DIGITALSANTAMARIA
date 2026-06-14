@@ -27,7 +27,7 @@ import type { Business, ContentStatus } from '@/types';
 
 const CATEGORIES: { value: Business['category']; label: string }[] = [
   { value: 'restaurante', label: 'Restaurante' },
-  { value: 'farmacia', label: 'Farmacia' },
+  { value: 'farmacia', label: 'Farmácia' },
   { value: 'mercado', label: 'Mercado' },
   { value: 'servico', label: 'Servico' },
   { value: 'loja', label: 'Loja' },

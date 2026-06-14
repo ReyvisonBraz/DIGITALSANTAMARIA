@@ -123,7 +123,7 @@ export default function EmergencyAlertsAdmin() {
             <Siren className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-red-600">Seguranca publica</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-red-600">Segurança pública</p>
             <h2 className="text-xl font-semibold tracking-normal text-text-main">Alertas emergenciais</h2>
             <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
               Acompanhe ocorrências urgentes enviadas pelos cidadãos.

@@ -129,7 +129,7 @@ const reportStatusLabel: Record<ReportStatus, string> = {
 const reportTypeLabel: Record<ReportType, string> = {
   infrastructure: 'Infraestrutura',
   environment: 'Meio ambiente',
-  security: 'Seguranca',
+  security: 'Segurança',
   other: 'Outro',
 };
 
@@ -495,7 +495,7 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
                       </p>
                       {demand.conversation?.lastMessageAuthorRole === 'citizen' && demand.conversation.lastMessageAuthorName && (
                         <p className="mt-2 text-xs font-bold text-text-muted">
-                          Ultima mensagem de {demand.conversation.lastMessageAuthorName}
+                          Última mensagem de {demand.conversation.lastMessageAuthorName}
                           {demand.conversation.lastMessageAt ? ` em ${formatDate(demand.conversation.lastMessageAt)}` : ''}
                         </p>
                       )}
@@ -720,7 +720,7 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
       ) : error ? (
         <EmptyState title="Erro ao carregar" description={error} />
       ) : reports.length === 0 ? (
-        <EmptyState title="Nenhum relato ainda" description="Quando alguem enviar um relato pela pagina /relatar, ele aparece aqui." />
+        <EmptyState title="Nenhum relato ainda" description="Quando alguém enviar um relato pela página /relatar, ele aparece aqui." />
       ) : filteredReports.length === 0 ? (
         <EmptyState title="Nada encontrado" description="Tente limpar os filtros ou buscar outro termo." />
       ) : (
@@ -771,7 +771,7 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
                     )}
                     {report.conversation?.lastMessageAuthorRole === 'citizen' && report.conversation.lastMessageAuthorName && (
                       <p className="mt-2 text-xs font-bold text-text-muted">
-                        Ultima mensagem de {report.conversation.lastMessageAuthorName}
+                        Última mensagem de {report.conversation.lastMessageAuthorName}
                         {report.conversation.lastMessageAt ? ` em ${formatDate(report.conversation.lastMessageAt)}` : ''}
                       </p>
                     )}

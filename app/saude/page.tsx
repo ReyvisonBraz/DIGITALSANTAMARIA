@@ -56,7 +56,7 @@ const fallbackMedicines: PharmacyDisplayItem[] = [
     unit: 'unidades',
     quantity: 12,
     stockStatus: 'available',
-    location: 'Farmacia Municipal',
+    location: 'Farmácia Municipal',
     requiresPrescription: true,
   },
   {
@@ -66,7 +66,7 @@ const fallbackMedicines: PharmacyDisplayItem[] = [
     unit: 'unidades',
     quantity: 0,
     stockStatus: 'unavailable',
-    location: 'Farmacia Municipal',
+    location: 'Farmácia Municipal',
     requiresPrescription: false,
   },
   {
@@ -76,7 +76,7 @@ const fallbackMedicines: PharmacyDisplayItem[] = [
     unit: 'unidades',
     quantity: 540,
     stockStatus: 'available',
-    location: 'Farmacia Municipal',
+    location: 'Farmácia Municipal',
     requiresPrescription: true,
   },
 ];

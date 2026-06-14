@@ -11,7 +11,7 @@ import type { Business } from '@/types';
 const CATEGORIES: { value: Business['category'] | 'all'; label: string }[] = [
   { value: 'all', label: 'Todos' },
   { value: 'restaurante', label: 'Restaurantes' },
-  { value: 'farmacia', label: 'Farmacias' },
+  { value: 'farmacia', label: 'Farmácias' },
   { value: 'mercado', label: 'Mercados' },
   { value: 'servico', label: 'Serviços' },
   { value: 'loja', label: 'Lojas' },

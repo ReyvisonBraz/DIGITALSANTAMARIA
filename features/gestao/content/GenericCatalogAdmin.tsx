@@ -378,7 +378,7 @@ export default function GenericCatalogAdmin({ config }: { config: CatalogAdminCo
       <ConfirmDialog
         isOpen={!!archiveId}
         title="Arquivar item"
-        description="Este item deixa de aparecer na pagina publica, mas o registro continua salvo no Firebase."
+        description="Este item deixa de aparecer na página pública, mas o registro continua salvo no Firebase."
         confirmLabel="Arquivar"
         loading={archiving}
         tone="danger"

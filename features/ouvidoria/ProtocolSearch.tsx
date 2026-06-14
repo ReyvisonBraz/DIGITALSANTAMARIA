@@ -55,7 +55,7 @@ export default function ProtocolSearch() {
     <div className="space-y-5">
       <form onSubmit={handleSearch} className="civic-card p-4 md:p-6">
         <label className="block space-y-2">
-          <span className="text-xs font-black uppercase tracking-widest text-text-muted">Numero do protocolo</span>
+          <span className="text-xs font-black uppercase tracking-widest text-text-muted">Número do protocolo</span>
           <div className="flex flex-col gap-3 sm:flex-row">
             <input
               value={protocolId}

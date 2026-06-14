@@ -25,9 +25,9 @@ import type { GeoLocation, ReportType } from '@/types';
 const log = createLogger('ReportForm');
 
 const REPORT_TYPES: { value: ReportType; label: string; hint: string; icon: LucideIcon }[] = [
-  { value: 'infrastructure', label: 'Infraestrutura', hint: 'Buracos, iluminacao, calcadas', icon: HardHat },
-  { value: 'environment', label: 'Meio ambiente', hint: 'Lixo, descarte, areas verdes', icon: Leaf },
-  { value: 'security', label: 'Seguranca', hint: 'Riscos, pontos perigosos', icon: Shield },
+  { value: 'infrastructure', label: 'Infraestrutura', hint: 'Buracos, iluminação, calçadas', icon: HardHat },
+  { value: 'environment', label: 'Meio ambiente', hint: 'Lixo, descarte, áreas verdes', icon: Leaf },
+  { value: 'security', label: 'Segurança', hint: 'Riscos, pontos perigosos', icon: Shield },
   { value: 'other', label: 'Outro', hint: 'Qualquer outra ocorrência', icon: MoreHorizontal },
 ];
 

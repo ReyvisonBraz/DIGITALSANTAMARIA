@@ -287,7 +287,7 @@ export default function AdminOverview({
               </p>
             </div>
             <div className="civic-card p-5">
-              <p className="text-xs font-semibold uppercase tracking-widest text-primary">Seguranca</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary">Segurança</p>
               <h3 className="mt-2 text-lg font-semibold text-text-main">Registrar ações</h3>
               <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
                 Ações sensíveis devem ficar documentadas em auditoria administrativa.

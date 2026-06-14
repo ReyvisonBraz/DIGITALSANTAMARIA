@@ -11,7 +11,7 @@ const TYPES: { value: HealthUnitType; label: string }[] = [
   { value: 'upa', label: 'UPA' },
   { value: 'clinica', label: 'Clinica' },
   { value: 'hospital', label: 'Hospital' },
-  { value: 'farmacia', label: 'Farmacia' },
+  { value: 'farmacia', label: 'Farmácia' },
   { value: 'cras', label: 'CRAS' },
 ];
 
@@ -142,7 +142,7 @@ export default function HealthUnitsAdmin() {
               {editingId ? 'Editar unidade' : 'Cadastrar unidade'}
             </h2>
             <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
-              Alimenta a pagina <code className="font-mono text-xs text-primary">/saude</code> e o fluxo de agendamento.
+              Alimenta a página <code className="font-mono text-xs text-primary">/saude</code> e o fluxo de agendamento.
             </p>
           </div>
         </div>
