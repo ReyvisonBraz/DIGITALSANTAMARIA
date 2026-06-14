@@ -133,7 +133,7 @@ export default function BusinessesAdmin() {
         actorName: user?.displayName || user?.email || 'Gestor',
         previousValue: approvingBusiness.status,
         nextValue: 'published',
-        note: 'Cadastro aprovado pela fila de comercios.',
+        note: 'Cadastro aprovado pela fila de comércios.',
       });
       toast('Cadastro aprovado e publicado.', 'success');
       setApprovingBusiness(null);
@@ -243,7 +243,7 @@ export default function BusinessesAdmin() {
       resetForm();
       load();
     } catch {
-      toast('Erro ao salvar o comercio.', 'error');
+      toast('Erro ao salvar o comércio.', 'error');
     } finally {
       setSaving(false);
     }
@@ -294,10 +294,10 @@ export default function BusinessesAdmin() {
         nextValue: nextStatus,
         note: null,
       });
-      toast('Status do comercio atualizado.', 'success');
+      toast('Status do comércio atualizado.', 'success');
       load();
     } catch {
-      toast('Erro ao atualizar status do comercio.', 'error');
+      toast('Erro ao atualizar status do comércio.', 'error');
     } finally {
       setQuickActionId(null);
     }
@@ -347,10 +347,10 @@ export default function BusinessesAdmin() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Economia local</p>
             <h2 className="text-xl font-semibold tracking-normal text-text-main">
-              {editingId ? 'Editar comercio' : 'Cadastrar comercio'}
+              {editingId ? 'Editar comércio' : 'Cadastrar comércio'}
             </h2>
             <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
-              Aparece em <code className="font-mono text-xs text-primary">/comercio</code> com telefone, WhatsApp e horario.
+              Aparece em <code className="font-mono text-xs text-primary">/comercio</code> com telefone, WhatsApp e horário.
             </p>
           </div>
         </div>
@@ -640,9 +640,9 @@ export default function BusinessesAdmin() {
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
           </div>
         ) : businesses.length === 0 ? (
-          <EmptyState title="Nenhum comercio cadastrado" description="Use o formulario acima para registrar o primeiro." />
+          <EmptyState title="Nenhum comércio cadastrado" description="Use o formulário acima para registrar o primeiro." />
         ) : visibleBusinesses.length === 0 ? (
-          <EmptyState title="Nenhum comercio encontrado" description="Ajuste a busca ou os filtros para ver mais registros." />
+          <EmptyState title="Nenhum comércio encontrado" description="Ajuste a busca ou os filtros para ver mais registros." />
         ) : (
           <div className="space-y-3">
             {visibleBusinesses.map((biz) => (
@@ -711,8 +711,8 @@ export default function BusinessesAdmin() {
 
       <ConfirmDialog
         isOpen={!!approvingBusiness}
-        title="Aprovar comercio"
-        description={approvingBusiness ? `Este cadastro sera publicado em /comercio como "${approvingBusiness.title}". Confirme depois de revisar nome, endereco e contatos.` : ''}
+        title="Aprovar comércio"
+        description={approvingBusiness ? `Este cadastro será publicado em /comercio como "${approvingBusiness.title}". Confirme depois de revisar nome, endereço e contatos.` : ''}
         confirmLabel="Aprovar e publicar"
         loading={!!approvingBusiness && actionId === approvingBusiness.id}
         onConfirm={handleApprove}
@@ -721,8 +721,8 @@ export default function BusinessesAdmin() {
 
       <ConfirmDialog
         isOpen={!!archiveId}
-        title="Arquivar comercio"
-        description="Este comercio deixa de aparecer na pagina publica, mas o registro continua salvo no Firebase."
+        title="Arquivar comércio"
+        description="Este comércio deixa de aparecer na página pública, mas o registro continua salvo no Firebase."
         confirmLabel="Arquivar"
         loading={archiving}
         tone="danger"

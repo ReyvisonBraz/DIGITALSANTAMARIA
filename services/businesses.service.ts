@@ -75,7 +75,7 @@ export async function resubmitOwnedBusiness(
   });
 }
 
-/** Admin aprova um cadastro pendente, deixando visivel em /comercio. */
+/** Admin aprova um cadastro pendente, deixando visível em /comercio. */
 export async function approveBusiness(id: string): Promise<void> {
   const business = await readBusiness(id);
 

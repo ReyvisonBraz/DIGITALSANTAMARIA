@@ -43,11 +43,11 @@ export interface DashboardModule {
 }
 
 export const NAV_LINKS: readonly NavLink[] = [
-  { label: 'Abrir solicitacao', href: '/ouvidoria', icon: MessageSquare, category: 'Atendimento' },
+  { label: 'Abrir solicitação', href: '/ouvidoria', icon: MessageSquare, category: 'Atendimento' },
   { label: 'Relatar problema', href: '/relatar', icon: Megaphone, category: 'Atendimento' },
   { label: 'Consultar protocolo', href: '/perfil', icon: SearchCheck, category: 'Atendimento' },
   { label: 'Peticoes', href: '/peticoes', icon: FileText, category: 'Participacao' },
-  { label: 'Painel do Cidadao', href: '/perfil', icon: UserRound, category: 'Conta' },
+  { label: 'Painel do Cidadão', href: '/perfil', icon: UserRound, category: 'Conta' },
   { label: 'Servicos', href: '/servicos', icon: Grid, category: 'Portal' },
   { label: 'Saude', href: '/saude', icon: Heart, category: 'Servicos' },
   { label: 'Educacao', href: '/educacao', icon: School, category: 'Servicos' },
@@ -74,11 +74,11 @@ export const BOTTOM_NAV_ITEMS: readonly BottomNavItem[] = [
 ] as const;
 
 export const DASHBOARD_MODULES: readonly DashboardModule[] = [
-  { icon: MessageSquare, label: 'Abrir solicitacao', href: '/ouvidoria', color: 'text-primary', bg: 'bg-primary/10' },
+  { icon: MessageSquare, label: 'Abrir solicitação', href: '/ouvidoria', color: 'text-primary', bg: 'bg-primary/10' },
   { icon: Megaphone, label: 'Relatar problema', href: '/relatar', color: 'text-accent-success', bg: 'bg-accent-success/10' },
   { icon: SearchCheck, label: 'Consultar protocolo', href: '/perfil', color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
   { icon: FileText, label: 'Peticoes', href: '/peticoes', color: 'text-orange-600', bg: 'bg-orange-500/10' },
-  { icon: UserRound, label: 'Painel do Cidadao', href: '/perfil', color: 'text-blue-600', bg: 'bg-blue-500/10' },
+  { icon: UserRound, label: 'Painel do Cidadão', href: '/perfil', color: 'text-blue-600', bg: 'bg-blue-500/10' },
   { icon: Heart, label: 'Saude', href: '/saude', color: 'text-rose-500', bg: 'bg-rose-500/10' },
   { icon: School, label: 'Educacao', href: '/educacao', color: 'text-violet-600', bg: 'bg-violet-500/10' },
   { icon: DollarSign, label: 'Tributos', href: '/tributos', color: 'text-amber-600', bg: 'bg-amber-600/10' },
@@ -89,8 +89,8 @@ export const FOOTER_LINKS: readonly { label: string; href: string }[] = [
   { label: 'Sobre o Portal', href: '/sobre' },
   { label: 'Privacidade', href: '/legal' },
   { label: 'Termos de Uso', href: '/legal' },
-  { label: 'Abrir solicitacao', href: '/ouvidoria' },
+  { label: 'Abrir solicitação', href: '/ouvidoria' },
   { label: 'Peticoes', href: '/peticoes' },
-  { label: 'Painel do Cidadao', href: '/perfil' },
+  { label: 'Painel do Cidadão', href: '/perfil' },
   { label: 'Contato', href: '/ouvidoria' },
 ] as const;

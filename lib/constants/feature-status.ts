@@ -2,7 +2,7 @@
  * Status de desenvolvimento das features do portal.
  *
  * Cada entrada mapeia uma feature/rota ao seu status atual.
- * Usado para exibir badges "Em Desenvolvimento" no painel admin e paginas publicas.
+ * Usado para exibir badges "Em Desenvolvimento" no painel admin e páginas públicas.
  */
 
 export type FeatureStatus = 'complete' | 'in_development' | 'planned';
@@ -17,54 +17,54 @@ export interface FeatureEntry {
 
 export const FEATURE_STATUS: readonly FeatureEntry[] = [
   // ── Completas ──
-  { route: '/ouvidoria', label: 'Ouvidoria', status: 'complete', description: 'Manifestacoes com protocolo, busca e timeline', adminTab: 'demands' },
-  { route: '/relatar', label: 'Relatar Problema', status: 'complete', description: 'Formulario com foto, GPS e classificacao AI', adminTab: 'reports' },
-  { route: '/peticoes', label: 'Peticoes', status: 'complete', description: 'Criacao e assinatura com Cloud Function', adminTab: 'petitions' },
+  { route: '/ouvidoria', label: 'Ouvidoria', status: 'complete', description: 'Manifestações com protocolo, busca e timeline', adminTab: 'demands' },
+  { route: '/relatar', label: 'Relatar Problema', status: 'complete', description: 'Formulário com foto, GPS e classificação AI', adminTab: 'reports' },
+  { route: '/peticoes', label: 'Petições', status: 'complete', description: 'Criação e assinatura com Cloud Function', adminTab: 'petitions' },
   { route: '/empregos', label: 'Empregos', status: 'complete', description: 'Vagas com candidatura e painel admin', adminTab: 'jobs' },
-  { route: '/comercio', label: 'Comercio Local', status: 'complete', description: 'Negocios com aprovacao e notificacao', adminTab: 'businesses' },
+  { route: '/comercio', label: 'Comércio Local', status: 'complete', description: 'Negócios com aprovação e notificação', adminTab: 'businesses' },
   { route: '/eventos', label: 'Eventos', status: 'complete', description: 'Agenda cultural com CRUD admin', adminTab: 'events' },
-  { route: '/obras', label: 'Obras', status: 'complete', description: 'Acompanhamento com progresso e atualizacoes', adminTab: 'works' },
-  { route: '/avisos', label: 'Avisos', status: 'complete', description: 'Comunicados oficiais com prioridade e expiracao', adminTab: 'notices' },
-  { route: '/votos', label: 'Votos', status: 'complete', description: 'Enquetes com Cloud Function atomica', adminTab: 'polls' },
-  { route: '/seguranca', label: 'Seguranca', status: 'complete', description: 'Zonas seguras e alertas de emergencia', adminTab: 'safety' },
-  { route: '/transito', label: 'Transito', status: 'complete', description: 'Alertas com severidade e localizacao', adminTab: 'traffic' },
-  { route: '/tributos', label: 'Tributos', status: 'complete', description: 'IPTU, ISS e certidoes', adminTab: 'taxes' },
+  { route: '/obras', label: 'Obras', status: 'complete', description: 'Acompanhamento com progresso e atualizações', adminTab: 'works' },
+  { route: '/avisos', label: 'Avisos', status: 'complete', description: 'Comunicados oficiais com prioridade e expiração', adminTab: 'notices' },
+  { route: '/votos', label: 'Votos', status: 'complete', description: 'Enquetes com Cloud Function atômica', adminTab: 'polls' },
+  { route: '/seguranca', label: 'Segurança', status: 'complete', description: 'Zonas seguras e alertas de emergência', adminTab: 'safety' },
+  { route: '/transito', label: 'Trânsito', status: 'complete', description: 'Alertas com severidade e localização', adminTab: 'traffic' },
+  { route: '/tributos', label: 'Tributos', status: 'complete', description: 'IPTU, ISS e certidões', adminTab: 'taxes' },
   { route: '/social', label: 'Social', status: 'complete', description: 'Programas sociais com requisitos', adminTab: 'social' },
-  { route: '/meio-ambiente', label: 'Meio Ambiente', status: 'complete', description: 'Coleta, denuncias e areas verdes', adminTab: 'environment' },
-  { route: '/comunidade', label: 'Comunidade', status: 'complete', description: 'Grupos comunitarios', adminTab: 'community' },
-  { route: '/servicos', label: 'Servicos', status: 'complete', description: 'Catalogo de servicos publicos', adminTab: 'services' },
-  { route: '/perfil', label: 'Painel do Cidadao', status: 'complete', description: 'Historico, notificacoes e perfil com listener em tempo real' },
-  { route: '/gestao', label: 'Painel de Gestao', status: 'complete', description: 'Admin completo com filas, conteudo e usuarios' },
-  { route: '/sobre', label: 'Sobre', status: 'complete', description: 'Pagina institucional' },
+  { route: '/meio-ambiente', label: 'Meio Ambiente', status: 'complete', description: 'Coleta, denúncias e áreas verdes', adminTab: 'environment' },
+  { route: '/comunidade', label: 'Comunidade', status: 'complete', description: 'Grupos comunitários', adminTab: 'community' },
+  { route: '/servicos', label: 'Serviços', status: 'complete', description: 'Catálogo de serviços públicos', adminTab: 'services' },
+  { route: '/perfil', label: 'Painel do Cidadão', status: 'complete', description: 'Histórico, notificações e perfil com listener em tempo real' },
+  { route: '/gestao', label: 'Painel de Gestão', status: 'complete', description: 'Admin completo com filas, conteúdo e usuários' },
+  { route: '/sobre', label: 'Sobre', status: 'complete', description: 'Página institucional' },
 
   // ── Em Desenvolvimento ──
   {
     route: '/educacao',
-    label: 'Educacao',
+    label: 'Educação',
     status: 'in_development',
-    description: 'Dashboard do aluno (notas, frequencia, cardapio, onibus) em construcao. Escolas e matriculas ja funcionam.',
+    description: 'Dashboard do aluno (notas, frequência, cardápio, ônibus) em construção. Escolas e matrículas já funcionam.',
     adminTab: 'education',
   },
   {
     route: '/saude',
-    label: 'Saude',
+    label: 'Saúde',
     status: 'in_development',
-    description: 'Carteira de vacinacao digital e mapa interativo em construcao. Unidades, agendamento e farmacia ja funcionam.',
+    description: 'Carteira de vacinação digital e mapa interativo em construção. Unidades, agendamento e farmácia já funcionam.',
     adminTab: 'health',
   },
   {
     route: '/legal',
     label: 'Termos e Privacidade',
     status: 'in_development',
-    description: 'Download de PDF completo em construcao. Conteudo dos termos ja disponivel.',
+    description: 'Download de PDF completo em construção. Conteúdo dos termos já disponível.',
   },
 
   // ── Planejado ──
   {
     route: '/educacao/matricula',
-    label: 'Matricula Escolar',
+    label: 'Matrícula Escolar',
     status: 'planned',
-    description: 'Integracao com sistema municipal de ensino prevista para fase 2.',
+    description: 'Integração com sistema municipal de ensino prevista para fase 2.',
   },
 ];
 

@@ -283,7 +283,7 @@ export default function AdminOverview({
               <p className="text-xs font-semibold uppercase tracking-widest text-primary">Conteudo</p>
               <h3 className="mt-2 text-lg font-semibold text-text-main">Publicar com controle</h3>
               <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-                Avisos, eventos, obras e comercios precisam de workflow de rascunho, publicacao e arquivamento.
+                Avisos, eventos, obras e comércios precisam de workflow de rascunho, publicação e arquivamento.
               </p>
             </div>
             <div className="civic-card p-5">
