@@ -65,7 +65,7 @@ export function createContentService<T extends {
     const q = query(col, ...constraints);
     const snap = await getDocs(q);
 
-    const docs = snap.docs.map(d => ({ ...d.data() as object, id: d.id } as unknown as T));
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data() } as unknown as T));
     const active = docs.filter(item => !item.deletedAt);
     return sortByCreatedAtDesc(active);
   }
@@ -78,14 +78,14 @@ export function createContentService<T extends {
   async function listAdmin(max = 100): Promise<T[]> {
     const q = query(col, orderBy('createdAt', 'desc'), limit(max));
     const snap = await getDocs(q);
-    return snap.docs.map(d => ({ ...d.data() as object, id: d.id } as unknown as T));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() } as unknown as T));
   }
 
   async function getById(id: string): Promise<T | null> {
     const ref = doc(db, collectionName, id);
     const snap = await getDoc(ref);
     if (!snap.exists()) return null;
-    const data = snap.data() as T;
+    const data = { id: snap.id, ...snap.data() } as unknown as T;
     if (data.deletedAt) return null;
     return data;
   }

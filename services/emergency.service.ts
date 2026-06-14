@@ -47,8 +47,8 @@ export async function createEmergencyAlert(
     location: input.location,
     status: 'active',
     protocol,
-    createdAt: server(),
-    updatedAt: server(),
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   });
   return protocol;
 }
@@ -79,7 +79,7 @@ export async function updateEmergencyAlertStatus(
 
   await updateDoc(ref, {
     status,
-    updatedAt: server(),
+    updatedAt: serverTimestamp(),
   });
 
   if (alert) {

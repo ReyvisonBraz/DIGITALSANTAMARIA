@@ -41,8 +41,8 @@ export async function createEnrollment(
     schoolPreference: input.schoolPreference,
     status: 'pending',
     protocol,
-    createdAt: server(),
-    updatedAt: server(),
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   });
   return protocol;
 }
@@ -73,7 +73,7 @@ export async function updateEnrollmentStatus(
 
   await updateDoc(ref, {
     status,
-    updatedAt: server(),
+    updatedAt: serverTimestamp(),
   });
 
   if (enrollment) {

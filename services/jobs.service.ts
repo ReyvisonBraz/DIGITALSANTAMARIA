@@ -54,8 +54,8 @@ export async function applyForJob(
     applicantEmail: input.applicantEmail,
     coverLetter: input.coverLetter || null,
     status: 'applied',
-    createdAt: server(),
-    updatedAt: server(),
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   });
   return applicationId;
 }
@@ -93,7 +93,7 @@ export async function updateApplicationStatus(
 
   await updateDoc(ref, {
     status,
-    updatedAt: server(),
+    updatedAt: serverTimestamp(),
   });
 
   if (application) {
@@ -122,8 +122,8 @@ export async function createJob(
   const docRef = await addDoc(collection(db, JOBS_COL), {
     ...input,
     applicationCount: 0,
-    createdAt: server(),
-    updatedAt: server(),
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   });
   return docRef.id;
 }
@@ -134,6 +134,6 @@ export async function updateJob(
 ): Promise<void> {
   await updateDoc(doc(db, JOBS_COL, id), {
     ...input,
-    updatedAt: server(),
+    updatedAt: serverTimestamp(),
   });
 }

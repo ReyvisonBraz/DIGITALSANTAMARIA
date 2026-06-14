@@ -1,7 +1,6 @@
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
   onSnapshot,
   query,
@@ -17,11 +16,6 @@ import { byCreatedAtDesc } from '@/lib/utils/sort';
 
 const COLLECTION = 'businesses';
 const factory = createContentService<Business>(COLLECTION);
-
-async function readBusiness(id: string): Promise<Business | null> {
-  const snap = await getDoc(doc(db, COLLECTION, id));
-  return snap.exists() ? ({ id: snap.id, ...snap.data() } as Business) : null;
-}
 
 export type RegisterBusinessInput = Pick<
   Business,
@@ -58,7 +52,7 @@ export async function updateOwnedBusiness(
   patch: Partial<Pick<Business, 'title' | 'description' | 'category' | 'address' | 'phone' | 'whatsapp' | 'hours' | 'isOpen'>>,
 ): Promise<void> {
   const ref = doc(db, COLLECTION, id);
-  await updateDoc(ref, { ...patch, updatedAt: server() });
+  await updateDoc(ref, { ...patch, updatedAt: serverTimestamp() });
 }
 
 /** Dono corrige um cadastro reprovado e reenvia para análise da prefeitura. */
@@ -71,18 +65,18 @@ export async function resubmitOwnedBusiness(
     ...patch,
     status: 'pending_approval',
     reviewNote: null,
-    updatedAt: server(),
+    updatedAt: serverTimestamp(),
   });
 }
 
 /** Admin aprova um cadastro pendente, deixando visível em /comercio. */
 export async function approveBusiness(id: string): Promise<void> {
-  const business = await readBusiness(id);
+  const business = await factory.getById(id);
 
   await updateDoc(doc(db, COLLECTION, id), {
     status: 'published',
     reviewNote: null,
-    updatedAt: server(),
+    updatedAt: serverTimestamp(),
   });
 
   if (business?.ownerId) {
@@ -100,13 +94,13 @@ export async function approveBusiness(id: string): Promise<void> {
 
 /** Admin reprova com motivo opcional, visivel para o dono no painel. */
 export async function rejectBusiness(id: string, note?: string): Promise<void> {
-  const business = await readBusiness(id);
+  const business = await factory.getById(id);
   const trimmedNote = note?.trim() || '';
 
   await updateDoc(doc(db, COLLECTION, id), {
     status: 'archived',
     reviewNote: trimmedNote || null,
-    updatedAt: server(),
+    updatedAt: serverTimestamp(),
   });
 
   if (business?.ownerId) {
