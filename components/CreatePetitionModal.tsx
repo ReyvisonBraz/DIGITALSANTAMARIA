@@ -228,7 +228,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
               disabled={!formData.title.trim()}
               className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-primary px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white shadow-sm transition hover:bg-primary-dark disabled:opacity-50"
             >
-              Proxima etapa
+              Próxima etapa
               <ChevronRight className="h-4 w-4" />
             </button>
           </motion.div>
