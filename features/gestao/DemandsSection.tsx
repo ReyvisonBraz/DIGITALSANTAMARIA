@@ -8,7 +8,6 @@ import { AdminQueueToolbar, AdminStatusSummary } from '@/features/gestao/content
 import MetricsDashboard from '@/features/gestao/MetricsDashboard';
 import StatusUpdater from '@/features/gestao/StatusUpdater';
 import DemandTimeline from '@/features/ouvidoria/DemandTimeline';
-import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
 import { markDemandReadByStaff } from '@/services/demands.service';
 import type { Demand, DemandStatus } from '@/types';
