@@ -259,7 +259,7 @@ export default function SaudePage() {
                   <div className="bg-white p-8 rounded-[3rem] border-2 border-border border-dashed space-y-6 shadow-sm">
                      <DevBanner
                         title="Carteira de vacinação digital em desenvolvimento"
-                        description="A emissao do certificado vacinal real com QR code validavel e exportacao oficial estara disponivel em breve. Consulte a unidade de saude mais proxima enquanto isso."
+                        description="A emissão do certificado vacinal real com QR code validável e exportação oficial estará disponível em breve. Consulte a unidade de saúde mais próxima enquanto isso."
                      />
                      <div className="flex items-center gap-4">
                            <div className="w-14 h-14 bg-sky-500/10 text-sky-500 rounded-2xl flex items-center justify-center border-2 border-sky-500/20 shadow-inner">

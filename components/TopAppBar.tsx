@@ -109,7 +109,7 @@ export default function TopAppBar() {
             <Link
               href="/"
               className="group flex shrink-0 items-center transition-transform duration-300 hover:scale-[1.02]"
-              aria-label="Ir para a pagina inicial"
+              aria-label="Ir para a página inicial"
             >
               <Logo size={40} withWordmark className="hidden sm:inline-flex" />
               <Logo size={38} withWordmark={false} className="sm:hidden" />
@@ -118,7 +118,7 @@ export default function TopAppBar() {
             <button
               onClick={() => setIsExplorerOpen(true)}
               className="inline-flex min-h-10 items-center justify-center gap-2 rounded-2xl border border-border bg-white/70 px-3.5 text-xs font-semibold tracking-wide text-text-main shadow-sm transition hover:border-primary hover:bg-primary/10 hover:text-primary"
-              aria-label="Abrir menu de servicos"
+              aria-label="Abrir menu de serviços"
             >
               <Grid className="h-4 w-4 text-primary" />
               <span className="hidden lg:inline">Serviços</span>
@@ -237,7 +237,7 @@ export default function TopAppBar() {
             <button
               onClick={() => setIsNotificationsOpen(true)}
               className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white/80 text-text-muted shadow-sm transition hover:border-primary hover:text-primary"
-              aria-label={unreadCount > 0 ? `Abrir notificacoes (${unreadCount} nao lidas)` : 'Abrir notificacoes'}
+              aria-label={unreadCount > 0 ? `Abrir notificações (${unreadCount} não lidas)` : 'Abrir notificações'}
             >
               <Bell className="h-4 w-4" />
               {unreadCount > 0 && (
@@ -298,7 +298,7 @@ export default function TopAppBar() {
               className="fixed inset-x-0 top-0 z-[100] overflow-y-auto bg-white/98 px-4 py-6 shadow-[0_32px_80px_rgba(20,34,74,0.16)] backdrop-blur-3xl md:px-8 md:py-10"
               role="dialog"
               aria-modal="true"
-              aria-label="Mapa de servicos municipais"
+              aria-label="Mapa de serviços municipais"
               style={{ maxHeight: '92vh' }}
             >
               {/* Grade decorativa de fundo */}
@@ -322,7 +322,7 @@ export default function TopAppBar() {
                   <button
                     onClick={() => setIsExplorerOpen(false)}
                     className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface text-text-muted transition hover:border-primary/30 hover:bg-primary/8 hover:text-primary"
-                    aria-label="Fechar menu de servicos"
+                    aria-label="Fechar menu de serviços"
                   >
                     <X className="h-5 w-5" />
                   </button>

@@ -29,7 +29,7 @@ const steps = [
   { id: 2, title: 'Aluno(a)', icon: FileText },
   { id: 3, title: 'Endereco', icon: Home },
   { id: 4, title: 'Unidade', icon: School },
-  { id: 5, title: 'Confirmacao', icon: CheckCircle2 },
+  { id: 5, title: 'Confirmação', icon: CheckCircle2 },
 ] as const;
 
 const FALLBACK_SCHOOLS = [
@@ -93,7 +93,7 @@ export default function MatriculaPage() {
 
   const nextStep = () => {
     if (!canProceed()) {
-      toast('Preencha os campos obrigatorios desta etapa.', 'error');
+      toast('Preencha os campos obrigatórios desta etapa.', 'error');
       return;
     }
     if (currentStep < 5) setCurrentStep((step) => step + 1);
@@ -132,9 +132,9 @@ export default function MatriculaPage() {
       });
       setProtocol(enrollmentProtocol);
       setSubmitted(true);
-      toast('Solicitacao de matricula enviada.', 'success');
+      toast('Solicitação de matrícula enviada.', 'success');
     } catch {
-      toast('Erro ao enviar solicitacao. Tente novamente.', 'error');
+      toast('Erro ao enviar solicitação. Tente novamente.', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -149,7 +149,7 @@ export default function MatriculaPage() {
           className="group flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-text-muted transition-colors hover:text-primary"
         >
           <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
-          Voltar para Educacao
+          Voltar para Educação
         </button>
         <div className="flex items-center gap-2 rounded-full border-2 border-border bg-surface px-4 py-2">
           <ShieldCheck className="h-4 w-4 text-green-500" />
@@ -159,11 +159,11 @@ export default function MatriculaPage() {
 
       <div className="space-y-4 text-center md:text-left">
         <h1 className="text-4xl font-semibold uppercase leading-none tracking-tighter text-text-main md:text-5xl">
-          Solicitacao de <br />
+          Solicitação de <br />
           <span className="text-primary">Matricula 2026.</span>
         </h1>
         <p className="font-ui max-w-xl text-sm font-medium text-text-muted">
-          Preencha os dados abaixo para iniciar o processo de vinculacao escolar na rede municipal.
+          Preencha os dados abaixo para iniciar o processo de vinculação escolar na rede municipal.
         </p>
       </div>
 
@@ -250,7 +250,7 @@ export default function MatriculaPage() {
                     onChange={(value) => updateField('cep', value)}
                   />
                   <TextField
-                    label="Logradouro, numero, bairro"
+                    label="Logradouro, número, bairro"
                     placeholder="Rua Exemplo, 123, Centro"
                     value={formData.address}
                     onChange={(value) => updateField('address', value)}
@@ -330,7 +330,7 @@ export default function MatriculaPage() {
                 </>
               ) : currentStep === 5 ? (
                 <>
-                  Finalizar solicitacao
+                  Finalizar solicitação
                   <ChevronRight className="h-4 w-4" />
                 </>
               ) : (
@@ -392,7 +392,7 @@ function ReviewView({ formData }: { formData: FormData }) {
       <div className="space-y-2">
         <h3 className="text-3xl font-semibold tracking-tight text-text-main">Quase la</h3>
         <p className="font-ui mx-auto max-w-sm text-sm font-medium text-text-muted">
-          Ao finalizar, sua solicitacao sera enviada para a central de vagas da Secretaria de Educacao.
+          Ao finalizar, sua solicitação será enviada para a central de vagas da Secretaria de Educação.
         </p>
       </div>
       <div className="space-y-2 rounded-3xl border-2 border-dashed border-border bg-surface p-4 text-left">
@@ -404,7 +404,7 @@ function ReviewView({ formData }: { formData: FormData }) {
       <div className="flex flex-col items-center gap-3 rounded-3xl border-2 border-dashed border-border bg-surface p-6">
         <Info className="h-6 w-6 text-primary" />
         <p className="text-[10px] font-semibold uppercase tracking-widest text-text-muted">
-          Lembre-se de apresentar os documentos fisicos na unidade escolar apos convocacao.
+          Lembre-se de apresentar os documentos físicos na unidade escolar após convocação.
         </p>
       </div>
     </>
@@ -429,7 +429,7 @@ function SuccessView({ protocol, onBack }: { protocol: string; onBack: () => voi
       <div className="space-y-2">
         <h3 className="text-3xl font-semibold tracking-tight text-text-main">Solicitacao enviada</h3>
         <p className="font-ui mx-auto max-w-sm text-sm font-medium text-text-muted">
-          Sua solicitacao de matricula foi registrada na Secretaria de Educacao.
+          Sua solicitação de matrícula foi registrada na Secretaria de Educação.
         </p>
       </div>
       <div className="rounded-3xl border-2 border-dashed border-border bg-surface p-6">
@@ -446,7 +446,7 @@ function SuccessView({ protocol, onBack }: { protocol: string; onBack: () => voi
         onClick={onBack}
         className="rounded-xl bg-primary px-10 py-5 text-xs font-semibold uppercase tracking-widest text-white shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
       >
-        Voltar para Educacao
+        Voltar para Educação
       </button>
     </>
   );

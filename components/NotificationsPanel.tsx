@@ -72,14 +72,14 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
   };
 
   return (
-    <SidePanel isOpen={isOpen} onClose={onClose} title="Notificacoes">
+    <SidePanel isOpen={isOpen} onClose={onClose} title="Notificações">
       <div className="space-y-3 p-4">
         {!user ? (
           <div className="rounded-2xl border border-dashed border-border bg-surface p-6 text-center">
             <BellOff className="mx-auto h-6 w-6 text-text-muted" />
             <p className="mt-3 text-sm font-semibold text-text-main">Entre para receber notificacoes</p>
             <p className="mt-2 text-xs font-medium leading-5 text-text-muted">
-              Avisos sobre seus protocolos, relatos e peticoes aparecem aqui assim que voce entra com sua conta.
+              Avisos sobre seus protocolos, relatos e petições aparecem aqui assim que você entra com sua conta.
             </p>
             <button
               type="button"
@@ -98,7 +98,7 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
             <BellOff className="mx-auto h-6 w-6 text-text-muted" />
             <p className="mt-3 text-sm font-semibold text-text-main">Nenhuma notificacao ainda</p>
             <p className="mt-2 text-xs font-medium leading-5 text-text-muted">
-              Quando uma solicitacao, relato ou peticao sua mudar de status, voce e avisado por aqui.
+              Quando uma solicitação, relato ou petição sua mudar de status, você é avisado por aqui.
             </p>
           </div>
         ) : (
@@ -120,7 +120,7 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
                     'relative block overflow-hidden rounded-xl border p-4 transition hover:border-primary/40 hover:shadow-sm',
                     !notification.read ? 'border-primary/20 bg-white shadow-sm' : 'border-border bg-surface',
                   )}
-                  aria-label={`Notificacao: ${notification.title}`}
+                  aria-label={`Notificação: ${notification.title}`}
                 >
                   {!notification.read && (
                     <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-primary" aria-label="Nao lida" />

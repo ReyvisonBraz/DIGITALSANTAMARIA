@@ -30,7 +30,7 @@ export default function SegurancaPage() {
   const handleEmergencySubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!location.trim() || !description.trim()) {
-      toast('Informe localizacao e descricao do alerta.', 'error');
+      toast('Informe localização e descrição do alerta.', 'error');
       return;
     }
 
@@ -47,7 +47,7 @@ export default function SegurancaPage() {
     try {
       const protocol = await createEmergencyAlert({
         userId: user.uid,
-        userName: user.displayName || user.email || 'Cidadao',
+        userName: user.displayName || user.email || 'Cidadão',
         userEmail: user.email || '',
         type: alertType,
         location: location.trim(),
@@ -83,7 +83,7 @@ export default function SegurancaPage() {
             <p className="text-xs font-black uppercase tracking-widest text-red-700">Alerta emergencial</p>
             <h2 className="mt-1 text-xl font-semibold text-text-main">Acione a equipe de seguranca</h2>
             <p className="mt-2 text-sm font-medium leading-6 text-red-900/70">
-              Use este canal para registrar uma ocorrencia urgente com localizacao e descricao objetiva.
+              Use este canal para registrar uma ocorrência urgente com localização e descrição objetiva.
             </p>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default function SegurancaPage() {
               value={location}
               onChange={(event) => setLocation(event.target.value)}
               maxLength={200}
-              placeholder="Rua, bairro ou ponto de referencia"
+              placeholder="Rua, bairro ou ponto de referência"
               className="h-11 w-full rounded-xl border border-red-200 bg-white px-3 text-sm font-medium outline-none focus:border-red-600"
             />
           </label>

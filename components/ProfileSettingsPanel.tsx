@@ -37,7 +37,7 @@ export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileS
         ) : (
           <div className="space-y-4">
             {[
-              { icon: Bell, label: 'Notificacoes', desc: 'Alertas de zeladoria e novidades.' },
+              { icon: Bell, label: 'Notificações', desc: 'Alertas de zeladoria e novidades.' },
               { icon: Palette, label: 'Acessibilidade', desc: 'Modo alto contraste e fontes.' },
               { icon: Globe, label: 'Idioma e regiao', desc: 'Portugues (Brasil).' },
               { icon: Shield, label: 'Privacidade', desc: 'Dados e permissoes de conta.' },
@@ -70,9 +70,9 @@ export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileS
             </p>
             <div className="grid gap-2">
               {[
-                { href: '/gestao', label: 'Painel de gestao', desc: 'Responder protocolos', icon: Building2 },
-                { href: '/peticoes', label: 'Peticoes', desc: 'Ver pagina publica', icon: FileText },
-                { href: '/ouvidoria', label: 'Solicitacoes', desc: 'Abrir ou consultar', icon: ClipboardList },
+                { href: '/gestao', label: 'Painel de gestão', desc: 'Responder protocolos', icon: Building2 },
+                { href: '/peticoes', label: 'Petições', desc: 'Ver página pública', icon: FileText },
+                { href: '/ouvidoria', label: 'Solicitações', desc: 'Abrir ou consultar', icon: ClipboardList },
               ].map((item) => (
                 <Link
                   key={item.href}

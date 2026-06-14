@@ -25,7 +25,7 @@ interface SearchResult {
 }
 
 const EXTRA_RESULTS: readonly SearchResult[] = [
-  { id: 'extra-matricula', title: 'Matricula escolar', category: 'Educacao', href: '/educacao/matricula', icon: ArrowRight },
+  { id: 'extra-matricula', title: 'Matrícula escolar', category: 'Educação', href: '/educacao/matricula', icon: ArrowRight },
   { id: 'extra-protocolo', title: 'Consultar protocolo', category: 'Atendimento', href: '/perfil', icon: Search },
 ];
 
@@ -95,7 +95,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
           className="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-20 md:pt-24"
           role="dialog"
           aria-modal="true"
-          aria-label="Busca global de servicos"
+          aria-label="Busca global de serviços"
         >
           <motion.div
             initial={{ opacity: 0 }}
@@ -193,7 +193,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             </div>
 
             <div className="border-t border-border bg-surface-container p-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
-              Dica: busque por protocolo, peticoes, saude ou tributos.
+              Dica: busque por protocolo, petições, saúde ou tributos.
             </div>
           </motion.div>
         </div>

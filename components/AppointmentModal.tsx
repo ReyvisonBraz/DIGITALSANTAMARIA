@@ -102,7 +102,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
     try {
       await createAppointment({
         userId: user.uid,
-        userName: user.displayName || 'Cidadao',
+        userName: user.displayName || 'Cidadão',
         unitId: formData.unit,
         unitName: formData.unitName,
         specialty: formData.specialty,

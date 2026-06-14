@@ -13,7 +13,7 @@ const CATEGORIES: { value: Business['category'] | 'all'; label: string }[] = [
   { value: 'restaurante', label: 'Restaurantes' },
   { value: 'farmacia', label: 'Farmacias' },
   { value: 'mercado', label: 'Mercados' },
-  { value: 'servico', label: 'Servicos' },
+  { value: 'servico', label: 'Serviços' },
   { value: 'loja', label: 'Lojas' },
   { value: 'outros', label: 'Outros' },
 ];
@@ -32,8 +32,8 @@ export default function ComercioPage() {
       <ContentHero
         icon={Store}
         label="Economia local"
-        title="Comercio Local"
-        subtitle="Restaurantes, farmacias, lojas e servicos de Santa Maria do Para: fale direto no WhatsApp."
+        title="Comércio Local"
+        subtitle="Restaurantes, farmácias, lojas e serviços de Santa Maria do Pará: fale direto no WhatsApp."
         accent="accent"
       />
 
@@ -86,7 +86,7 @@ export default function ComercioPage() {
           </div>
           <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
             {category === 'all'
-              ? 'Nenhum comercio cadastrado ainda.'
+              ? 'Nenhum comércio cadastrado ainda.'
               : 'Nenhum negocio nesta categoria.'}
           </p>
         </div>

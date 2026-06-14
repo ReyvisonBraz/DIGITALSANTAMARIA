@@ -130,7 +130,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
         goal,
         description,
         creatorId: user.uid,
-        creatorName: user.displayName || user.email || 'Cidadao',
+        creatorName: user.displayName || user.email || 'Cidadão',
         coverFile,
       });
       log.info('Petition created', { title });
@@ -138,7 +138,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
       setShowSuccess(true);
     } catch (err) {
       log.error('Failed to create petition', {}, err);
-      toast('Erro ao criar peticao.', 'error');
+      toast('Erro ao criar petição.', 'error');
     } finally {
       setLoading(false);
     }
@@ -283,7 +283,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
             <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
               <p className="text-sm font-medium leading-6 text-primary/80">
-                Ao publicar, voce assume responsabilidade pela veracidade das informacoes.
+                Ao publicar, você assume responsabilidade pela veracidade das informações.
               </p>
             </div>
 
@@ -323,7 +323,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
               </div>
               <div>
                 <h3 className="text-lg font-semibold uppercase leading-none tracking-normal text-text-main">
-                  Manifesto cidadao
+                  Manifesto cidadão
                 </h3>
                 <p className="mt-1 text-xs font-medium text-text-muted">Mobilize sua comunidade.</p>
               </div>
@@ -354,7 +354,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
           <div className="space-y-2">
             <h3 className="text-2xl font-semibold uppercase tracking-normal text-text-main">Proposta recebida</h3>
             <p className="text-sm font-medium leading-6 text-text-muted">
-              Sua peticao foi publicada e ja pode receber assinaturas.
+              Sua petição foi publicada e já pode receber assinaturas.
             </p>
           </div>
           <button
