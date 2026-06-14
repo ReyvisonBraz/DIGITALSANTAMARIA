@@ -201,7 +201,7 @@ export default function ApplicationsAdmin() {
       <ConfirmDialog
         isOpen={!!pendingStatus}
         title={pendingStatus ? `Confirmar ${getStatusLabel(pendingStatus.status).toLowerCase()}` : 'Confirmar status'}
-        description={pendingStatus ? `Esta acao vai marcar a candidatura de ${pendingStatus.application.applicantName} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificacao ao candidato.` : ''}
+        description={pendingStatus ? `Esta ação vai marcar a candidatura de ${pendingStatus.application.applicantName} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificação ao candidato.` : ''}
         confirmLabel="Confirmar status"
         loading={!!pendingStatus && savingId === pendingStatus.application.id}
         tone={pendingStatus?.status === 'rejected' ? 'danger' : 'default'}

@@ -116,7 +116,7 @@ export default function VotosPage() {
                 {poll.isActive ? (
                   <span className="inline-flex items-center gap-1 text-primary">
                     <CheckCircle2 className="h-4 w-4" />
-                    Participacao aberta
+                    Participação aberta
                   </span>
                 ) : (
                   <span>Periodo encerrado</span>

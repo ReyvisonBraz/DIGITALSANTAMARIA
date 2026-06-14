@@ -44,7 +44,7 @@ export default function LocationPicker({ value, location, onChange }: LocationPi
           if (!mountedRef.current) return;
 
           if (!response.ok) {
-            throw new Error('Reverse geocoding failed');
+            throw new Error('Não foi possível identificar o endereço pela localização.');
           }
 
           const data = await response.json();

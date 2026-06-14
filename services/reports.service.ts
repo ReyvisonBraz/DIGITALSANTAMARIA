@@ -267,7 +267,7 @@ export async function updateReportStatus(
   await runTransaction(db, async (tx) => {
     const reportSnap = await tx.get(reportRef);
     if (!reportSnap.exists()) {
-      throw new Error('Report not found');
+      throw new Error('Solicitação não encontrada.');
     }
 
     const report = reportSnap.data() as Report;
@@ -305,7 +305,7 @@ export async function updateReportStatus(
     }
   });
 
-  // Notificacao fora da transacao (fire-and-forget)
+  // Notificação fora da transação (fire-and-forget)
   try {
     const snap = await getDoc(reportRef);
     if (snap.exists()) {

@@ -199,7 +199,7 @@ export default function AppointmentsAdmin() {
       <ConfirmDialog
         isOpen={!!pendingStatus}
         title={pendingStatus ? `Confirmar ${getStatusLabel(pendingStatus.status).toLowerCase()}` : 'Confirmar status'}
-        description={pendingStatus ? `Esta acao vai marcar a consulta de ${pendingStatus.appointment.userName} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificacao ao cidadao.` : ''}
+        description={pendingStatus ? `Esta ação vai marcar a consulta de ${pendingStatus.appointment.userName} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificação ao cidadão.` : ''}
         confirmLabel="Confirmar status"
         loading={!!pendingStatus && savingId === pendingStatus.appointment.id}
         tone={pendingStatus?.status === 'cancelled' ? 'danger' : 'default'}

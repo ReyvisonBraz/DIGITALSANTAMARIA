@@ -275,7 +275,7 @@ export async function updateDemandStatus(
   await runTransaction(db, async (tx) => {
     const demandSnap = await tx.get(demandRef);
     if (!demandSnap.exists()) {
-      throw new Error('Demand not found');
+      throw new Error('Demanda não encontrada.');
     }
 
     const demand = demandSnap.data() as Demand;
@@ -313,7 +313,7 @@ export async function updateDemandStatus(
     }
   });
 
-  // Notificacao fora da transacao (fire-and-forget, nao deve bloquear)
+  // Notificação fora da transação (fire-and-forget, não deve bloquear)
   try {
     const snap = await getDoc(demandRef);
     if (snap.exists()) {

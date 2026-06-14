@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
 
   if (!getAuthUserId(request)) {
-    return NextResponse.json({ error: 'Autenticacao necessaria.' }, { status: 401 });
+    return NextResponse.json({ error: 'Autenticação necessária.' }, { status: 401 });
   }
 
   if (isRateLimited(ip)) {

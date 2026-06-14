@@ -147,7 +147,7 @@ export default function TopAppBar() {
               <Link
                 href="/gestao"
                 className="hidden min-h-10 items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-primary/10 px-3.5 text-[11px] font-bold uppercase tracking-[0.16em] text-primary transition hover:bg-primary hover:text-white md:inline-flex"
-                aria-label="Abrir painel de gestao"
+                aria-label="Abrir painel de gestão"
               >
                 <ShieldCheck className="h-4 w-4" />
                 Gestão

@@ -65,10 +65,10 @@ type ContentGroup = 'all' | 'publishing' | 'operations' | 'registries' | 'partic
 
 const GROUPS: { value: ContentGroup; label: string; description: string }[] = [
   { value: 'all', label: 'Todos', description: 'Todas as areas' },
-  { value: 'publishing', label: 'Publicacao', description: 'Informacoes publicas' },
+  { value: 'publishing', label: 'Publicação', description: 'Informações publicas' },
   { value: 'operations', label: 'Atendimento', description: 'Filas de trabalho' },
   { value: 'registries', label: 'Cadastros', description: 'Bases municipais' },
-  { value: 'participation', label: 'Participacao', description: 'Comunidade e votos' },
+  { value: 'participation', label: 'Participação', description: 'Comunidade e votos' },
 ];
 
 const TABS: { value: ContentTab; label: string; icon: LucideIcon; group: Exclude<ContentGroup, 'all'> }[] = [
@@ -99,7 +99,7 @@ const OPERATION_TABS: ContentTab[] = ['appointments', 'applications', 'enrollmen
 const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'businesses' | 'traffic' | 'health' | 'appointments' | 'jobs' | 'applications' | 'enrollments' | 'emergency'>, CatalogAdminConfig> = {
   community: {
     collection: 'community_groups',
-    eyebrow: 'Participacao comunitaria',
+    eyebrow: 'Participação comunitária',
     title: 'grupos comunitarios',
     publicPath: '/comunidade',
     emptyTitle: 'Nenhum grupo comunitario publicado',
@@ -248,7 +248,7 @@ const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'bus
   },
   polls: {
     collection: 'polls',
-    eyebrow: 'Participacao cidada',
+    eyebrow: 'Participação cidadã',
     title: 'votacoes',
     publicPath: '/votos',
     emptyTitle: 'Nenhuma votação publicada',
@@ -359,7 +359,7 @@ const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'bus
       { name: 'type', label: 'Tipo de ensino', type: 'text', defaultValue: 'Ensino Fundamental', required: true },
       { name: 'address', label: 'Endereco', type: 'text', required: true },
       { name: 'availabilityStatus', label: 'Status de vagas', type: 'text', defaultValue: 'Vagas Abertas', required: true },
-      { name: 'rating', label: 'Avaliacao', type: 'number', defaultValue: 0 },
+      { name: 'rating', label: 'Avaliação', type: 'number', defaultValue: 0 },
       { name: 'ideb', label: 'IDEB', type: 'number', defaultValue: 0 },
       { name: 'imageURL', label: 'URL da imagem', type: 'text' },
     ],

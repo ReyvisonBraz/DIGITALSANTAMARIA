@@ -77,7 +77,7 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
         {!user ? (
           <div className="rounded-2xl border border-dashed border-border bg-surface p-6 text-center">
             <BellOff className="mx-auto h-6 w-6 text-text-muted" />
-            <p className="mt-3 text-sm font-semibold text-text-main">Entre para receber notificacoes</p>
+            <p className="mt-3 text-sm font-semibold text-text-main">Entre para receber notificações</p>
             <p className="mt-2 text-xs font-medium leading-5 text-text-muted">
               Avisos sobre seus protocolos, relatos e petições aparecem aqui assim que você entra com sua conta.
             </p>
@@ -96,7 +96,7 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
         ) : notifications.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border bg-surface p-6 text-center">
             <BellOff className="mx-auto h-6 w-6 text-text-muted" />
-            <p className="mt-3 text-sm font-semibold text-text-main">Nenhuma notificacao ainda</p>
+            <p className="mt-3 text-sm font-semibold text-text-main">Nenhuma notificação ainda</p>
             <p className="mt-2 text-xs font-medium leading-5 text-text-muted">
               Quando uma solicitação, relato ou petição sua mudar de status, você é avisado por aqui.
             </p>

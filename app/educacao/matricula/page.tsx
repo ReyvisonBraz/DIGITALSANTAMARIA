@@ -153,7 +153,7 @@ export default function MatriculaPage() {
         </button>
         <div className="flex items-center gap-2 rounded-full border-2 border-border bg-surface px-4 py-2">
           <ShieldCheck className="h-4 w-4 text-green-500" />
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-text-muted">Conexao segura SSL</span>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-text-muted">Conexão segura SSL</span>
         </div>
       </div>
 
@@ -427,7 +427,7 @@ function SuccessView({ protocol, onBack }: { protocol: string; onBack: () => voi
         <CheckCircle2 className="h-10 w-10" />
       </div>
       <div className="space-y-2">
-        <h3 className="text-3xl font-semibold tracking-tight text-text-main">Solicitacao enviada</h3>
+        <h3 className="text-3xl font-semibold tracking-tight text-text-main">Solicitação enviada</h3>
         <p className="font-ui mx-auto max-w-sm text-sm font-medium text-text-muted">
           Sua solicitação de matrícula foi registrada na Secretaria de Educação.
         </p>

@@ -106,7 +106,7 @@ export default function SegurancaPage() {
             </select>
           </label>
           <label htmlFor="alert-location" className="space-y-1.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Localizacao</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Localização</span>
             <input
               id="alert-location"
               value={location}

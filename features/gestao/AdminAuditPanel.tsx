@@ -120,14 +120,14 @@ export default function AdminAuditPanel() {
                 type="search"
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Buscar por gestor, documento, colecao ou nota"
+                placeholder="Buscar por gestor, documento, coleção ou nota"
                 className="h-11 w-full rounded-xl border border-border bg-white pl-10 pr-3 text-sm font-bold outline-none focus:border-primary"
               />
             </span>
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Acao</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Ação</span>
             <select
               value={actionFilter}
               onChange={(event) => setActionFilter(event.target.value as AdminAuditAction | 'all')}
@@ -141,7 +141,7 @@ export default function AdminAuditPanel() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Colecao</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Coleção</span>
             <select
               value={collectionFilter}
               onChange={(event) => setCollectionFilter(event.target.value)}

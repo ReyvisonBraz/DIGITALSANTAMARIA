@@ -211,7 +211,7 @@ export default function EmergencyAlertsAdmin() {
       <ConfirmDialog
         isOpen={!!pendingStatus}
         title={pendingStatus ? `Confirmar ${getStatusLabel(pendingStatus.status).toLowerCase()}` : 'Confirmar status'}
-        description={pendingStatus ? `Esta acao vai marcar o alerta ${pendingStatus.alert.protocol} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificacao ao cidadao.` : ''}
+        description={pendingStatus ? `Esta ação vai marcar o alerta ${pendingStatus.alert.protocol} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificação ao cidadão.` : ''}
         confirmLabel="Confirmar status"
         loading={!!pendingStatus && savingId === pendingStatus.alert.id}
         tone={pendingStatus?.status === 'cancelled' ? 'danger' : 'default'}
