@@ -83,7 +83,7 @@ export default function PerfilPage() {
     }, () => {
       setDemands([]);
       demandsReady = true;
-      toast('Nao foi possivel carregar suas solicitacoes agora.', 'error');
+      toast('Não foi possível carregar suas solicitações agora.', 'error');
       markReady();
     });
     const unsubReports = listenToUserReports(user.uid, (next) => {
@@ -93,7 +93,7 @@ export default function PerfilPage() {
     }, () => {
       setReports([]);
       reportsReady = true;
-      toast('Nao foi possivel carregar seus relatos agora.', 'error');
+      toast('Não foi possível carregar seus relatos agora.', 'error');
       markReady();
     });
     return () => {
@@ -125,7 +125,7 @@ export default function PerfilPage() {
         setEnrollments(nextEnrollments);
         setEmergencyAlerts(nextEmergencyAlerts);
       })
-      .catch(() => toast('Nao foi possivel carregar seus processos agora.', 'error'))
+      .catch(() => toast('Não foi possível carregar seus processos agora.', 'error'))
       .finally(() => setOperationsLoading(false));
   }, [user, toast]);
 
@@ -138,12 +138,12 @@ export default function PerfilPage() {
     try {
       await login();
     } catch (error) {
-      toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+      toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
     }
   };
 
   const stats = useMemo(() => [
-    { label: 'Solicitacoes', value: demands.length, icon: ClipboardList },
+    { label: 'Solicitações', value: demands.length, icon: ClipboardList },
     { label: 'Relatos', value: reports.length, icon: MessageSquare },
     { label: 'Processos', value: appointments.length + applications.length + enrollments.length + emergencyAlerts.length, icon: CalendarCheck },
     { label: 'Pontos', value: profile?.points ?? 0, icon: ShieldCheck },
@@ -156,7 +156,7 @@ export default function PerfilPage() {
           <UserRound className="h-8 w-8" />
         </div>
         <h1 className="mt-6 text-3xl font-semibold tracking-normal text-text-main">
-          Painel do Cidadao
+          Painel do Cidadão
         </h1>
         <p className="mt-3 text-base font-medium leading-7 text-text-muted">
           Entre com sua conta Google para acompanhar protocolos, dados basicos e atividades no portal.
@@ -186,7 +186,7 @@ export default function PerfilPage() {
           </div>
 
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Painel do Cidadao</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Painel do Cidadão</p>
             <h1 className="mt-1 truncate text-3xl font-semibold tracking-normal text-text-main md:text-4xl">
               {displayName}
             </h1>
@@ -205,13 +205,13 @@ export default function PerfilPage() {
               href="/ouvidoria"
               className="action-button-primary min-h-11 px-4 py-2 text-xs"
             >
-              Abrir solicitacao
+              Abrir solicitação
               <ArrowRight className="h-4 w-4" />
             </Link>
             <button
               onClick={() => {
                 logout();
-                toast('Sessao encerrada com sucesso.', 'info');
+                toast('Sessão encerrada com sucesso.', 'info');
               }}
               className="action-button-secondary min-h-11 px-4 py-2 text-xs hover:border-rose-300 hover:text-rose-600"
             >
@@ -241,7 +241,7 @@ export default function PerfilPage() {
           <div className="glass-panel p-5 md:p-6">
             <div className="mb-5 flex flex-col gap-2 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-primary">Historico</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary">Histórico</p>
                 <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">Meus protocolos</h2>
               </div>
               <Link href="/ouvidoria" className="text-xs font-semibold uppercase tracking-widest text-primary">
@@ -275,7 +275,7 @@ export default function PerfilPage() {
                 >
                   <span className="inline-flex items-center gap-2">
                     <Building2 className="h-4 w-4" />
-                    Gestao
+                    Gestão
                   </span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -285,7 +285,7 @@ export default function PerfilPage() {
                 >
                   <span className="inline-flex items-center gap-2">
                     <FileText className="h-4 w-4" />
-                    Peticoes
+                    Petições
                   </span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -295,7 +295,7 @@ export default function PerfilPage() {
                 >
                   <span className="inline-flex items-center gap-2">
                     <MessageSquare className="h-4 w-4" />
-                    Solicitacoes
+                    Solicitações
                   </span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -305,7 +305,7 @@ export default function PerfilPage() {
 
           <div className="civic-card p-5">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">Dados basicos</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">Dados básicos</p>
               <button
                 onClick={() => setSettingsMode('edit')}
                 className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
@@ -315,8 +315,8 @@ export default function PerfilPage() {
               </button>
             </div>
             <div className="mt-4 space-y-3 text-sm font-medium text-text-muted">
-              <p><span className="font-semibold text-text-main">Bairro:</span> {profile?.neighborhood || 'Nao informado'}</p>
-              <p><span className="font-semibold text-text-main">Telefone:</span> {profile?.phone || 'Nao informado'}</p>
+              <p><span className="font-semibold text-text-main">Bairro:</span> {profile?.neighborhood || 'Não informado'}</p>
+              <p><span className="font-semibold text-text-main">Telefone:</span> {profile?.phone || 'Não informado'}</p>
               <p><span className="font-semibold text-text-main">Perfil:</span> {profile?.role || 'citizen'}</p>
             </div>
           </div>
@@ -325,7 +325,7 @@ export default function PerfilPage() {
             <FileText className="h-6 w-6 text-primary-light" />
             <h2 className="mt-3 text-lg font-semibold tracking-normal">Como usar o painel</h2>
             <p className="mt-2 text-sm font-medium leading-6 text-white/70">
-              Solicitacoes abertas com login aparecem aqui automaticamente. Solicitacoes anonimas podem ser acompanhadas pelo numero de protocolo.
+              Solicitações abertas com login aparecem aqui automaticamente. Solicitações anônimas podem ser acompanhadas pelo numero de protocolo.
             </p>
           </div>
         </aside>

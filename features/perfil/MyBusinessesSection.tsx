@@ -116,7 +116,7 @@ export default function MyBusinessesSection() {
       () => {
         setBusinesses([]);
         setLoading(false);
-        toast('Nao foi possivel carregar seus negocios agora.', 'error');
+        toast('Não foi possível carregar seus negocios agora.', 'error');
       },
     );
 
@@ -177,7 +177,7 @@ export default function MyBusinessesSection() {
 
       setEditing(null);
     } catch {
-      toast('Nao foi possivel salvar agora.', 'error');
+      toast('Não foi possível salvar agora.', 'error');
     } finally {
       setSaving(false);
     }
@@ -192,7 +192,7 @@ export default function MyBusinessesSection() {
             Comercio
           </p>
           <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">
-            Meus negocios
+            Meus negócios
           </h2>
           <p className="mt-1 text-xs font-medium leading-5 text-text-muted">
             Cadastre seu comercio ou servico. Depois da aprovacao da prefeitura, ele aparece em <code className="font-mono text-primary">/comercio</code>.
@@ -248,7 +248,7 @@ export default function MyBusinessesSection() {
           </label>
 
           <label className="space-y-1.5 md:col-span-2">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descricao</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descrição</span>
             <textarea
               value={editing.description}
               required
@@ -348,7 +348,7 @@ export default function MyBusinessesSection() {
         </div>
       ) : businesses.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-surface p-6 text-center">
-          <p className="text-sm font-bold uppercase tracking-widest text-text-main">Nenhum negocio cadastrado</p>
+          <p className="text-sm font-bold uppercase tracking-widest text-text-main">Nenhum negócio cadastrado</p>
           <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
             Quando voce cadastrar um comercio ou servico, ele aparece aqui com o status da aprovacao.
           </p>

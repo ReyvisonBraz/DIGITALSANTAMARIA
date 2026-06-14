@@ -79,7 +79,7 @@ export default function AdminOverview({
       ]);
       setQueues({ appointments, applications, enrollments, emergencies });
     } catch {
-      setQueueError('Nao foi possivel carregar todos os indicadores operacionais.');
+      setQueueError('Não foi possível carregar todos os indicadores operacionais.');
     } finally {
       setLoadingQueues(false);
     }
@@ -111,7 +111,7 @@ export default function AdminOverview({
         emergencyActive,
       rows: [
         {
-          label: 'Solicitacoes',
+          label: 'Solicitações',
           value: demandActionable,
           total: demands.length,
           helper: demandUnread > 0
@@ -219,8 +219,8 @@ export default function AdminOverview({
             </div>
             <p className="mt-4 text-sm font-medium leading-6 text-text-muted">
               {canManageCatalog
-                ? 'Priorize emergencias, solicitacoes e relatos pendentes antes de editar cadastros publicos.'
-                : 'Priorize emergencias, solicitacoes e relatos pendentes para manter as filas em dia.'}
+                ? 'Priorize emergencias, solicitações e relatos pendentes antes de editar cadastros publicos.'
+                : 'Priorize emergencias, solicitações e relatos pendentes para manter as filas em dia.'}
             </p>
           </div>
 
@@ -267,7 +267,7 @@ export default function AdminOverview({
           <p className="text-xs font-semibold uppercase tracking-widest text-primary">Atendimento</p>
           <h3 className="mt-2 text-lg font-semibold text-text-main">Responder primeiro</h3>
           <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-            Use solicitacoes e relatos para manter protocolos oficiais com resposta e status atualizados.
+            Use solicitações e relatos para manter protocolos oficiais com resposta e status atualizados.
           </p>
         </div>
         <div className="civic-card p-5">

@@ -34,14 +34,14 @@ import type {
 
 const demandStatusLabel: Record<DemandStatus, string> = {
   pending: 'Pendente',
-  analyzing: 'Em analise',
+  analyzing: 'Em análise',
   solved: 'Resolvida',
   rejected: 'Recusada',
 };
 
 const reportStatusLabel: Record<ReportStatus, string> = {
   pending: 'Pendente',
-  in_review: 'Em analise',
+  in_review: 'Em análise',
   resolved: 'Resolvido',
   rejected: 'Recusado',
 };
@@ -88,7 +88,7 @@ type ActivityItem =
       id: string;
       source: Demand;
       protocol: string;
-      type: 'Solicitacao';
+      type: 'Solicitação';
       title: string;
       status: string;
       unreadByCitizen: boolean;
@@ -155,7 +155,7 @@ export default function ActivityHistory({
       id: demand.id,
       source: demand,
       protocol: demand.protocolId,
-      type: 'Solicitacao',
+      type: 'Solicitação',
       title: demand.subject,
       status: demandStatusLabel[demand.status],
       unreadByCitizen: demand.conversation?.unreadByCitizen === true,
@@ -232,14 +232,14 @@ export default function ActivityHistory({
       <div className="rounded-xl border border-dashed border-border bg-surface p-6 text-center">
         <p className="text-sm font-black uppercase tracking-widest text-text-main">Nenhum protocolo ainda</p>
         <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-          Abra uma solicitacao ou registre um relato. Eles aparecerao aqui automaticamente.
+          Abra uma solicitação ou registre um relato. Eles aparecerao aqui automaticamente.
         </p>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           <Link
             href="/ouvidoria"
             className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white"
           >
-            Abrir solicitacao
+            Abrir solicitação
           </Link>
           <Link
             href="/relatar"
@@ -256,7 +256,7 @@ export default function ActivityHistory({
     <div className="space-y-3">
       {activities.slice(0, 8).map((item) => {
         const itemKey = `${item.type}-${item.id}`;
-        const canOpen = item.type === 'Solicitacao' || item.type === 'Relato';
+        const canOpen = item.type === 'Solicitação' || item.type === 'Relato';
         const isOpen = openItemId === itemKey;
         const Icon = item.icon;
 
@@ -303,7 +303,7 @@ export default function ActivityHistory({
               </div>
             </div>
 
-            {isOpen && item.type === 'Solicitacao' && (
+            {isOpen && item.type === 'Solicitação' && (
               <div className="border-t border-border p-4">
                 <DemandTimeline
                   demand={item.source}

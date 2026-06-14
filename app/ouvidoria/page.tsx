@@ -21,10 +21,10 @@ export default function OuvidoriaPage() {
 
             <div className="max-w-3xl space-y-3 animate-float-in">
               <h1 className="text-3xl font-semibold leading-tight tracking-normal text-text-main sm:text-5xl lg:text-6xl">
-                Ouvidoria e solicitacoes
+                Ouvidoria e solicitações
               </h1>
               <p className="max-w-2xl text-base font-medium leading-7 text-text-muted">
-                Abra uma solicitacao, registre uma manifestacao ou consulte o andamento pelo protocolo.
+                Abra uma solicitação, registre uma manifestação ou consulte o andamento pelo protocolo.
               </p>
             </div>
 
@@ -34,7 +34,7 @@ export default function OuvidoriaPage() {
                 className={activeTab === 'create' ? 'action-button-primary' : 'action-button-secondary'}
               >
                 <MessageSquare className="h-4 w-4" />
-                Abrir solicitacao
+                Abrir solicitação
               </button>
               <button
                 onClick={() => setActiveTab('search')}
@@ -47,7 +47,7 @@ export default function OuvidoriaPage() {
           </div>
 
           <aside className="relative z-10 glass-panel p-4 md:p-5">
-            <h2 className="text-lg font-semibold tracking-normal text-text-main">Antes de comecar</h2>
+            <h2 className="text-lg font-semibold tracking-normal text-text-main">Antes de começar</h2>
             <div className="mt-4 space-y-3">
               {[
                 {
@@ -60,7 +60,7 @@ export default function OuvidoriaPage() {
                 },
                 {
                   icon: Clock3,
-                  text: 'Solicitacoes vinculadas ao login aparecem no Painel do Cidadao.',
+                  text: 'Solicitações vinculadas ao login aparecem no Painel do Cidadão.',
                 },
               ].map((item) => (
                 <div key={item.text} className="civic-card flex gap-3 p-4">
@@ -80,7 +80,7 @@ export default function OuvidoriaPage() {
               {activeTab === 'create' ? 'Novo protocolo' : 'Acompanhamento'}
             </p>
             <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">
-              {activeTab === 'create' ? 'Abrir solicitacao' : 'Consultar protocolo'}
+              {activeTab === 'create' ? 'Abrir solicitação' : 'Consultar protocolo'}
             </h2>
           </div>
 
@@ -89,7 +89,7 @@ export default function OuvidoriaPage() {
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold">Solicitacao protocolada com sucesso.</p>
+                  <p className="text-sm font-semibold">Solicitação protocolada com sucesso.</p>
                   <p className="mt-1 break-all font-mono text-base font-semibold text-green-800 sm:text-lg">
                     {createdProtocol}
                   </p>
@@ -114,9 +114,9 @@ export default function OuvidoriaPage() {
             </p>
           </div>
           <div className="rounded-[1.25rem] bg-gradient-to-br from-text-main to-primary-dark p-5 text-white shadow-[0_18px_48px_rgba(15,23,42,0.16)]">
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary-light">Painel do Cidadao</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary-light">Painel do Cidadão</p>
             <p className="mt-2 text-sm font-medium leading-6 text-white/75">
-              Solicitacoes feitas com login aparecem automaticamente no historico.
+              Solicitações feitas com login aparecem automaticamente no histórico.
             </p>
           </div>
         </aside>

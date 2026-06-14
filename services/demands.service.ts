@@ -338,8 +338,8 @@ export async function updateDemandStatus(
           recipientId: d.authorId,
           kind: 'demand_update',
           tone: STATUS_TONE[status],
-          title: `Solicitacao ${STATUS_LABEL[status]}`,
-          message: response || `Sua solicitacao "${d.subject}" foi atualizada para ${STATUS_LABEL[status]}.`,
+          title: `Solicitação ${STATUS_LABEL[status]}`,
+          message: response || `Sua solicitação "${d.subject}" foi atualizada para ${STATUS_LABEL[status]}.`,
           href: '/perfil',
           source: { type: 'demand', id, protocol: d.protocolId },
         });

@@ -12,9 +12,9 @@ interface DemandFormProps {
 }
 
 const demandTypes: { label: string; value: DemandType }[] = [
-  { label: 'Reclamacao', value: 'reclamacao' },
-  { label: 'Solicitacao', value: 'sugestao' },
-  { label: 'Denuncia', value: 'denuncia' },
+  { label: 'Reclamação', value: 'reclamacao' },
+  { label: 'Solicitação', value: 'sugestao' },
+  { label: 'Denúncia', value: 'denuncia' },
   { label: 'Elogio', value: 'elogio' },
 ];
 
@@ -87,7 +87,7 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
         });
       });
     } catch {
-      toast('Nao foi possivel enviar a solicitacao agora.', 'error');
+      toast('Não foi possível enviar a solicitação agora.', 'error');
       setLoading(false);
     }
   };
@@ -96,12 +96,12 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
     event.preventDefault();
 
     if (!formData.subject.trim() || !formData.text.trim()) {
-      toast('Preencha o assunto e a descricao da solicitacao.', 'error');
+      toast('Preencha o assunto e a descricao da solicitação.', 'error');
       return;
     }
 
     if (!formData.consent) {
-      toast('Confirme os termos para protocolar a solicitacao.', 'error');
+      toast('Confirme os termos para protocolar a solicitação.', 'error');
       return;
     }
 
@@ -111,7 +111,7 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
         await login();
       } catch (error) {
         pendingSubmit.current = false;
-        toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+        toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
       }
       return;
     }
@@ -161,7 +161,7 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
       </label>
 
       <label className="block space-y-2">
-        <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descricao</span>
+        <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descrição</span>
         <textarea
           value={formData.text}
           onChange={(event) => setFormData({ ...formData, text: event.target.value })}
@@ -181,7 +181,7 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
             className="mt-1 h-4 w-4 accent-primary"
           />
           <span className="text-sm font-medium leading-6 text-text-muted">
-            Enviar como solicitacao anonima.
+            Enviar como solicitação anonima.
           </span>
         </label>
 
@@ -193,7 +193,7 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
             className="mt-1 h-4 w-4 accent-primary"
           />
           <span className="text-sm font-medium leading-6 text-text-muted">
-            Confirmo que as informacoes sao verdadeiras e autorizo o tratamento dos dados necessarios para atendimento.
+            Confirmo que as informações são verdadeiras e autorizo o tratamento dos dados necessários para atendimento.
           </span>
         </label>
       </div>
@@ -213,7 +213,7 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
         className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-        Protocolar solicitacao
+        Protocolar solicitação
       </button>
     </form>
   );

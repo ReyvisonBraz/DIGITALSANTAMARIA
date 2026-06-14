@@ -11,15 +11,15 @@ import type { Demand, DemandStatus, DemandType } from '@/types';
 
 const statusLabel: Record<DemandStatus, string> = {
   pending: 'Pendente',
-  analyzing: 'Em analise',
+  analyzing: 'Em análise',
   solved: 'Resolvida',
   rejected: 'Recusada',
 };
 
 const typeLabel: Record<DemandType, string> = {
-  reclamacao: 'Reclamacao',
-  sugestao: 'Solicitacao',
-  denuncia: 'Denuncia',
+  reclamacao: 'Reclamação',
+  sugestao: 'Solicitação',
+  denuncia: 'Denúncia',
   elogio: 'Elogio',
 };
 
@@ -45,7 +45,7 @@ export default function ProtocolSearch() {
       }
       setResult(demand);
     } catch {
-      toast('Nao foi possivel consultar o protocolo agora.', 'error');
+      toast('Não foi possível consultar o protocolo agora.', 'error');
     } finally {
       setLoading(false);
     }
@@ -108,7 +108,7 @@ export default function ProtocolSearch() {
           <div className="mt-5 rounded-xl border border-border p-4">
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted">
               <FileText className="h-4 w-4 text-primary" />
-              Descricao
+              Descrição
             </div>
             <p className="mt-3 text-sm font-medium leading-6 text-text-muted">{result.content.text}</p>
           </div>

@@ -64,7 +64,7 @@ export default function AdminAuditPanel() {
     try {
       setLogs(await getAdminAuditLogs(150));
     } catch {
-      setError('Nao foi possivel carregar a auditoria administrativa.');
+      setError('Não foi possível carregar a auditoria administrativa.');
       setLogs([]);
     } finally {
       setLoading(false);
@@ -95,7 +95,7 @@ export default function AdminAuditPanel() {
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Auditoria</p>
-            <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">Historico administrativo</h2>
+            <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">Histórico administrativo</h2>
             <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-text-muted">
               Ultimas acoes sensiveis registradas pelo painel: publicacoes, arquivamentos, aprovacoes e mudancas de status.
             </p>

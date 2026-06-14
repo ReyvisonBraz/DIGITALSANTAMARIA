@@ -45,15 +45,15 @@ import type { Demand, DemandStatus, DemandType, Report, ReportStatus, ReportType
 
 const demandStatusLabel: Record<DemandStatus, string> = {
   pending: 'Pendente',
-  analyzing: 'Em analise',
+  analyzing: 'Em análise',
   solved: 'Resolvida',
   rejected: 'Recusada',
 };
 
 const demandTypeLabel: Record<DemandType, string> = {
-  reclamacao: 'Reclamacao',
-  sugestao: 'Solicitacao',
-  denuncia: 'Denuncia',
+  reclamacao: 'Reclamação',
+  sugestao: 'Solicitação',
+  denuncia: 'Denúncia',
   elogio: 'Elogio',
 };
 
@@ -104,7 +104,7 @@ function normalizeDemandStatus(status: string): DemandStatus {
 }
 
 function normalizeDemandType(type: string): DemandType {
-  if (type === 'solicitacao') return 'sugestao';
+  if (type === 'solicitação') return 'sugestao';
   if (type === 'reclamacao' || type === 'sugestao' || type === 'denuncia' || type === 'elogio') {
     return type;
   }
@@ -121,7 +121,7 @@ function getDemandTypeLabel(type: string) {
 
 const reportStatusLabel: Record<ReportStatus, string> = {
   pending: 'Pendente',
-  in_review: 'Em analise',
+  in_review: 'Em análise',
   resolved: 'Resolvido',
   rejected: 'Recusado',
 };
@@ -173,14 +173,14 @@ const reportStatusMeta = {
 
 const demandStatusOptions: { value: DemandStatus; label: string }[] = [
   { value: 'pending', label: 'Pendente' },
-  { value: 'analyzing', label: 'Em analise' },
+  { value: 'analyzing', label: 'Em análise' },
   { value: 'solved', label: 'Resolvida' },
   { value: 'rejected', label: 'Recusada' },
 ];
 
 const reportStatusOptions: { value: ReportStatus; label: string }[] = [
   { value: 'pending', label: 'Pendente' },
-  { value: 'in_review', label: 'Em analise' },
+  { value: 'in_review', label: 'Em análise' },
   { value: 'resolved', label: 'Resolvido' },
   { value: 'rejected', label: 'Recusado' },
 ];
@@ -242,9 +242,9 @@ function LoginGate({ authError, loginError, onLogin }: AuthGateProps) {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-4 text-center">
       <AlertCircle className="h-12 w-12 text-primary" />
-      <h1 className="mt-4 text-3xl font-semibold tracking-normal text-text-main">Painel de Gestao</h1>
+      <h1 className="mt-4 text-3xl font-semibold tracking-normal text-text-main">Painel de Gestão</h1>
       <p className="mt-3 text-base font-medium leading-7 text-text-muted">
-        Entre com uma conta autorizada para acessar solicitacoes, relatos e cadastros administrativos.
+        Entre com uma conta autorizada para acessar solicitações, relatos e cadastros administrativos.
       </p>
       <button type="button" onClick={onLogin} className="action-button-primary mt-6">
         Entrar
@@ -280,7 +280,7 @@ function CopyProtocolButton({ protocol }: { protocol: string }) {
       await navigator.clipboard.writeText(protocol);
       toast('Protocolo copiado.', 'success');
     } catch {
-      toast('Nao foi possivel copiar o protocolo.', 'error');
+      toast('Não foi possível copiar o protocolo.', 'error');
     }
   };
 
@@ -431,7 +431,7 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
         </div>
 
         <p className="mt-3 text-xs font-bold text-text-muted">
-          Mostrando {filteredDemands.length} de {demands.length} solicitacoes.
+          Mostrando {filteredDemands.length} de {demands.length} solicitações.
           {unreadByStaffCount > 0 && (
             <span className="ml-2 text-primary-dark">
               {unreadByStaffCount} com nova resposta do cidadao.
@@ -448,7 +448,7 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
       ) : error ? (
         <EmptyState title="Erro ao carregar" description={error} />
       ) : demands.length === 0 ? (
-        <EmptyState title="Nenhuma solicitacao" description="Ainda nao ha solicitacoes registradas." />
+        <EmptyState title="Nenhuma solicitação" description="Ainda nao ha solicitações registradas." />
       ) : filteredDemands.length === 0 ? (
         <EmptyState title="Nada encontrado" description="Tente limpar os filtros ou buscar outro termo." />
       ) : (
@@ -527,7 +527,7 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
                         <div className="rounded-xl border border-border bg-surface p-4">
                           <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted">
                             <FileText className="h-4 w-4 text-primary" />
-                            Solicitacao original
+                            Solicitação original
                           </div>
                           <p className="mt-3 whitespace-pre-wrap text-sm font-medium leading-6 text-text-muted">
                             {demand.content.text}
@@ -882,7 +882,7 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
   );
 }
 
-export default function GestaoPage() {
+export default function GestãoPage() {
   const { user, userRole, loading: authLoading, authError, login } = useAuth();
   const isStaff = userRole === 'admin' || userRole === 'clerk';
   const canManageAdminCatalog = userRole === 'admin';
@@ -913,7 +913,7 @@ export default function GestaoPage() {
     try {
       await login();
     } catch (loginProblem) {
-      setLoginError(loginProblem instanceof Error ? loginProblem.message : 'Nao foi possivel iniciar o login.');
+      setLoginError(loginProblem instanceof Error ? loginProblem.message : 'Não foi possível iniciar o login.');
     }
   };
 
@@ -939,13 +939,13 @@ export default function GestaoPage() {
         <div className="hero-panel p-5 sm:p-7 md:p-9">
           <div className="soft-chip">
             <ShieldCheck className="h-4 w-4" />
-            Gestao municipal
+            Gestão municipal
           </div>
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-text-main md:text-5xl" style={{ fontFamily: 'var(--font-display)' }}>
-            Painel de <span className="text-gradient">operacao</span>
+            Painel de <span className="text-gradient">operação</span>
           </h1>
           <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-            Acompanhe solicitacoes, responda protocolos, gerencie conteudo publico e mantenha os cadastros administrativos em ordem.
+            Acompanhe solicitações, responda protocolos, gerencie conteudo publico e mantenha os cadastros administrativos em ordem.
           </p>
         </div>
       </section>

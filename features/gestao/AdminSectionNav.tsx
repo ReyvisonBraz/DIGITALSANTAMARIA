@@ -24,7 +24,7 @@ export default function AdminSectionNav({
 }: AdminSectionNavProps) {
   const items = [
     { value: 'overview' as const, label: 'Visao geral', icon: BarChart3, count: null, restricted: false },
-    { value: 'demands' as const, label: 'Solicitacoes', icon: FileText, count: demandCount, restricted: false },
+    { value: 'demands' as const, label: 'Solicitações', icon: FileText, count: demandCount, restricted: false },
     {
       value: 'reports' as const,
       label: 'Relatos',
@@ -39,7 +39,7 @@ export default function AdminSectionNav({
       count: null,
       restricted: false,
     },
-    { value: 'petitions' as const, label: 'Peticoes', icon: FileText, count: null, restricted: true },
+    { value: 'petitions' as const, label: 'Petições', icon: FileText, count: null, restricted: true },
     { value: 'users' as const, label: 'Usuarios', icon: Users, count: null, restricted: true },
     { value: 'audit' as const, label: 'Auditoria', icon: ScrollText, count: null, restricted: true },
   ].filter((item) => !item.restricted || canManageAdminCatalog);
