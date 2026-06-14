@@ -46,7 +46,7 @@ async function notifyUser(userId: string | null | undefined, status: string): Pr
       notification: { title: message.title, body: message.body },
       data: { type: 'status_update', status },
     });
-    console.log(`[onStatusChanged] Notificacao enviada para ${userId}`);
+    console.log(`[onStatusChanged] Notificação enviada para ${userId}`);
   } catch (error) {
     console.error('[onStatusChanged] Erro ao enviar notificação:', error);
   }

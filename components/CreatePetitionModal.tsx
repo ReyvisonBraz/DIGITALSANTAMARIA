@@ -237,7 +237,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
         return (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
             <label className="block space-y-2">
-              <span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">Descricao da proposta</span>
+              <span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">Descrição da proposta</span>
               <textarea
                 rows={7}
                 className="w-full resize-none rounded-xl border border-border bg-surface p-4 font-medium leading-6 shadow-inner outline-none transition focus:border-primary"

@@ -9,7 +9,7 @@ export const votePollCallable = functions.https.onCall(
     if (!request.auth) {
       throw new functions.https.HttpsError(
         'unauthenticated',
-        'Autenticacao necessaria para votar.'
+        'Autenticação necessária para votar.'
       );
     }
 

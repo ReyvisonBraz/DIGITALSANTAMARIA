@@ -179,7 +179,7 @@ export default function ReportForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <fieldset className="space-y-3">
         <legend className="text-[11px] font-black uppercase tracking-widest text-text-main">
-          Tipo de ocorrencia
+          Tipo de ocorrência
         </legend>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {REPORT_TYPES.map((option) => {
@@ -230,7 +230,7 @@ export default function ReportForm() {
 
       <div className="space-y-2">
         <label htmlFor="report-description" className="text-[11px] font-black uppercase tracking-widest text-text-main">
-          Descreva a situacao
+          Descreva a situação
         </label>
         <textarea
           id="report-description"

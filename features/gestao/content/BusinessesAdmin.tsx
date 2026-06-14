@@ -237,7 +237,7 @@ export default function BusinessesAdmin() {
           nextValue: status,
           note: null,
         });
-        toast(status === 'published' ? 'Comercio publicado.' : 'Comercio salvo.', 'success');
+        toast(status === 'published' ? 'Comércio publicado.' : 'Comércio salvo.', 'success');
       }
 
       resetForm();
@@ -265,7 +265,7 @@ export default function BusinessesAdmin() {
         nextValue: 'archived',
         note: null,
       });
-      toast('Comercio arquivado.', 'success');
+      toast('Comércio arquivado.', 'success');
       setArchiveId(null);
       load();
     } catch {

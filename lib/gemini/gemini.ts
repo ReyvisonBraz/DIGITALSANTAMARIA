@@ -38,7 +38,7 @@ export async function classifyReport(
 - other: qualquer outro
 
 Titulo: "${limitText(title, 160)}"
-Descricao: "${limitText(description, 1200)}"
+Descrição: "${limitText(description, 1200)}"
 
 Responda apenas: infrastructure, environment, security ou other`;
 
