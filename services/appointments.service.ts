@@ -21,7 +21,7 @@ const HEALTH_UNITS_COL = 'health_units';
 const APPOINTMENT_STATUS_LABEL: Record<AppointmentStatus, string> = {
   scheduled: 'agendada',
   confirmed: 'confirmada',
-  completed: 'concluida',
+  completed: 'concluída',
   cancelled: 'cancelada',
 };
 
@@ -46,9 +46,15 @@ export async function createAppointment(
 
 export async function getAppointmentsByUser(userId: string): Promise<Appointment[]> {
   const ref = collection(db, APPOINTMENTS_COL).withConverter(appointmentConverter);
-  const q = query(ref, where('userId', '==', userId), orderBy('date', 'desc'));
+  const q = query(ref, where('userId', '==', userId));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => d.data());
+  return snap.docs
+    .map((d) => d.data())
+    .sort((a, b) => {
+      // Datas estão em formato ISO (YYYY-MM-DD), localeCompare funciona para ordenação descrescente.
+      if (b.date !== a.date) return b.date.localeCompare(a.date);
+      return b.time.localeCompare(a.time);
+    });
 }
 
 export async function getAllAppointments(): Promise<Appointment[]> {

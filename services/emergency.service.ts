@@ -9,6 +9,7 @@ import {
   serverTimestamp,
   updateDoc,
   where,
+  type Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { emergencyAlertConverter } from '@/lib/firebase/converters';
@@ -61,9 +62,15 @@ export async function getAllEmergencyAlerts(): Promise<EmergencyAlert[]> {
 
 export async function getEmergencyAlertsByUser(userId: string): Promise<EmergencyAlert[]> {
   const ref = collection(db, COLLECTION).withConverter(emergencyAlertConverter);
-  const q = query(ref, where('userId', '==', userId), orderBy('createdAt', 'desc'));
+  const q = query(ref, where('userId', '==', userId));
   const snap = await getDocs(q);
-  return snap.docs.map((document) => document.data());
+  return snap.docs
+    .map((document) => document.data())
+    .sort((a, b) => {
+      const aMs = (a.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
+      const bMs = (b.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
+      return bMs - aMs;
+    });
 }
 
 export async function updateEmergencyAlertStatus(
@@ -84,8 +91,8 @@ export async function updateEmergencyAlertStatus(
       recipientId: alert.userId,
       kind: 'emergency_update',
       tone: status === 'resolved' ? 'success' : (status === 'cancelled' ? 'alert' : 'update'),
-      title: 'Alerta de seguranca atualizado',
-      message: `O alerta ${alert.protocol} esta ${EMERGENCY_STATUS_LABEL[status]}.`,
+      title: 'Alerta de segurança atualizado',
+      message: `O alerta ${alert.protocol} está ${EMERGENCY_STATUS_LABEL[status]}.`,
       href: '/seguranca',
       source: { type: 'emergency', id, protocol: alert.protocol },
     });

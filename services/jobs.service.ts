@@ -10,6 +10,7 @@ import {
   setDoc,
   updateDoc,
   where,
+  type Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { jobConverter, jobApplicationConverter } from '@/lib/firebase/converters';
@@ -29,13 +30,15 @@ const APPLICATION_STATUS_LABEL: Record<ApplicationStatus, string> = {
 
 export async function getActiveJobs(): Promise<Job[]> {
   const ref = collection(db, JOBS_COL).withConverter(jobConverter);
-  const q = query(
-    ref,
-    where('isActive', '==', true),
-    orderBy('createdAt', 'desc')
-  );
+  const q = query(ref, where('isActive', '==', true));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => d.data());
+  return snap.docs
+    .map((d) => d.data())
+    .sort((a, b) => {
+      const aMs = (a.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
+      const bMs = (b.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
+      return bMs - aMs;
+    });
 }
 
 export async function applyForJob(
@@ -70,9 +73,15 @@ export async function hasUserApplied(jobId: string, userId: string): Promise<boo
 
 export async function getUserApplications(userId: string): Promise<JobApplication[]> {
   const ref = collection(db, APPLICATIONS_COL).withConverter(jobApplicationConverter);
-  const q = query(ref, where('applicantId', '==', userId), orderBy('createdAt', 'desc'));
+  const q = query(ref, where('applicantId', '==', userId));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => d.data());
+  return snap.docs
+    .map((d) => d.data())
+    .sort((a, b) => {
+      const aMs = (a.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
+      const bMs = (b.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
+      return bMs - aMs;
+    });
 }
 
 export async function getAllApplications(): Promise<JobApplication[]> {

@@ -9,6 +9,7 @@ import {
   serverTimestamp,
   updateDoc,
   where,
+  type Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { enrollmentConverter } from '@/lib/firebase/converters';
@@ -55,9 +56,15 @@ export async function getAllEnrollments(): Promise<Enrollment[]> {
 
 export async function getEnrollmentsByUser(userId: string): Promise<Enrollment[]> {
   const ref = collection(db, COLLECTION).withConverter(enrollmentConverter);
-  const q = query(ref, where('userId', '==', userId), orderBy('createdAt', 'desc'));
+  const q = query(ref, where('userId', '==', userId));
   const snap = await getDocs(q);
-  return snap.docs.map((document) => document.data());
+  return snap.docs
+    .map((document) => document.data())
+    .sort((a, b) => {
+      const aMs = (a.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
+      const bMs = (b.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
+      return bMs - aMs;
+    });
 }
 
 export async function updateEnrollmentStatus(
@@ -78,8 +85,8 @@ export async function updateEnrollmentStatus(
       recipientId: enrollment.userId,
       kind: 'enrollment_update',
       tone: status === 'approved' ? 'success' : (status === 'rejected' ? 'alert' : 'update'),
-      title: 'Matricula atualizada',
-      message: `A solicitacao ${enrollment.protocol} foi ${ENROLLMENT_STATUS_LABEL[status]}.`,
+      title: 'Matrícula atualizada',
+      message: `A solicitação ${enrollment.protocol} foi ${ENROLLMENT_STATUS_LABEL[status]}.`,
       href: '/perfil',
       source: { type: 'enrollment', id, protocol: enrollment.protocol },
     });

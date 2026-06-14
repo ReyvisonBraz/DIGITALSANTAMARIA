@@ -4,11 +4,11 @@ import {
   getDoc,
   getDocs,
   onSnapshot,
-  orderBy,
   query,
   serverTimestamp,
   updateDoc,
   where,
+  type Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { createContentService } from '@/services/content.service';
@@ -90,8 +90,8 @@ export async function approveBusiness(id: string): Promise<void> {
       recipientId: business.ownerId,
       kind: 'business_update',
       tone: 'success',
-      title: 'Negocio aprovado',
-      message: `Seu cadastro "${business.title}" foi aprovado e ja esta visivel em /comercio.`,
+      title: 'Negócio aprovado',
+      message: `Seu cadastro "${business.title}" foi aprovado e já está visível em /comércio.`,
       href: '/perfil',
       source: { type: 'business', id },
     });
@@ -114,10 +114,10 @@ export async function rejectBusiness(id: string, note?: string): Promise<void> {
       recipientId: business.ownerId,
       kind: 'business_update',
       tone: 'alert',
-      title: 'Cadastro nao aprovado',
+      title: 'Cadastro não aprovado',
       message: trimmedNote
-        ? `"${business.title}" nao foi aprovado. Motivo: ${trimmedNote}`
-        : `"${business.title}" nao foi aprovado pela prefeitura. Veja seu painel para revisar e reenviar.`,
+        ? `"${business.title}" não foi aprovado. Motivo: ${trimmedNote}`
+        : `"${business.title}" não foi aprovado pela prefeitura. Veja seu painel para revisar e reenviar.`,
       href: '/perfil',
       source: { type: 'business', id },
     });
@@ -127,15 +127,16 @@ export async function rejectBusiness(id: string, note?: string): Promise<void> {
 /** Lista negocios pendentes para o painel de moderacao. */
 export async function listPendingBusinesses(): Promise<Business[]> {
   const ref = collection(db, COLLECTION);
-  const q = query(
-    ref,
-    where('status', '==', 'pending_approval'),
-    orderBy('createdAt', 'desc'),
-  );
+  const q = query(ref, where('status', '==', 'pending_approval'));
   const snap = await getDocs(q);
   return snap.docs
     .map((d) => ({ id: d.id, ...d.data() }) as Business)
-    .filter((business) => !business.deletedAt);
+    .filter((business) => !business.deletedAt)
+    .sort((a, b) => {
+      const aMs = (a.createdAt as Timestamp)?.toMillis?.() ?? 0;
+      const bMs = (b.createdAt as Timestamp)?.toMillis?.() ?? 0;
+      return bMs - aMs;
+    });
 }
 
 /** Stream em tempo real dos negocios de um cidadao, em qualquer status. */
@@ -145,19 +146,19 @@ export function listenToOwnedBusinesses(
   onError?: (error: unknown) => void,
 ): () => void {
   const ref = collection(db, COLLECTION);
-  const q = query(
-    ref,
-    where('ownerId', '==', ownerId),
-    orderBy('createdAt', 'desc'),
-  );
+  const q = query(ref, where('ownerId', '==', ownerId));
   return onSnapshot(
     q,
     (snap) => {
-      onChange(
-        snap.docs
-          .map((d) => ({ id: d.id, ...d.data() }) as Business)
-          .filter((business) => !business.deletedAt),
-      );
+      const sorted = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }) as Business)
+        .filter((business) => !business.deletedAt)
+        .sort((a, b) => {
+          const aMs = (a.createdAt as Timestamp)?.toMillis?.() ?? 0;
+          const bMs = (b.createdAt as Timestamp)?.toMillis?.() ?? 0;
+          return bMs - aMs;
+        });
+      onChange(sorted);
     },
     (error) => {
       onError?.(error);
