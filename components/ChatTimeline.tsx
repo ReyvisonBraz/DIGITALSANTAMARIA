@@ -24,7 +24,7 @@ export interface ChatTimelineAdapter {
   /** Real-time listener de mensagens. Retorna função de unsubscribe. */
   listenMessages: (
     entityId: string,
-    onChange: (rawMessages: { id: string; authorName: string; authorRole: string; message: string; createdAt: any }[]) => void,
+    onChange: (rawMessages: { id: string; authorName: string; authorRole: string; message: string; createdAt: { seconds: number; nanoseconds?: number; toDate?: () => Date } | string }[]) => void,
     onError?: (error: unknown) => void,
   ) => () => void;
   /** Cria uma nova mensagem. */
@@ -34,7 +34,7 @@ export interface ChatTimelineAdapter {
     authorName: string;
     authorRole: string;
     message: string;
-  }) => Promise<any>;
+  }) => Promise<string>;
   /** Marca a conversa como lida pelo cidadão. */
   markAsRead: (entityId: string) => Promise<void>;
 }
@@ -44,7 +44,7 @@ interface ChatTimelineProps {
   /** Mensagem inicial (a do formulário de criação). */
   initialAuthorName: string;
   initialMessage: string;
-  initialCreatedAt: any;
+  initialCreatedAt: { seconds: number; nanoseconds?: number; toDate?: () => Date } | string;
   /** Resposta legada (antes do chat existir). */
   legacyResponseText?: string;
   legacyResponseAuthorName?: string;
@@ -69,7 +69,7 @@ const ROLE_ICON: Record<string, typeof UserRound> = {
   system: CheckCircle2,
 };
 
-function messageDate(createdAt: any): string {
+function messageDate(createdAt: { seconds: number; nanoseconds?: number; toDate?: () => Date } | string | null | undefined): string {
   return createdAt ? formatDate(createdAt) : 'Agora';
 }
 
@@ -91,7 +91,7 @@ export default function ChatTimeline({
   compact = false,
 }: ChatTimelineProps) {
   const { toast } = useToast();
-  const [rawMessages, setRawMessages] = useState<any[]>([]);
+  const [rawMessages, setRawMessages] = useState<{ id: string; authorName: string; authorRole: string; message: string; createdAt: { seconds: number; nanoseconds?: number; toDate?: () => Date } | string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reply, setReply] = useState('');
@@ -174,7 +174,7 @@ export default function ChatTimeline({
         authorName: legacyResponseAuthorName,
         authorRole: 'staff',
         message: legacyResponseText!,
-        createdAt: new Date().toISOString() as any,
+        createdAt: new Date().toISOString(),
         isStaff: true,
       });
     }
