@@ -1,46 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Building2, HardHat } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { ArrowLeft, HardHat } from 'lucide-react';
+import { useContentItem } from '@/lib/hooks/use-content-item';
 import ContentPage from '@/components/ui/ContentPage';
 import ContentHero from '@/components/ui/ContentHero';
 import ContentCard from '@/components/ui/ContentCard';
 import type { Work } from '@/types';
 
+/**
+ * Página de detalhes de uma obra pública.
+ * Carrega o documento pela coleção 'works' via useContentItem().
+ */
 export default function ObraDetalhesPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [work, setWork] = useState<Work | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchWork = () => {
-    setLoading(true);
-    setError(null);
-    getDoc(doc(db, 'works', id))
-      .then((snap) => {
-        if (!snap.exists()) {
-          setWork(null);
-        } else {
-          const data = snap.data() as Work;
-          if (data.deletedAt) {
-            setWork(null);
-          } else {
-            setWork({ ...data, id: snap.id });
-          }
-        }
-      })
-      .catch(() => setError('Erro ao carregar a obra.'))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    fetchWork();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  const { item: work, loading, error, refresh } = useContentItem<Work>('works', id);
 
   return (
     <div className="page-shell">
@@ -49,6 +25,7 @@ export default function ObraDetalhesPage() {
           type="button"
           onClick={() => router.back()}
           className="inline-flex w-fit items-center gap-2 text-xs font-semibold uppercase tracking-widest text-text-muted transition hover:text-primary"
+          aria-label="Voltar para lista de obras"
         >
           <ArrowLeft className="h-4 w-4" />
           Voltar
@@ -57,18 +34,28 @@ export default function ObraDetalhesPage() {
         <ContentPage
           loading={loading}
           error={error}
-          onRetry={fetchWork}
+          isEmpty={!work}
+          onRetry={refresh}
           emptyMessage="Obra não encontrada."
         >
-          {!loading && !error && !work ? null : work && (
+          {work && (
             <>
-              <ContentHero icon={HardHat} label={work.category} title={work.title} subtitle={work.neighborhood} accent="primary-dark" />
+              <ContentHero
+                icon={HardHat}
+                label={work.category}
+                title={work.title}
+                subtitle={work.neighborhood}
+                accent="primary-dark"
+              />
               <ContentCard
                 title={work.title}
                 description={work.description}
                 imageURL={work.imageURL}
                 address={work.address}
-                badge={{ text: `${work.progress}% concluído`, color: 'bg-blue-100 text-blue-800' }}
+                badge={{
+                  text: `${work.progress}% concluído`,
+                  color: 'bg-blue-100 text-blue-800',
+                }}
                 stats={[
                   { label: 'Orçamento', value: `R$ ${work.budget.toLocaleString('pt-BR')}` },
                   { label: 'Início', value: work.startDate },
