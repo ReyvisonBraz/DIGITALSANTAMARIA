@@ -82,7 +82,9 @@ export function createContentService<T extends {
   }
 
   async function getById(id: string): Promise<T | null> {
-    const ref = doc(db, collectionName, id);
+    // Usa `doc(col, id)` em vez de `doc(db, collectionName, id)` para que o
+    // converter opcional da factory seja aplicado corretamente.
+    const ref = doc(col, id);
     const snap = await getDoc(ref);
     if (!snap.exists()) return null;
     const data = { id: snap.id, ...snap.data() } as unknown as T;
@@ -91,7 +93,7 @@ export function createContentService<T extends {
   }
 
   async function create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<string> {
-    const docRef = await addDoc(collection(db, collectionName), {
+    const docRef = await addDoc(col, {
       ...data,
       status: (data.status || 'published') as ContentStatus,
       createdAt: serverTimestamp(),
