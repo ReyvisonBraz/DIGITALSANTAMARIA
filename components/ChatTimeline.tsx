@@ -153,7 +153,7 @@ export default function ChatTimeline({
       items.push({
         id: m.id,
         authorName: m.authorName || 'Sistema',
-        authorRole: m.authorRole || 'system',
+        authorRole: (m.authorRole || 'system') as TimelineMessage['authorRole'],
         message: m.message || '',
         createdAt: m.createdAt,
         isStaff: m.authorRole === 'staff',

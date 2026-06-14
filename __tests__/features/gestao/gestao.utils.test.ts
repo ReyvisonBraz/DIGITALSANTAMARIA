@@ -125,19 +125,20 @@ describe('reportTypeLabel', () => {
 
 describe('hasUnreadStaffMessage', () => {
   const base: Demand = {
-    id: '1', protocolId: 'OUV-2024-ABC123', userId: 'u1',
+    id: '1', protocolId: 'OUV-2024-ABC123', authorId: 'u1', authorName: null,
     subject: 'Teste', category: 'outros', type: 'reclamacao', status: 'pending',
-    content: { text: 'texto', attachments: [] },
-    createdAt: ts, updatedAt: ts, deletedAt: null,
+    content: { text: 'texto', mediaFiles: [], location: null },
+    adminAction: null, isAnonymous: false, consent: true,
+    createdAt: ts, updatedAt: ts,
   };
 
   it('returns true when unreadByStaff is true', () => {
-    const d: Demand = { ...base, conversation: { unreadByStaff: true, unreadByCitizen: false, lastMessageAuthorName: '' } };
+    const d: Demand = { ...base, conversation: { unreadByStaff: true, unreadByCitizen: false, lastMessageAuthorName: '', lastMessageAt: ts, lastMessageAuthorRole: 'citizen' } };
     expect(hasUnreadStaffMessage(d)).toBe(true);
   });
 
   it('returns false when unreadByStaff is false', () => {
-    const d: Demand = { ...base, conversation: { unreadByStaff: false, unreadByCitizen: false, lastMessageAuthorName: '' } };
+    const d: Demand = { ...base, conversation: { unreadByStaff: false, unreadByCitizen: false, lastMessageAuthorName: '', lastMessageAt: ts, lastMessageAuthorRole: 'citizen' } };
     expect(hasUnreadStaffMessage(d)).toBe(false);
   });
 
@@ -150,11 +151,12 @@ describe('hasUnreadStaffMessage', () => {
 
 describe('buildDemandSearchText', () => {
   const demand: Demand = {
-    id: '1', protocolId: 'OUV-2024-ABC123', userId: 'u1',
+    id: '1', protocolId: 'OUV-2024-ABC123', authorId: 'u1', authorName: null,
     subject: 'Buraco na rua', category: 'infraestrutura',
     type: 'reclamacao', status: 'pending',
-    content: { text: 'Há um buraco perigoso', attachments: [] },
-    createdAt: ts, updatedAt: ts, deletedAt: null,
+    content: { text: 'Há um buraco perigoso', mediaFiles: [], location: null },
+    adminAction: null, isAnonymous: false, consent: true,
+    createdAt: ts, updatedAt: ts,
   };
 
   it('includes protocol, subject and body text', () => {
@@ -173,7 +175,7 @@ describe('buildDemandSearchText', () => {
   it('includes unread indicator and author name when unreadByStaff is true', () => {
     const d: Demand = {
       ...demand,
-      conversation: { unreadByStaff: true, unreadByCitizen: false, lastMessageAuthorName: 'Maria' },
+      conversation: { unreadByStaff: true, unreadByCitizen: false, lastMessageAuthorName: 'Maria', lastMessageAt: ts, lastMessageAuthorRole: 'citizen' },
     };
     const text = buildDemandSearchText(d);
     expect(text).toContain('nova resposta cidadão');
@@ -190,15 +192,16 @@ describe('buildDemandSearchText', () => {
 
 describe('hasUnreadReportStaffMessage', () => {
   const base: Report = {
-    id: '1', protocolId: 'GC-2024-ABC123', userId: 'u1',
+    id: '1', protocolId: 'GC-2024-ABC123', reporterId: 'u1',
     title: 'Lâmpada queimada', description: 'Rua escura', reporterName: 'João',
     type: 'infrastructure', status: 'pending',
     location: { lat: 0, lng: 0, address: '' },
-    createdAt: ts, updatedAt: ts, deletedAt: null,
+    photo: null, votes: 0, isPetition: false, adminResponse: null, clerkId: null,
+    createdAt: ts, updatedAt: ts,
   };
 
   it('returns true when unreadByStaff is true', () => {
-    const r: Report = { ...base, conversation: { unreadByStaff: true, unreadByCitizen: false, lastMessageAuthorName: '' } };
+    const r: Report = { ...base, conversation: { unreadByStaff: true, unreadByCitizen: false, lastMessageAuthorName: '', lastMessageAt: ts, lastMessageAuthorRole: 'citizen' } };
     expect(hasUnreadReportStaffMessage(r)).toBe(true);
   });
 
@@ -211,12 +214,13 @@ describe('hasUnreadReportStaffMessage', () => {
 
 describe('buildReportSearchText', () => {
   const report: Report = {
-    id: '1', protocolId: 'GC-2024-XYZ789', userId: 'u1',
+    id: '1', protocolId: 'GC-2024-XYZ789', reporterId: 'u1',
     title: 'Lâmpada queimada', description: 'Rua totalmente escura à noite',
     reporterName: 'Maria Silva',
     type: 'infrastructure', status: 'in_review',
     location: { lat: 0, lng: 0, address: '' },
-    createdAt: ts, updatedAt: ts, deletedAt: null,
+    photo: null, votes: 0, isPetition: false, adminResponse: null, clerkId: null,
+    createdAt: ts, updatedAt: ts,
   };
 
   it('includes protocol, title, description and reporter name', () => {
