@@ -14,8 +14,8 @@ import { db } from '@/lib/firebase';
 import { emergencyAlertConverter } from '@/lib/firebase/converters';
 import { tryCreateNotification } from '@/services/notifications.service';
 import { generateProtocolId } from '@/lib/utils/protocol';
-import type {
 import { byCreatedAtDesc } from '@/lib/utils/sort';
+import type {
   CreateEmergencyAlertInput,
   EmergencyAlert,
   EmergencyAlertStatus,
