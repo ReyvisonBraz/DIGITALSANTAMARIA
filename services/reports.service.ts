@@ -174,9 +174,13 @@ function mapReportMessage(id: string, data: Record<string, unknown>): ReportMess
 
 export async function getReportMessages(reportId: string): Promise<ReportMessage[]> {
   const ref = collection(db, MESSAGES_COLLECTION);
-  const q = query(ref, where('reportId', '==', reportId), orderBy('createdAt', 'asc'));
+  const q = query(ref, where('reportId', '==', reportId));
   const snap = await getDocs(q);
-  return snap.docs.map((docSnap) => mapReportMessage(docSnap.id, docSnap.data()));
+  return snap.docs.map((docSnap) => mapReportMessage(docSnap.id, docSnap.data())).sort((a, b) => {
+    const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
+    const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
+    return aTime - bTime;
+  });
 }
 
 export function listenToReportMessages(
@@ -185,11 +189,16 @@ export function listenToReportMessages(
   onError?: (error: unknown) => void,
 ): () => void {
   const ref = collection(db, MESSAGES_COLLECTION);
-  const q = query(ref, where('reportId', '==', reportId), orderBy('createdAt', 'asc'));
+  const q = query(ref, where('reportId', '==', reportId));
   return onSnapshot(
     q,
     (snap) => {
-      onChange(snap.docs.map((d) => mapReportMessage(d.id, d.data())));
+      const sorted = snap.docs.map((d) => mapReportMessage(d.id, d.data())).sort((a, b) => {
+        const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
+        const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
+        return aTime - bTime;
+      });
+      onChange(sorted);
     },
     (error) => {
       onError?.(error);
@@ -199,9 +208,13 @@ export function listenToReportMessages(
 
 export async function getReportsByUser(userId: string): Promise<Report[]> {
   const ref = collection(db, COLLECTION).withConverter(reportConverter);
-  const q = query(ref, where('reporterId', '==', userId), orderBy('createdAt', 'desc'));
+  const q = query(ref, where('reporterId', '==', userId));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => d.data());
+  return snap.docs.map((d) => d.data()).sort((a, b) => {
+    const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
+    const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
+    return bTime - aTime;
+  });
 }
 
 export function listenToUserReports(
@@ -210,11 +223,17 @@ export function listenToUserReports(
   onError?: (error: unknown) => void,
 ): () => void {
   const ref = collection(db, COLLECTION).withConverter(reportConverter);
-  const q = query(ref, where('reporterId', '==', userId), orderBy('createdAt', 'desc'));
+  // orderBy removed to avoid composite index requirement — sorted client-side
+  const q = query(ref, where('reporterId', '==', userId));
   return onSnapshot(
     q,
     (snap) => {
-      onChange(snap.docs.map((d) => d.data()));
+      const sorted = snap.docs.map((d) => d.data()).sort((a, b) => {
+        const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
+        const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
+        return bTime - aTime;
+      });
+      onChange(sorted);
     },
     (error) => {
       onError?.(error);
