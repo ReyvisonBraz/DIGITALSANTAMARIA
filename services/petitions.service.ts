@@ -15,6 +15,7 @@ import { db, functions } from '@/lib/firebase';
 import { petitionConverter } from '@/lib/firebase/converters';
 import { uploadPetitionCover } from '@/services/storage.service';
 import type { CreatePetitionInput, Petition, PetitionStatus } from '@/types';
+import { sortByCreatedAtDesc } from '@/lib/utils/sort';
 
 const PETITIONS_COL = 'petitions';
 const SIGNATURES_COL = 'petition_signatures';
@@ -50,19 +51,13 @@ export async function createPetition(
   return docRef.id;
 }
 
-function sortPetitions(petitions: Petition[]): Petition[] {
-  return [...petitions].sort((a, b) => {
-    const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0;
-    const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0;
-    return bTime - aTime;
-  });
-}
+
 
 export async function getActivePetitions(): Promise<Petition[]> {
   const ref = collection(db, PETITIONS_COL).withConverter(petitionConverter);
   const q = query(ref, where('status', '==', 'active'));
   const snap = await getDocs(q);
-  return sortPetitions(snap.docs.map((d) => d.data()));
+  return sortByCreatedAtDesc(snap.docs.map((d) => d.data()));
 }
 
 export function listenToActivePetitions(
@@ -73,7 +68,7 @@ export function listenToActivePetitions(
   const q = query(ref, where('status', '==', 'active'));
   return onSnapshot(
     q,
-    (snap) => onChange(sortPetitions(snap.docs.map((d) => d.data()))),
+    (snap) => onChange(sortByCreatedAtDesc(snap.docs.map((d) => d.data()))),
     (error) => onError?.(error),
   );
 }
@@ -81,7 +76,7 @@ export function listenToActivePetitions(
 export async function getAllPetitions(): Promise<Petition[]> {
   const ref = collection(db, PETITIONS_COL).withConverter(petitionConverter);
   const snap = await getDocs(ref);
-  return sortPetitions(snap.docs.map((d) => d.data()));
+  return sortByCreatedAtDesc(snap.docs.map((d) => d.data()));
 }
 
 export async function getPetitionById(id: string): Promise<Petition | null> {

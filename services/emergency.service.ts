@@ -9,13 +9,13 @@ import {
   serverTimestamp,
   updateDoc,
   where,
-  type Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { emergencyAlertConverter } from '@/lib/firebase/converters';
 import { tryCreateNotification } from '@/services/notifications.service';
 import { generateProtocolId } from '@/lib/utils/protocol';
 import type {
+import { byCreatedAtDesc } from '@/lib/utils/sort';
   CreateEmergencyAlertInput,
   EmergencyAlert,
   EmergencyAlertStatus,
@@ -47,8 +47,8 @@ export async function createEmergencyAlert(
     location: input.location,
     status: 'active',
     protocol,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
+    createdAt: server(),
+    updatedAt: server(),
   });
   return protocol;
 }
@@ -66,11 +66,7 @@ export async function getEmergencyAlertsByUser(userId: string): Promise<Emergenc
   const snap = await getDocs(q);
   return snap.docs
     .map((document) => document.data())
-    .sort((a, b) => {
-      const aMs = (a.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
-      const bMs = (b.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
-      return bMs - aMs;
-    });
+    .sort(byCreatedAtDesc);
 }
 
 export async function updateEmergencyAlertStatus(
@@ -83,7 +79,7 @@ export async function updateEmergencyAlertStatus(
 
   await updateDoc(ref, {
     status,
-    updatedAt: serverTimestamp(),
+    updatedAt: server(),
   });
 
   if (alert) {

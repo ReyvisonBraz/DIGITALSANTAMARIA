@@ -10,12 +10,12 @@ import {
   setDoc,
   updateDoc,
   where,
-  type Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { jobConverter, jobApplicationConverter } from '@/lib/firebase/converters';
 import { tryCreateNotification } from '@/services/notifications.service';
 import type { ApplicationStatus, Job, JobApplication, CreateApplicationInput } from '@/types';
+import { byCreatedAtDesc } from '@/lib/utils/sort';
 
 const JOBS_COL = 'jobs';
 const APPLICATIONS_COL = 'job_applications';
@@ -34,11 +34,7 @@ export async function getActiveJobs(): Promise<Job[]> {
   const snap = await getDocs(q);
   return snap.docs
     .map((d) => d.data())
-    .sort((a, b) => {
-      const aMs = (a.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
-      const bMs = (b.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
-      return bMs - aMs;
-    });
+    .sort(byCreatedAtDesc);
 }
 
 export async function applyForJob(
@@ -58,8 +54,8 @@ export async function applyForJob(
     applicantEmail: input.applicantEmail,
     coverLetter: input.coverLetter || null,
     status: 'applied',
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
+    createdAt: server(),
+    updatedAt: server(),
   });
   return applicationId;
 }
@@ -77,11 +73,7 @@ export async function getUserApplications(userId: string): Promise<JobApplicatio
   const snap = await getDocs(q);
   return snap.docs
     .map((d) => d.data())
-    .sort((a, b) => {
-      const aMs = (a.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
-      const bMs = (b.createdAt as unknown as Timestamp)?.toMillis?.() ?? 0;
-      return bMs - aMs;
-    });
+    .sort(byCreatedAtDesc);
 }
 
 export async function getAllApplications(): Promise<JobApplication[]> {
@@ -101,7 +93,7 @@ export async function updateApplicationStatus(
 
   await updateDoc(ref, {
     status,
-    updatedAt: serverTimestamp(),
+    updatedAt: server(),
   });
 
   if (application) {
@@ -130,8 +122,8 @@ export async function createJob(
   const docRef = await addDoc(collection(db, JOBS_COL), {
     ...input,
     applicationCount: 0,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
+    createdAt: server(),
+    updatedAt: server(),
   });
   return docRef.id;
 }
@@ -142,6 +134,6 @@ export async function updateJob(
 ): Promise<void> {
   await updateDoc(doc(db, JOBS_COL, id), {
     ...input,
-    updatedAt: serverTimestamp(),
+    updatedAt: server(),
   });
 }

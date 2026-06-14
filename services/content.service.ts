@@ -5,6 +5,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { ContentStatus } from '@/types';
+import { sortByCreatedAtDesc } from '@/lib/utils/sort';
 
 /**
  * Serviço genérico de conteúdo — CRUD padronizado para qualquer coleção.
@@ -47,18 +48,6 @@ export function createContentService<T extends {
   const col = converter
     ? collection(db, collectionName).withConverter(converter)
     : collection(db, collectionName);
-
-  /**
-   * Ordena um array de documentos por createdAt decrescente (mais recente primeiro).
-   * Feito no cliente para evitar índices compostos no Firestore.
-   */
-  function sortByCreatedAtDesc(items: T[]): T[] {
-    return [...items].sort((a, b) => {
-      const aMs = (a.createdAt as Timestamp)?.toMillis?.() ?? 0;
-      const bMs = (b.createdAt as Timestamp)?.toMillis?.() ?? 0;
-      return bMs - aMs;
-    });
-  }
 
   /**
    * Lista documentos publicados. Filtros adicionais são opcionais.

@@ -20,6 +20,7 @@ import { generateProtocolId } from '@/lib/utils/protocol';
 import { uploadReportPhoto } from '@/services/storage.service';
 import { tryCreateNotification } from '@/services/notifications.service';
 import type {
+import { byCreatedAtAsc, byCreatedAtDesc } from '@/lib/utils/sort';
   CreateReportInput,
   NotificationTone,
   Report,
@@ -176,11 +177,7 @@ export async function getReportMessages(reportId: string): Promise<ReportMessage
   const ref = collection(db, MESSAGES_COLLECTION);
   const q = query(ref, where('reportId', '==', reportId));
   const snap = await getDocs(q);
-  return snap.docs.map((docSnap) => mapReportMessage(docSnap.id, docSnap.data())).sort((a, b) => {
-    const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
-    const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
-    return aTime - bTime;
-  });
+  return snap.docs.map((docSnap) => mapReportMessage(docSnap.id, docSnap.data())).sort(byCreatedAtAsc);
 }
 
 export function listenToReportMessages(
@@ -193,11 +190,7 @@ export function listenToReportMessages(
   return onSnapshot(
     q,
     (snap) => {
-      const sorted = snap.docs.map((d) => mapReportMessage(d.id, d.data())).sort((a, b) => {
-        const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
-        const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
-        return aTime - bTime;
-      });
+      const sorted = snap.docs.map((d) => mapReportMessage(d.id, d.data())).sort(byCreatedAtAsc);
       onChange(sorted);
     },
     (error) => {
@@ -210,11 +203,7 @@ export async function getReportsByUser(userId: string): Promise<Report[]> {
   const ref = collection(db, COLLECTION).withConverter(reportConverter);
   const q = query(ref, where('reporterId', '==', userId));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => d.data()).sort((a, b) => {
-    const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
-    const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
-    return bTime - aTime;
-  });
+  return snap.docs.map((d) => d.data()).sort(byCreatedAtDesc);
 }
 
 export function listenToUserReports(
@@ -228,11 +217,7 @@ export function listenToUserReports(
   return onSnapshot(
     q,
     (snap) => {
-      const sorted = snap.docs.map((d) => d.data()).sort((a, b) => {
-        const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
-        const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
-        return bTime - aTime;
-      });
+      const sorted = snap.docs.map((d) => d.data()).sort(byCreatedAtDesc);
       onChange(sorted);
     },
     (error) => {
@@ -245,11 +230,7 @@ export async function getPendingReports(): Promise<Report[]> {
   const ref = collection(db, COLLECTION).withConverter(reportConverter);
   const q = query(ref, where('status', '==', 'pending'));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => d.data()).sort((a, b) => {
-    const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
-    const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
-    return bTime - aTime;
-  });
+  return snap.docs.map((d) => d.data()).sort(byCreatedAtDesc);
 }
 
 export async function getAllReports(): Promise<Report[]> {

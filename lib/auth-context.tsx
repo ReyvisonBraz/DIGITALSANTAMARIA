@@ -125,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Cookie com ID token real para middleware de protecao server-side
         fbUser.getIdToken().then((token) => {
           document.cookie = `firebase-auth-token=${token}; path=/; max-age=86400; SameSite=Strict`;
-        }).catch(() => {});
+        }).catch(() => { /* falha silenciosa: cookie de auth é melhor-esforço */ });
         try {
           await syncUserProfile(fbUser);
           const role = await fetchUserRole(fbUser.uid);

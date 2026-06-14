@@ -8,12 +8,12 @@ import {
   serverTimestamp,
   updateDoc,
   where,
-  type Timestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { createContentService } from '@/services/content.service';
 import { tryCreateNotification } from '@/services/notifications.service';
 import type { Business } from '@/types';
+import { byCreatedAtDesc } from '@/lib/utils/sort';
 
 const COLLECTION = 'businesses';
 const factory = createContentService<Business>(COLLECTION);
@@ -58,7 +58,7 @@ export async function updateOwnedBusiness(
   patch: Partial<Pick<Business, 'title' | 'description' | 'category' | 'address' | 'phone' | 'whatsapp' | 'hours' | 'isOpen'>>,
 ): Promise<void> {
   const ref = doc(db, COLLECTION, id);
-  await updateDoc(ref, { ...patch, updatedAt: serverTimestamp() });
+  await updateDoc(ref, { ...patch, updatedAt: server() });
 }
 
 /** Dono corrige um cadastro reprovado e reenvia para análise da prefeitura. */
@@ -71,7 +71,7 @@ export async function resubmitOwnedBusiness(
     ...patch,
     status: 'pending_approval',
     reviewNote: null,
-    updatedAt: serverTimestamp(),
+    updatedAt: server(),
   });
 }
 
@@ -82,7 +82,7 @@ export async function approveBusiness(id: string): Promise<void> {
   await updateDoc(doc(db, COLLECTION, id), {
     status: 'published',
     reviewNote: null,
-    updatedAt: serverTimestamp(),
+    updatedAt: server(),
   });
 
   if (business?.ownerId) {
@@ -106,7 +106,7 @@ export async function rejectBusiness(id: string, note?: string): Promise<void> {
   await updateDoc(doc(db, COLLECTION, id), {
     status: 'archived',
     reviewNote: trimmedNote || null,
-    updatedAt: serverTimestamp(),
+    updatedAt: server(),
   });
 
   if (business?.ownerId) {
@@ -132,11 +132,7 @@ export async function listPendingBusinesses(): Promise<Business[]> {
   return snap.docs
     .map((d) => ({ id: d.id, ...d.data() }) as Business)
     .filter((business) => !business.deletedAt)
-    .sort((a, b) => {
-      const aMs = (a.createdAt as Timestamp)?.toMillis?.() ?? 0;
-      const bMs = (b.createdAt as Timestamp)?.toMillis?.() ?? 0;
-      return bMs - aMs;
-    });
+    .sort(byCreatedAtDesc);
 }
 
 /** Stream em tempo real dos negocios de um cidadao, em qualquer status. */
@@ -153,11 +149,7 @@ export function listenToOwnedBusinesses(
       const sorted = snap.docs
         .map((d) => ({ id: d.id, ...d.data() }) as Business)
         .filter((business) => !business.deletedAt)
-        .sort((a, b) => {
-          const aMs = (a.createdAt as Timestamp)?.toMillis?.() ?? 0;
-          const bMs = (b.createdAt as Timestamp)?.toMillis?.() ?? 0;
-          return bMs - aMs;
-        });
+        .sort(byCreatedAtDesc);
       onChange(sorted);
     },
     (error) => {

@@ -18,6 +18,7 @@ import { demandConverter } from '@/lib/firebase/converters';
 import { generateDemandProtocolId } from '@/lib/utils/protocol';
 import { tryCreateNotification } from '@/services/notifications.service';
 import type {
+import { byCreatedAtAsc, byCreatedAtDesc } from '@/lib/utils/sort';
   Demand,
   CreateDemandInput,
   DemandMessage,
@@ -165,11 +166,7 @@ export async function getDemandMessages(demandId: string): Promise<DemandMessage
   const ref = collection(db, MESSAGES_COLLECTION);
   const q = query(ref, where('demandId', '==', demandId));
   const snap = await getDocs(q);
-  return snap.docs.map((docSnap) => mapDemandMessage(docSnap.id, docSnap.data())).sort((a, b) => {
-    const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
-    const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
-    return aTime - bTime;
-  });
+  return snap.docs.map((docSnap) => mapDemandMessage(docSnap.id, docSnap.data())).sort(byCreatedAtAsc);
 }
 
 export function listenToDemandMessages(
@@ -182,11 +179,7 @@ export function listenToDemandMessages(
   return onSnapshot(
     q,
     (snap) => {
-      const sorted = snap.docs.map((d) => mapDemandMessage(d.id, d.data())).sort((a, b) => {
-        const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
-        const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
-        return aTime - bTime;
-      });
+      const sorted = snap.docs.map((d) => mapDemandMessage(d.id, d.data())).sort(byCreatedAtAsc);
       onChange(sorted);
     },
     (error) => {
@@ -227,11 +220,7 @@ export async function getDemandsByUser(userId: string): Promise<Demand[]> {
   const ref = collection(db, COLLECTION).withConverter(demandConverter);
   const q = query(ref, where('authorId', '==', userId));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => d.data()).sort((a, b) => {
-    const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
-    const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
-    return bTime - aTime;
-  });
+  return snap.docs.map((d) => d.data()).sort(byCreatedAtDesc);
 }
 
 export function listenToUserDemands(
@@ -245,11 +234,7 @@ export function listenToUserDemands(
   return onSnapshot(
     q,
     (snap) => {
-      const sorted = snap.docs.map((d) => d.data()).sort((a, b) => {
-        const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
-        const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
-        return bTime - aTime;
-      });
+      const sorted = snap.docs.map((d) => d.data()).sort(byCreatedAtDesc);
       onChange(sorted);
     },
     (error) => {

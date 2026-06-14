@@ -16,6 +16,7 @@ import { db } from '@/lib/firebase';
 import { notificationConverter } from '@/lib/firebase/converters';
 import { createLogger } from '@/lib/logger';
 import type { CreateNotificationInput, Notification } from '@/types';
+import { byCreatedAtDesc } from '@/lib/utils/sort';
 
 const COLLECTION = 'notifications';
 const FEED_LIMIT = 30;
@@ -56,11 +57,7 @@ export function listenToUserNotifications(
     (snap) => {
       const sorted = snap.docs
         .map((d) => d.data())
-        .sort((a, b) => {
-          const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
-          const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
-          return bTime - aTime;
-        })
+        .sort(byCreatedAtDesc)
         .slice(0, FEED_LIMIT);
       onChange(sorted);
     },
