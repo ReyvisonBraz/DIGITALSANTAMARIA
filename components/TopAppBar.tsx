@@ -77,7 +77,7 @@ export default function TopAppBar() {
   const handleToggleContrast = useCallback(() => {
     const nextState = !highContrast;
     toggleHighContrast();
-    toast(nextState ? 'Modo de acessibilidade ativado.' : 'Modo padrao restaurado.', 'info');
+    toast(nextState ? 'Modo de acessibilidade ativado.' : 'Modo padrão restaurado.', 'info');
   }, [highContrast, toast, toggleHighContrast]);
 
   const handleLogin = useCallback(async () => {

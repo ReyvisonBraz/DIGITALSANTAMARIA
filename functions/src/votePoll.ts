@@ -40,7 +40,7 @@ export const votePollCallable = functions.https.onCall(
         if (voteSnap.exists) {
           throw new functions.https.HttpsError(
             'already-exists',
-            'Voce ja votou nesta consulta.'
+            'Você já votou nesta consulta.'
           );
         }
 

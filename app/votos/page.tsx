@@ -39,7 +39,7 @@ export default function VotosPage() {
       refresh();
     } catch (voteError) {
       const message = voteError instanceof Error ? voteError.message : 'Erro ao registrar voto.';
-      toast(message.includes('already-exists') ? 'Voce ja votou nesta consulta.' : message, 'error');
+      toast(message.includes('already-exists') ? 'Você já votou nesta consulta.' : message, 'error');
     } finally {
       setVotingKey(null);
     }

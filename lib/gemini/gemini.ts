@@ -32,12 +32,12 @@ export async function classifyReport(
     });
 
     const prompt = `Classifique o relato municipal abaixo em UMA categoria:
-- infrastructure: buraco, iluminacao, calcada, agua, esgoto, obra
-- environment: lixo, entulho, arvore, poluicao, area verde
-- security: seguranca publica, violencia, policiamento
+- infrastructure: buraco, iluminação, calçada, água, esgoto, obra
+- environment: lixo, entulho, árvore, poluição, área verde
+- security: segurança pública, violência, policiamento
 - other: qualquer outro
 
-Titulo: "${limitText(title, 160)}"
+Título: "${limitText(title, 160)}"
 Descrição: "${limitText(description, 1200)}"
 
 Responda apenas: infrastructure, environment, security ou other`;
@@ -62,9 +62,9 @@ export async function suggestDemandResponse(type: string, subject: string, text:
       generationConfig: { temperature: 0.4, maxOutputTokens: 300 },
     });
 
-    const prompt = `Voce e assistente da ouvidoria municipal.
-Escreva um rascunho de resposta FORMAL e OBJETIVA para a manifestacao abaixo.
-Maximo 3 paragrafos curtos, em portugues.
+    const prompt = `Você é assistente da ouvidoria municipal.
+Escreva um rascunho de resposta FORMAL e OBJETIVA para a manifestação abaixo.
+Máximo 3 parágrafos curtos, em português.
 
 Tipo: ${limitText(type, 80)}
 Assunto: ${limitText(subject, 160)}

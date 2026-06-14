@@ -213,7 +213,7 @@ const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'bus
       { name: 'address', label: 'Endereco', type: 'text', required: true },
       { name: 'phone', label: 'Telefone', type: 'text' },
       { name: 'schedule', label: 'Horario', type: 'text' },
-      { name: 'targetAudience', label: 'Publico alvo', type: 'text' },
+      { name: 'targetAudience', label: 'Público alvo', type: 'text' },
     ],
   },
   taxes: {
@@ -278,7 +278,7 @@ const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'bus
     eyebrow: 'Catalogo municipal',
     title: 'servicos publicos',
     publicPath: '/servicos',
-    emptyTitle: 'Nenhum servico publico publicado',
+    emptyTitle: 'Nenhum serviço público publicado',
     categoryField: 'category',
     fields: [
       {

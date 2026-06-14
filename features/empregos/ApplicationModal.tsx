@@ -85,7 +85,7 @@ export default function ApplicationModal({ isOpen, onClose, jobId, jobTitle }: A
               <textarea
                 rows={6}
                 maxLength={2000}
-                placeholder="Conte um pouco sobre voce e por que se interessa pela vaga..."
+                placeholder="Conte um pouco sobre você e por que se interessa pela vaga..."
                 value={coverLetter}
                 onChange={(event) => setCoverLetter(event.target.value)}
                 className="font-ui w-full resize-none rounded-xl border-2 border-border bg-surface p-4 font-bold shadow-inner outline-none transition-all placeholder:opacity-30 focus:border-primary"

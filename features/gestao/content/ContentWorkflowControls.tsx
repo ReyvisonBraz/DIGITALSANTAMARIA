@@ -9,10 +9,10 @@ import { cn } from '@/lib/utils';
 export type ContentListSort = 'newest' | 'oldest' | 'title';
 
 export const CONTENT_STATUS_OPTIONS: { value: ContentStatus; label: string; description: string }[] = [
-  { value: 'published', label: 'Publicado', description: 'Aparece no site publico' },
+  { value: 'published', label: 'Publicado', description: 'Aparece no site público' },
   { value: 'draft', label: 'Rascunho', description: 'Salvo apenas no painel' },
   { value: 'pending_approval', label: 'Pendente', description: 'Aguardando revisao' },
-  { value: 'archived', label: 'Arquivado', description: 'Fora do site publico' },
+  { value: 'archived', label: 'Arquivado', description: 'Fora do site público' },
 ];
 
 const STATUS_CLASS: Record<ContentStatus, string> = {
@@ -238,7 +238,7 @@ export function ContentPreviewDialog({
   isOpen,
   title,
   description,
-  eyebrow = 'Preview publico',
+  eyebrow = 'Preview público',
   meta = [],
   actionLabel,
   actionURL,

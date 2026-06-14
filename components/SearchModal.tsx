@@ -117,7 +117,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 <Search className="absolute left-4 h-5 w-5 text-primary" />
                 <input
                   autoFocus
-                  placeholder="O que voce esta procurando?"
+                  placeholder="O que você está procurando?"
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   className="h-13 w-full rounded-xl border border-border bg-surface py-4 pl-12 pr-12 text-base font-bold outline-none transition focus:border-primary"

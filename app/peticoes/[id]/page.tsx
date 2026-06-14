@@ -67,7 +67,7 @@ export default function PetitionDetailPage() {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <FileQuestion className="h-12 w-12 text-text-muted" />
-        <h2 className="text-xl font-semibold text-text-main">Peticao nao encontrada</h2>
+        <h2 className="text-xl font-semibold text-text-main">Petição não encontrada</h2>
         <p className="text-sm font-medium text-text-muted">{error || 'Verifique o link e tente novamente.'}</p>
         <Link href="/peticoes" className="text-sm font-bold text-primary hover:underline">
           Voltar para peticoes
