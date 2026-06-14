@@ -151,7 +151,7 @@ export default function JobsAdmin() {
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <label className="space-y-1.5 md:col-span-2">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Titulo</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Título</span>
             <input value={form.title} onChange={(event) => updateField('title', event.target.value)} className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary" />
           </label>
           <label className="space-y-1.5 md:col-span-2">

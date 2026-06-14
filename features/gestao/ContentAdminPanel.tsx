@@ -89,7 +89,7 @@ const TABS: { value: ContentTab; label: string; icon: LucideIcon; group: Exclude
   { value: 'environment', label: 'Ambiente', icon: Leaf, group: 'registries' },
   { value: 'social', label: 'Social', icon: Heart, group: 'registries' },
   { value: 'taxes', label: 'Tributos', icon: FileText, group: 'registries' },
-  { value: 'services', label: 'Servicos', icon: Layers, group: 'registries' },
+  { value: 'services', label: 'Serviços', icon: Layers, group: 'registries' },
   { value: 'community', label: 'Comunidade', icon: Users, group: 'participation' },
   { value: 'polls', label: 'Votos', icon: Gavel, group: 'participation' },
 ];

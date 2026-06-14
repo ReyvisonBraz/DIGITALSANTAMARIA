@@ -132,7 +132,7 @@ export function ContentListControls({
         >
           <option value="newest">Mais recentes</option>
           <option value="oldest">Mais antigas</option>
-          <option value="title">Titulo A-Z</option>
+          <option value="title">Título A-Z</option>
         </select>
       </label>
     </div>

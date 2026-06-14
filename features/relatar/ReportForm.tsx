@@ -214,7 +214,7 @@ export default function ReportForm() {
 
       <div className="space-y-2">
         <label htmlFor="report-title" className="text-[11px] font-black uppercase tracking-widest text-text-main">
-          Titulo curto
+          Título curto
         </label>
         <input
           id="report-title"

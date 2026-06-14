@@ -150,7 +150,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
         return (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
             <label className="block space-y-2">
-              <span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">Titulo da causa</span>
+              <span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">Título da causa</span>
               <input
                 className="w-full rounded-xl border border-border bg-surface p-4 font-bold shadow-inner outline-none transition focus:border-primary"
                 placeholder="Ex: Reforma da Praca Central"

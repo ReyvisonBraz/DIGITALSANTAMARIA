@@ -29,7 +29,7 @@ const CATEGORIES: { value: Business['category']; label: string }[] = [
   { value: 'restaurante', label: 'Restaurante' },
   { value: 'farmacia', label: 'Farmácia' },
   { value: 'mercado', label: 'Mercado' },
-  { value: 'servico', label: 'Servico' },
+  { value: 'servico', label: 'Serviço' },
   { value: 'loja', label: 'Loja' },
   { value: 'outros', label: 'Outros' },
 ];

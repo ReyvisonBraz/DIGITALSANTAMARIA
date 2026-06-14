@@ -159,7 +159,7 @@ export default function TrafficAdmin() {
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <label className="md:col-span-2 space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Titulo</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Título</span>
             <input
               type="text"
               value={title}
