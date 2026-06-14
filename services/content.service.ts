@@ -15,8 +15,13 @@ import type { ContentStatus } from '@/types';
  * Uso:
  * ```ts
  * const worksService = createContentService<Work>('works');
- * const events = await worksService.list(['status', '==', 'published']);
+ * const works = await worksService.list(); // retorna publicados, mais recentes primeiro
  * ```
+ *
+ * Nota sobre índices Firestore:
+ * Combinar `where()` num campo com `orderBy()` noutro exige um índice composto
+ * que pode não estar implantado. Para evitar esse requisito em todos os módulos,
+ * a ordenação por `createdAt` é feita no lado do cliente após a busca.
  */
 
 interface ContentService<T extends { id: string }> {
@@ -29,7 +34,13 @@ interface ContentService<T extends { id: string }> {
   archive: (id: string) => Promise<void>;
 }
 
-export function createContentService<T extends { id: string; status: ContentStatus; createdAt: Timestamp; updatedAt: Timestamp; deletedAt: Timestamp | null }>(
+export function createContentService<T extends {
+  id: string;
+  status: ContentStatus;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  deletedAt: Timestamp | null;
+}>(
   collectionName: string,
   converter?: FirestoreDataConverter<T>,
 ): ContentService<T> {
@@ -37,31 +48,46 @@ export function createContentService<T extends { id: string; status: ContentStat
     ? collection(db, collectionName).withConverter(converter)
     : collection(db, collectionName);
 
+  /**
+   * Ordena um array de documentos por createdAt decrescente (mais recente primeiro).
+   * Feito no cliente para evitar índices compostos no Firestore.
+   */
+  function sortByCreatedAtDesc(items: T[]): T[] {
+    return [...items].sort((a, b) => {
+      const aMs = (a.createdAt as Timestamp)?.toMillis?.() ?? 0;
+      const bMs = (b.createdAt as Timestamp)?.toMillis?.() ?? 0;
+      return bMs - aMs;
+    });
+  }
+
+  /**
+   * Lista documentos publicados. Filtros adicionais são opcionais.
+   *
+   * Não usa orderBy() para evitar a necessidade de índice composto com where().
+   * A ordenação por data de criação é aplicada no cliente após a busca.
+   */
   async function list(filters?: [string, WhereFilterOp, unknown][], max = 50): Promise<T[]> {
-    const baseConstraints: QueryConstraint[] = [
+    const constraints: QueryConstraint[] = [
       where('status', '==', 'published'),
-      orderBy('createdAt', 'desc'),
+      ...(filters ?? []).map(([field, op, value]) => where(field, op, value)),
       limit(max),
     ];
 
-    if (filters && filters.length > 0) {
-      const filterConstraints: QueryConstraint[] = filters.map(([f, op, v]) => where(f, op, v));
-      const q = query(collection(db, collectionName), ...filterConstraints, ...baseConstraints);
-      const snap = await getDocs(q);
-      return snap.docs
-        .map(d => ({ ...d.data() as object, id: d.id } as unknown as T))
-        .filter((item) => !item.deletedAt);
-    }
-
-    const q = query(col, ...baseConstraints);
+    const q = query(col, ...constraints);
     const snap = await getDocs(q);
-    return snap.docs
-      .map(d => ({ ...d.data() as object, id: d.id } as unknown as T))
-      .filter((item) => !item.deletedAt);
+
+    const docs = snap.docs.map(d => ({ ...d.data() as object, id: d.id } as unknown as T));
+    const active = docs.filter(item => !item.deletedAt);
+    return sortByCreatedAtDesc(active);
   }
 
+  /**
+   * Lista todos os documentos (qualquer status) para painéis administrativos.
+   * Usa orderBy() puro — sem where() em campo diferente — portanto não exige
+   * índice composto.
+   */
   async function listAdmin(max = 100): Promise<T[]> {
-    const q = query(collection(db, collectionName), orderBy('createdAt', 'desc'), limit(max));
+    const q = query(col, orderBy('createdAt', 'desc'), limit(max));
     const snap = await getDocs(q);
     return snap.docs.map(d => ({ ...d.data() as object, id: d.id } as unknown as T));
   }
@@ -98,7 +124,11 @@ export function createContentService<T extends { id: string; status: ContentStat
 
   async function archive(id: string): Promise<void> {
     const ref = doc(db, collectionName, id);
-    await updateDoc(ref, { status: 'archived', deletedAt: serverTimestamp(), updatedAt: serverTimestamp() });
+    await updateDoc(ref, {
+      status: 'archived',
+      deletedAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
   }
 
   return { list, listAdmin, getById, create, update, setStatus, archive };

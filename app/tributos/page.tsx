@@ -30,6 +30,7 @@ export default function TributosPage() {
       />
 
       <ContentPage
+        isEmpty={data.length === 0}
         loading={loading}
         error={error}
         onRetry={refresh}

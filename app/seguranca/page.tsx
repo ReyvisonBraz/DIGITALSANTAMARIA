@@ -142,6 +142,7 @@ export default function SegurancaPage() {
       </section>
 
       <ContentPage
+        isEmpty={data.length === 0}
         loading={loading}
         error={error}
         onRetry={refresh}
