@@ -266,7 +266,7 @@ function RestrictedGate() {
       </div>
       <h1 className="mt-5 text-3xl font-semibold tracking-normal text-text-main">Acesso restrito</h1>
       <p className="mt-3 text-base font-medium leading-7 text-text-muted">
-        Sua conta nao tem permissao para acessar o painel administrativo.
+        Sua conta não tem permissão para acessar o painel administrativo.
       </p>
     </div>
   );
@@ -672,7 +672,7 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
       <div className="glass-panel p-4">
         <AdminQueueToolbar
           search={searchTerm}
-          searchPlaceholder="Buscar por protocolo, titulo, descricao ou cidadao"
+          searchPlaceholder="Buscar por protocolo, título, descrição ou cidadão"
           filter={statusFilter}
           statusOptions={reportStatusOptions}
           loading={loading}

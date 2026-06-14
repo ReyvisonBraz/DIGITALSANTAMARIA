@@ -224,7 +224,7 @@ export default function BusinessesAdmin() {
           nextValue: status,
           note: null,
         });
-        toast('Comercio atualizado.', 'success');
+        toast('Comércio atualizado.', 'success');
       } else {
         const newId = await service.create(payload);
         await tryCreateAdminAuditLog({
@@ -370,7 +370,7 @@ export default function BusinessesAdmin() {
           </label>
 
           <label className="md:col-span-2 space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descricao</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descrição</span>
             <textarea
               value={description}
               onChange={(event) => setDescription(event.target.value)}
@@ -464,7 +464,7 @@ export default function BusinessesAdmin() {
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
               >
                 <X className="h-4 w-4" />
-                Cancelar edicao
+                Cancelar edição
               </button>
             )}
             <button

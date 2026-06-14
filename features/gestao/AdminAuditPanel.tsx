@@ -13,7 +13,7 @@ const ACTION_LABEL: Record<AdminAuditAction, string> = {
   content_created: 'Criado',
   content_updated: 'Atualizado',
   queue_status_changed: 'Fila atualizada',
-  user_role_changed: 'Permissao alterada',
+  user_role_changed: 'Permissão alterada',
 };
 
 const ACTION_META: Record<AdminAuditAction, { icon: typeof ShieldCheck; className: string }> = {
@@ -97,7 +97,7 @@ export default function AdminAuditPanel() {
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Auditoria</p>
             <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">Histórico administrativo</h2>
             <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-text-muted">
-              Ultimas acoes sensiveis registradas pelo painel: publicacoes, arquivamentos, aprovacoes e mudancas de status.
+              Ultimas acoes sensiveis registradas pelo painel: publicações, arquivamentos, aprovacoes e mudancas de status.
             </p>
           </div>
           <button

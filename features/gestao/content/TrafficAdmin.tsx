@@ -172,14 +172,14 @@ export default function TrafficAdmin() {
           </label>
 
           <label className="md:col-span-2 space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descricao</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descrição</span>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               maxLength={500}
               required
-              placeholder="Detalhes da situacao e o que o motorista deve fazer."
+              placeholder="Detalhes da situação e o que o motorista deve fazer."
               className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary"
             />
           </label>

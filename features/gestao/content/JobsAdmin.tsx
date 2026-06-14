@@ -155,7 +155,7 @@ export default function JobsAdmin() {
             <input value={form.title} onChange={(event) => updateField('title', event.target.value)} className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary" />
           </label>
           <label className="space-y-1.5 md:col-span-2">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descricao</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descrição</span>
             <textarea value={form.description} onChange={(event) => updateField('description', event.target.value)} rows={3} className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary" />
           </label>
           <label className="space-y-1.5">

@@ -126,7 +126,7 @@ export default function EmergencyAlertsAdmin() {
             <p className="text-xs font-semibold uppercase tracking-widest text-red-600">Seguranca publica</p>
             <h2 className="text-xl font-semibold tracking-normal text-text-main">Alertas emergenciais</h2>
             <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
-              Acompanhe ocorrencias urgentes enviadas pelos cidadaos.
+              Acompanhe ocorrências urgentes enviadas pelos cidadãos.
             </p>
           </div>
         </div>
@@ -136,7 +136,7 @@ export default function EmergencyAlertsAdmin() {
 
       <AdminQueueToolbar
         search={search}
-        searchPlaceholder="Buscar por protocolo, local, cidadao, tipo ou descricao"
+        searchPlaceholder="Buscar por protocolo, local, cidadão, tipo ou descrição"
         filter={filter}
         statusOptions={STATUS_OPTIONS}
         loading={loading}
@@ -161,7 +161,7 @@ export default function EmergencyAlertsAdmin() {
           <Loader2 className="h-5 w-5 animate-spin text-primary" />
         </div>
       ) : filtered.length === 0 ? (
-        <EmptyState title="Nenhum alerta encontrado" description="Alertas enviados pela pagina de seguranca aparecem aqui." />
+        <EmptyState title="Nenhum alerta encontrado" description="Alertas enviados pela página de segurança aparecem aqui." />
       ) : (
         <div className="space-y-3">
           {filtered.map((alert) => (

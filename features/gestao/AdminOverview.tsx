@@ -136,7 +136,7 @@ export default function AdminOverview({
           label: 'Consultas',
           value: appointmentPending,
           total: queues.appointments.length,
-          helper: 'Agendadas aguardando confirmacao',
+          helper: 'Agendadas aguardando confirmação',
           icon: CalendarCheck,
           color: 'border-sky-200 bg-sky-50 text-sky-800',
           section: 'content' as MainSection,
@@ -214,7 +214,7 @@ export default function AdminOverview({
               </div>
               <div>
                 <p className="text-3xl font-black leading-none text-text-main">{stats.totalPending}</p>
-                <p className="mt-1 text-xs font-black uppercase tracking-widest text-text-muted">Itens pedindo acao</p>
+                <p className="mt-1 text-xs font-black uppercase tracking-widest text-text-muted">Itens pedindo ação</p>
               </div>
             </div>
             <p className="mt-4 text-sm font-medium leading-6 text-text-muted">
@@ -288,9 +288,9 @@ export default function AdminOverview({
             </div>
             <div className="civic-card p-5">
               <p className="text-xs font-semibold uppercase tracking-widest text-primary">Seguranca</p>
-              <h3 className="mt-2 text-lg font-semibold text-text-main">Registrar acoes</h3>
+              <h3 className="mt-2 text-lg font-semibold text-text-main">Registrar ações</h3>
               <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-                Acoes sensiveis devem ficar documentadas em auditoria administrativa.
+                Ações sensíveis devem ficar documentadas em auditoria administrativa.
               </p>
             </div>
           </>

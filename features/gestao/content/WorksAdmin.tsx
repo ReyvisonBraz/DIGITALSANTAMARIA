@@ -317,7 +317,7 @@ export default function WorksAdmin() {
               <button type="button" onClick={resetForm}
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary">
                 <X className="h-4 w-4" />
-                Cancelar edicao
+                Cancelar edição
               </button>
             )}
             <button type="submit" disabled={saving}

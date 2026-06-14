@@ -27,7 +27,7 @@ export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileS
   const isStaff = userRole === 'admin' || userRole === 'clerk';
 
   return (
-    <SidePanel isOpen={isOpen} onClose={onClose} title={mode === 'edit' ? 'Editar perfil' : 'Preferencias'}>
+    <SidePanel isOpen={isOpen} onClose={onClose} title={mode === 'edit' ? 'Editar perfil' : 'Preferências'}>
       <div className="space-y-8 p-4 pb-32 sm:p-6">
         {mode === 'edit' ? (
           <div className="space-y-8">
@@ -39,8 +39,8 @@ export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileS
             {[
               { icon: Bell, label: 'Notificações', desc: 'Alertas de zeladoria e novidades.' },
               { icon: Palette, label: 'Acessibilidade', desc: 'Modo alto contraste e fontes.' },
-              { icon: Globe, label: 'Idioma e regiao', desc: 'Portugues (Brasil).' },
-              { icon: Shield, label: 'Privacidade', desc: 'Dados e permissoes de conta.' },
+              { icon: Globe, label: 'Idioma e região', desc: 'Português (Brasil).' },
+              { icon: Shield, label: 'Privacidade', desc: 'Dados e permissões de conta.' },
             ].map((pref) => (
               <button
                 key={pref.label}

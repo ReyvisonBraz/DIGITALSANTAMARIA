@@ -75,7 +75,7 @@ const TABS: { value: ContentTab; label: string; icon: LucideIcon; group: Exclude
   { value: 'notices', label: 'Avisos', icon: Bell, group: 'publishing' },
   { value: 'events', label: 'Eventos', icon: CalendarDays, group: 'publishing' },
   { value: 'works', label: 'Obras', icon: HardHat, group: 'publishing' },
-  { value: 'businesses', label: 'Comercio', icon: Store, group: 'publishing' },
+  { value: 'businesses', label: 'Comércio', icon: Store, group: 'publishing' },
   { value: 'traffic', label: 'Transito', icon: Car, group: 'publishing' },
   { value: 'appointments', label: 'Consultas', icon: CalendarCheck, group: 'operations' },
   { value: 'applications', label: 'Candidaturas', icon: ClipboardList, group: 'operations' },

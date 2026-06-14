@@ -114,7 +114,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
       return;
     }
     if (description.length > MAX_DESC) {
-      toast(`Descricao deve ter no maximo ${MAX_DESC} caracteres.`, 'error');
+      toast(`Descrição deve ter no máximo ${MAX_DESC} caracteres.`, 'error');
       return;
     }
     if (!Number.isFinite(goal) || goal < 1) {

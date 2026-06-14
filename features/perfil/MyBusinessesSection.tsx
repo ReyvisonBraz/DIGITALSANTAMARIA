@@ -189,7 +189,7 @@ export default function MyBusinessesSection() {
         <div>
           <p className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-widest text-primary">
             <Store className="h-3.5 w-3.5" />
-            Comercio
+            Comércio
           </p>
           <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">
             Meus negócios

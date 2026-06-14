@@ -199,7 +199,7 @@ export default function PetitionsAdminPanel() {
             <input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Buscar por titulo, autor, categoria ou descricao"
+              placeholder="Buscar por título, autor, categoria ou descrição"
               className="h-11 w-full rounded-xl border border-border bg-surface pl-10 pr-3 text-sm font-medium outline-none transition focus:border-primary"
             />
           </label>

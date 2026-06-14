@@ -117,7 +117,7 @@ export default function SegurancaPage() {
             />
           </label>
           <label htmlFor="alert-description" className="space-y-1.5 md:col-span-2">
-            <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Descricao</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Descrição</span>
             <textarea
               id="alert-description"
               value={description}
