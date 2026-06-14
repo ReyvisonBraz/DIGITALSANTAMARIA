@@ -293,7 +293,7 @@ export default function MyBusinessesSection() {
               required
               maxLength={200}
               onChange={(event) => setEditing({ ...editing, address: event.target.value })}
-              placeholder="Rua, numero, bairro"
+              placeholder="Rua, número, bairro"
               className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
             />
           </label>

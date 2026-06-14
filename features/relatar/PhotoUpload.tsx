@@ -28,7 +28,7 @@ export default function PhotoUpload({ previewUrl, onFileChange }: PhotoUploadPro
   const handleFile = (selected: File | null) => {
     if (!selected) return;
     if (selected.size > MAX_SIZE) {
-      toast('A imagem deve ter no maximo 5MB.', 'error');
+      toast('A imagem deve ter no máximo 5MB.', 'error');
       return;
     }
     if (!ACCEPTED_TYPES.includes(selected.type)) {

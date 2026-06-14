@@ -25,7 +25,7 @@ export default function AvatarUpload() {
   const handleUpload = async (file: File | null) => {
     if (!file || !user) return;
     if (file.size > MAX_SIZE) {
-      toast('A imagem deve ter no maximo 2MB.', 'error');
+      toast('A imagem deve ter no máximo 2MB.', 'error');
       return;
     }
     if (!ACCEPTED_TYPES.includes(file.type)) {

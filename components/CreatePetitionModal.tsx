@@ -75,7 +75,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
       return;
     }
     if (file.size > MAX_COVER_SIZE) {
-      toast('Imagem de capa deve ter no maximo 5MB.', 'error');
+      toast('Imagem de capa deve ter no máximo 5MB.', 'error');
       return;
     }
     if (!ACCEPTED_COVER.includes(file.type)) {
@@ -110,7 +110,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
       return;
     }
     if (title.length > MAX_TITLE) {
-      toast(`Titulo deve ter no maximo ${MAX_TITLE} caracteres.`, 'error');
+      toast(`Título deve ter no máximo ${MAX_TITLE} caracteres.`, 'error');
       return;
     }
     if (description.length > MAX_DESC) {
@@ -118,7 +118,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
       return;
     }
     if (!Number.isFinite(goal) || goal < 1) {
-      toast('Informe uma meta valida (minimo 1 assinatura).', 'error');
+      toast('Informe uma meta válida (mínimo 1 assinatura).', 'error');
       return;
     }
 

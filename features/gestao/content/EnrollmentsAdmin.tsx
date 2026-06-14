@@ -128,7 +128,7 @@ export default function EnrollmentsAdmin() {
 
       <AdminQueueToolbar
         search={search}
-        searchPlaceholder="Buscar por protocolo, aluno, responsavel, CPF ou escola"
+        searchPlaceholder="Buscar por protocolo, aluno, responsávelavel, CPF ou escola"
         filter={filter}
         statusOptions={STATUS_OPTIONS}
         loading={loading}
@@ -168,7 +168,7 @@ export default function EnrollmentsAdmin() {
                   </div>
                   <h3 className="mt-2 text-base font-semibold text-text-main">{enrollment.studentName}</h3>
                   <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
-                    Responsavel: {enrollment.parentName} - CPF {enrollment.parentCpf}
+                    Responsável: {enrollment.parentName} - CPF {enrollment.parentCpf}
                   </p>
                   <div className="mt-2 grid gap-2 rounded-xl bg-surface-muted px-3 py-2 text-sm font-medium leading-6 text-text-muted md:grid-cols-2">
                     <span>Nascimento: {enrollment.studentBirth}</span>

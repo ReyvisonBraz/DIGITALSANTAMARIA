@@ -66,7 +66,7 @@ function getOptionsVoteTotal(value: unknown): number {
 
 const baseFields: CatalogField[] = [
   { name: 'title', label: 'Titulo', type: 'text', required: true, placeholder: 'Nome exibido ao cidadao' },
-  { name: 'description', label: 'Descrição', type: 'textarea', required: true, placeholder: 'Resumo publico deste item' },
+  { name: 'description', label: 'Descrição', type: 'textarea', required: true, placeholder: 'Resumo público deste item' },
 ];
 
 function fieldInitialValue(field: CatalogField): string | boolean {
