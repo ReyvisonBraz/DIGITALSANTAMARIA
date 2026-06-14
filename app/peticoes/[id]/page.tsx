@@ -38,7 +38,7 @@ export default function PetitionDetailPage() {
         setLoading(false);
       },
       () => {
-        setError('Nao foi possivel carregar a peticao.');
+        setError('Não foi possível carregar a petição.');
         setLoading(false);
       },
     );
@@ -51,7 +51,7 @@ export default function PetitionDetailPage() {
       await navigator.clipboard.writeText(window.location.href);
       toast('Link copiado.', 'info');
     } catch {
-      toast('Nao foi possivel copiar o link automaticamente.', 'error');
+      toast('Não foi possível copiar o link automaticamente.', 'error');
     }
   };
 

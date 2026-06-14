@@ -84,7 +84,7 @@ export default function TopAppBar() {
     try {
       await login();
     } catch (error) {
-      toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+      toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
     }
   }, [login, toast]);
 

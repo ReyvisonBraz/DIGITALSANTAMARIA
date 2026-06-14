@@ -126,7 +126,7 @@ export default function UsersAdminPanel() {
     setLoading(true);
     getAllUsers()
       .then(setUsers)
-      .catch(() => toast('Nao foi possivel carregar usuarios.', 'error'))
+      .catch(() => toast('Não foi possível carregar usuários.', 'error'))
       .finally(() => setLoading(false));
   }, [toast]);
 

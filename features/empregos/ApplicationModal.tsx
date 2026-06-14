@@ -57,7 +57,7 @@ export default function ApplicationModal({ isOpen, onClose, jobId, jobTitle }: A
         await login();
       } catch (error) {
         pendingSubmit.current = false;
-        toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+        toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
       }
       return;
     }

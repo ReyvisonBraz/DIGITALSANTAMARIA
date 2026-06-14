@@ -289,7 +289,7 @@ export default function EducacaoPage() {
                <div className="lg:col-span-12">
                   <DevBanner
                      title="Dashboard do aluno em desenvolvimento"
-                     description="Notas, frequencia, cardapio e transporte escolar terao dados reais da Secretaria de Educacao em breve. As escolas e matriculas ja estao funcionando normalmente."
+                     description="Notas, frequência, cardápio e transporte escolar terão dados reais da Secretaria de Educação em breve. As escolas e matrículas já estão funcionando normalmente."
                   />
                </div>
                {/* Quick Student Status Panel */}

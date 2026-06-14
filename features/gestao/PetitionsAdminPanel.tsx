@@ -49,10 +49,10 @@ function PetitionAdminCard({ petition, onSaved }: { petition: Petition; onSaved:
         status,
         officialReply: officialReply.trim() || null,
       });
-      toast('Peticao atualizada.', 'success');
+      toast('Petição atualizada.', 'success');
       onSaved();
     } catch {
-      toast('Erro ao atualizar peticao.', 'error');
+      toast('Erro ao atualizar petição.', 'error');
     } finally {
       setSaving(false);
     }
@@ -110,7 +110,7 @@ function PetitionAdminCard({ petition, onSaved }: { petition: Petition; onSaved:
               value={officialReply}
               onChange={(event) => setOfficialReply(event.target.value)}
               rows={3}
-              placeholder="Informe uma posicao oficial da gestao sobre esta peticao."
+              placeholder="Informe uma posição oficial da gestão sobre esta petição."
               className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary"
             />
           </label>
@@ -122,7 +122,7 @@ function PetitionAdminCard({ petition, onSaved }: { petition: Petition; onSaved:
           className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          Salvar peticao
+          Salvar petição
         </button>
       </div>
     </article>
@@ -141,7 +141,7 @@ export default function PetitionsAdminPanel() {
     setLoading(true);
     getAllPetitions()
       .then(setPetitions)
-      .catch(() => toast('Nao foi possivel carregar peticoes.', 'error'))
+      .catch(() => toast('Não foi possível carregar petições.', 'error'))
       .finally(() => setLoading(false));
   }, [toast]);
 
@@ -182,9 +182,9 @@ export default function PetitionsAdminPanel() {
     return (
       <div className="rounded-xl border border-dashed border-border bg-white p-8 text-center">
         <FileText className="mx-auto h-10 w-10 text-primary" />
-        <h2 className="mt-4 text-xl font-black text-text-main">Nenhuma peticao criada</h2>
+        <h2 className="mt-4 text-xl font-black text-text-main">Nenhuma petição criada</h2>
         <p className="mt-2 text-sm font-medium text-text-muted">
-          As peticoes criadas pelos cidadaos aparecerao aqui.
+          As petições criadas pelos cidadãos aparecerão aqui.
         </p>
       </div>
     );

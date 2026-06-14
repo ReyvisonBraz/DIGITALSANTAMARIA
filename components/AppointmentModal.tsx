@@ -93,7 +93,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
         await login();
       } catch (error) {
         log.error('Login failed before appointment creation', {}, error);
-        toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+        toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
       }
       return;
     }

@@ -153,10 +153,10 @@ export default function AdminOverview({
           contentTab: 'applications' as ContentTab,
         },
         {
-          label: 'Matriculas',
+          label: 'Matrículas',
           value: enrollmentPending,
           total: queues.enrollments.length,
-          helper: 'Pedidos aguardando analise',
+          helper: 'Pedidos aguardando análise',
           icon: GraduationCap,
           color: 'border-emerald-200 bg-emerald-50 text-emerald-800',
           section: 'content' as MainSection,
@@ -219,8 +219,8 @@ export default function AdminOverview({
             </div>
             <p className="mt-4 text-sm font-medium leading-6 text-text-muted">
               {canManageCatalog
-                ? 'Priorize emergencias, solicitações e relatos pendentes antes de editar cadastros publicos.'
-                : 'Priorize emergencias, solicitações e relatos pendentes para manter as filas em dia.'}
+                ? 'Priorize emergências, solicitações e relatos pendentes antes de editar cadastros públicos.'
+                : 'Priorize emergências, solicitações e relatos pendentes para manter as filas em dia.'}
             </p>
           </div>
 
@@ -274,7 +274,7 @@ export default function AdminOverview({
           <p className="text-xs font-semibold uppercase tracking-widest text-primary">Filas operacionais</p>
           <h3 className="mt-2 text-lg font-semibold text-text-main">Resolver com contexto</h3>
           <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-            Consultas, candidaturas, matriculas e emergencias ficam agrupadas para atendimento rapido.
+            Consultas, candidaturas, matrículas e emergências ficam agrupadas para atendimento rápido.
           </p>
         </div>
         {canManageCatalog && (

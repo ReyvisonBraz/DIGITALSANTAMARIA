@@ -67,7 +67,7 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
       onClose();
     } catch (error) {
       log.error('Login failed from notifications panel', {}, error);
-      toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+      toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
     }
   };
 

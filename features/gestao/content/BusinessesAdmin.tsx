@@ -85,7 +85,7 @@ export default function BusinessesAdmin() {
       setBusinesses(list);
       setPending(pendingList);
     } catch {
-      toast('Nao foi possivel carregar os comercios.', 'error');
+      toast('Não foi possível carregar os comércios.', 'error');
     } finally {
       setLoading(false);
     }
@@ -473,7 +473,7 @@ export default function BusinessesAdmin() {
               className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {editingId ? 'Salvar alteracoes' : status === 'published' ? 'Publicar' : 'Salvar'}
+              {editingId ? 'Salvar alterações' : status === 'published' ? 'Publicar' : 'Salvar'}
             </button>
           </div>
         </form>
@@ -484,7 +484,7 @@ export default function BusinessesAdmin() {
           <div>
             <p className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-widest text-accent-success">
               <Clock3 className="h-3.5 w-3.5" />
-              Aguardando aprovacao
+              Aguardando aprovação
             </p>
             <h3 className="text-lg font-semibold text-text-main">
               Cadastros pendentes ({pending.length})
@@ -499,7 +499,7 @@ export default function BusinessesAdmin() {
         ) : pending.length === 0 ? (
           <EmptyState
             title="Nenhum cadastro pendente"
-            description="Quando um lojista cadastrar seu negocio pelo painel, aparece aqui para aprovacao."
+            description="Quando um lojista cadastrar seu negócio pelo painel, aparece aqui para aprovação."
           />
         ) : (
           <div className="space-y-3">
@@ -676,7 +676,7 @@ export default function BusinessesAdmin() {
                 <div className="flex flex-wrap gap-2">
                   {biz.status === 'pending_approval' ? (
                     <span className="inline-flex min-h-9 items-center rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-800">
-                      Revise na fila de aprovacao
+                      Revise na fila de aprovação
                     </span>
                   ) : (
                     <ContentQuickActions

@@ -54,7 +54,7 @@ export default function EmergencyAlertsAdmin() {
     try {
       setAlerts(await getAllEmergencyAlerts());
     } catch {
-      toast('Nao foi possivel carregar alertas emergenciais.', 'error');
+      toast('Não foi possível carregar alertas emergenciais.', 'error');
     } finally {
       setLoading(false);
     }

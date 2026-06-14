@@ -35,7 +35,7 @@ const PROTOCOL_TIMEOUT_MS = 12_000;
 
 const STATUS_LABEL: Record<ReportStatus, string> = {
   pending: 'recebido',
-  in_review: 'em analise',
+  in_review: 'em análise',
   resolved: 'resolvido',
   rejected: 'recusado',
 };

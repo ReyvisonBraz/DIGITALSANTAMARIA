@@ -53,7 +53,7 @@ export default function JobsAdmin() {
     try {
       setJobs(await getAllJobs());
     } catch {
-      toast('Nao foi possivel carregar vagas.', 'error');
+      toast('Não foi possível carregar vagas.', 'error');
     } finally {
       setLoading(false);
     }
@@ -206,7 +206,7 @@ export default function JobsAdmin() {
             )}
             <button type="submit" disabled={saving} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {editingId ? 'Salvar alteracoes' : 'Publicar'}
+              {editingId ? 'Salvar alterações' : 'Publicar'}
             </button>
           </div>
         </form>

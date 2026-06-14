@@ -30,7 +30,7 @@ export default function PeticoesPage() {
         setError(null);
       },
       () => {
-        setError('Nao foi possivel carregar as peticoes.');
+        setError('Não foi possível carregar as petições.');
         setLoading(false);
       },
     );
@@ -62,13 +62,13 @@ export default function PeticoesPage() {
           <div className="relative z-10">
             <div className="soft-chip">
               <Users className="h-4 w-4" />
-              Participacao cidada
+              Participação cidadã
             </div>
             <h1 className="mt-4 text-3xl font-semibold tracking-normal text-text-main md:text-6xl">
-              Peticoes publicas
+              Petições públicas
             </h1>
             <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-              Apoie causas abertas pela comunidade ou proponha uma nova peticao para mobilizar a cidade.
+              Apoie causas abertas pela comunidade ou proponha uma nova petição para mobilizar a cidade.
             </p>
           </div>
 
@@ -77,7 +77,7 @@ export default function PeticoesPage() {
             className="action-button-primary relative z-10"
           >
             <Plus className="h-4 w-4" />
-            Nova peticao
+            Nova petição
           </button>
         </div>
       </section>
@@ -89,8 +89,8 @@ export default function PeticoesPage() {
               <input
                 value={searchInput}
                 onChange={(event) => handleSearchChange(event.target.value)}
-                placeholder="Buscar por titulo, categoria ou descricao"
-                aria-label="Buscar peticoes"
+                placeholder="Buscar por título, categoria ou descrição"
+                aria-label="Buscar petições"
                 className="h-12 w-full rounded-xl border border-border bg-white/80 pl-10 pr-3 text-sm font-medium text-text-main shadow-inner outline-none transition focus:border-primary"
               />
           </label>
@@ -109,9 +109,9 @@ export default function PeticoesPage() {
         ) : filteredPetitions.length === 0 ? (
           <div className="glass-panel border-dashed p-8 text-center">
             <FileText className="mx-auto h-10 w-10 text-primary" />
-            <h2 className="mt-4 text-xl font-semibold text-text-main">Nenhuma peticao encontrada</h2>
+            <h2 className="mt-4 text-xl font-semibold text-text-main">Nenhuma petição encontrada</h2>
             <p className="mt-2 text-sm font-medium text-text-muted">
-              Crie uma nova peticao ou tente outro termo de busca.
+              Crie uma nova petição ou tente outro termo de busca.
             </p>
           </div>
         ) : (

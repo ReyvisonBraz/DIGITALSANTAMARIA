@@ -45,7 +45,7 @@ export default function AppointmentsAdmin() {
     try {
       setAppointments(await getAllAppointments());
     } catch {
-      toast('Nao foi possivel carregar consultas.', 'error');
+      toast('Não foi possível carregar consultas.', 'error');
     } finally {
       setLoading(false);
     }

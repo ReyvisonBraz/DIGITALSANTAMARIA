@@ -38,7 +38,7 @@ export default function SegurancaPage() {
       try {
         await login();
       } catch (loginError) {
-        toast(loginError instanceof Error ? loginError.message : 'Nao foi possivel iniciar o login.', 'error');
+        toast(loginError instanceof Error ? loginError.message : 'Não foi possível iniciar o login.', 'error');
       }
       return;
     }
@@ -57,7 +57,7 @@ export default function SegurancaPage() {
       setDescription('');
       toast(`Alerta enviado. Protocolo ${protocol}.`, 'success');
     } catch {
-      toast('Nao foi possivel enviar o alerta agora.', 'error');
+      toast('Não foi possível enviar o alerta agora.', 'error');
     } finally {
       setSubmitting(false);
     }

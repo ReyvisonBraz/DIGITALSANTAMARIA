@@ -64,7 +64,7 @@ export default function LocationPicker({ value, location, onChange }: LocationPi
       () => {
         if (mountedRef.current) {
           setLoading(false);
-          setError('Nao foi possivel obter sua localizacao. Informe o endereco manualmente.');
+          setError('Não foi possível obter sua localização. Informe o endereço manualmente.');
         }
       },
       { enableHighAccuracy: true, timeout: 10000 },

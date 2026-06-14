@@ -96,7 +96,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
         await login();
       } catch (error) {
         log.error('Login failed before petition creation', {}, error);
-        toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+        toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
       }
       return;
     }

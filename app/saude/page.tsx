@@ -316,7 +316,7 @@ export default function SaudePage() {
                           <div className="rounded-3xl border-2 border-border bg-white p-5 text-center">
                             <AlertTriangle className="mx-auto h-8 w-8 text-sky-500" />
                             <p className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
-                              Nao foi possivel carregar o estoque.
+                              Não foi possível carregar o estoque.
                             </p>
                             <button
                               type="button"

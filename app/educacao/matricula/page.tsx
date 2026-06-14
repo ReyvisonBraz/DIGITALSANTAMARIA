@@ -113,7 +113,7 @@ export default function MatriculaPage() {
       try {
         await login();
       } catch (error) {
-        toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+        toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
       }
       return;
     }
@@ -160,7 +160,7 @@ export default function MatriculaPage() {
       <div className="space-y-4 text-center md:text-left">
         <h1 className="text-4xl font-semibold uppercase leading-none tracking-tighter text-text-main md:text-5xl">
           Solicitação de <br />
-          <span className="text-primary">Matricula 2026.</span>
+          <span className="text-primary">Matrícula 2026.</span>
         </h1>
         <p className="font-ui max-w-xl text-sm font-medium text-text-muted">
           Preencha os dados abaixo para iniciar o processo de vinculação escolar na rede municipal.

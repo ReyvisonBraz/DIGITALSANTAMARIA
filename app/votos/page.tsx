@@ -26,7 +26,7 @@ export default function VotosPage() {
       try {
         await login();
       } catch (loginError) {
-        toast(loginError instanceof Error ? loginError.message : 'Nao foi possivel iniciar o login.', 'error');
+        toast(loginError instanceof Error ? loginError.message : 'Não foi possível iniciar o login.', 'error');
       }
       return;
     }

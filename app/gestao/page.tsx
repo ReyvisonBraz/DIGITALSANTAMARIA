@@ -551,7 +551,7 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
                           </div>
                           <dl className="mt-3 space-y-3 text-sm">
                             <div>
-                              <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Cidadao</dt>
+                              <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Cidadão</dt>
                               <dd className="mt-1 font-bold text-text-main">
                                 {demand.isAnonymous ? 'Anonimo' : demand.authorName || demand.authorId || 'Identificado'}
                               </dd>
@@ -838,7 +838,7 @@ function ReportsSection({ reports, loading, error, userId, clerkName, onRefresh 
                           </div>
                           <dl className="mt-3 space-y-3 text-sm">
                             <div>
-                              <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Cidadao</dt>
+                              <dt className="text-xs font-black uppercase tracking-widest text-text-muted">Cidadão</dt>
                               <dd className="mt-1 font-bold text-text-main">{report.reporterName || 'Identificado'}</dd>
                             </div>
                             <div>

@@ -40,7 +40,7 @@ export default function ProtocolSearch() {
     try {
       const demand = await getDemandByProtocol(search, user?.uid);
       if (!demand) {
-        toast('Protocolo nao encontrado.', 'error');
+        toast('Protocolo não encontrado.', 'error');
         return;
       }
       setResult(demand);

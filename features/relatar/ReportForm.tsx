@@ -71,7 +71,7 @@ export default function ReportForm() {
       await login();
     } catch (error) {
       log.error('Login failed before report creation', {}, error);
-      toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+      toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
     }
   };
 
@@ -99,7 +99,7 @@ export default function ReportForm() {
     try {
       const id = await createReport({
         reporterId: user.uid,
-        reporterName: user.displayName || 'Cidadao',
+        reporterName: user.displayName || 'Cidadão',
         type,
         title: title.trim(),
         description: description.trim(),
@@ -118,7 +118,7 @@ export default function ReportForm() {
       return;
     } catch (error) {
       log.error('Failed to create report', {}, error);
-      toast('Nao foi possivel enviar agora. Tente novamente em instantes.', 'error');
+      toast('Não foi possível enviar agora. Tente novamente em instantes.', 'error');
       setSubmitting(false);
     }
   };

@@ -31,7 +31,7 @@ export type RegisterBusinessInput = Pick<
   ownerName: string;
 };
 
-/** Cidadao cadastra seu proprio negocio e entra como pending_approval. */
+/** Cidadão cadastra seu próprio negócio e entra como pending_approval. */
 export async function registerBusiness(input: RegisterBusinessInput): Promise<string> {
   return factory.create({
     title: input.title,
@@ -61,7 +61,7 @@ export async function updateOwnedBusiness(
   await updateDoc(ref, { ...patch, updatedAt: serverTimestamp() });
 }
 
-/** Dono corrige um cadastro reprovado e reenvia para analise da prefeitura. */
+/** Dono corrige um cadastro reprovado e reenvia para análise da prefeitura. */
 export async function resubmitOwnedBusiness(
   id: string,
   patch: Partial<Pick<Business, 'title' | 'description' | 'category' | 'address' | 'phone' | 'whatsapp' | 'hours' | 'isOpen'>>,

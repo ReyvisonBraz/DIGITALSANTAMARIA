@@ -129,7 +129,7 @@ export default function PerfilPage() {
       .finally(() => setOperationsLoading(false));
   }, [user, toast]);
 
-  const displayName = profile?.displayName || user?.displayName || 'Cidadao';
+  const displayName = profile?.displayName || user?.displayName || 'Cidadão';
   const email = profile?.email || user?.email || '';
   const photoURL = profile?.photoURL || user?.photoURL || null;
   const isStaff = userRole === 'admin' || userRole === 'clerk';

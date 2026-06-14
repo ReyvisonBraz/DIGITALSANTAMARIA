@@ -36,7 +36,7 @@ const CATEGORIES: { value: Business['category']; label: string }[] = [
 
 const STATUS_META: Record<ContentStatus, { label: string; tone: string; icon: typeof Clock3 }> = {
   pending_approval: {
-    label: 'Aguardando aprovacao',
+    label: 'Aguardando aprovação',
     tone: 'bg-amber-50 text-amber-700 border-amber-200',
     icon: Clock3,
   },
@@ -161,18 +161,18 @@ export default function MyBusinessesSection() {
       if (editing.id) {
         if (editing.currentStatus === 'archived') {
           await resubmitOwnedBusiness(editing.id, patch);
-          toast('Cadastro corrigido e reenviado para analise.', 'success');
+          toast('Cadastro corrigido e reenviado para análise.', 'success');
         } else {
           await updateOwnedBusiness(editing.id, patch);
-          toast('Negocio atualizado.', 'success');
+          toast('Negócio atualizado.', 'success');
         }
       } else {
         await registerBusiness({
           ...patch,
           ownerId: user.uid,
-          ownerName: user.displayName || user.email || 'Cidadao',
+          ownerName: user.displayName || user.email || 'Cidadão',
         });
-        toast('Cadastro enviado. Aguarde a aprovacao da prefeitura.', 'success');
+        toast('Cadastro enviado. Aguarde a aprovação da prefeitura.', 'success');
       }
 
       setEditing(null);
@@ -195,7 +195,7 @@ export default function MyBusinessesSection() {
             Meus negócios
           </h2>
           <p className="mt-1 text-xs font-medium leading-5 text-text-muted">
-            Cadastre seu comercio ou servico. Depois da aprovacao da prefeitura, ele aparece em <code className="font-mono text-primary">/comercio</code>.
+            Cadastre seu comércio ou serviço. Depois da aprovação da prefeitura, ele aparece em <code className="font-mono text-primary">/comercio</code>.
           </p>
         </div>
 
@@ -220,7 +220,7 @@ export default function MyBusinessesSection() {
               </h3>
               {editing.currentStatus === 'archived' && (
                 <p className="mt-1 text-xs font-semibold text-rose-700">
-                  Ao salvar, este cadastro volta para a fila de aprovacao.
+                  Ao salvar, este cadastro volta para a fila de aprovação.
                 </p>
               )}
             </div>
@@ -336,7 +336,7 @@ export default function MyBusinessesSection() {
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {editing.id ? 'Salvar alteracoes' : 'Enviar para aprovacao'}
+              {editing.id ? 'Salvar alterações' : 'Enviar para aprovação'}
             </button>
           </div>
         </form>
@@ -350,14 +350,14 @@ export default function MyBusinessesSection() {
         <div className="rounded-xl border border-dashed border-border bg-surface p-6 text-center">
           <p className="text-sm font-bold uppercase tracking-widest text-text-main">Nenhum negócio cadastrado</p>
           <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-            Quando voce cadastrar um comercio ou servico, ele aparece aqui com o status da aprovacao.
+            Quando você cadastrar um comércio ou serviço, ele aparece aqui com o status da aprovação.
           </p>
         </div>
       ) : (
         <div className="space-y-3">
           {pendingCount > 0 && (
             <p className="text-xs font-bold text-text-muted">
-              {pendingCount} cadastro{pendingCount === 1 ? '' : 's'} aguardando aprovacao.
+              {pendingCount} cadastro{pendingCount === 1 ? '' : 's'} aguardando aprovação.
             </p>
           )}
 

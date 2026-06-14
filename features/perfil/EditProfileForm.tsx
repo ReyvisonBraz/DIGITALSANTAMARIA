@@ -33,7 +33,7 @@ export default function EditProfileForm({ onSaved }: { onSaved?: () => void }) {
           neighborhood: profile?.neighborhood || '',
         });
       })
-      .catch(() => toast('Nao foi possivel carregar seus dados de perfil.', 'error'))
+      .catch(() => toast('Não foi possível carregar seus dados de perfil.', 'error'))
       .finally(() => setLoadingProfile(false));
   }, [toast, user]);
 

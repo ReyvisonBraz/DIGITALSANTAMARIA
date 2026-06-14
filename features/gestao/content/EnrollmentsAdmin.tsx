@@ -45,7 +45,7 @@ export default function EnrollmentsAdmin() {
     try {
       setEnrollments(await getAllEnrollments());
     } catch {
-      toast('Nao foi possivel carregar matriculas.', 'error');
+      toast('Não foi possível carregar matrículas.', 'error');
     } finally {
       setLoading(false);
     }
@@ -89,10 +89,10 @@ export default function EnrollmentsAdmin() {
       setEnrollments((current) =>
         current.map((item) => (item.id === enrollment.id ? { ...item, status } : item)),
       );
-      toast('Status da matricula atualizado.', 'success');
+      toast('Status da matrícula atualizado.', 'success');
       setPendingStatus(null);
     } catch {
-      toast('Erro ao atualizar matricula.', 'error');
+      toast('Erro ao atualizar matrícula.', 'error');
     } finally {
       setSavingId(null);
     }
@@ -116,9 +116,9 @@ export default function EnrollmentsAdmin() {
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Rede municipal</p>
-            <h2 className="text-xl font-semibold tracking-normal text-text-main">Solicitacoes de matricula</h2>
+            <h2 className="text-xl font-semibold tracking-normal text-text-main">Solicitações de matrícula</h2>
             <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
-              Analise pedidos enviados pela matricula digital e atualize a situacao.
+              Analise pedidos enviados pela matrícula digital e atualize a situação.
             </p>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default function EnrollmentsAdmin() {
       />
 
       <p className="mt-3 text-xs font-bold text-text-muted">
-        Mostrando {filtered.length} de {enrollments.length} matriculas.
+        Mostrando {filtered.length} de {enrollments.length} matrículas.
       </p>
 
       {loading ? (
@@ -153,7 +153,7 @@ export default function EnrollmentsAdmin() {
           <Loader2 className="h-5 w-5 animate-spin text-primary" />
         </div>
       ) : filtered.length === 0 ? (
-        <EmptyState title="Nenhuma matricula encontrada" description="Os pedidos aparecem aqui quando forem enviados." />
+        <EmptyState title="Nenhuma matrícula encontrada" description="Os pedidos aparecem aqui quando forem enviados." />
       ) : (
         <div className="space-y-3">
           {filtered.map((enrollment) => (
@@ -199,7 +199,7 @@ export default function EnrollmentsAdmin() {
       <ConfirmDialog
         isOpen={!!pendingStatus}
         title={pendingStatus ? `Confirmar ${getStatusLabel(pendingStatus.status).toLowerCase()}` : 'Confirmar status'}
-        description={pendingStatus ? `Esta acao vai marcar a matricula de ${pendingStatus.enrollment.studentName} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificacao ao responsavel.` : ''}
+        description={pendingStatus ? `Esta ação vai marcar a matrícula de ${pendingStatus.enrollment.studentName} como ${getStatusLabel(pendingStatus.status).toLowerCase()} e enviar notificação ao responsável.` : ''}
         confirmLabel="Confirmar status"
         loading={!!pendingStatus && savingId === pendingStatus.enrollment.id}
         tone={pendingStatus?.status === 'rejected' ? 'danger' : 'default'}

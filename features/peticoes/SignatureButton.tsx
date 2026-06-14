@@ -37,19 +37,19 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
       try {
         await login();
       } catch (error) {
-        toast(error instanceof Error ? error.message : 'Nao foi possivel iniciar o login.', 'error');
+        toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
       }
       return;
     }
 
     setLoading(true);
     try {
-      await signPetition(petitionId, user.displayName || user.email || 'Cidadao');
+      await signPetition(petitionId, user.displayName || user.email || 'Cidadão');
       setSigned(true);
       toast(`Assinatura registrada em "${petitionTitle}"!`, 'success');
       onSign();
     } catch {
-      toast('Nao foi possivel registrar a assinatura.', 'error');
+      toast('Não foi possível registrar a assinatura.', 'error');
     } finally {
       setLoading(false);
     }

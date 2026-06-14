@@ -47,7 +47,7 @@ export default function ApplicationsAdmin() {
     try {
       setApplications(await getAllApplications());
     } catch {
-      toast('Nao foi possivel carregar candidaturas.', 'error');
+      toast('Não foi possível carregar candidaturas.', 'error');
     } finally {
       setLoading(false);
     }

@@ -160,9 +160,9 @@ const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'bus
   environment: {
     collection: 'environment_data',
     eyebrow: 'Meio ambiente',
-    title: 'informacoes ambientais',
+    title: 'informações ambientais',
     publicPath: '/meio-ambiente',
-    emptyTitle: 'Nenhuma informacao ambiental publicada',
+    emptyTitle: 'Nenhuma informação ambiental publicada',
     categoryField: 'category',
     fields: [
       {
