@@ -3,6 +3,9 @@
 import { useEffect } from 'react';
 import Button from '@/components/ui/Button';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('PageError');
 
 export default function Error({
   error,
@@ -12,7 +15,7 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('Page error:', error);
+    log.error('Erro não capturado na página', { digest: error.digest }, error);
   }, [error]);
 
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Loader2, MapPin, Navigation } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { GeoLocation } from '@/types';
@@ -16,6 +16,15 @@ export default function LocationPicker({ value, location, onChange }: LocationPi
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Cleanup: marca como desmontado e cancela qualquer fetch pendente
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      abortRef.current?.abort();
+    };
+  }, []);
 
   const getCurrentPosition = () => {
     setError(null);
@@ -74,7 +83,7 @@ export default function LocationPicker({ value, location, onChange }: LocationPi
   return (
     <div className="space-y-2">
       <label className="text-[11px] font-black uppercase tracking-widest text-text-main">
-        Ponto de referencia ou endereco
+        Ponto de referência ou endereço
       </label>
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -90,7 +99,7 @@ export default function LocationPicker({ value, location, onChange }: LocationPi
           type="button"
           onClick={getCurrentPosition}
           disabled={loading}
-          aria-label="Usar minha localizacao"
+          aria-label="Usar minha localização"
           className={cn(
             'flex items-center justify-center rounded-xl border-2 border-border bg-white px-4 transition-all',
             loading ? 'opacity-50' : 'hover:border-primary hover:text-primary',

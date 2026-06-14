@@ -54,7 +54,7 @@ export function useContent<T extends BaseDoc>(
    */
   const filtersKey = JSON.stringify(filters ?? null);
 
-  const fetch = useCallback(() => {
+  const loadData = useCallback(() => {
     const parsedFilters = filtersKey !== 'null'
       ? (JSON.parse(filtersKey) as [string, WhereFilterOp, unknown][])
       : undefined;
@@ -68,7 +68,7 @@ export function useContent<T extends BaseDoc>(
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersKey, service]);
 
-  useEffect(() => { fetch(); }, [fetch]);
+  useEffect(() => { loadData(); }, [loadData]);
 
-  return { data, loading, error, refresh: fetch };
+  return { data, loading, error, refresh: loadData };
 }
