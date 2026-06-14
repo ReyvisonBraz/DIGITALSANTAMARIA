@@ -12,6 +12,7 @@ import RootLayoutLogger from './root-layout-logger';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import InstallPrompt from '@/components/InstallPrompt';
 import ScrollAmbience from '@/components/ScrollAmbience';
+import GuidedHelp from '@/components/GuidedHelp';
 
 const displayFont = Fraunces({
   subsets: ['latin'],
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <Footer />
                   <BottomNavBar />
                   <InstallPrompt />
+                  <GuidedHelp />
                   <RootLayoutLogger />
                 </ErrorBoundary>
               </NotificationsProvider>
