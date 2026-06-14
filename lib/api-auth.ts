@@ -1,50 +1,47 @@
 import { NextRequest } from 'next/server';
 
 /**
- * Extrai e verifica o Firebase ID token de requests para API routes.
- * Suporta token via cookie (firebase-auth-token) ou header (Authorization: Bearer).
- *
- * Retorna o uid do usuario ou null se nao autenticado/valido.
+ * Decodifica o payload de um Firebase ID token sem verificação criptográfica.
+ * Valida apenas estrutura e expiração — adequado para API Routes do Next.js
+ * onde a validação completa ocorre no Firebase Admin (Cloud Functions).
  */
-export function getAuthToken(request: NextRequest): string | null {
-  // Cookie (setado pelo auth-context)
-  const cookieToken = request.cookies.get('firebase-auth-token')?.value;
-
-  // Header Authorization: Bearer <token>
-  const authHeader = request.headers.get('authorization');
-  const headerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
-
-  const token = cookieToken || headerToken;
-  if (!token) return null;
-
-  // Decodifica JWT e verifica expiracao
+function decodeFirebaseToken(token: string): { sub?: string; exp?: number } | null {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
-    const payload = JSON.parse(
-      Buffer.from(parts[1], 'base64url').toString('utf-8'),
-    );
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf-8'));
     if (!payload.sub) return null;
     if (payload.exp * 1000 < Date.now()) return null;
-    return token;
+    return payload;
   } catch {
     return null;
   }
 }
 
 /**
- * Retorna o uid do Firebase Auth ou null.
+ * Extrai o Firebase ID token de um request.
+ * Suporta cookie (firebase-auth-token) ou header (Authorization: Bearer <token>).
+ *
+ * Retorna o token decodificado ou null se ausente, inválido ou expirado.
+ */
+export function getAuthToken(request: NextRequest): string | null {
+  const cookieToken = request.cookies.get('firebase-auth-token')?.value;
+  const authHeader = request.headers.get('authorization');
+  const headerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  const token = cookieToken || headerToken;
+  if (!token) return null;
+  return decodeFirebaseToken(token) ? token : null;
+}
+
+/**
+ * Retorna o uid do usuário autenticado ou null se o token for inválido/ausente.
+ * Reutiliza a decodificação de getAuthToken para evitar parsing duplo do JWT.
  */
 export function getAuthUserId(request: NextRequest): string | null {
-  const token = getAuthToken(request);
+  const cookieToken = request.cookies.get('firebase-auth-token')?.value;
+  const authHeader = request.headers.get('authorization');
+  const headerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  const token = cookieToken || headerToken;
   if (!token) return null;
-  try {
-    const parts = token.split('.');
-    const payload = JSON.parse(
-      Buffer.from(parts[1], 'base64url').toString('utf-8'),
-    );
-    return payload.sub || null;
-  } catch {
-    return null;
-  }
+  return decodeFirebaseToken(token)?.sub ?? null;
 }

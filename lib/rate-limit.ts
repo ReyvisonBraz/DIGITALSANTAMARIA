@@ -1,6 +1,6 @@
 /**
  * Rate limiter simples em memoria para API Routes do Next.js.
- * Baseado no padrao do /api/logs.
+ * Baseado no padrão do /api/logs.
  */
 
 const RATE_LIMIT_WINDOW = 60_000; // 1 minuto

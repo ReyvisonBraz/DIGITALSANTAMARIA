@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   try {
     const { title, description } = await request.json();
     if (!title || !description) {
-      return NextResponse.json({ error: 'title e description obrigatorios' }, { status: 400 });
+      return NextResponse.json({ error: 'title e description obrigatórios' }, { status: 400 });
     }
 
     const type = await classifyReport(String(title), String(description));
