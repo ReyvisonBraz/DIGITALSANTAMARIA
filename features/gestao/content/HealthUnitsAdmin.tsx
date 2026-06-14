@@ -176,14 +176,14 @@ export default function HealthUnitsAdmin() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Nivel de espera</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Nível de espera</span>
             <select value={form.waitLevel} onChange={(event) => updateField('waitLevel', event.target.value as WaitTimeLevel)} className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary">
               {WAIT_LEVELS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
             </select>
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Horario</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Horário</span>
             <input value={form.openHours} onChange={(event) => updateField('openHours', event.target.value)} placeholder="Ex: 7h-17h" className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
           </label>
 

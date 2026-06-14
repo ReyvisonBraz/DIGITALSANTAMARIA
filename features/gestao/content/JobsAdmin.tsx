@@ -173,7 +173,7 @@ export default function JobsAdmin() {
             <input value={form.location} onChange={(event) => updateField('location', event.target.value)} className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
           </label>
           <label className="space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Salario</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Salário</span>
             <input value={form.salary} onChange={(event) => updateField('salary', event.target.value)} placeholder="Ex: R$ 1.800" className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
           </label>
           <label className="space-y-1.5 md:col-span-2">

@@ -241,7 +241,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
               <textarea
                 rows={7}
                 className="w-full resize-none rounded-xl border border-border bg-surface p-4 font-medium leading-6 shadow-inner outline-none transition focus:border-primary"
-                placeholder="Descreva sua proposta e como ela ajudara a comunidade."
+                placeholder="Descreva sua proposta e como ela ajudará a comunidade."
                 value={formData.description}
                 onChange={(event) => setFormData({ ...formData, description: event.target.value })}
                 required
