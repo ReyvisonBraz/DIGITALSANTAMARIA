@@ -29,7 +29,7 @@ export default function AvatarUpload() {
       return;
     }
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      toast('Formato nao suportado. Use JPEG, PNG ou WebP.', 'error');
+      toast('Formato não suportado. Use JPEG, PNG ou WebP.', 'error');
       return;
     }
 

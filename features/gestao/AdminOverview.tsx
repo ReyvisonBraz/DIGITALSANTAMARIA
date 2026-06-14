@@ -146,7 +146,7 @@ export default function AdminOverview({
           label: 'Candidaturas',
           value: applicationPending,
           total: queues.applications.length,
-          helper: 'Recebidas ainda nao visualizadas',
+          helper: 'Recebidas ainda não visualizadas',
           icon: ClipboardList,
           color: 'border-violet-200 bg-violet-50 text-violet-800',
           section: 'content' as MainSection,

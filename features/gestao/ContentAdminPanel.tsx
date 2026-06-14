@@ -251,7 +251,7 @@ const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'bus
     eyebrow: 'Participacao cidada',
     title: 'votacoes',
     publicPath: '/votos',
-    emptyTitle: 'Nenhuma votacao publicada',
+    emptyTitle: 'Nenhuma votação publicada',
     categoryField: 'category',
     fields: [
       {
@@ -267,7 +267,7 @@ const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'bus
           { value: 'projeto', label: 'Projeto' },
         ],
       },
-      { name: 'options', label: 'Opcoes de voto', type: 'options', required: true, placeholder: 'Uma opcao por linha' },
+      { name: 'options', label: 'Opções de voto', type: 'options', required: true, placeholder: 'Uma opção por linha' },
       { name: 'startDate', label: 'Inicio', type: 'text', placeholder: '2026-06-01' },
       { name: 'endDate', label: 'Fim', type: 'text', placeholder: '2026-06-30' },
       { name: 'isActive', label: 'Ativa', type: 'checkbox', defaultValue: true },

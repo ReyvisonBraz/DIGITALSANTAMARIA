@@ -59,7 +59,7 @@ export const NAV_LINKS: readonly NavLink[] = [
   { label: 'Social', href: '/social', icon: Heart, category: 'Servicos' },
   { label: 'Obras', href: '/obras', icon: HardHat, category: 'Gestao' },
   { label: 'Avisos', href: '/avisos', icon: Megaphone, category: 'Portal' },
-  { label: 'Comercio', href: '/comercio', icon: Store, category: 'Economia' },
+  { label: 'Comércio', href: '/comercio', icon: Store, category: 'Economia' },
   { label: 'Eventos', href: '/eventos', icon: Calendar, category: 'Vida Urbana' },
   { label: 'Comunidade', href: '/comunidade', icon: Users, category: 'Vida Urbana' },
   { label: 'Votos', href: '/votos', icon: Vote, category: 'Participacao' },

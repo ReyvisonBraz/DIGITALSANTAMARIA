@@ -18,7 +18,7 @@ export default function VotosPage() {
 
   const handleVote = async (poll: Poll, option: PollOption) => {
     if (!poll.isActive) {
-      toast('Esta votacao ja foi encerrada.', 'error');
+      toast('Esta votação já foi encerrada.', 'error');
       return;
     }
 
@@ -59,7 +59,7 @@ export default function VotosPage() {
         loading={loading}
         error={error}
         onRetry={refresh}
-        emptyMessage="Nenhuma votacao ativa no momento."
+        emptyMessage="Nenhuma votação ativa no momento."
       >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {data.map((poll) => (

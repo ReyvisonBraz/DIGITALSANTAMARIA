@@ -9,7 +9,7 @@ export const signPetitionCallable = functions.https.onCall(
     if (!request.auth) {
       throw new functions.https.HttpsError(
         'unauthenticated',
-        'Autenticacao necessaria para assinar peticoes.'
+        'Autenticação necessária para assinar petições.'
       );
     }
 
@@ -18,10 +18,10 @@ export const signPetitionCallable = functions.https.onCall(
       userName?: string;
     };
     const userId = request.auth.uid;
-    const userName = inputUserName?.trim() || request.auth.token.name || 'Cidadao';
+    const userName = inputUserName?.trim() || request.auth.token.name || 'Cidadão';
 
     if (!petitionId || typeof petitionId !== 'string') {
-      throw new functions.https.HttpsError('invalid-argument', 'petitionId e obrigatorio');
+      throw new functions.https.HttpsError('invalid-argument', 'petitionId é obrigatório');
     }
 
     const sigId = `${petitionId}_${userId}`;
@@ -38,19 +38,19 @@ export const signPetitionCallable = functions.https.onCall(
         if (sigSnap.exists) {
           throw new functions.https.HttpsError(
             'already-exists',
-            'Voce ja assinou esta peticao.'
+            'Você já assinou esta petição.'
           );
         }
 
         if (!petitionSnap.exists) {
-          throw new functions.https.HttpsError('not-found', 'Peticao nao encontrada.');
+          throw new functions.https.HttpsError('not-found', 'Petição não encontrada.');
         }
 
         const petition = petitionSnap.data()!;
         if (petition.status !== 'active') {
           throw new functions.https.HttpsError(
             'failed-precondition',
-            'Esta peticao nao esta mais ativa.'
+            'Esta petição não está mais ativa.'
           );
         }
 

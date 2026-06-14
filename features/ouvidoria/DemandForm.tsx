@@ -96,7 +96,7 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
     event.preventDefault();
 
     if (!formData.subject.trim() || !formData.text.trim()) {
-      toast('Preencha o assunto e a descricao da solicitação.', 'error');
+      toast('Preencha o assunto e a descrição da solicitação.', 'error');
       return;
     }
 

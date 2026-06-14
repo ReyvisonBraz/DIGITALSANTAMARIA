@@ -32,7 +32,7 @@ export default function PhotoUpload({ previewUrl, onFileChange }: PhotoUploadPro
       return;
     }
     if (!ACCEPTED_TYPES.includes(selected.type)) {
-      toast('Formato nao suportado. Use JPEG, PNG ou WebP.', 'error');
+      toast('Formato não suportado. Use JPEG, PNG ou WebP.', 'error');
       return;
     }
 

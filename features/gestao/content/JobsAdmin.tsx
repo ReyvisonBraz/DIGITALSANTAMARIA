@@ -93,7 +93,7 @@ export default function JobsAdmin() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!form.title.trim() || !form.description.trim() || !form.location.trim()) {
-      toast('Preencha titulo, descricao e local.', 'error');
+      toast('Preencha título, descrição e local.', 'error');
       return;
     }
 

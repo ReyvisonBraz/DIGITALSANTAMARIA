@@ -20,7 +20,7 @@ const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
 
 if (!apiKey || !projectId || !appId) {
   throw new Error(
-    'Firebase nao configurado. Defina NEXT_PUBLIC_FIREBASE_API_KEY, NEXT_PUBLIC_FIREBASE_PROJECT_ID e NEXT_PUBLIC_FIREBASE_APP_ID nas variaveis de ambiente (.env.local ou Vercel dashboard).'
+    'Firebase não configurado. Defina NEXT_PUBLIC_FIREBASE_API_KEY, NEXT_PUBLIC_FIREBASE_PROJECT_ID e NEXT_PUBLIC_FIREBASE_APP_ID nas variáveis de ambiente (.env.local ou Vercel dashboard).'
   );
 }
 

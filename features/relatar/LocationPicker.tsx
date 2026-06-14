@@ -21,7 +21,7 @@ export default function LocationPicker({ value, location, onChange }: LocationPi
     setError(null);
 
     if (!navigator.geolocation) {
-      setError('Seu navegador nao permite capturar localizacao automaticamente.');
+      setError('Seu navegador não permite capturar localização automaticamente.');
       onChange(value, null);
       return;
     }

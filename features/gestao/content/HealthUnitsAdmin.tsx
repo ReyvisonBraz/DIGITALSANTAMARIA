@@ -94,7 +94,7 @@ export default function HealthUnitsAdmin() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!form.name.trim() || !form.address.trim()) {
-      toast('Preencha nome e endereco.', 'error');
+      toast('Preencha nome e endereço.', 'error');
       return;
     }
 

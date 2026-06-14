@@ -123,7 +123,7 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
                   aria-label={`Notificação: ${notification.title}`}
                 >
                   {!notification.read && (
-                    <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-primary" aria-label="Nao lida" />
+                    <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-primary" aria-label="Não lida" />
                   )}
 
                   <div className="flex gap-3">

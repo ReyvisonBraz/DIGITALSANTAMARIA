@@ -29,8 +29,8 @@ export default function PetitionDetailPage() {
       id,
       (data) => {
         if (!data) {
-          setError('Peticao nao encontrada.');
-          toast('Peticao nao encontrada.', 'error');
+          setError('Petição não encontrada.');
+          toast('Petição não encontrada.', 'error');
         } else {
           setPetition(data);
           setError(null);

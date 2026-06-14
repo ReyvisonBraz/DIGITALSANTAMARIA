@@ -448,7 +448,7 @@ function DemandsSection({ demands, loading, error, userId, clerkName, onRefresh 
       ) : error ? (
         <EmptyState title="Erro ao carregar" description={error} />
       ) : demands.length === 0 ? (
-        <EmptyState title="Nenhuma solicitação" description="Ainda nao ha solicitações registradas." />
+        <EmptyState title="Nenhuma solicitação" description="Ainda não há solicitações registradas." />
       ) : filteredDemands.length === 0 ? (
         <EmptyState title="Nada encontrado" description="Tente limpar os filtros ou buscar outro termo." />
       ) : (

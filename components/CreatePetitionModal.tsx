@@ -79,7 +79,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
       return;
     }
     if (!ACCEPTED_COVER.includes(file.type)) {
-      toast('Formato nao suportado. Use JPEG, PNG ou WebP.', 'error');
+      toast('Formato não suportado. Use JPEG, PNG ou WebP.', 'error');
       return;
     }
     setCoverFile(file);
@@ -106,7 +106,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
     const goal = parseInt(formData.goal, 10);
 
     if (!title || !description) {
-      toast('Preencha titulo e descricao.', 'error');
+      toast('Preencha título e descrição.', 'error');
       return;
     }
     if (title.length > MAX_TITLE) {

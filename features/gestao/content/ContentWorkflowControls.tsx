@@ -106,7 +106,7 @@ interface ContentListControlsProps {
 export function ContentListControls({
   search,
   sort,
-  searchPlaceholder = 'Buscar por titulo ou descricao',
+  searchPlaceholder = 'Buscar por título ou descrição',
   onSearchChange,
   onSortChange,
 }: ContentListControlsProps) {
@@ -275,9 +275,9 @@ export function ContentPreviewDialog({
                 ))}
               </div>
             )}
-            <h4 className="text-xl font-semibold tracking-normal text-text-main">{title || 'Sem titulo'}</h4>
+            <h4 className="text-xl font-semibold tracking-normal text-text-main">{title || 'Sem título'}</h4>
             <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-              {description || 'Sem descricao.'}
+              {description || 'Sem descrição.'}
             </p>
             {actionURL && (
               <a

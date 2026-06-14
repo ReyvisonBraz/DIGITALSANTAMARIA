@@ -188,7 +188,7 @@ export default function BusinessesAdmin() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!title.trim() || !description.trim() || !address.trim()) {
-      toast('Preencha nome, descricao e endereco.', 'error');
+      toast('Preencha nome, descrição e endereço.', 'error');
       return;
     }
 

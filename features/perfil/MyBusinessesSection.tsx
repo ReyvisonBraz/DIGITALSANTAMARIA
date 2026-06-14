@@ -46,7 +46,7 @@ const STATUS_META: Record<ContentStatus, { label: string; tone: string; icon: ty
     icon: CheckCircle2,
   },
   archived: {
-    label: 'Nao aprovado',
+    label: 'Não aprovado',
     tone: 'bg-rose-50 text-rose-700 border-rose-200',
     icon: AlertCircle,
   },
@@ -116,7 +116,7 @@ export default function MyBusinessesSection() {
       () => {
         setBusinesses([]);
         setLoading(false);
-        toast('Não foi possível carregar seus negocios agora.', 'error');
+        toast('Não foi possível carregar seus negócios agora.', 'error');
       },
     );
 
@@ -152,7 +152,7 @@ export default function MyBusinessesSection() {
 
     const patch = businessPatch(editing);
     if (!patch.title || !patch.description || !patch.address) {
-      toast('Preencha nome, descricao e endereco.', 'error');
+      toast('Preencha nome, descrição e endereço.', 'error');
       return;
     }
 

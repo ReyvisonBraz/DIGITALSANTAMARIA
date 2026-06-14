@@ -28,7 +28,7 @@ const REPORT_TYPES: { value: ReportType; label: string; hint: string; icon: Luci
   { value: 'infrastructure', label: 'Infraestrutura', hint: 'Buracos, iluminacao, calcadas', icon: HardHat },
   { value: 'environment', label: 'Meio ambiente', hint: 'Lixo, descarte, areas verdes', icon: Leaf },
   { value: 'security', label: 'Seguranca', hint: 'Riscos, pontos perigosos', icon: Shield },
-  { value: 'other', label: 'Outro', hint: 'Qualquer outra ocorrencia', icon: MoreHorizontal },
+  { value: 'other', label: 'Outro', hint: 'Qualquer outra ocorrência', icon: MoreHorizontal },
 ];
 
 const MIN_TITLE = 5;

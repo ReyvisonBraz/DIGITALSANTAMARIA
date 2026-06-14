@@ -85,7 +85,7 @@ function UserAdminCard({ user, onSaved }: { user: UserProfile; onSaved: () => vo
             <input
               value={phone}
               onChange={(event) => setPhone(event.target.value)}
-              placeholder="Nao informado"
+              placeholder="Não informado"
               className="h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm font-bold outline-none transition focus:border-primary"
             />
           </label>
@@ -95,7 +95,7 @@ function UserAdminCard({ user, onSaved }: { user: UserProfile; onSaved: () => vo
             <input
               value={neighborhood}
               onChange={(event) => setNeighborhood(event.target.value)}
-              placeholder="Nao informado"
+              placeholder="Não informado"
               className="h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm font-bold outline-none transition focus:border-primary"
             />
           </label>

@@ -5,24 +5,24 @@ if (!admin.apps.length) admin.initializeApp();
 
 const STATUS_MESSAGES: Record<string, { title: string; body: string }> = {
   in_review: {
-    title: 'Solicitacao em analise',
-    body: 'Sua solicitacao foi recebida e esta sendo analisada pela equipe municipal.',
+    title: 'Solicitação em análise',
+    body: 'Sua solicitação foi recebida e está sendo analisada pela equipe municipal.',
   },
   resolved: {
-    title: 'Solicitacao resolvida',
-    body: 'Sua solicitacao foi resolvida. Veja a resposta no aplicativo.',
+    title: 'Solicitação resolvida',
+    body: 'Sua solicitação foi resolvida. Veja a resposta no aplicativo.',
   },
   rejected: {
-    title: 'Solicitacao indeferida',
-    body: 'Sua solicitacao nao pode ser atendida.',
+    title: 'Solicitação indeferida',
+    body: 'Sua solicitação não pode ser atendida.',
   },
   analyzing: {
-    title: 'Solicitacao em analise',
-    body: 'Sua solicitacao entrou na fila de analise da prefeitura.',
+    title: 'Solicitação em análise',
+    body: 'Sua solicitação entrou na fila de análise da prefeitura.',
   },
   solved: {
-    title: 'Solicitacao resolvida',
-    body: 'Sua solicitacao da ouvidoria foi resolvida.',
+    title: 'Solicitação resolvida',
+    body: 'Sua solicitação da ouvidoria foi resolvida.',
   },
 };
 
@@ -48,7 +48,7 @@ async function notifyUser(userId: string | null | undefined, status: string): Pr
     });
     console.log(`[onStatusChanged] Notificacao enviada para ${userId}`);
   } catch (error) {
-    console.error('[onStatusChanged] Erro ao enviar notificacao:', error);
+    console.error('[onStatusChanged] Erro ao enviar notificação:', error);
   }
 }
 

@@ -89,7 +89,7 @@ export default function TrafficAdmin() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!title.trim() || !description.trim() || !location.trim()) {
-      toast('Preencha titulo, descricao e local.', 'error');
+      toast('Preencha título, descrição e local.', 'error');
       return;
     }
 

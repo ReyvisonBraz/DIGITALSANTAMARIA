@@ -45,27 +45,27 @@ export const votePollCallable = functions.https.onCall(
         }
 
         if (!pollSnap.exists) {
-          throw new functions.https.HttpsError('not-found', 'Votacao nao encontrada.');
+          throw new functions.https.HttpsError('not-found', 'Votação não encontrada.');
         }
 
         const poll = pollSnap.data()!;
         if (poll.status !== 'published' || poll.deletedAt) {
           throw new functions.https.HttpsError(
             'failed-precondition',
-            'Esta votacao nao esta disponivel.'
+            'Esta votação não está disponível.'
           );
         }
         if (poll.isActive !== true) {
           throw new functions.https.HttpsError(
             'failed-precondition',
-            'Esta votacao esta encerrada.'
+            'Esta votação está encerrada.'
           );
         }
 
         const options = Array.isArray(poll.options) ? poll.options : [];
         const optionIndex = options.findIndex((option) => option?.id === optionId);
         if (optionIndex < 0) {
-          throw new functions.https.HttpsError('not-found', 'Opcao de voto nao encontrada.');
+          throw new functions.https.HttpsError('not-found', 'Opção de voto não encontrada.');
         }
 
         const nextOptions = options.map((option, index) => (
