@@ -163,9 +163,13 @@ function mapDemandMessage(id: string, data: Record<string, unknown>): DemandMess
 
 export async function getDemandMessages(demandId: string): Promise<DemandMessage[]> {
   const ref = collection(db, MESSAGES_COLLECTION);
-  const q = query(ref, where('demandId', '==', demandId), orderBy('createdAt', 'asc'));
+  const q = query(ref, where('demandId', '==', demandId));
   const snap = await getDocs(q);
-  return snap.docs.map((docSnap) => mapDemandMessage(docSnap.id, docSnap.data()));
+  return snap.docs.map((docSnap) => mapDemandMessage(docSnap.id, docSnap.data())).sort((a, b) => {
+    const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
+    const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
+    return aTime - bTime;
+  });
 }
 
 export function listenToDemandMessages(
@@ -174,11 +178,16 @@ export function listenToDemandMessages(
   onError?: (error: unknown) => void,
 ): () => void {
   const ref = collection(db, MESSAGES_COLLECTION);
-  const q = query(ref, where('demandId', '==', demandId), orderBy('createdAt', 'asc'));
+  const q = query(ref, where('demandId', '==', demandId));
   return onSnapshot(
     q,
     (snap) => {
-      onChange(snap.docs.map((d) => mapDemandMessage(d.id, d.data())));
+      const sorted = snap.docs.map((d) => mapDemandMessage(d.id, d.data())).sort((a, b) => {
+        const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
+        const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
+        return aTime - bTime;
+      });
+      onChange(sorted);
     },
     (error) => {
       onError?.(error);
@@ -216,9 +225,13 @@ export async function getDemandByProtocol(protocolId: string, userId?: string): 
 
 export async function getDemandsByUser(userId: string): Promise<Demand[]> {
   const ref = collection(db, COLLECTION).withConverter(demandConverter);
-  const q = query(ref, where('authorId', '==', userId), orderBy('createdAt', 'desc'));
+  const q = query(ref, where('authorId', '==', userId));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => d.data());
+  return snap.docs.map((d) => d.data()).sort((a, b) => {
+    const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
+    const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
+    return bTime - aTime;
+  });
 }
 
 export function listenToUserDemands(
@@ -227,11 +240,17 @@ export function listenToUserDemands(
   onError?: (error: unknown) => void,
 ): () => void {
   const ref = collection(db, COLLECTION).withConverter(demandConverter);
-  const q = query(ref, where('authorId', '==', userId), orderBy('createdAt', 'desc'));
+  // Note: orderBy removed to avoid requiring composite index — sorted client-side
+  const q = query(ref, where('authorId', '==', userId));
   return onSnapshot(
     q,
     (snap) => {
-      onChange(snap.docs.map((d) => d.data()));
+      const sorted = snap.docs.map((d) => d.data()).sort((a, b) => {
+        const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
+        const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
+        return bTime - aTime;
+      });
+      onChange(sorted);
     },
     (error) => {
       onError?.(error);
