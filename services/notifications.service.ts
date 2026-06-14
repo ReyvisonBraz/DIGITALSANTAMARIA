@@ -49,16 +49,20 @@ export function listenToUserNotifications(
   onError?: (error: unknown) => void,
 ): () => void {
   const ref = collection(db, COLLECTION).withConverter(notificationConverter);
-  const q = query(
-    ref,
-    where('recipientId', '==', userId),
-    orderBy('createdAt', 'desc'),
-    limit(FEED_LIMIT),
-  );
+  // orderBy and limit removed to avoid composite index requirement — sorted/limited client-side
+  const q = query(ref, where('recipientId', '==', userId));
   return onSnapshot(
     q,
     (snap) => {
-      onChange(snap.docs.map((d) => d.data()));
+      const sorted = snap.docs
+        .map((d) => d.data())
+        .sort((a, b) => {
+          const aTime = (a.createdAt as any)?.toMillis?.() ?? 0;
+          const bTime = (b.createdAt as any)?.toMillis?.() ?? 0;
+          return bTime - aTime;
+        })
+        .slice(0, FEED_LIMIT);
+      onChange(sorted);
     },
     (error) => {
       onError?.(error);
