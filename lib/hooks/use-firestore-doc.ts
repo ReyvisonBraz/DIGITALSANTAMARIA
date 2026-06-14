@@ -86,15 +86,16 @@ export function useFirestoreDoc<T extends { id: string }>(
     }
   }, [path, converter]);
 
-  /** Carrega ou inicia subscription conforme configuração */
+  // Modo fetch: carrega uma vez quando path/converter mudam
   useEffect(() => {
-    if (!subscribe) {
-      // Modo fetch: carrega uma vez
-      refresh();
-      return;
-    }
+    if (subscribe) return;
+    refresh();
+  }, [subscribe, refresh]);
 
-    // Modo subscribe: escuta alterações em tempo real
+  // Modo subscribe: escuta alterações em tempo real sem depender de `refresh`
+  useEffect(() => {
+    if (!subscribe) return;
+
     setStatus('loading');
     const ref = doc(db, path).withConverter(converter);
 
@@ -112,7 +113,7 @@ export function useFirestoreDoc<T extends { id: string }>(
     );
 
     return unsub;
-  }, [path, converter, subscribe, refresh]);
+  }, [path, converter, subscribe]);
 
   return { data, status, error, refresh };
 }
