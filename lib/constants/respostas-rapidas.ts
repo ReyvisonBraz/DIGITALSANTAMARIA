@@ -97,7 +97,7 @@ export const GENERIC_QUICK_RESPONSES: QuickResponse[] = [
     group: 'resolucao',
   },
   {
-    label: 'Resolvido - servico executado',
+    label: 'Resolvido - serviço executado',
     text: 'Informamos que o serviço solicitado foi executado pela equipe responsável. O local passou por vistoria e a situação foi regularizada.\n\nAgradecemos por nos informar sobre o problema.\n\nAtenciosamente,\nPrefeitura Municipal de Santa Maria do Pará',
     group: 'resolucao',
   },

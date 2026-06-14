@@ -212,8 +212,8 @@ export function ContentQuickActions({
 
       <ConfirmDialog
         isOpen={publishConfirmationOpen}
-        title={`${publishLabel} conteudo`}
-        description="Esta ação torna o item visível nas páginas públicas do site. Confirme apenas depois de revisar titulo, texto, data e links."
+        title={`${publishLabel} conteúdo`}
+        description="Esta ação torna o item visível nas páginas públicas do site. Confirme apenas depois de revisar título, texto, data e links."
         confirmLabel={publishLabel}
         loading={loading}
         onConfirm={confirmPublish}

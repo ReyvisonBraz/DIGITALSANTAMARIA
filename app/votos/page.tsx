@@ -50,8 +50,8 @@ export default function VotosPage() {
       <ContentHero
         icon={Gavel}
         label="Democracia"
-        title="Votacoes Cidadas"
-        subtitle="Orcamento participativo, consultas publicas e projetos de lei."
+        title="Votações Cidadãs"
+        subtitle="Orçamento participativo, consultas públicas e projetos de lei."
         accent="primary"
       />
 

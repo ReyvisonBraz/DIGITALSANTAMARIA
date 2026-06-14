@@ -80,7 +80,7 @@ export default function ReportForm() {
     if (!user) return;
 
     if (title.trim().length < MIN_TITLE) {
-      toast(`De um titulo com pelo menos ${MIN_TITLE} caracteres.`, 'error');
+      toast(`Dê um título com pelo menos ${MIN_TITLE} caracteres.`, 'error');
       return;
     }
     if (description.trim().length < MIN_DESCRIPTION) {

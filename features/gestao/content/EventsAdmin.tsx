@@ -416,7 +416,7 @@ export default function EventsAdmin() {
           <ContentListControls
             search={searchTerm}
             sort={sortMode}
-            searchPlaceholder="Buscar por titulo, local, data, categoria ou organizador"
+            searchPlaceholder="Buscar por título, local, data, categoria ou organizador"
             onSearchChange={setSearchTerm}
             onSortChange={setSortMode}
           />

@@ -350,7 +350,7 @@ export default function WorksAdmin() {
           <ContentListControls
             search={searchTerm}
             sort={sortMode}
-            searchPlaceholder="Buscar por titulo, endereco, bairro, categoria ou empresa"
+            searchPlaceholder="Buscar por título, endereço, bairro, categoria ou empresa"
             onSearchChange={setSearchTerm}
             onSortChange={setSortMode}
           />
