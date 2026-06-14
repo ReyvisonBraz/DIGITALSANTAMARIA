@@ -17,8 +17,8 @@ import { db } from '@/lib/firebase';
 import { demandConverter } from '@/lib/firebase/converters';
 import { generateDemandProtocolId } from '@/lib/utils/protocol';
 import { tryCreateNotification } from '@/services/notifications.service';
-import type {
 import { byCreatedAtAsc, byCreatedAtDesc } from '@/lib/utils/sort';
+import type {
   Demand,
   CreateDemandInput,
   DemandMessage,
@@ -70,10 +70,6 @@ export async function createDemand(
   return { id: docRef.id };
 }
 
-/**
- * Aguarda o protocolId real gerado pela Cloud Function (onDemandCreated).
- * Se a CF falhar ou demorar mais que PROTOCOL_TIMEOUT_MS, gera fallback local.
- */
 export function waitForDemandProtocol(
   demandId: string,
   onProtocol: (protocolId: string) => void,
@@ -229,7 +225,6 @@ export function listenToUserDemands(
   onError?: (error: unknown) => void,
 ): () => void {
   const ref = collection(db, COLLECTION).withConverter(demandConverter);
-  // Note: orderBy removed to avoid requiring composite index — sorted client-side
   const q = query(ref, where('authorId', '==', userId));
   return onSnapshot(
     q,
@@ -313,7 +308,6 @@ export async function updateDemandStatus(
     }
   });
 
-  // Notificação fora da transação (fire-and-forget, não deve bloquear)
   try {
     const snap = await getDoc(demandRef);
     if (snap.exists()) {
