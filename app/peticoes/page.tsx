@@ -2,22 +2,18 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { AlertCircle, ArrowRight, FileText, Loader2, Plus, Search, Users } from 'lucide-react';
-import CreatePetitionModal from '@/components/CreatePetitionModal';
+import { AlertCircle, ArrowRight, FileText, Loader2, Search, Users } from 'lucide-react';
 import SignatureButton from '@/features/peticoes/SignatureButton';
 import SignatureProgress from '@/features/peticoes/SignatureProgress';
-import { useToast } from '@/lib/toast-context';
 import { listenToActivePetitions } from '@/services/petitions.service';
 import type { Petition } from '@/types';
 
 export default function PeticoesPage() {
-  const { toast } = useToast();
   const [petitions, setPetitions] = useState<Petition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [searchInput, setSearchInput] = useState('');
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -58,7 +54,7 @@ export default function PeticoesPage() {
   return (
     <div className="page-shell">
       <section className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 md:px-10 lg:px-12">
-        <div className="hero-panel grid w-full grid-cols-1 gap-5 p-5 sm:p-7 md:grid-cols-[1fr_auto] md:items-end md:p-9">
+        <div className="hero-panel grid w-full grid-cols-1 gap-5 p-5 sm:p-7 md:p-9">
           <div className="relative z-10">
             <div className="soft-chip">
               <Users className="h-4 w-4" />
@@ -68,17 +64,9 @@ export default function PeticoesPage() {
               Petições públicas
             </h1>
             <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-              Apoie causas abertas pela comunidade ou proponha uma nova petição para mobilizar a cidade.
+              Apoie causas abertas pela comunidade para mobilizar a cidade.
             </p>
           </div>
-
-          <button
-            onClick={() => setIsCreateOpen(true)}
-            className="action-button-primary relative z-10"
-          >
-            <Plus className="h-4 w-4" />
-            Nova petição
-          </button>
         </div>
       </section>
 
@@ -111,7 +99,7 @@ export default function PeticoesPage() {
             <FileText className="mx-auto h-10 w-10 text-primary" />
             <h2 className="mt-4 text-xl font-semibold text-text-main">Nenhuma petição encontrada</h2>
             <p className="mt-2 text-sm font-medium text-text-muted">
-              Crie uma nova petição ou tente outro termo de busca.
+              Tente outro termo de busca.
             </p>
           </div>
         ) : (
@@ -158,12 +146,6 @@ export default function PeticoesPage() {
           </div>
         )}
       </main>
-
-      <CreatePetitionModal
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        onCreated={loadPetitions}
-      />
     </div>
   );
 }
