@@ -17,6 +17,7 @@ export const demandStatusLabel: Record<DemandStatus, string> = {
   analyzing: 'Em análise',
   solved: 'Resolvida',
   rejected: 'Recusada',
+  cancelled: 'Cancelada',
 };
 
 export const demandTypeLabel: Record<DemandType, string> = {
@@ -54,6 +55,7 @@ export const demandStatusMeta = {
   analyzing: { className: 'border-blue-200 bg-blue-50 text-blue-800' },
   solved:    { className: 'border-green-200 bg-green-50 text-green-800' },
   rejected:  { className: 'border-red-200 bg-red-50 text-red-800' },
+  cancelled: { className: 'border-zinc-200 bg-zinc-50 text-zinc-700' },
 } satisfies Record<DemandStatus, { className: string }>;
 
 export const demandStatusOptions: { value: DemandStatus; label: string }[] = [
@@ -61,11 +63,12 @@ export const demandStatusOptions: { value: DemandStatus; label: string }[] = [
   { value: 'analyzing', label: 'Em análise' },
   { value: 'solved',    label: 'Resolvida' },
   { value: 'rejected',  label: 'Recusada' },
+  { value: 'cancelled', label: 'Cancelada' },
 ];
 
 export function normalizeDemandStatus(status: string): DemandStatus {
   if (status === 'in_review') return 'analyzing';
-  if (status === 'pending' || status === 'analyzing' || status === 'solved' || status === 'rejected') {
+  if (status === 'pending' || status === 'analyzing' || status === 'solved' || status === 'rejected' || status === 'cancelled') {
     return status;
   }
   return 'pending';
@@ -111,6 +114,7 @@ export const reportStatusLabel: Record<ReportStatus, string> = {
   in_review: 'Em análise',
   resolved:  'Resolvido',
   rejected:  'Recusado',
+  cancelled: 'Cancelado',
 };
 
 export const reportTypeLabel: Record<ReportType, string> = {
@@ -148,6 +152,7 @@ export const reportStatusMeta = {
   in_review: { className: 'border-blue-200 bg-blue-50 text-blue-800' },
   resolved:  { className: 'border-green-200 bg-green-50 text-green-800' },
   rejected:  { className: 'border-red-200 bg-red-50 text-red-800' },
+  cancelled: { className: 'border-zinc-200 bg-zinc-50 text-zinc-700' },
 } satisfies Record<ReportStatus, { className: string }>;
 
 export const reportStatusOptions: { value: ReportStatus; label: string }[] = [
@@ -155,6 +160,7 @@ export const reportStatusOptions: { value: ReportStatus; label: string }[] = [
   { value: 'in_review', label: 'Em análise' },
   { value: 'resolved',  label: 'Resolvido' },
   { value: 'rejected',  label: 'Recusado' },
+  { value: 'cancelled', label: 'Cancelado' },
 ];
 
 export function hasUnreadReportStaffMessage(report: Report) {

@@ -44,24 +44,6 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
   const pendingSubmit = useRef(false);
   const protocolUnsubscribe = useRef<(() => void) | null>(null);
 
-  // Re-submete apos login (M2 fix)
-  useEffect(() => {
-    if (user && pendingSubmit.current) {
-      pendingSubmit.current = false;
-      submitDemand();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  // Cleanup do listener de protocolo ao desmontar
-  useEffect(() => {
-    return () => {
-      if (protocolUnsubscribe.current) {
-        protocolUnsubscribe.current();
-      }
-    };
-  }, []);
-
   const submitDemand = async () => {
     setLoading(true);
     try {
@@ -91,6 +73,24 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
       setLoading(false);
     }
   };
+
+  // Re-submete apos login (M2 fix)
+  useEffect(() => {
+    if (user && pendingSubmit.current) {
+      pendingSubmit.current = false;
+      submitDemand();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  // Cleanup do listener de protocolo ao desmontar
+  useEffect(() => {
+    return () => {
+      if (protocolUnsubscribe.current) {
+        protocolUnsubscribe.current();
+      }
+    };
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

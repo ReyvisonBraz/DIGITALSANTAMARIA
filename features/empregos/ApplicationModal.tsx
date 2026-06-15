@@ -22,14 +22,6 @@ export default function ApplicationModal({ isOpen, onClose, jobId, jobTitle }: A
   const [success, setSuccess] = useState(false);
   const pendingSubmit = useRef(false);
 
-  useEffect(() => {
-    if (user && pendingSubmit.current) {
-      pendingSubmit.current = false;
-      submitApplication();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
   const submitApplication = async () => {
     setLoading(true);
     try {
@@ -49,6 +41,14 @@ export default function ApplicationModal({ isOpen, onClose, jobId, jobTitle }: A
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user && pendingSubmit.current) {
+      pendingSubmit.current = false;
+      submitApplication();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const handleSubmit = async () => {
     if (!user) {

@@ -8,6 +8,7 @@ import {
   createDemandMessage,
   markDemandReadByCitizen,
 } from '@/services/demands.service';
+import { isDemandClosed } from '@/lib/constants/protocols';
 import type { Demand } from '@/types';
 
 interface DemandTimelineProps {
@@ -42,7 +43,7 @@ export default function DemandTimeline({
   currentUserId = '',
   currentUserName = '',
 }: DemandTimelineProps) {
-  const isClosed = demand.status === 'solved' || demand.status === 'rejected';
+  const isClosed = isDemandClosed(demand.status);
   const canReply =
     allowCitizenReply &&
     !demand.isAnonymous &&

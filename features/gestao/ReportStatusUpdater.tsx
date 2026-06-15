@@ -21,6 +21,7 @@ const STATUSES: { label: string; value: ReportStatus }[] = [
   { label: 'Em análise', value: 'in_review' },
   { label: 'Resolvido', value: 'resolved' },
   { label: 'Recusado', value: 'rejected' },
+  { label: 'Cancelado', value: 'cancelled' },
 ];
 
 const TYPE_TO_CATEGORY: Record<ReportType, string> = {
@@ -56,7 +57,7 @@ export default function ReportStatusUpdater({
       toast('Informe uma resposta oficial para concluir o relato.', 'error');
       return;
     }
-    if (status === 'resolved' || status === 'rejected') {
+    if (status === 'resolved' || status === 'rejected' || status === 'cancelled') {
       setConfirmOpen(true);
       return;
     }
@@ -91,7 +92,7 @@ export default function ReportStatusUpdater({
       confirmTitle={`Confirmar ${getLabel(status).toLowerCase()}`}
       confirmDescription={`Esta ação vai marcar o relato como ${getLabel(status).toLowerCase()} e o cidadão verá a resposta oficial no histórico do relato.`}
       confirmLabel="Confirmar status"
-      confirmTone={status === 'rejected' ? 'danger' : 'default'}
+      confirmTone={status === 'rejected' || status === 'cancelled' ? 'danger' : 'default'}
       onConfirm={saveStatus}
       onCancelConfirm={() => setConfirmOpen(false)}
     />

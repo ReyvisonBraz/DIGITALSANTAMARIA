@@ -7,6 +7,7 @@ import {
   createReportMessage,
   markReportReadByCitizen,
 } from '@/services/reports.service';
+import { isReportClosed } from '@/lib/constants/protocols';
 import type { Report } from '@/types';
 
 interface ReportTimelineProps {
@@ -41,7 +42,7 @@ export default function ReportTimeline({
   currentUserId = '',
   currentUserName = '',
 }: ReportTimelineProps) {
-  const isClosed = report.status === 'resolved' || report.status === 'rejected';
+  const isClosed = isReportClosed(report.status);
   const canReply = allowCitizenReply && currentUserId === report.reporterId && !isClosed;
 
   const shouldMarkRead =

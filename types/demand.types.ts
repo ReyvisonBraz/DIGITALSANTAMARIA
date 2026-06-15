@@ -3,7 +3,7 @@ import type { GeoLocation, StorageFile } from './common.types';
 
 export type DemandType = 'reclamacao' | 'sugestao' | 'denuncia' | 'elogio';
 
-export type DemandStatus = 'pending' | 'analyzing' | 'solved' | 'rejected';
+export type DemandStatus = 'pending' | 'analyzing' | 'solved' | 'rejected' | 'cancelled';
 
 export type DemandCategory =
   | 'infraestrutura'
@@ -30,6 +30,12 @@ export interface DemandConversationSummary {
   unreadByStaff: boolean;
 }
 
+export interface ProtocolCancellation {
+  cancelledAt: Timestamp;
+  cancelledBy: string;
+  reason: string | null;
+}
+
 export interface Demand {
   id: string;
   protocolId: string;
@@ -45,6 +51,7 @@ export interface Demand {
     location: GeoLocation | null;
   };
   adminAction: AdminAction | null;
+  cancellation?: ProtocolCancellation | null;
   conversation?: DemandConversationSummary;
   isAnonymous: boolean;
   consent: boolean;

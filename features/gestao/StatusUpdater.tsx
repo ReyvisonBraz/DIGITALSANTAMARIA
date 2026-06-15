@@ -21,6 +21,7 @@ const STATUSES: { label: string; value: DemandStatus }[] = [
   { label: 'Em análise', value: 'analyzing' },
   { label: 'Resolvida', value: 'solved' },
   { label: 'Recusada', value: 'rejected' },
+  { label: 'Cancelada', value: 'cancelled' },
 ];
 
 function getLabel(s: DemandStatus) {
@@ -47,7 +48,7 @@ export default function StatusUpdater({
       toast('Informe uma resposta oficial para concluir a solicitação.', 'error');
       return;
     }
-    if (status === 'solved' || status === 'rejected') {
+    if (status === 'solved' || status === 'rejected' || status === 'cancelled') {
       setConfirmOpen(true);
       return;
     }
@@ -82,7 +83,7 @@ export default function StatusUpdater({
       confirmTitle={`Confirmar ${getLabel(status).toLowerCase()}`}
       confirmDescription={`Esta ação vai marcar a solicitação como ${getLabel(status).toLowerCase()} e o cidadão verá a resposta oficial no histórico do protocolo.`}
       confirmLabel="Confirmar status"
-      confirmTone={status === 'rejected' ? 'danger' : 'default'}
+      confirmTone={status === 'rejected' || status === 'cancelled' ? 'danger' : 'default'}
       onConfirm={saveStatus}
       onCancelConfirm={() => setConfirmOpen(false)}
     />

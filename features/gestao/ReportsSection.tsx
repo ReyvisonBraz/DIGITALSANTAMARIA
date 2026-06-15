@@ -75,7 +75,7 @@ export default function ReportsSection({ reports, loading, error, userId, clerkN
         }
         if (sortMode === 'newest') return timestampMillis(b.createdAt) - timestampMillis(a.createdAt);
         if (sortMode === 'oldest') return timestampMillis(a.createdAt) - timestampMillis(b.createdAt);
-        const order: Record<ReportStatus, number> = { pending: 0, in_review: 1, rejected: 2, resolved: 3 };
+        const order: Record<ReportStatus, number> = { pending: 0, in_review: 1, rejected: 2, resolved: 3, cancelled: 4 };
         return order[a.status] - order[b.status] || timestampMillis(b.createdAt) - timestampMillis(a.createdAt);
       });
   }, [reports, searchTerm, sortMode, statusFilter]);

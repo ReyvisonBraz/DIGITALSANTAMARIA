@@ -17,6 +17,7 @@ import { db } from '@/lib/firebase';
 import { demandConverter } from '@/lib/firebase/converters';
 import { generateDemandProtocolId } from '@/lib/utils/protocol';
 import { tryCreateNotification } from '@/services/notifications.service';
+import { canCitizenCancelDemand } from '@/lib/constants/protocols';
 import { byCreatedAtAsc, byCreatedAtDesc } from '@/lib/utils/sort';
 import type {
   Demand,
@@ -37,6 +38,7 @@ const STATUS_LABEL: Record<DemandStatus, string> = {
   analyzing: 'em análise',
   solved: 'resolvida',
   rejected: 'recusada',
+  cancelled: 'cancelada',
 };
 
 const STATUS_TONE: Record<DemandStatus, NotificationTone> = {
@@ -44,6 +46,7 @@ const STATUS_TONE: Record<DemandStatus, NotificationTone> = {
   analyzing: 'update',
   solved: 'success',
   rejected: 'alert',
+  cancelled: 'alert',
 };
 
 export async function createDemand(
@@ -256,6 +259,40 @@ export async function markDemandReadByCitizen(id: string): Promise<void> {
   await updateDoc(doc(db, COLLECTION, id), {
     'conversation.unreadByCitizen': false,
     updatedAt: serverTimestamp(),
+  });
+}
+
+export async function cancelDemandByCitizen(
+  id: string,
+  userId: string,
+  reason?: string,
+): Promise<void> {
+  const demandRef = doc(db, COLLECTION, id);
+  const cancellationReason = reason?.trim() || null;
+
+  await runTransaction(db, async (tx) => {
+    const demandSnap = await tx.get(demandRef);
+    if (!demandSnap.exists()) {
+      throw new Error('Solicitação não encontrada.');
+    }
+
+    const demand = demandSnap.data() as Demand;
+    if (demand.authorId !== userId || demand.isAnonymous) {
+      throw new Error('Você não tem permissão para cancelar este protocolo.');
+    }
+    if (!canCitizenCancelDemand(demand.status, demand.isAnonymous)) {
+      throw new Error('Este protocolo não pode mais ser cancelado pelo cidadão.');
+    }
+
+    tx.update(demandRef, {
+      status: 'cancelled',
+      cancellation: {
+        cancelledAt: serverTimestamp(),
+        cancelledBy: userId,
+        reason: cancellationReason,
+      },
+      updatedAt: serverTimestamp(),
+    });
   });
 }
 

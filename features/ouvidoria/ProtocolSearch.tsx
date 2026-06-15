@@ -14,6 +14,7 @@ const statusLabel: Record<DemandStatus, string> = {
   analyzing: 'Em análise',
   solved: 'Resolvida',
   rejected: 'Recusada',
+  cancelled: 'Cancelada',
 };
 
 const typeLabel: Record<DemandType, string> = {

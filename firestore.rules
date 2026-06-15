@@ -90,6 +90,20 @@ service cloud.firestore {
         && incoming().conversation.unreadByCitizen == false;
     }
 
+    function validReportOwnerCancel() {
+      return isOwner(existing().reporterId)
+        && existing().status in ['pending', 'in_review']
+        && incoming().status == 'cancelled'
+        && incoming().cancellation.cancelledBy == request.auth.uid
+        && incoming().cancellation.cancelledAt is timestamp
+        && (
+          incoming().cancellation.reason == null
+          || incoming().cancellation.reason is string
+        )
+        && incoming().cancellation.keys().hasOnly(['cancelledAt', 'cancelledBy', 'reason'])
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'cancellation', 'updatedAt']);
+    }
+
     function validPetitionSignatureUpdate() {
       return isSignedIn()
         && incoming().diff(existing()).changedKeys().hasOnly(['signaturesCount', 'updatedAt'])
@@ -179,6 +193,21 @@ service cloud.firestore {
         ]);
     }
 
+    function validDemandOwnerCancel() {
+      return isOwner(existing().authorId)
+        && existing().isAnonymous == false
+        && existing().status in ['pending', 'analyzing']
+        && incoming().status == 'cancelled'
+        && incoming().cancellation.cancelledBy == request.auth.uid
+        && incoming().cancellation.cancelledAt is timestamp
+        && (
+          incoming().cancellation.reason == null
+          || incoming().cancellation.reason is string
+        )
+        && incoming().cancellation.keys().hasOnly(['cancelledAt', 'cancelledBy', 'reason'])
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'cancellation', 'updatedAt']);
+    }
+
     function validBusinessOwnerResubmit() {
       return isOwner(resource.data.ownerId)
         && existing().status == 'archived'
@@ -238,7 +267,10 @@ service cloud.firestore {
       allow create: if isSignedIn()
         && incoming().reporterId == request.auth.uid
         && incoming().status == 'pending';
-      allow update: if isStaff() || validReportCitizenConversationUpdate() || validReportCitizenReadUpdate();
+      allow update: if isStaff()
+        || validReportCitizenConversationUpdate()
+        || validReportCitizenReadUpdate()
+        || validReportOwnerCancel();
     }
 
     match /report_messages/{messageId} {
@@ -259,7 +291,10 @@ service cloud.firestore {
         || isOwner(resource.data.authorId)
         || resource.data.isAnonymous == true;
       allow create: if isSignedIn() && validDemandCreate();
-      allow update: if isStaff() || validDemandCitizenConversationUpdate() || validDemandCitizenReadUpdate();
+      allow update: if isStaff()
+        || validDemandCitizenConversationUpdate()
+        || validDemandCitizenReadUpdate()
+        || validDemandOwnerCancel();
       allow delete: if isAdmin();
     }
 

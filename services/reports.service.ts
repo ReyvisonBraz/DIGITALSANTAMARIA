@@ -19,6 +19,7 @@ import { reportConverter } from '@/lib/firebase/converters';
 import { generateProtocolId } from '@/lib/utils/protocol';
 import { uploadReportPhoto } from '@/services/storage.service';
 import { tryCreateNotification } from '@/services/notifications.service';
+import { canCitizenCancelReport } from '@/lib/constants/protocols';
 import { byCreatedAtAsc, byCreatedAtDesc } from '@/lib/utils/sort';
 import type {
   CreateReportInput,
@@ -39,6 +40,7 @@ const STATUS_LABEL: Record<ReportStatus, string> = {
   in_review: 'em análise',
   resolved: 'resolvido',
   rejected: 'recusado',
+  cancelled: 'cancelado',
 };
 
 const STATUS_TONE: Record<ReportStatus, NotificationTone> = {
@@ -46,6 +48,7 @@ const STATUS_TONE: Record<ReportStatus, NotificationTone> = {
   in_review: 'update',
   resolved: 'success',
   rejected: 'alert',
+  cancelled: 'alert',
 };
 
 export async function createReport(
@@ -251,6 +254,40 @@ export async function markReportReadByCitizen(id: string): Promise<void> {
   await updateDoc(doc(db, COLLECTION, id), {
     'conversation.unreadByCitizen': false,
     updatedAt: serverTimestamp(),
+  });
+}
+
+export async function cancelReportByCitizen(
+  id: string,
+  userId: string,
+  reason?: string,
+): Promise<void> {
+  const reportRef = doc(db, COLLECTION, id);
+  const cancellationReason = reason?.trim() || null;
+
+  await runTransaction(db, async (tx) => {
+    const reportSnap = await tx.get(reportRef);
+    if (!reportSnap.exists()) {
+      throw new Error('Relato não encontrado.');
+    }
+
+    const report = reportSnap.data() as Report;
+    if (report.reporterId !== userId) {
+      throw new Error('Você não tem permissão para cancelar este relato.');
+    }
+    if (!canCitizenCancelReport(report.status)) {
+      throw new Error('Este relato não pode mais ser cancelado pelo cidadão.');
+    }
+
+    tx.update(reportRef, {
+      status: 'cancelled',
+      cancellation: {
+        cancelledAt: serverTimestamp(),
+        cancelledBy: userId,
+        reason: cancellationReason,
+      },
+      updatedAt: serverTimestamp(),
+    });
   });
 }
 

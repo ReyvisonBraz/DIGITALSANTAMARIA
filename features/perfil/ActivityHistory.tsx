@@ -13,43 +13,38 @@ import {
   GraduationCap,
   Loader2,
   Siren,
+  XCircle,
 } from 'lucide-react';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import DemandTimeline from '@/features/ouvidoria/DemandTimeline';
 import ReportTimeline from '@/features/relatar/ReportTimeline';
+import { cancelDemandByCitizen } from '@/services/demands.service';
+import { cancelReportByCitizen } from '@/services/reports.service';
+import {
+  canCitizenCancelDemand,
+  canCitizenCancelReport,
+  DEMAND_STATUS_LABEL,
+  REPORT_STATUS_LABEL,
+} from '@/lib/constants/protocols';
+import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
 import type {
   ApplicationStatus,
   Appointment,
   AppointmentStatus,
   Demand,
-  DemandStatus,
   EmergencyAlert,
   EmergencyAlertStatus,
   Enrollment,
   EnrollmentStatus,
   JobApplication,
   Report,
-  ReportStatus,
 } from '@/types';
-
-const demandStatusLabel: Record<DemandStatus, string> = {
-  pending: 'Pendente',
-  analyzing: 'Em análise',
-  solved: 'Resolvida',
-  rejected: 'Recusada',
-};
-
-const reportStatusLabel: Record<ReportStatus, string> = {
-  pending: 'Pendente',
-  in_review: 'Em análise',
-  resolved: 'Resolvido',
-  rejected: 'Recusado',
-};
 
 const appointmentStatusLabel: Record<AppointmentStatus, string> = {
   scheduled: 'Agendada',
   confirmed: 'Confirmada',
-  completed: 'Concluida',
+  completed: 'Concluída',
   cancelled: 'Cancelada',
 };
 
@@ -83,7 +78,7 @@ type ActivityDate =
   | Enrollment['createdAt']
   | EmergencyAlert['createdAt'];
 
-type ActivityItem =
+type ConversationActivity =
   | {
       id: string;
       source: Demand;
@@ -105,12 +100,15 @@ type ActivityItem =
       unreadByCitizen: boolean;
       date: ActivityDate;
       icon: typeof FileText;
-    }
+    };
+
+type ActivityItem =
+  | ConversationActivity
   | {
       id: string;
       source: null;
       protocol: string;
-      type: 'Consulta' | 'Candidatura' | 'Matricula' | 'Emergencia';
+      type: 'Consulta' | 'Candidatura' | 'Matricula' | 'Emergência';
       title: string;
       status: string;
       unreadByCitizen: false;
@@ -148,7 +146,10 @@ export default function ActivityHistory({
   emergencyAlerts = [],
   loading = false,
 }: ActivityHistoryProps) {
+  const { toast } = useToast();
   const [openItemId, setOpenItemId] = useState<string | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<ConversationActivity | null>(null);
+  const [cancelling, setCancelling] = useState(false);
 
   const activities: ActivityItem[] = [
     ...demands.map((demand): ActivityItem => ({
@@ -157,7 +158,7 @@ export default function ActivityHistory({
       protocol: demand.protocolId,
       type: 'Solicitação',
       title: demand.subject,
-      status: demandStatusLabel[demand.status],
+      status: DEMAND_STATUS_LABEL[demand.status],
       unreadByCitizen: demand.conversation?.unreadByCitizen === true,
       date: demand.createdAt,
       icon: ClipboardList,
@@ -168,7 +169,7 @@ export default function ActivityHistory({
       protocol: report.protocolId,
       type: 'Relato',
       title: report.title,
-      status: reportStatusLabel[report.status],
+      status: REPORT_STATUS_LABEL[report.status],
       unreadByCitizen: report.conversation?.unreadByCitizen === true,
       date: report.createdAt,
       icon: FileText,
@@ -210,7 +211,7 @@ export default function ActivityHistory({
       id: alert.id,
       source: null,
       protocol: alert.protocol,
-      type: 'Emergencia',
+      type: 'Emergência',
       title: alert.location,
       status: emergencyStatusLabel[alert.status],
       unreadByCitizen: false,
@@ -218,6 +219,25 @@ export default function ActivityHistory({
       icon: Siren,
     })),
   ].sort((a, b) => getMillis(b.date) - getMillis(a.date));
+
+  const handleCancelProtocol = async () => {
+    if (!cancelTarget || !currentUserId) return;
+    setCancelling(true);
+    try {
+      if (cancelTarget.type === 'Solicitação') {
+        await cancelDemandByCitizen(cancelTarget.id, currentUserId);
+      } else {
+        await cancelReportByCitizen(cancelTarget.id, currentUserId);
+      }
+      toast('Protocolo cancelado.', 'success');
+      setOpenItemId(null);
+      setCancelTarget(null);
+    } catch (error) {
+      toast(error instanceof Error ? error.message : 'Não foi possível cancelar o protocolo.', 'error');
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -232,7 +252,7 @@ export default function ActivityHistory({
       <div className="rounded-xl border border-dashed border-border bg-surface p-6 text-center">
         <p className="text-sm font-black uppercase tracking-widest text-text-main">Nenhum protocolo ainda</p>
         <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-          Abra uma solicitação ou registre um relato. Eles aparecerao aqui automaticamente.
+          Abra uma solicitação ou registre um relato. Eles aparecerão aqui automaticamente.
         </p>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           <Link
@@ -257,6 +277,9 @@ export default function ActivityHistory({
       {activities.slice(0, 8).map((item) => {
         const itemKey = `${item.type}-${item.id}`;
         const canOpen = item.type === 'Solicitação' || item.type === 'Relato';
+        const canCancel =
+          (item.type === 'Solicitação' && canCitizenCancelDemand(item.source.status, item.source.isAnonymous)) ||
+          (item.type === 'Relato' && canCitizenCancelReport(item.source.status));
         const isOpen = openItemId === itemKey;
         const Icon = item.icon;
 
@@ -300,6 +323,16 @@ export default function ActivityHistory({
                     Conversa
                   </button>
                 )}
+                {canCancel && (
+                  <button
+                    type="button"
+                    onClick={() => setCancelTarget(item)}
+                    className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-white px-2 py-1 text-[10px] font-black uppercase tracking-widest text-rose-600 hover:bg-rose-50"
+                  >
+                    <XCircle className="h-3.5 w-3.5" />
+                    Cancelar
+                  </button>
+                )}
               </div>
             </div>
 
@@ -328,6 +361,17 @@ export default function ActivityHistory({
           </div>
         );
       })}
+
+      <ConfirmDialog
+        isOpen={!!cancelTarget}
+        title="Cancelar protocolo"
+        description={cancelTarget ? `O protocolo ${cancelTarget.protocol} será marcado como cancelado e continuará visível no seu histórico.` : ''}
+        confirmLabel="Cancelar protocolo"
+        loading={cancelling}
+        tone="danger"
+        onConfirm={handleCancelProtocol}
+        onClose={() => setCancelTarget(null)}
+      />
     </div>
   );
 }

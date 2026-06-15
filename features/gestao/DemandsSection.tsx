@@ -83,7 +83,7 @@ export default function DemandsSection({ demands, loading, error, userId, clerkN
           return unreadA - unreadB || msgB - msgA;
         }
         if (sortMode === 'pending') {
-          const order: Record<DemandStatus, number> = { pending: 0, analyzing: 1, rejected: 2, solved: 3 };
+          const order: Record<DemandStatus, number> = { pending: 0, analyzing: 1, rejected: 2, solved: 3, cancelled: 4 };
           const sa = normalizeDemandStatus(String(a.status));
           const sb = normalizeDemandStatus(String(b.status));
           return order[sa] - order[sb] || timestampMillis(b.createdAt) - timestampMillis(a.createdAt);
