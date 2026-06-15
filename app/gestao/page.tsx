@@ -73,20 +73,23 @@ export default function GestãoPage() {
   return (
     <div className="page-shell">
       <section className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 md:px-10 lg:px-12">
-        <div className="hero-panel p-5 sm:p-7 md:p-9">
-          <div className="soft-chip">
-            <ShieldCheck className="h-4 w-4" />
-            Gestão municipal
+        <div className="hero-panel relative p-5 sm:p-7 md:p-9">
+          <div aria-hidden className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-secondary/15 blur-3xl" />
+          <div className="relative z-10">
+            <div className="soft-chip">
+              <ShieldCheck className="h-4 w-4" />
+              Gestão municipal
+            </div>
+            <h1
+              className="mt-4 text-3xl font-semibold tracking-tight text-text-main md:text-5xl"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              Painel de <span className="text-gradient">operação</span>
+            </h1>
+            <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
+              Acompanhe solicitações, responda protocolos, gerencie conteúdo público e mantenha os cadastros administrativos em ordem.
+            </p>
           </div>
-          <h1
-            className="mt-4 text-3xl font-semibold tracking-tight text-text-main md:text-5xl"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            Painel de <span className="text-gradient">operação</span>
-          </h1>
-          <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-            Acompanhe solicitações, responda protocolos, gerencie conteúdo público e mantenha os cadastros administrativos em ordem.
-          </p>
         </div>
       </section>
 

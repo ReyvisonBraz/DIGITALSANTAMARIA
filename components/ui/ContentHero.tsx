@@ -18,12 +18,12 @@ import type { LucideIcon } from 'lucide-react';
 
 export type ContentAccent = 'primary' | 'secondary' | 'accent' | 'accent-success' | 'primary-dark';
 
-const ACCENTS: Record<ContentAccent, { glowTop: string; glowBottom: string; chipIcon: string; subtitleBorder: string }> = {
-  primary:          { glowTop: 'bg-primary/30',          glowBottom: 'bg-secondary/30',       chipIcon: 'text-secondary',       subtitleBorder: 'border-secondary/50' },
-  secondary:        { glowTop: 'bg-secondary/35',        glowBottom: 'bg-primary-light/40',   chipIcon: 'text-secondary',       subtitleBorder: 'border-secondary/60' },
-  accent:           { glowTop: 'bg-accent/30',           glowBottom: 'bg-secondary/25',       chipIcon: 'text-accent',          subtitleBorder: 'border-accent/55' },
-  'accent-success': { glowTop: 'bg-accent-success/30',   glowBottom: 'bg-secondary/25',       chipIcon: 'text-accent-success',  subtitleBorder: 'border-accent-success/55' },
-  'primary-dark':   { glowTop: 'bg-primary-dark/45',     glowBottom: 'bg-accent/22',          chipIcon: 'text-accent',          subtitleBorder: 'border-accent/50' },
+const ACCENTS: Record<ContentAccent, { glowTop: string; glowBottom: string; chipIcon: string; subtitleBorder: string; accentLine: string }> = {
+  primary:          { glowTop: 'bg-primary/30',          glowBottom: 'bg-secondary/30',       chipIcon: 'text-secondary',       subtitleBorder: 'border-secondary/50',         accentLine: 'via-secondary/70' },
+  secondary:        { glowTop: 'bg-secondary/35',        glowBottom: 'bg-primary-light/40',   chipIcon: 'text-secondary',       subtitleBorder: 'border-secondary/60',         accentLine: 'via-secondary/70' },
+  accent:           { glowTop: 'bg-accent/30',           glowBottom: 'bg-secondary/25',       chipIcon: 'text-accent',          subtitleBorder: 'border-accent/55',            accentLine: 'via-accent/80' },
+  'accent-success': { glowTop: 'bg-accent-success/30',   glowBottom: 'bg-secondary/25',       chipIcon: 'text-accent-success',  subtitleBorder: 'border-accent-success/55',    accentLine: 'via-accent-success/80' },
+  'primary-dark':   { glowTop: 'bg-primary-dark/45',     glowBottom: 'bg-accent/22',          chipIcon: 'text-accent',          subtitleBorder: 'border-accent/50',            accentLine: 'via-accent/80' },
 };
 
 interface ContentHeroProps {
@@ -50,12 +50,23 @@ export default function ContentHero({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
       className={cn(
-        'relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] bg-gradient-to-br from-primary-dark via-primary to-primary-dark p-8 text-white shadow-[0_26px_70px_rgba(14,58,140,0.30)] animate-drift md:p-14',
+        'ring-highlight-dark relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] bg-gradient-to-br from-primary-dark via-primary to-primary-dark p-8 text-white shadow-[0_26px_70px_rgba(14,58,140,0.30)] animate-drift md:p-14',
         className,
       )}
     >
+      {/* Glows de acento da categoria */}
       <div aria-hidden className={cn('pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full blur-3xl', palette.glowTop)} />
       <div aria-hidden className={cn('pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full blur-3xl', palette.glowBottom)} />
+
+      {/* Textura de grade pontilhada + brilho superior */}
+      <div aria-hidden className="hero-grid-overlay" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+
+      {/* Anel decorativo flutuante */}
+      <div
+        aria-hidden
+        className="animate-slow-spin pointer-events-none absolute -right-24 top-1/2 h-80 w-80 -translate-y-1/2 rounded-full border border-white/[0.06]"
+      />
 
       <div className="relative z-10 max-w-3xl space-y-5">
         <motion.div
@@ -90,9 +101,12 @@ export default function ContentHero({
         )}
 
         {action && <div className="pt-2">{action}</div>}
+
+        {/* Linha de acento da categoria */}
+        <div aria-hidden className={cn('mt-1 h-px w-40 bg-gradient-to-r from-white/0', palette.accentLine, 'to-white/0')} />
       </div>
 
-      <Icon className="animate-floaty pointer-events-none absolute -bottom-10 -right-8 h-56 w-56 opacity-[0.06]" />
+      <Icon className="animate-floaty pointer-events-none absolute -bottom-10 -right-8 h-56 w-56 opacity-[0.07]" />
     </motion.section>
   );
 }

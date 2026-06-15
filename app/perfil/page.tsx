@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -143,10 +143,10 @@ export default function PerfilPage() {
   };
 
   const stats = useMemo(() => [
-    { label: 'Solicitações', value: demands.length, icon: ClipboardList },
-    { label: 'Relatos', value: reports.length, icon: MessageSquare },
-    { label: 'Processos', value: appointments.length + applications.length + enrollments.length + emergencyAlerts.length, icon: CalendarCheck },
-    { label: 'Pontos', value: profile?.points ?? 0, icon: ShieldCheck },
+    { label: 'Solicitações', value: demands.length, icon: ClipboardList, accent: 'var(--color-primary)', tint: 'bg-primary/10 text-primary' },
+    { label: 'Relatos', value: reports.length, icon: MessageSquare, accent: 'var(--color-secondary)', tint: 'bg-secondary/10 text-secondary' },
+    { label: 'Processos', value: appointments.length + applications.length + enrollments.length + emergencyAlerts.length, icon: CalendarCheck, accent: 'var(--color-accent-success)', tint: 'bg-accent-success/10 text-accent-success' },
+    { label: 'Pontos', value: profile?.points ?? 0, icon: ShieldCheck, accent: 'var(--color-accent-dark)', tint: 'bg-accent/15 text-accent-dark' },
   ], [applications.length, appointments.length, demands.length, emergencyAlerts.length, enrollments.length, reports.length, profile?.points]);
 
   if (!user) {
@@ -175,19 +175,27 @@ export default function PerfilPage() {
     <div className="page-shell">
       <section className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 md:px-10 lg:px-12">
         <div className="hero-panel grid grid-cols-1 gap-6 p-5 sm:p-7 md:grid-cols-[auto_1fr_auto] md:items-center md:p-8">
-          <div className="relative h-20 w-20 overflow-hidden rounded-2xl border border-border bg-surface">
-            {photoURL ? (
-              <Image src={photoURL} alt={displayName} fill className="object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-primary">
-                <UserRound className="h-9 w-9" />
-              </div>
-            )}
+          <div className="relative h-20 w-20 shrink-0 rounded-[1.4rem] bg-gradient-to-br from-primary via-secondary to-primary p-[2px] shadow-[0_10px_30px_rgba(26,86,196,0.25)]">
+            <div className="relative h-full w-full overflow-hidden rounded-[1.25rem] bg-surface">
+              {photoURL ? (
+                <Image src={photoURL} alt={displayName} fill className="object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-primary">
+                  <UserRound className="h-9 w-9" />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Painel do Cidadão</p>
-            <h1 className="mt-1 truncate text-3xl font-semibold tracking-normal text-text-main md:text-4xl">
+            <div className="inline-flex items-center gap-2">
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary">Painel do Cidadão</p>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-success/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-accent-success">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent-success" />
+                Conectado
+              </span>
+            </div>
+            <h1 className="mt-1.5 truncate text-3xl font-semibold tracking-normal text-text-main md:text-4xl">
               {displayName}
             </h1>
             <p className="mt-1 break-all text-sm font-bold text-text-muted">{email}</p>
@@ -226,8 +234,8 @@ export default function PerfilPage() {
         <section className="space-y-6">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {stats.map((stat) => (
-              <div key={stat.label} className="civic-card p-5">
-                <div className="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-primary">
+              <div key={stat.label} className="stat-tile" style={{ '--tile-accent': stat.accent } as CSSProperties}>
+                <div className={`grid h-11 w-11 place-items-center rounded-2xl ${stat.tint}`}>
                   <stat.icon className="h-5 w-5" />
                 </div>
                 <p className="mt-4 text-3xl font-semibold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>
@@ -321,12 +329,18 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary to-primary-dark p-5 text-white shadow-[0_8px_24px_rgba(26,86,196,0.22)]">
-            <FileText className="h-6 w-6 text-primary-light" />
-            <h2 className="mt-3 text-lg font-semibold tracking-normal">Como usar o painel</h2>
-            <p className="mt-2 text-sm font-medium leading-6 text-white/70">
-              Solicitações abertas com login aparecem aqui automaticamente. Solicitações anônimas podem ser acompanhadas pelo número de protocolo.
-            </p>
+          <div className="ring-highlight-dark relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary to-primary-dark p-5 text-white shadow-[0_14px_34px_rgba(26,86,196,0.26)]">
+            <div aria-hidden className="hero-grid-overlay" />
+            <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-secondary/30 blur-2xl" />
+            <div className="relative z-10">
+              <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/12 text-primary-light backdrop-blur">
+                <FileText className="h-5 w-5" />
+              </div>
+              <h2 className="mt-3 text-lg font-semibold tracking-normal">Como usar o painel</h2>
+              <p className="mt-2 text-sm font-medium leading-6 text-white/70">
+                Solicitações abertas com login aparecem aqui automaticamente. Solicitações anônimas podem ser acompanhadas pelo número de protocolo.
+              </p>
+            </div>
           </div>
         </aside>
       </main>

@@ -207,21 +207,25 @@ export default function AdminOverview({
         </div>
 
         <div className="mt-5 grid gap-3 md:grid-cols-[1.1fr_2fr]">
-          <div className="rounded-xl border border-border bg-surface p-5">
-            <div className="flex items-center gap-3">
-              <div className="grid h-11 w-11 place-items-center rounded-xl bg-primary/12 text-primary">
-                <AlertTriangle className="h-5 w-5" />
+          <div className="ring-highlight-dark relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary to-primary-dark p-5 text-white shadow-[0_16px_38px_rgba(26,86,196,0.26)]">
+            <div aria-hidden className="hero-grid-overlay" />
+            <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-secondary/30 blur-2xl" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="grid h-11 w-11 place-items-center rounded-xl bg-white/12 text-white backdrop-blur">
+                  <AlertTriangle className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-3xl font-black leading-none">{stats.totalPending}</p>
+                  <p className="mt-1 text-xs font-black uppercase tracking-widest text-white/70">Itens pedindo ação</p>
+                </div>
               </div>
-              <div>
-                <p className="text-3xl font-black leading-none text-text-main">{stats.totalPending}</p>
-                <p className="mt-1 text-xs font-black uppercase tracking-widest text-text-muted">Itens pedindo ação</p>
-              </div>
+              <p className="mt-4 text-sm font-medium leading-6 text-white/75">
+                {canManageCatalog
+                  ? 'Priorize emergências, solicitações e relatos pendentes antes de editar cadastros públicos.'
+                  : 'Priorize emergências, solicitações e relatos pendentes para manter as filas em dia.'}
+              </p>
             </div>
-            <p className="mt-4 text-sm font-medium leading-6 text-text-muted">
-              {canManageCatalog
-                ? 'Priorize emergências, solicitações e relatos pendentes antes de editar cadastros públicos.'
-                : 'Priorize emergências, solicitações e relatos pendentes para manter as filas em dia.'}
-            </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -240,13 +244,11 @@ export default function AdminOverview({
                       onNavigate(item.section);
                     }
                   }}
-                  className={`rounded-xl border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-sm ${item.color} ${
-                    ''
-                  }`}
+                  className={`sheen-on-hover ring-highlight rounded-xl border p-4 text-left transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${item.color}`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <Icon className="h-5 w-5 shrink-0" />
-                    <ChevronRight className="h-4 w-4 opacity-70" />
+                    <ChevronRight className="h-4 w-4 opacity-70 transition-transform group-hover:translate-x-0.5" />
                   </div>
                   <p className="mt-4 text-2xl font-black leading-none">{item.value}</p>
                   <p className="mt-1 text-xs font-black uppercase tracking-widest">{item.label}</p>
