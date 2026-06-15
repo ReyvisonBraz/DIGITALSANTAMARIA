@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import Image from 'next/image';
 import {
   AlertCircle,
-  Camera,
   CheckCircle2,
   Clock3,
   ExternalLink,
@@ -17,7 +16,6 @@ import {
   Save,
   Store,
   Trash2,
-  Upload,
   X,
 } from 'lucide-react';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
@@ -28,7 +26,6 @@ import {
   resubmitOwnedBusiness,
   updateOwnedBusiness,
 } from '@/services/businesses.service';
-import { uploadBusinessLogo } from '@/services/storage.service';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
 import { cn } from '@/lib/utils';
@@ -38,9 +35,6 @@ import {
   getBusinessCategoryLabel,
 } from '@/lib/constants/businesses';
 import type { Business, ContentStatus } from '@/types';
-
-const MAX_LOGO_SIZE = 2 * 1024 * 1024;
-const ACCEPTED_LOGO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const STATUS_META: Record<ContentStatus, { label: string; tone: string; icon: typeof Clock3 }> = {
   pending_approval: {
@@ -101,6 +95,12 @@ function isHttpURL(value: string): boolean {
   }
 }
 
+function isLogoURL(value: string | null): boolean {
+  if (!value?.trim()) return true;
+  if (value.startsWith('/business-logos/')) return true;
+  return value.startsWith('https://');
+}
+
 function businessPatch(form: FormState) {
   return {
     title: form.title.trim(),
@@ -122,11 +122,8 @@ export default function MyBusinessesSection() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState<FormState | null>(null);
-  const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Business | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const logoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user) {
@@ -152,12 +149,6 @@ export default function MyBusinessesSection() {
     return unsubscribe;
   }, [toast, user]);
 
-  useEffect(() => {
-    return () => {
-      if (logoPreviewUrl) URL.revokeObjectURL(logoPreviewUrl);
-    };
-  }, [logoPreviewUrl]);
-
   const pendingCount = useMemo(
     () => businesses.filter((business) => business.status === 'pending_approval').length,
     [businesses],
@@ -165,19 +156,11 @@ export default function MyBusinessesSection() {
 
   if (!user) return null;
 
-  const resetLogoSelection = () => {
-    setLogoFile(null);
-    setLogoPreviewUrl(null);
-    if (logoInputRef.current) logoInputRef.current.value = '';
-  };
-
   const startCreate = () => {
-    resetLogoSelection();
     setEditing({ ...emptyForm });
   };
 
   const startEdit = (business: Business) => {
-    resetLogoSelection();
     setEditing({
       id: business.id,
       currentStatus: business.status,
@@ -194,35 +177,16 @@ export default function MyBusinessesSection() {
   };
 
   const cancelEdit = () => {
-    resetLogoSelection();
     setEditing(null);
-  };
-
-  const handleLogoFile = (file: File | null) => {
-    if (!file || !editing) return;
-    if (file.size > MAX_LOGO_SIZE) {
-      toast('A logo deve ter no maximo 2MB.', 'error');
-      return;
-    }
-    if (!ACCEPTED_LOGO_TYPES.includes(file.type)) {
-      toast('Formato nao suportado. Use JPEG, PNG ou WebP.', 'error');
-      return;
-    }
-
-    setLogoFile(file);
-    setLogoPreviewUrl(URL.createObjectURL(file));
-    setEditing({ ...editing, imageURL: null });
   };
 
   const selectGenericLogo = (url: string) => {
     if (!editing) return;
-    resetLogoSelection();
     setEditing({ ...editing, imageURL: url });
   };
 
   const removeLogo = () => {
     if (!editing) return;
-    resetLogoSelection();
     setEditing({ ...editing, imageURL: null });
   };
 
@@ -239,16 +203,14 @@ export default function MyBusinessesSection() {
       toast('Informe um link de mapa valido iniciando com http ou https.', 'error');
       return;
     }
+    if (!isLogoURL(editing.imageURL)) {
+      toast('Informe uma URL de logo publica iniciando com https:// ou escolha uma logo generica.', 'error');
+      return;
+    }
 
     setSaving(true);
     try {
-      let imageURL = editing.imageURL;
-      if (logoFile) {
-        const uploaded = await uploadBusinessLogo(user.uid, logoFile);
-        imageURL = uploaded.url;
-      }
-
-      const patch = businessPatch({ ...editing, imageURL });
+      const patch = businessPatch(editing);
       if (editing.id) {
         if (editing.currentStatus === 'archived') {
           await resubmitOwnedBusiness(editing.id, patch);
@@ -296,8 +258,6 @@ export default function MyBusinessesSection() {
       setDeleting(false);
     }
   };
-
-  const logoPreviewSrc = logoPreviewUrl || editing?.imageURL || null;
 
   return (
     <section className="glass-panel p-5 md:p-6">
@@ -429,7 +389,7 @@ export default function MyBusinessesSection() {
           <div className="space-y-3 md:col-span-2">
             <div className="flex items-center justify-between gap-3">
               <span className="text-xs font-black uppercase tracking-widest text-text-muted">Logo</span>
-              {logoPreviewSrc && (
+              {editing.imageURL && (
                 <button
                   type="button"
                   onClick={removeLogo}
@@ -443,9 +403,9 @@ export default function MyBusinessesSection() {
 
             <div className="grid gap-3 md:grid-cols-[160px_1fr]">
               <div className="relative grid h-32 place-items-center overflow-hidden rounded-xl border border-border bg-surface">
-                {logoPreviewSrc ? (
+                {editing.imageURL ? (
                   <Image
-                    src={logoPreviewSrc}
+                    src={editing.imageURL}
                     alt="Logo selecionada"
                     fill
                     sizes="160px"
@@ -458,21 +418,17 @@ export default function MyBusinessesSection() {
               </div>
 
               <div className="space-y-3">
-                <input
-                  ref={logoInputRef}
-                  type="file"
-                  accept={ACCEPTED_LOGO_TYPES.join(',')}
-                  className="hidden"
-                  onChange={(event) => handleLogoFile(event.target.files?.[0] || null)}
-                />
-                <button
-                  type="button"
-                  onClick={() => logoInputRef.current?.click()}
-                  className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-border bg-white px-3 py-2 text-xs font-black uppercase tracking-widest text-text-main hover:border-primary hover:text-primary"
-                >
-                  <Upload className="h-4 w-4" />
-                  Anexar logo
-                </button>
+                <label className="block space-y-1.5">
+                  <span className="text-xs font-black uppercase tracking-widest text-text-muted">URL da logo</span>
+                  <input
+                    type="url"
+                    value={editing.imageURL?.startsWith('/business-logos/') ? '' : editing.imageURL || ''}
+                    maxLength={500}
+                    onChange={(event) => setEditing({ ...editing, imageURL: event.target.value.trim() || null })}
+                    placeholder="https://exemplo.com/logo.png"
+                    className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
+                  />
+                </label>
                 <div className="flex flex-wrap gap-2">
                   {GENERIC_BUSINESS_LOGOS.map((logo) => (
                     <button
@@ -489,9 +445,8 @@ export default function MyBusinessesSection() {
                     </button>
                   ))}
                 </div>
-                <p className="inline-flex items-center gap-1 text-[11px] font-semibold text-text-muted">
-                  <Camera className="h-3.5 w-3.5" />
-                  JPEG, PNG ou WebP ate 2MB.
+                <p className="text-[11px] font-semibold leading-5 text-text-muted">
+                  Use uma imagem publica em HTTPS ou escolha uma logo generica. Upload direto fica desativado enquanto o Storage nao estiver ativo.
                 </p>
               </div>
             </div>

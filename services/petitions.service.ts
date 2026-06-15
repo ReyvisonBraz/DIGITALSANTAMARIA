@@ -13,26 +13,20 @@ import {
 import { httpsCallable } from 'firebase/functions';
 import { db, functions } from '@/lib/firebase';
 import { petitionConverter } from '@/lib/firebase/converters';
-import { uploadPetitionCover } from '@/services/storage.service';
-import type { CreatePetitionInput, Petition, PetitionStatus } from '@/types';
 import { sortByCreatedAtDesc } from '@/lib/utils/sort';
+import type { CreatePetitionInput, Petition, PetitionStatus } from '@/types';
 
 const PETITIONS_COL = 'petitions';
 const SIGNATURES_COL = 'petition_signatures';
 
 export async function createPetition(
-  input: CreatePetitionInput & { creatorId: string; creatorName: string; creatorPhotoURL?: string | null; coverFile?: File | null },
+  input: CreatePetitionInput & {
+    creatorId: string;
+    creatorName: string;
+    creatorPhotoURL?: string | null;
+    coverImageURL?: string | null;
+  },
 ): Promise<string> {
-  let coverImageURL: string | null = null;
-  if (input.coverFile) {
-    try {
-      const uploaded = await uploadPetitionCover(input.creatorId, input.coverFile);
-      coverImageURL = uploaded.url;
-    } catch {
-      // imagem opcional — segue sem capa
-    }
-  }
-
   const docRef = await addDoc(collection(db, PETITIONS_COL), {
     creatorId: input.creatorId,
     creatorName: input.creatorName,
@@ -44,14 +38,12 @@ export async function createPetition(
     signaturesCount: 0,
     status: 'active',
     officialReply: null,
-    coverImageURL,
+    coverImageURL: input.coverImageURL?.trim() || null,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
   return docRef.id;
 }
-
-
 
 export async function getActivePetitions(): Promise<Petition[]> {
   const ref = collection(db, PETITIONS_COL).withConverter(petitionConverter);
@@ -121,7 +113,7 @@ export async function signPetition(petitionId: string, userName: string): Promis
 
   await callable({
     petitionId,
-    userName: userName || 'Cidadão',
+    userName: userName || 'Cidadao',
   });
 }
 

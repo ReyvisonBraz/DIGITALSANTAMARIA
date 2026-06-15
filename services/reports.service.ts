@@ -17,7 +17,6 @@ import {
 import { db } from '@/lib/firebase';
 import { reportConverter } from '@/lib/firebase/converters';
 import { generateProtocolId } from '@/lib/utils/protocol';
-import { uploadReportPhoto } from '@/services/storage.service';
 import { tryCreateNotification } from '@/services/notifications.service';
 import { canCitizenCancelReport } from '@/lib/constants/protocols';
 import { byCreatedAtAsc, byCreatedAtDesc } from '@/lib/utils/sort';
@@ -54,10 +53,16 @@ const STATUS_TONE: Record<ReportStatus, NotificationTone> = {
 export async function createReport(
   input: CreateReportInput & { reporterId: string; reporterName: string },
 ): Promise<string> {
-  let photo: StorageFile | null = null;
-  if (input.photoFile) {
-    photo = await uploadReportPhoto(input.reporterId, input.photoFile);
-  }
+  const photoURL = input.photoURL?.trim();
+  const photo: StorageFile | null = photoURL
+    ? {
+        url: photoURL,
+        path: 'external',
+        name: 'Imagem externa',
+        size: 0,
+        type: 'image/external',
+      }
+    : null;
 
   const docRef = await addDoc(collection(db, COLLECTION), {
     reporterId: input.reporterId,

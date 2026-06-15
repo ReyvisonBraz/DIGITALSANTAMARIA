@@ -43,8 +43,7 @@ export default function ReportForm() {
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
   const [location, setLocation] = useState<GeoLocation | null>(null);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoURL, setPhotoURL] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitLabel, setSubmitLabel] = useState('Enviando...');
   const [createdProtocol, setCreatedProtocol] = useState<string | null>(null);
@@ -61,9 +60,7 @@ export default function ReportForm() {
     setDescription('');
     setAddress('');
     setLocation(null);
-    if (photoPreview) URL.revokeObjectURL(photoPreview);
-    setPhotoFile(null);
-    setPhotoPreview(null);
+    setPhotoURL('');
     setCreatedProtocol(null);
     setSubmitLabel('Enviando...');
   };
@@ -89,6 +86,10 @@ export default function ReportForm() {
       toast(`Descreva o problema com pelo menos ${MIN_DESCRIPTION} caracteres.`, 'error');
       return;
     }
+    if (photoURL.trim() && !photoURL.trim().startsWith('https://')) {
+      toast('Informe um link publico de imagem iniciando com https://.', 'error');
+      return;
+    }
 
     const trimmedAddress = address.trim();
     const finalLocation: GeoLocation | null = location
@@ -98,7 +99,7 @@ export default function ReportForm() {
         : null;
 
     setSubmitting(true);
-    setSubmitLabel(photoFile ? 'Enviando imagem...' : 'Enviando relato...');
+    setSubmitLabel('Enviando relato...');
     try {
       const id = await createReport({
         reporterId: user.uid,
@@ -108,7 +109,7 @@ export default function ReportForm() {
         description: description.trim(),
         location: finalLocation,
         isPetition: false,
-        photoFile: photoFile || undefined,
+        photoURL: photoURL.trim() || undefined,
       });
       log.info('Report created', { id, type });
       setSubmitLabel('Finalizando protocolo...');
@@ -264,12 +265,8 @@ export default function ReportForm() {
       />
 
       <PhotoUpload
-        file={photoFile}
-        previewUrl={photoPreview}
-        onFileChange={(file, preview) => {
-          setPhotoFile(file);
-          setPhotoPreview(preview);
-        }}
+        imageURL={photoURL}
+        onImageURLChange={setPhotoURL}
       />
 
       <button

@@ -56,5 +56,5 @@ export type CreateReportInput = Pick<
   Report,
   'type' | 'title' | 'description' | 'location' | 'isPetition'
 > & {
-  photoFile?: File;
+  photoURL?: string;
 };

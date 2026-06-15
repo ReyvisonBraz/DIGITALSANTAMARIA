@@ -230,6 +230,7 @@ export default function ReportsSection({ reports, loading, error, userId, clerkN
                               alt={`Evidência do relato ${report.title}`}
                               fill
                               sizes="(min-width: 1024px) 640px, 100vw"
+                              unoptimized
                               className="object-cover"
                             />
                           </div>
