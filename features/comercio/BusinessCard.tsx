@@ -4,25 +4,11 @@ import Image from 'next/image';
 import { Clock, MapPin, MessageCircle, Phone, Store } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
+import {
+  BUSINESS_CATEGORY_ACCENT,
+  getBusinessCategoryLabel,
+} from '@/lib/constants/businesses';
 import type { Business } from '@/types';
-
-const CATEGORY_LABEL: Record<Business['category'], string> = {
-  restaurante: 'Restaurante',
-  farmacia: 'Farmácia',
-  mercado: 'Mercado',
-  servico: 'Serviço',
-  loja: 'Loja',
-  outros: 'Outros',
-};
-
-const CATEGORY_ACCENT: Record<Business['category'], string> = {
-  restaurante: 'bg-accent/15 text-primary-dark border-accent/30',
-  farmacia: 'bg-accent-success/12 text-accent-success border-accent-success/30',
-  mercado: 'bg-secondary/15 text-secondary border-secondary/30',
-  servico: 'bg-primary/10 text-primary border-primary/25',
-  loja: 'bg-primary-dark/12 text-primary-dark border-primary-dark/25',
-  outros: 'bg-surface text-text-muted border-border',
-};
 
 function buildWhatsAppLink(numbersOnly: string, businessName: string): string {
   const trimmed = numbersOnly.replace(/\D/g, '');
@@ -35,13 +21,17 @@ function buildMapsLink(address: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 }
 
+function getMapHref(business: Business): string {
+  return business.mapURL?.trim() || buildMapsLink(business.address || business.title);
+}
+
 interface BusinessCardProps {
   business: Business;
 }
 
 export default function BusinessCard({ business }: BusinessCardProps) {
-  const categoryLabel = CATEGORY_LABEL[business.category] ?? 'Outros';
-  const categoryAccent = CATEGORY_ACCENT[business.category] ?? CATEGORY_ACCENT.outros;
+  const categoryLabel = getBusinessCategoryLabel(business.category);
+  const categoryAccent = BUSINESS_CATEGORY_ACCENT[business.category] ?? BUSINESS_CATEGORY_ACCENT.outros;
   const whatsapp = business.whatsapp || '';
   const phone = business.phone || '';
   const address = business.address || '';
@@ -131,7 +121,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
         <div className="flex flex-col gap-1.5 pt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted">
           {hasAddress && (
             <a
-              href={buildMapsLink(address)}
+              href={getMapHref(business)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 truncate transition hover:text-primary"

@@ -23,6 +23,8 @@ export type RegisterBusinessInput = Pick<
 > & {
   ownerId: string;
   ownerName: string;
+  imageURL?: string | null;
+  mapURL?: string | null;
 };
 
 /** Cidadão cadastra seu próprio negócio e entra como pending_approval. */
@@ -36,7 +38,8 @@ export async function registerBusiness(input: RegisterBusinessInput): Promise<st
     phone: input.phone,
     whatsapp: input.whatsapp,
     hours: input.hours,
-    imageURL: null,
+    imageURL: input.imageURL ?? null,
+    mapURL: input.mapURL ?? null,
     isOpen: true,
     lat: null,
     lng: null,
@@ -49,7 +52,7 @@ export async function registerBusiness(input: RegisterBusinessInput): Promise<st
 /** Dono edita o proprio negocio sem mudar status nem ownerId. */
 export async function updateOwnedBusiness(
   id: string,
-  patch: Partial<Pick<Business, 'title' | 'description' | 'category' | 'address' | 'phone' | 'whatsapp' | 'hours' | 'isOpen'>>,
+  patch: Partial<Pick<Business, 'title' | 'description' | 'category' | 'address' | 'phone' | 'whatsapp' | 'hours' | 'isOpen' | 'imageURL' | 'mapURL'>>,
 ): Promise<void> {
   const ref = doc(db, COLLECTION, id);
   await updateDoc(ref, { ...patch, updatedAt: serverTimestamp() });
@@ -58,13 +61,24 @@ export async function updateOwnedBusiness(
 /** Dono corrige um cadastro reprovado e reenvia para análise da prefeitura. */
 export async function resubmitOwnedBusiness(
   id: string,
-  patch: Partial<Pick<Business, 'title' | 'description' | 'category' | 'address' | 'phone' | 'whatsapp' | 'hours' | 'isOpen'>>,
+  patch: Partial<Pick<Business, 'title' | 'description' | 'category' | 'address' | 'phone' | 'whatsapp' | 'hours' | 'isOpen' | 'imageURL' | 'mapURL'>>,
 ): Promise<void> {
   const ref = doc(db, COLLECTION, id);
   await updateDoc(ref, {
     ...patch,
     status: 'pending_approval',
     reviewNote: null,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+/** Dono cancela/exclui o proprio cadastro sem remover fisicamente do Firestore. */
+export async function deleteOwnedBusiness(id: string): Promise<void> {
+  const ref = doc(db, COLLECTION, id);
+  await updateDoc(ref, {
+    status: 'archived',
+    reviewNote: 'Cancelado pelo proprietario.',
+    deletedAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
 }

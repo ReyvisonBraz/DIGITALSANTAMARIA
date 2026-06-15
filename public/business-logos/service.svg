@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Logo generica de servico">
+  <rect width="160" height="160" rx="32" fill="#eff6ff"/>
+  <circle cx="80" cy="80" r="48" fill="#ffffff" stroke="#1d4ed8" stroke-width="6"/>
+  <path d="M80 42v18m0 40v18M42 80h18m40 0h18M53 53l13 13m28 28 13 13m0-54L94 66M66 94l-13 13" stroke="#1d4ed8" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="80" cy="80" r="18" fill="#60a5fa"/>
+</svg>

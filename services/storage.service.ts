@@ -16,4 +16,9 @@ export async function uploadAvatar(uid: string, file: File): Promise<StorageFile
   return uploadFile(file, path);
 }
 
+export async function uploadBusinessLogo(uid: string, file: File): Promise<StorageFile> {
+  const path = generateStoragePath('businesses', uid, file.name);
+  return uploadFile(file, path);
+}
+
 export { deleteFile };

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Logo generica de mercado">
+  <rect width="160" height="160" rx="32" fill="#f0fdf4"/>
+  <path d="M40 64h80l-10 56H50z" fill="#ffffff" stroke="#166534" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M58 64l18-30m26 30L84 34" stroke="#166534" stroke-width="6" stroke-linecap="round"/>
+  <path d="M60 86h40m-44 18h48" stroke="#22c55e" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="52" cy="124" r="6" fill="#166534"/>
+  <circle cx="108" cy="124" r="6" fill="#166534"/>
+</svg>

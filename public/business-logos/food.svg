@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Logo generica de comida">
+  <rect width="160" height="160" rx="32" fill="#fff7ed"/>
+  <circle cx="80" cy="86" r="42" fill="#ffffff" stroke="#c2410c" stroke-width="6"/>
+  <path d="M52 84c8-18 48-18 56 0" stroke="#fb923c" stroke-width="10" stroke-linecap="round"/>
+  <path d="M50 124h60" stroke="#c2410c" stroke-width="6" stroke-linecap="round"/>
+  <path d="M44 38v42m14-42v42m58-42v84" stroke="#c2410c" stroke-width="6" stroke-linecap="round"/>
+</svg>

@@ -67,12 +67,29 @@ export interface CommunityGroup extends BaseContent {
 
 // Comércio local
 export interface Business extends BaseContent {
-  category: 'restaurante' | 'farmacia' | 'mercado' | 'servico' | 'loja' | 'outros';
+  category:
+    | 'restaurante'
+    | 'farmacia'
+    | 'mercado'
+    | 'servico'
+    | 'loja'
+    | 'beleza'
+    | 'saude'
+    | 'educacao'
+    | 'construcao'
+    | 'transporte'
+    | 'tecnologia'
+    | 'alimentacao'
+    | 'hospedagem'
+    | 'oficina'
+    | 'agro'
+    | 'outros';
   address: string;
   phone: string;
   whatsapp: string;
   hours: string;
   imageURL: string | null;
+  mapURL?: string | null;
   isOpen: boolean;
   lat: number | null;
   lng: number | null;

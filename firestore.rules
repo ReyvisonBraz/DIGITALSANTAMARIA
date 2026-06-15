@@ -149,6 +149,7 @@ service cloud.firestore {
           'whatsapp',
           'hours',
           'imageURL',
+          'mapURL',
           'isOpen',
           'lat',
           'lng',
@@ -171,6 +172,8 @@ service cloud.firestore {
           'phone',
           'whatsapp',
           'hours',
+          'imageURL',
+          'mapURL',
           'isOpen',
           'updatedAt'
         ]);
@@ -189,9 +192,23 @@ service cloud.firestore {
           'phone',
           'whatsapp',
           'hours',
+          'imageURL',
+          'mapURL',
           'isOpen',
           'status',
           'reviewNote',
+          'updatedAt'
+        ]);
+    }
+
+    function validBusinessOwnerDelete() {
+      return isOwner(resource.data.ownerId)
+        && incoming().status == 'archived'
+        && incoming().deletedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'status',
+          'reviewNote',
+          'deletedAt',
           'updatedAt'
         ]);
     }
@@ -349,7 +366,8 @@ service cloud.firestore {
         || (isSignedIn() && validBusinessCitizenCreate());
       allow update: if isAdmin()
         || validBusinessOwnerUpdate()
-        || validBusinessOwnerResubmit();
+        || validBusinessOwnerResubmit()
+        || validBusinessOwnerDelete();
       allow delete: if false;
     }
 

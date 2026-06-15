@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Logo generica de fachada">
+  <rect width="160" height="160" rx="32" fill="#eef8f7"/>
+  <path d="M34 68h92v54H34z" fill="#ffffff" stroke="#155e75" stroke-width="6" />
+  <path d="M28 52h104l-10-24H38z" fill="#f59e0b" stroke="#155e75" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M44 52v22m24-22v22m24-22v22m24-22v22" stroke="#155e75" stroke-width="6" stroke-linecap="round"/>
+  <path d="M60 122V92h40v30" fill="#dff3f1" stroke="#155e75" stroke-width="6"/>
+  <circle cx="80" cy="82" r="8" fill="#14b8a6"/>
+</svg>

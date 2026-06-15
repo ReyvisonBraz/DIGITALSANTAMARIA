@@ -6,16 +6,12 @@ import { useContent } from '@/lib/hooks/use-content';
 import ContentHero from '@/components/ui/ContentHero';
 import BusinessCard from '@/features/comercio/BusinessCard';
 import { cn } from '@/lib/utils';
+import { BUSINESS_CATEGORIES } from '@/lib/constants/businesses';
 import type { Business } from '@/types';
 
 const CATEGORIES: { value: Business['category'] | 'all'; label: string }[] = [
   { value: 'all', label: 'Todos' },
-  { value: 'restaurante', label: 'Restaurantes' },
-  { value: 'farmacia', label: 'Farmácias' },
-  { value: 'mercado', label: 'Mercados' },
-  { value: 'servico', label: 'Serviços' },
-  { value: 'loja', label: 'Lojas' },
-  { value: 'outros', label: 'Outros' },
+  ...BUSINESS_CATEGORIES.map((category) => ({ value: category.value, label: category.plural })),
 ];
 
 export default function ComercioPage() {
@@ -32,8 +28,8 @@ export default function ComercioPage() {
       <ContentHero
         icon={Store}
         label="Economia local"
-        title="Comércio Local"
-        subtitle="Restaurantes, farmácias, lojas e serviços de Santa Maria do Pará: fale direto no WhatsApp."
+        title="Comercio Local"
+        subtitle="Restaurantes, farmacias, lojas e servicos de Santa Maria do Para: fale direto no WhatsApp."
         accent="accent"
       />
 
@@ -86,7 +82,7 @@ export default function ComercioPage() {
           </div>
           <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
             {category === 'all'
-              ? 'Nenhum comércio cadastrado ainda.'
+              ? 'Nenhum comercio cadastrado ainda.'
               : 'Nenhum negocio nesta categoria.'}
           </p>
         </div>

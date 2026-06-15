@@ -35,6 +35,7 @@ import { tryCreateAdminAuditLog } from '@/services/admin-audit.service';
 import { useToast } from '@/lib/toast-context';
 import { useAuth } from '@/lib/auth-context';
 import { formatDate } from '@/lib/utils/formatters';
+import { BUSINESS_CATEGORIES } from '@/lib/constants/businesses';
 import type { Business, ContentStatus } from '@/types';
 
 const service = createContentService<Business>('businesses');
@@ -46,6 +47,11 @@ const CATEGORIES: { value: Business['category']; label: string }[] = [
   { value: 'servico', label: 'Serviço' },
   { value: 'loja', label: 'Loja' },
   { value: 'outros', label: 'Outros' },
+];
+
+const ADMIN_CATEGORIES = [
+  ...CATEGORIES,
+  ...BUSINESS_CATEGORIES.filter((category) => !CATEGORIES.some((item) => item.value === category.value)),
 ];
 
 export default function BusinessesAdmin() {
@@ -77,6 +83,8 @@ export default function BusinessesAdmin() {
   const [phone, setPhone] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [hours, setHours] = useState('');
+  const [imageURL, setImageURL] = useState('');
+  const [mapURL, setMapURL] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -102,6 +110,8 @@ export default function BusinessesAdmin() {
     setPhone('');
     setWhatsapp('');
     setHours('');
+    setImageURL('');
+    setMapURL('');
     setIsOpen(true);
     setEditingId(null);
   };
@@ -116,6 +126,8 @@ export default function BusinessesAdmin() {
     setPhone(business.phone);
     setWhatsapp(business.whatsapp);
     setHours(business.hours);
+    setImageURL(business.imageURL || '');
+    setMapURL(business.mapURL || '');
     setIsOpen(business.isOpen);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -203,7 +215,8 @@ export default function BusinessesAdmin() {
         phone: phone.trim(),
         whatsapp: whatsapp.trim(),
         hours: hours.trim(),
-        imageURL: null,
+        imageURL: imageURL.trim() || null,
+        mapURL: mapURL.trim() || null,
         isOpen,
         lat: null,
         lng: null,
@@ -389,7 +402,7 @@ export default function BusinessesAdmin() {
               onChange={(event) => setCategory(event.target.value as Business['category'])}
               className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary"
             >
-              {CATEGORIES.map((item) => (
+              {ADMIN_CATEGORIES.map((item) => (
                 <option key={item.value} value={item.value}>{item.label}</option>
               ))}
             </select>
@@ -418,6 +431,30 @@ export default function BusinessesAdmin() {
               required
               maxLength={200}
               placeholder="Rua, número, bairro"
+              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
+            />
+          </label>
+
+          <label className="space-y-1.5">
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">URL da logo</span>
+            <input
+              type="url"
+              value={imageURL}
+              onChange={(event) => setImageURL(event.target.value)}
+              maxLength={500}
+              placeholder="https://..."
+              className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
+            />
+          </label>
+
+          <label className="space-y-1.5">
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Link do mapa</span>
+            <input
+              type="url"
+              value={mapURL}
+              onChange={(event) => setMapURL(event.target.value)}
+              maxLength={500}
+              placeholder="https://maps.google.com/..."
               className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
             />
           </label>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Logo generica de saude">
+  <rect width="160" height="160" rx="32" fill="#ecfdf5"/>
+  <path d="M80 128s-46-28-46-66c0-18 12-30 29-30 9 0 15 4 17 10 2-6 8-10 17-10 17 0 29 12 29 30 0 38-46 66-46 66z" fill="#ffffff" stroke="#047857" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M80 56v48M56 80h48" stroke="#10b981" stroke-width="12" stroke-linecap="round"/>
+</svg>
