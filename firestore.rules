@@ -204,7 +204,7 @@ service cloud.firestore {
     function validBusinessOwnerDelete() {
       return isOwner(resource.data.ownerId)
         && incoming().status == 'archived'
-        && incoming().deletedAt == request.time
+        && incoming().deletedAt is timestamp
         && incoming().diff(existing()).affectedKeys().hasOnly([
           'status',
           'reviewNote',

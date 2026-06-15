@@ -10,14 +10,32 @@ import { app } from '@/lib/firebase';
 import type { StorageFile } from '@/types';
 
 const storage = getStorage(app);
+const UPLOAD_TIMEOUT_MS = 45_000;
+
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(message)), timeoutMs);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
+}
 
 export async function uploadFile(
   file: File,
   path: string
 ): Promise<StorageFile> {
   const storageRef = ref(storage, path);
-  const snapshot: UploadResult = await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(snapshot.ref);
+  const snapshot: UploadResult = await withTimeout(
+    uploadBytes(storageRef, file),
+    UPLOAD_TIMEOUT_MS,
+    'O envio da imagem demorou demais. Verifique sua conexao e tente novamente.',
+  );
+  const url = await withTimeout(
+    getDownloadURL(snapshot.ref),
+    10_000,
+    'A imagem foi enviada, mas nao foi possivel obter o link publico agora.',
+  );
   return {
     url,
     path: snapshot.ref.fullPath,

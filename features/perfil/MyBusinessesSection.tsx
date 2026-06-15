@@ -282,8 +282,16 @@ export default function MyBusinessesSection() {
       if (editing?.id === deleteTarget.id) setEditing(null);
       toast(deleteTarget.status === 'pending_approval' ? 'Cadastro cancelado.' : 'Negocio excluido.', 'success');
       setDeleteTarget(null);
-    } catch {
-      toast('Nao foi possivel remover este negocio agora.', 'error');
+    } catch (error) {
+      const code = typeof error === 'object' && error && 'code' in error
+        ? String((error as { code?: unknown }).code)
+        : '';
+      const message = code === 'permission-denied'
+        ? 'Sem permissao para cancelar este cadastro. Publique as regras do Firestore ou confirme se ele pertence a sua conta.'
+        : error instanceof Error && error.message
+          ? error.message
+          : 'Nao foi possivel remover este negocio agora.';
+      toast(message, 'error');
     } finally {
       setDeleting(false);
     }

@@ -46,6 +46,7 @@ export default function ReportForm() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [submitLabel, setSubmitLabel] = useState('Enviando...');
   const [createdProtocol, setCreatedProtocol] = useState<string | null>(null);
   const protocolCleanup = useRef<(() => void) | null>(null);
 
@@ -64,6 +65,7 @@ export default function ReportForm() {
     setPhotoFile(null);
     setPhotoPreview(null);
     setCreatedProtocol(null);
+    setSubmitLabel('Enviando...');
   };
 
   const handleLogin = async () => {
@@ -96,6 +98,7 @@ export default function ReportForm() {
         : null;
 
     setSubmitting(true);
+    setSubmitLabel(photoFile ? 'Enviando imagem...' : 'Enviando relato...');
     try {
       const id = await createReport({
         reporterId: user.uid,
@@ -108,6 +111,7 @@ export default function ReportForm() {
         photoFile: photoFile || undefined,
       });
       log.info('Report created', { id, type });
+      setSubmitLabel('Finalizando protocolo...');
 
       // Aguarda protocolo real da Cloud Function
       protocolCleanup.current = waitForReportProtocol(id, (protocol) => {
@@ -118,7 +122,10 @@ export default function ReportForm() {
       return;
     } catch (error) {
       log.error('Failed to create report', {}, error);
-      toast('Não foi possível enviar agora. Tente novamente em instantes.', 'error');
+      const message = error instanceof Error && error.message
+        ? error.message
+        : 'Nao foi possivel enviar agora. Tente novamente em instantes.';
+      toast(message, 'error');
       setSubmitting(false);
     }
   };
@@ -273,7 +280,7 @@ export default function ReportForm() {
         {submitting ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            Enviando...
+            {submitLabel}
           </>
         ) : (
           <>
