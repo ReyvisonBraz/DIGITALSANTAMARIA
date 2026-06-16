@@ -54,12 +54,8 @@ export default function PeticoesPage() {
   return (
     <div className="page-shell">
       <section className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 md:px-10 lg:px-12">
-<<<<<<< HEAD
         <div className="hero-panel relative grid w-full grid-cols-1 gap-5 p-5 sm:p-7 md:p-9">
           <div aria-hidden className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-secondary/15 blur-3xl" />
-=======
-        <div className="hero-panel grid w-full grid-cols-1 gap-5 p-5 sm:p-7 md:p-9">
->>>>>>> 774bd5a34d0b4d178baa4925486a7d724a4e9185
           <div className="relative z-10">
             <div className="soft-chip">
               <Users className="h-4 w-4" />
