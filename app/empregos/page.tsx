@@ -40,32 +40,37 @@ export default function EmpregosPage() {
 
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 md:p-12 pb-32 gap-10 md:gap-14 bg-background">
-      <section className="space-y-8">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-          <div className="space-y-4 max-w-3xl text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-primary/10 text-primary rounded-full text-[11px] font-bold uppercase tracking-[0.18em] border border-primary/20">
-              <Briefcase className="w-4 h-4" />
+      <section className="space-y-6">
+        <div className="ring-highlight-dark relative overflow-hidden rounded-[2.5rem] md:rounded-[3rem] bg-gradient-to-br from-primary-dark via-primary to-primary-dark animate-drift p-8 md:p-14 text-white shadow-[0_26px_70px_rgba(14,58,140,0.30)]">
+          <div aria-hidden className="hero-grid-overlay" />
+          <div aria-hidden className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-accent-success/25 blur-3xl" />
+          <div aria-hidden className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-secondary/25 blur-3xl" />
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+
+          <div className="relative z-10 max-w-3xl space-y-5">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 text-white rounded-full text-[11px] font-bold uppercase tracking-[0.2em] border border-white/15 backdrop-blur">
+              <Briefcase className="w-4 h-4 text-accent-success" />
               Banco de oportunidades
             </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold text-text-main tracking-tight leading-[0.98]" style={{ fontFamily: 'var(--font-display)' }}>
-              Banco de <span className="text-gradient">talentos</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[0.98]" style={{ fontFamily: 'var(--font-display)' }}>
+              Banco de <span className="text-accent">talentos</span>
             </h1>
-            <p className="text-base md:text-xl font-medium text-text-muted leading-relaxed">
+            <p className="max-w-2xl border-l-2 border-accent-success/50 pl-5 text-base md:text-xl font-medium text-white/75 leading-relaxed">
               Conectamos os melhores profissionais às vagas reais do município.
             </p>
-          </div>
-        </div>
 
-        <div className="flex flex-col md:flex-row items-center gap-4 bg-white p-2 rounded-[2rem] md:rounded-full border-2 border-border shadow-2xl transition-all focus-within:border-primary/30">
-          <div className="relative flex-grow w-full">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Cargo ou palavra-chave..."
-              className="w-full pl-16 pr-6 py-4 bg-transparent outline-none font-bold text-sm md:text-base"
-            />
+            <div className="relative max-w-2xl">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Cargo ou palavra-chave..."
+                className="w-full pl-16 pr-6 py-4 rounded-full bg-white text-text-main outline-none font-bold text-sm md:text-base shadow-[0_14px_34px_rgba(14,58,140,0.18)] ring-1 ring-white/40 transition-all focus:ring-2 focus:ring-accent/60"
+              />
+            </div>
           </div>
+
+          <Briefcase className="animate-floaty pointer-events-none absolute -bottom-10 -right-8 h-56 w-56 opacity-[0.07]" />
         </div>
       </section>
 
@@ -84,7 +89,7 @@ export default function EmpregosPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className="bg-white p-8 md:p-10 rounded-[3rem] border-2 border-border shadow-sm hover:border-primary/40 hover:shadow-2xl transition-all group"
+            className="sheen-on-hover bg-white p-8 md:p-10 rounded-[3rem] border-2 border-border shadow-sm hover:border-primary/40 hover:shadow-2xl transition-all group"
           >
             <div className="flex justify-between items-start mb-6">
               <div className="w-14 h-14 rounded-2xl bg-surface flex items-center justify-center border-2 border-border">

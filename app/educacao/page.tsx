@@ -109,7 +109,11 @@ export default function EducacaoPage() {
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 md:p-12 pb-32 gap-12 bg-background">
       
       {/* Academy Hero Section */}
-      <section className="relative overflow-hidden rounded-[3.5rem] md:rounded-[5rem] bg-blue-600 text-white p-10 md:p-16 lg:p-24 shadow-4xl flex flex-col md:flex-row items-center justify-between border-4 border-white/10 group">
+      <section className="ring-highlight-dark relative overflow-hidden rounded-[3.5rem] md:rounded-[5rem] bg-gradient-to-br from-primary-dark via-primary to-primary-dark animate-drift text-white p-10 md:p-16 lg:p-24 shadow-[0_30px_80px_rgba(14,58,140,0.32)] flex flex-col md:flex-row items-center justify-between group">
+         <div aria-hidden className="hero-grid-overlay" />
+         <div aria-hidden className="pointer-events-none absolute -left-20 -top-24 h-80 w-80 rounded-full bg-secondary/25 blur-3xl" />
+         <div aria-hidden className="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
+         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
          <div className="relative z-10 max-w-3xl text-center md:text-left space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] border border-white/20 backdrop-blur-sm">
                <Award className="w-4 h-4 text-accent" />
@@ -124,13 +128,13 @@ export default function EducacaoPage() {
             <div className="flex flex-wrap gap-4 justify-center md:justify-start pt-4">
                <Link
                  href="/educacao/matricula"
-                 className="bg-white text-blue-600 px-10 py-4 rounded-2xl font-semibold text-sm shadow-xl hover:scale-105 active:scale-95 transition-all shrink-0"
+                 className="bg-white text-primary px-10 py-4 rounded-2xl font-semibold text-sm shadow-xl hover:scale-105 active:scale-95 transition-all shrink-0"
                >
                   Matrícula online
                </Link>
                <Link
                  href="/perfil"
-                 className="bg-blue-700/50 text-white border border-white/20 px-9 py-4 rounded-2xl font-semibold text-sm shadow-lg hover:bg-blue-700 transition-all shrink-0"
+                 className="bg-white/10 text-white border border-white/20 px-9 py-4 rounded-2xl font-semibold text-sm shadow-lg backdrop-blur hover:bg-white/20 transition-all shrink-0"
                >
                   Portal do aluno
                </Link>
@@ -294,7 +298,8 @@ export default function EducacaoPage() {
                </div>
                {/* Quick Student Status Panel */}
                <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[4rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">
+                  <div className="ring-highlight-dark bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[4rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">
+                     <div aria-hidden className="hero-grid-overlay" />
                      <div className="relative z-10 flex flex-col gap-6">
                         <div className="flex items-center gap-4">
                            <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 backdrop-blur shadow-inner">
@@ -392,7 +397,8 @@ export default function EducacaoPage() {
                </div>
 
                {/* Right Promotion Card */}
-               <div className="lg:col-span-4 bg-blue-600 p-10 rounded-[4rem] text-white space-y-10 relative overflow-hidden group shadow-4xl border-2 border-white/5">
+               <div className="ring-highlight-dark lg:col-span-4 bg-gradient-to-br from-primary via-primary-dark to-primary p-10 rounded-[4rem] text-white space-y-10 relative overflow-hidden group shadow-[0_24px_60px_rgba(14,58,140,0.30)]">
+                  <div aria-hidden className="hero-grid-overlay" />
                   <div className="relative z-10 space-y-8">
                      <div className="flex items-center gap-4">
                         <div className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur shadow-inner">

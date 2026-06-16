@@ -13,6 +13,7 @@ export default function OuvidoriaPage() {
     <div className="page-shell">
       <section className="mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 md:px-10 lg:px-12">
         <div className="hero-panel grid grid-cols-1 gap-6 p-5 sm:p-7 md:grid-cols-[1fr_0.78fr] md:p-9">
+          <div aria-hidden className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-secondary/15 blur-3xl" />
           <div className="relative z-10 space-y-6">
             <div className="soft-chip w-fit">
               <ShieldCheck className="h-4 w-4" />
@@ -113,11 +114,14 @@ export default function OuvidoriaPage() {
               O prazo pode variar conforme a complexidade e o setor responsável.
             </p>
           </div>
-          <div className="rounded-[1.25rem] bg-gradient-to-br from-text-main to-primary-dark p-5 text-white shadow-[0_18px_48px_rgba(15,23,42,0.16)]">
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary-light">Painel do Cidadão</p>
-            <p className="mt-2 text-sm font-medium leading-6 text-white/75">
-              Solicitações feitas com login aparecem automaticamente no histórico.
-            </p>
+          <div className="ring-highlight-dark relative overflow-hidden rounded-[1.25rem] bg-gradient-to-br from-text-main to-primary-dark p-5 text-white shadow-[0_18px_48px_rgba(15,23,42,0.16)]">
+            <div aria-hidden className="hero-grid-overlay" />
+            <div className="relative z-10">
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary-light">Painel do Cidadão</p>
+              <p className="mt-2 text-sm font-medium leading-6 text-white/75">
+                Solicitações feitas com login aparecem automaticamente no histórico.
+              </p>
+            </div>
           </div>
         </aside>
       </main>

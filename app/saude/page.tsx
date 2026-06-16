@@ -240,7 +240,9 @@ export default function SaudePage() {
                      animate={{ opacity: 1, x: 0 }}
                      className="space-y-6"
                   >
-                     <div className="bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[3rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">
+                     <div className="ring-highlight-dark bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[3rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">
+                        <div aria-hidden className="hero-grid-overlay" />
+                        <div aria-hidden className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-secondary/30 blur-3xl" />
                         <div className="relative z-10 flex flex-col h-full justify-between gap-6">
                            <div className="space-y-1">
                               <h3 className="text-3xl font-semibold leading-[1.02] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Minha saúde</h3>
