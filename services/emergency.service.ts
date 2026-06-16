@@ -4,6 +4,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   orderBy,
   query,
   serverTimestamp,
@@ -53,9 +54,9 @@ export async function createEmergencyAlert(
   return protocol;
 }
 
-export async function getAllEmergencyAlerts(): Promise<EmergencyAlert[]> {
+export async function getAllEmergencyAlerts(max = 200): Promise<EmergencyAlert[]> {
   const ref = collection(db, COLLECTION).withConverter(emergencyAlertConverter);
-  const q = query(ref, orderBy('createdAt', 'desc'));
+  const q = query(ref, orderBy('createdAt', 'desc'), limit(max));
   const snap = await getDocs(q);
   return snap.docs.map((document) => document.data());
 }

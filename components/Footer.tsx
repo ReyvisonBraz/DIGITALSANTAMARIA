@@ -16,7 +16,7 @@ export default function Footer() {
           </p>
         </div>
 
-        <nav className="flex flex-wrap gap-x-5 gap-y-2 md:justify-end" aria-label="Links do rodape">
+        <nav className="flex flex-wrap gap-x-5 gap-y-2 md:justify-end" aria-label="Links do rodapé">
           {FOOTER_LINKS.map((link) => (
             <Link
               key={`${link.href}-${link.label}`}

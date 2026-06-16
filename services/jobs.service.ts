@@ -4,6 +4,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   orderBy,
   query,
   serverTimestamp,
@@ -76,9 +77,9 @@ export async function getUserApplications(userId: string): Promise<JobApplicatio
     .sort(byCreatedAtDesc);
 }
 
-export async function getAllApplications(): Promise<JobApplication[]> {
+export async function getAllApplications(max = 300): Promise<JobApplication[]> {
   const ref = collection(db, APPLICATIONS_COL).withConverter(jobApplicationConverter);
-  const q = query(ref, orderBy('createdAt', 'desc'));
+  const q = query(ref, orderBy('createdAt', 'desc'), limit(max));
   const snap = await getDocs(q);
   return snap.docs.map((d) => d.data());
 }
@@ -109,9 +110,9 @@ export async function updateApplicationStatus(
   }
 }
 
-export async function getAllJobs(): Promise<Job[]> {
+export async function getAllJobs(max = 200): Promise<Job[]> {
   const ref = collection(db, JOBS_COL).withConverter(jobConverter);
-  const q = query(ref, orderBy('createdAt', 'desc'));
+  const q = query(ref, orderBy('createdAt', 'desc'), limit(max));
   const snap = await getDocs(q);
   return snap.docs.map((d) => d.data());
 }

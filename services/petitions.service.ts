@@ -4,6 +4,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   onSnapshot,
   query,
   serverTimestamp,
@@ -65,9 +66,9 @@ export function listenToActivePetitions(
   );
 }
 
-export async function getAllPetitions(): Promise<Petition[]> {
+export async function getAllPetitions(max = 200): Promise<Petition[]> {
   const ref = collection(db, PETITIONS_COL).withConverter(petitionConverter);
-  const snap = await getDocs(ref);
+  const snap = await getDocs(query(ref, limit(max)));
   return sortByCreatedAtDesc(snap.docs.map((d) => d.data()));
 }
 
