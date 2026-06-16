@@ -23,7 +23,7 @@ export default function AvatarUpload() {
     if (!user) return;
     const nextURL = photoURL.trim();
     if (nextURL && !nextURL.startsWith('https://')) {
-      toast('Informe uma URL publica iniciando com https://.', 'error');
+      toast('Informe uma URL pública iniciando com https://.', 'error');
       return;
     }
 
