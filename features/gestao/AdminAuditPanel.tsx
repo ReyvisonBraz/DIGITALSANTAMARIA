@@ -181,10 +181,10 @@ export default function AdminAuditPanel() {
                   </div>
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest ${meta.className}`}>
+                      <span className={`rounded-full border px-2.5 py-1 text-[11px] font-black uppercase tracking-widest ${meta.className}`}>
                         {ACTION_LABEL[log.action]}
                       </span>
-                      <span className="inline-flex items-center gap-1 rounded-full border border-border bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-border bg-white px-2.5 py-1 text-[11px] font-black uppercase tracking-widest text-text-muted">
                         <Database className="h-3 w-3" />
                         {log.collectionName}
                       </span>

@@ -9,7 +9,7 @@ import { hasUserSigned, signPetition } from '@/services/petitions.service';
 interface SignatureButtonProps {
   petitionId: string;
   petitionTitle: string;
-  onSign: () => void;
+  onSign?: () => void;
   className?: string;
 }
 
@@ -47,7 +47,7 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
       await signPetition(petitionId, user.displayName || user.email || 'Cidadão');
       setSigned(true);
       toast(`Assinatura registrada em "${petitionTitle}"!`, 'success');
-      onSign();
+      onSign?.();
     } catch {
       toast('Não foi possível registrar a assinatura.', 'error');
     } finally {
@@ -59,7 +59,7 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
     return (
       <button
         disabled
-        className={`flex items-center justify-center gap-2 rounded-xl bg-green-600 px-10 py-4 text-[10px] font-black uppercase tracking-widest text-white opacity-90 cursor-default ${className || ''}`}
+        className={`flex items-center justify-center gap-2 rounded-xl bg-green-600 px-10 py-4 text-[11px] font-black uppercase tracking-widest text-white opacity-90 cursor-default ${className || ''}`}
       >
         <CheckCircle2 className="h-4 w-4" />
         Assinado
@@ -71,7 +71,7 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
     <button
       onClick={handleSign}
       disabled={loading || checkingSignature}
-      className={`flex items-center justify-center gap-2 rounded-xl bg-tertiary px-10 py-4 text-[10px] font-black uppercase tracking-widest text-white shadow-xl shadow-tertiary/20 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 ${className || ''}`}
+      className={`flex items-center justify-center gap-2 rounded-xl bg-tertiary px-10 py-4 text-[11px] font-black uppercase tracking-widest text-white shadow-xl shadow-tertiary/20 transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 ${className || ''}`}
     >
       {loading || checkingSignature ? (
         <Loader2 className="h-4 w-4 animate-spin" />

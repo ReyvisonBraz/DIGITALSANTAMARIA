@@ -1,4 +1,10 @@
 import { generateProtocolId, generateDemandProtocolId } from '@/lib/utils/protocol';
+import {
+  canCitizenCancelDemand,
+  canCitizenCancelReport,
+  isDemandClosed,
+  isReportClosed,
+} from '@/lib/constants/protocols';
 
 describe('Protocol Utils', () => {
   describe('generateProtocolId', () => {
@@ -42,6 +48,30 @@ describe('Protocol Utils', () => {
     it('should generate OUV prefixed protocol', () => {
       const protocol = generateDemandProtocolId();
       expect(protocol).toMatch(/^OUV-\d{4}-[A-Z0-9]{6}$/);
+    });
+  });
+
+  describe('cancellation rules', () => {
+    it('allows citizens to cancel open non-anonymous demands only', () => {
+      expect(canCitizenCancelDemand('pending', false)).toBe(true);
+      expect(canCitizenCancelDemand('analyzing', false)).toBe(true);
+      expect(canCitizenCancelDemand('pending', true)).toBe(false);
+      expect(canCitizenCancelDemand('solved', false)).toBe(false);
+      expect(canCitizenCancelDemand('rejected', false)).toBe(false);
+      expect(canCitizenCancelDemand('cancelled', false)).toBe(false);
+    });
+
+    it('allows citizens to cancel open reports only', () => {
+      expect(canCitizenCancelReport('pending')).toBe(true);
+      expect(canCitizenCancelReport('in_review')).toBe(true);
+      expect(canCitizenCancelReport('resolved')).toBe(false);
+      expect(canCitizenCancelReport('rejected')).toBe(false);
+      expect(canCitizenCancelReport('cancelled')).toBe(false);
+    });
+
+    it('treats cancelled protocols as closed', () => {
+      expect(isDemandClosed('cancelled')).toBe(true);
+      expect(isReportClosed('cancelled')).toBe(true);
     });
   });
 });

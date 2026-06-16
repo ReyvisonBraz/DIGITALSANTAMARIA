@@ -342,7 +342,7 @@ export default function GenericCatalogAdmin({ config }: { config: CatalogAdminCo
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     {config.categoryField && (
-                      <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-dark">
+                      <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest text-primary-dark">
                         {String(item[config.categoryField] ?? '')}
                       </span>
                     )}

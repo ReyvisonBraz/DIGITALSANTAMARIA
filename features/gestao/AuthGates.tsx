@@ -65,7 +65,7 @@ export function CopyProtocolButton({ protocol }: { protocol: string }) {
     <button
       type="button"
       onClick={handleCopy}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-white px-2 py-1 text-[10px] font-black uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-white px-2 py-1 text-[11px] font-black uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
       title="Copiar protocolo"
     >
       <Copy className="h-3.5 w-3.5" />

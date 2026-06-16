@@ -65,7 +65,7 @@ export default function ProfileSettingsPanel({ isOpen, onClose, mode }: ProfileS
 
         {isStaff && (
           <div className="border-t border-dashed border-border pt-6">
-            <p className="mb-4 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted">
+            <p className="mb-4 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-text-muted">
               Acesso administrativo
             </p>
             <div className="grid gap-2">

@@ -65,12 +65,12 @@ export default function VotosPage() {
           {data.map((poll) => (
             <article key={poll.id} className="civic-card flex flex-col gap-5 p-6">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full border border-violet-600/20 bg-violet-600/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-violet-700">
+                <span className="rounded-full border border-violet-600/20 bg-violet-600/10 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-violet-700">
                   {poll.category}
                 </span>
                 <span className={poll.isActive
-                  ? 'rounded-full border border-green-200 bg-green-100 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-green-700'
-                  : 'rounded-full border border-gray-200 bg-gray-100 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-gray-600'}
+                  ? 'rounded-full border border-green-200 bg-green-100 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-green-700'
+                  : 'rounded-full border border-gray-200 bg-gray-100 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-gray-600'}
                 >
                   {poll.isActive ? 'Ativa' : 'Encerrada'}
                 </span>
@@ -103,7 +103,7 @@ export default function VotosPage() {
                       <div className="h-2 overflow-hidden rounded-full bg-surface">
                         <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${percent}%` }} />
                       </div>
-                      <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                      <p className="mt-2 text-[11px] font-black uppercase tracking-widest text-text-muted">
                         {percent}% do total
                       </p>
                     </button>

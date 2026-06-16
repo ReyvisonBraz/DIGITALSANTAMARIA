@@ -63,10 +63,10 @@ function PetitionAdminCard({ petition, onSaved }: { petition: Petition; onSaved:
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_auto]">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
+            <span className="rounded-full bg-primary/10 px-2 py-1 text-[11px] font-black uppercase tracking-widest text-primary">
               {petition.category}
             </span>
-            <span className="rounded-full bg-surface px-2 py-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
+            <span className="rounded-full bg-surface px-2 py-1 text-[11px] font-black uppercase tracking-widest text-text-muted">
               {statusLabel[petition.status]}
             </span>
             <span className="text-xs font-bold text-text-muted">{formatDate(petition.createdAt)}</span>

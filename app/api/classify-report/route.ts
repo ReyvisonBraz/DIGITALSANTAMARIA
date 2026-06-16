@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { classifyReport } from '@/lib/gemini/gemini';
 import { isRateLimited, getRateLimitHeaders } from '@/lib/rate-limit';
 import { getAuthUserId } from '@/lib/api-auth';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('ClassifyReportAPI');
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
@@ -26,7 +29,7 @@ export async function POST(request: NextRequest) {
     const type = await classifyReport(String(title), String(description));
     return NextResponse.json({ type }, { headers: getRateLimitHeaders(ip) });
   } catch (error) {
-    console.error('[/api/classify-report]', error);
+    log.error('Falha ao classificar relato', {}, error);
     return NextResponse.json({ type: 'other' });
   }
 }

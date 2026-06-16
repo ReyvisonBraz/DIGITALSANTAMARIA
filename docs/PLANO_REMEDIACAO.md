@@ -26,14 +26,14 @@
 
 | # | Parte | Sev. | Área | Dep. | Status | Notas |
 |---|---|---|---|---|---|---|
-| P1 | Allowlist de imagens (`next/image`) | 🔴 | Segurança/Config | — | ⬜ Pendente | |
-| P2 | Reativar Storage + upload de fotos | 🔴 | UX/Infra | — | ⬜ Pendente | |
-| P3 | Auditoria de dados mockados | 🔴 | Produto/Confiança | — | ⬜ Pendente | |
-| P4 | Portão de build/CI verde | 🔴 | Processo | — | 🟡 Parcial | import quebrado de Petições já removido nesta sessão |
-| P5 | Acessibilidade — mínimo de tipografia | 🟠 | A11y/Design | — | ⬜ Pendente | |
-| P6 | Cobertura de testes dos `services/` | 🟠 | Qualidade | — | ⬜ Pendente | |
-| P7 | Unificar linguagem visual / tokens | 🟠 | Design System | P5 | 🟡 Parcial | heros unificados nesta sessão (ver Apêndice A) |
-| P8 | Higiene de código (TODO/console/morto) | 🟡 | Manutenção | — | ⬜ Pendente | |
+| P1 | Allowlist de imagens (`next/image`) | 🔴 | Segurança/Config | — | ✅ Concluída | Removido wildcard; mantidos apenas Storage e avatar Google. |
+| P2 | Reativar Storage + upload de fotos | 🔴 | UX/Infra | — | ✅ Concluída | Upload real para relato, avatar e logo; regras de Storage ajustadas. |
+| P3 | Auditoria de dados mockados | 🔴 | Produto/Confiança | — | ✅ Concluída | Inventário em `docs/INVENTARIO_DADOS.md`; mocks externos removidos/sinalizados. |
+| P4 | Portão de build/CI verde | 🔴 | Processo | — | ✅ Concluída | CI inclui build; artefatos não trackeados. Branch protection exige ajuste no GitHub. |
+| P5 | Acessibilidade — mínimo de tipografia | 🟠 | A11y/Design | — | ✅ Concluída | Zero `text-[8px]`, `text-[9px]` e `text-[10px]`; criada `.label-caps`. |
+| P6 | Cobertura de testes dos `services/` | 🟠 | Qualidade | — | ✅ Concluída | Testes dos services críticos adicionados; testes de protocolo consolidados. |
+| P7 | Unificar linguagem visual / tokens | 🟠 | Design System | P5 | ✅ Concluída | Removidos `blue-600/700`, sombras fora de escala e raios 3rem+. |
+| P8 | Higiene de código (TODO/console/morto) | 🟡 | Manutenção | — | ✅ Concluída | Sem TODO/FIXME; consoles diretos centralizados; no-op de petições removido. |
 
 ---
 

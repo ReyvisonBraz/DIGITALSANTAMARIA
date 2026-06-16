@@ -9,7 +9,7 @@ interface Metrics {
 
 export default function MetricsDashboard({ total, pending, analyzing, solved }: Metrics) {
   const items = [
-    { label: 'Total', value: total, icon: BarChart3, color: 'bg-blue-50 text-blue-700 border-blue-200' },
+    { label: 'Total', value: total, icon: BarChart3, color: 'bg-blue-50 text-primary-dark border-blue-200' },
     { label: 'Pendentes', value: pending, icon: Clock, color: 'bg-amber-50 text-amber-700 border-amber-200' },
     { label: 'Em análise', value: analyzing, icon: AlertTriangle, color: 'bg-orange-50 text-orange-700 border-orange-200' },
     { label: 'Resolvidas', value: solved, icon: CheckCircle2, color: 'bg-green-50 text-green-700 border-green-200' },

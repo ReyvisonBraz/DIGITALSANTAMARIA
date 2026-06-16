@@ -248,7 +248,7 @@ export default function Home() {
                 ].map(([value, label]) => (
                   <div key={label} className="rounded-2xl border border-border bg-white/80 p-3 text-center">
                     <p className="text-sm font-bold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>{value}</p>
-                    <p className="mt-1 text-[10px] font-semibold leading-tight text-text-muted">{label}</p>
+                    <p className="mt-1 text-[11px] font-semibold leading-tight text-text-muted">{label}</p>
                   </div>
                 ))}
               </div>

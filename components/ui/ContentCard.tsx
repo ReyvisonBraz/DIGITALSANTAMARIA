@@ -63,7 +63,7 @@ export default function ContentCard({
           <Image src={imageURL} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
           {badge && (
-            <span className={cn('absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.12em]', badge.color)}>
+            <span className={cn('absolute top-4 left-4 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-[0.12em]', badge.color)}>
               {badge.text}
             </span>
           )}
@@ -75,12 +75,12 @@ export default function ContentCard({
         {/* Badge + Status */}
         <div className="flex items-center gap-2 flex-wrap">
           {!imageURL && badge && (
-            <span className={cn('px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.12em]', badge.color)}>
+            <span className={cn('px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-[0.12em]', badge.color)}>
               {badge.text}
             </span>
           )}
           {status && (
-            <span className={cn('px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.12em]',
+            <span className={cn('px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-[0.12em]',
               statusColor || 'bg-primary/10 text-primary border border-primary/20')}>
               {status}
             </span>
@@ -131,7 +131,7 @@ export default function ContentCard({
             {stats.map((s, i) => (
               <div key={i} className="text-center">
                 <span className="block text-xl font-semibold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>{s.value}</span>
-                <span className="text-[10px] font-semibold text-text-muted uppercase tracking-[0.1em]">{s.label}</span>
+                <span className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.1em]">{s.label}</span>
               </div>
             ))}
           </div>

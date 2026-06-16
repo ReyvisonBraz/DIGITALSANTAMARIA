@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import Image from 'next/image';
 import {
   AlertCircle,
@@ -29,6 +29,7 @@ import {
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
 import { cn } from '@/lib/utils';
+import { uploadBusinessLogo } from '@/services/storage.service';
 import {
   BUSINESS_CATEGORIES,
   GENERIC_BUSINESS_LOGOS,
@@ -54,7 +55,7 @@ const STATUS_META: Record<ContentStatus, { label: string; tone: string; icon: ty
   },
   draft: {
     label: 'Rascunho',
-    tone: 'bg-blue-50 text-blue-700 border-blue-200',
+    tone: 'bg-blue-50 text-primary-dark border-blue-200',
     icon: Clock3,
   },
 };
@@ -84,6 +85,8 @@ const emptyForm: FormState = {
   hours: '',
   imageURL: null,
 };
+
+const BUSINESS_LOGO_INPUT_ID = 'business-logo-file';
 
 function isHttpURL(value: string): boolean {
   if (!value.trim()) return true;
@@ -124,6 +127,9 @@ export default function MyBusinessesSection() {
   const [editing, setEditing] = useState<FormState | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Business | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [logoProgress, setLogoProgress] = useState(0);
+  const logoInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -188,6 +194,30 @@ export default function MyBusinessesSection() {
   const removeLogo = () => {
     if (!editing) return;
     setEditing({ ...editing, imageURL: null });
+  };
+
+  const handleLogoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user || !editing) return;
+
+    setLogoUploading(true);
+    setLogoProgress(0);
+    try {
+      const uploaded = await uploadBusinessLogo(user.uid, file, {
+        onProgress: setLogoProgress,
+      });
+      setEditing((current) => current ? { ...current, imageURL: uploaded.url } : current);
+      setLogoProgress(100);
+      toast('Logo enviada.', 'success');
+    } catch (error) {
+      const message = error instanceof Error && error.message
+        ? error.message
+        : 'Nao foi possivel enviar a logo agora.';
+      toast(message, 'error');
+    } finally {
+      setLogoUploading(false);
+      if (logoInputRef.current) logoInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -393,7 +423,7 @@ export default function MyBusinessesSection() {
                 <button
                   type="button"
                   onClick={removeLogo}
-                  className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-text-muted hover:border-rose-300 hover:text-rose-600"
+                  className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-[11px] font-bold uppercase tracking-widest text-text-muted hover:border-rose-300 hover:text-rose-600"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Remover
@@ -418,6 +448,38 @@ export default function MyBusinessesSection() {
               </div>
 
               <div className="space-y-3">
+                <div className="space-y-2">
+                  <label
+                    htmlFor={BUSINESS_LOGO_INPUT_ID}
+                    className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark"
+                  >
+                    {logoUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageIcon className="h-4 w-4" />}
+                    Enviar logo
+                  </label>
+                  <input
+                    ref={logoInputRef}
+                    id={BUSINESS_LOGO_INPUT_ID}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    disabled={logoUploading}
+                    onChange={handleLogoUpload}
+                    className="sr-only"
+                  />
+                  {logoUploading && (
+                    <div className="space-y-1">
+                      <div className="h-2 overflow-hidden rounded-full bg-primary/10">
+                        <div
+                          className="h-full rounded-full bg-primary transition-all"
+                          style={{ width: `${logoProgress}%` }}
+                        />
+                      </div>
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-text-muted">
+                        {logoProgress}% enviado
+                      </p>
+                    </div>
+                  )}
+                </div>
+
                 <label className="block space-y-1.5">
                   <span className="text-xs font-black uppercase tracking-widest text-text-muted">URL da logo</span>
                   <input
@@ -446,7 +508,7 @@ export default function MyBusinessesSection() {
                   ))}
                 </div>
                 <p className="text-[11px] font-semibold leading-5 text-text-muted">
-                  Use uma imagem pública em HTTPS ou escolha uma logo genérica. Upload direto fica desativado enquanto o Storage não estiver ativo.
+                  Envie JPG, PNG ou WebP ate 2 MB, use uma URL publica em HTTPS ou escolha uma logo generica.
                 </p>
               </div>
             </div>
@@ -523,11 +585,11 @@ export default function MyBusinessesSection() {
             return (
               <article key={business.id} className="civic-card p-4">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest', meta.tone)}>
+                  <span className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest', meta.tone)}>
                     <StatusIcon className="h-3 w-3" />
                     {meta.label}
                   </span>
-                  <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+                  <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
                     {getBusinessCategoryLabel(business.category)}
                   </span>
                 </div>

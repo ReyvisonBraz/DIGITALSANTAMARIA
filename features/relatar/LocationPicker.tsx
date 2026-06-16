@@ -113,7 +113,7 @@ export default function LocationPicker({ value, location, onChange }: LocationPi
         </button>
       </div>
       {location && (
-        <p className="flex items-center gap-1 text-[10px] font-bold text-green-600">
+        <p className="flex items-center gap-1 text-[11px] font-bold text-green-600">
           <MapPin className="h-3 w-3" />
           GPS: {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
         </p>

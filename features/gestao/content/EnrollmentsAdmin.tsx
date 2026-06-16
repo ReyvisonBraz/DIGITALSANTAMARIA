@@ -161,7 +161,7 @@ export default function EnrollmentsAdmin() {
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest ${STATUS_CLASS[enrollment.status]}`}>
+                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest ${STATUS_CLASS[enrollment.status]}`}>
                       {getStatusLabel(enrollment.status)}
                     </span>
                     <span className="font-mono text-xs font-bold text-text-muted">{enrollment.protocol}</span>

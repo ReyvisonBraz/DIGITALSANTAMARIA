@@ -47,7 +47,7 @@ export default function GlobalStatsModal({ isOpen, onClose }: GlobalStatsModalPr
               <stat.icon className={`w-5 h-5 mx-auto ${stat.color} opacity-80`} />
               <div className="space-y-0.5">
                 <p className="text-xl font-bold text-text-main tracking-tight leading-none tabular-nums">{stat.value}</p>
-                <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{stat.label}</p>
+                <p className="text-[11px] font-bold text-text-muted uppercase tracking-widest">{stat.label}</p>
               </div>
             </motion.div>
           ))}
@@ -69,7 +69,7 @@ export default function GlobalStatsModal({ isOpen, onClose }: GlobalStatsModalPr
 
         <button 
           onClick={onClose}
-          className="w-full py-4 bg-white border border-border text-text-muted rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-surface-container hover:border-primary/30 hover:text-primary transition-all shadow-sm active:scale-[0.98]"
+          className="w-full py-4 bg-white border border-border text-text-muted rounded-xl font-bold text-[11px] uppercase tracking-widest hover:bg-surface-container hover:border-primary/30 hover:text-primary transition-all shadow-sm active:scale-[0.98]"
         >
           Fechar Painel
         </button>

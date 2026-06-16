@@ -67,7 +67,7 @@ export default function EditProfileForm({ onSaved }: { onSaved?: () => void }) {
   return (
     <div className="space-y-4">
       <label className="block space-y-2">
-        <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
+        <span className="ml-1 text-[11px] font-black uppercase tracking-widest text-text-muted">
           Nome de exibição
         </span>
         <span className="relative block">
@@ -81,7 +81,7 @@ export default function EditProfileForm({ onSaved }: { onSaved?: () => void }) {
       </label>
 
       <label className="block space-y-2">
-        <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
+        <span className="ml-1 text-[11px] font-black uppercase tracking-widest text-text-muted">
           Telefone
         </span>
         <span className="relative block">
@@ -96,7 +96,7 @@ export default function EditProfileForm({ onSaved }: { onSaved?: () => void }) {
       </label>
 
       <label className="block space-y-2">
-        <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
+        <span className="ml-1 text-[11px] font-black uppercase tracking-widest text-text-muted">
           Bairro
         </span>
         <span className="relative block">

@@ -543,10 +543,10 @@ export default function BusinessesAdmin() {
             {pending.map((biz) => (
               <article key={biz.id} className="civic-card flex flex-col gap-3 p-4">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-amber-700">
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest text-amber-700">
                     Pendente
                   </span>
-                  <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-dark">
+                  <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest text-primary-dark">
                     {biz.category}
                   </span>
                   <span className="text-xs font-bold text-text-muted">{formatDate(biz.createdAt)}</span>
@@ -686,12 +686,12 @@ export default function BusinessesAdmin() {
               <article key={biz.id} className="civic-card flex flex-col gap-3 p-4 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-dark">
+                    <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest text-primary-dark">
                       {biz.category}
                     </span>
                     <ContentStatusBadge status={biz.status} />
                     {biz.hours && (
-                      <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+                      <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
                         {biz.hours}
                       </span>
                     )}

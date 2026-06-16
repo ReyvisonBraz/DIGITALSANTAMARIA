@@ -78,7 +78,7 @@ export const DASHBOARD_MODULES: readonly DashboardModule[] = [
   { icon: Megaphone, label: 'Relatar problema', href: '/relatar', color: 'text-accent-success', bg: 'bg-accent-success/10' },
   { icon: SearchCheck, label: 'Consultar protocolo', href: '/perfil', color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
   { icon: FileText, label: 'Petições', href: '/peticoes', color: 'text-orange-600', bg: 'bg-orange-500/10' },
-  { icon: UserRound, label: 'Painel do Cidadão', href: '/perfil', color: 'text-blue-600', bg: 'bg-blue-500/10' },
+  { icon: UserRound, label: 'Painel do Cidadão', href: '/perfil', color: 'text-primary', bg: 'bg-primary/10' },
   { icon: Heart, label: 'Saúde', href: '/saude', color: 'text-rose-500', bg: 'bg-rose-500/10' },
   { icon: School, label: 'Educação', href: '/educacao', color: 'text-violet-600', bg: 'bg-violet-500/10' },
   { icon: DollarSign, label: 'Tributos', href: '/tributos', color: 'text-amber-600', bg: 'bg-amber-600/10' },

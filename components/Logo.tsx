@@ -109,7 +109,7 @@ export default function Logo({
           </span>
           <span
             className={cn(
-              'mt-0.5 text-[10px] font-bold uppercase tracking-[0.26em]',
+              'mt-0.5 text-[11px] font-bold uppercase tracking-[0.26em]',
               tone === 'light' ? 'text-white/70' : 'text-primary'
             )}
           >

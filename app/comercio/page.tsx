@@ -69,7 +69,7 @@ export default function ComercioPage() {
           <button
             type="button"
             onClick={refresh}
-            className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:brightness-110"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-[11px] font-semibold uppercase tracking-widest text-white transition hover:brightness-110"
           >
             <RefreshCcw className="h-4 w-4" />
             Tentar novamente

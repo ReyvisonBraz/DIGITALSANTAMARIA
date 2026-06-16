@@ -1,9 +1,8 @@
 import {
   ref,
-  uploadBytes,
   getDownloadURL,
   deleteObject,
-  type UploadResult,
+  uploadBytesResumable,
 } from 'firebase/storage';
 import { getStorage } from 'firebase/storage';
 import { app } from '@/lib/firebase';
@@ -23,11 +22,25 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string)
 
 export async function uploadFile(
   file: File,
-  path: string
+  path: string,
+  onProgress?: (progress: number) => void,
 ): Promise<StorageFile> {
   const storageRef = ref(storage, path);
-  const snapshot: UploadResult = await withTimeout(
-    uploadBytes(storageRef, file),
+  const uploadTask = uploadBytesResumable(storageRef, file, {
+    contentType: file.type,
+  });
+  const snapshot = await withTimeout(
+    new Promise<typeof uploadTask.snapshot>((resolve, reject) => {
+      uploadTask.on(
+        'state_changed',
+        (state) => {
+          if (!state.totalBytes) return;
+          onProgress?.(Math.round((state.bytesTransferred / state.totalBytes) * 100));
+        },
+        reject,
+        () => resolve(uploadTask.snapshot),
+      );
+    }),
     UPLOAD_TIMEOUT_MS,
     'O envio da imagem demorou demais. Verifique sua conexao e tente novamente.',
   );

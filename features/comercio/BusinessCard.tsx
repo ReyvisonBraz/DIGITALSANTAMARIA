@@ -61,7 +61,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           <span
             className={cn(
-              'absolute left-4 top-4 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] backdrop-blur-sm',
+              'absolute left-4 top-4 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] backdrop-blur-sm',
               categoryAccent,
             )}
           >
@@ -70,7 +70,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
           </span>
           <span
             className={cn(
-              'absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] backdrop-blur-sm',
+              'absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] backdrop-blur-sm',
               business.isOpen
                 ? 'border-green-200 bg-green-50/90 text-green-700'
                 : 'border-rose-200 bg-rose-50/90 text-rose-700',
@@ -87,7 +87,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
           <div className="flex flex-wrap items-center gap-2">
             <span
               className={cn(
-                'inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em]',
+                'inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em]',
                 categoryAccent,
               )}
             >
@@ -96,7 +96,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
             </span>
             <span
               className={cn(
-                'inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em]',
+                'inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em]',
                 business.isOpen
                   ? 'border-green-200 bg-green-50 text-green-700'
                   : 'border-rose-200 bg-rose-50 text-rose-700',

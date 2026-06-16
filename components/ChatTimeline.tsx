@@ -239,7 +239,7 @@ export default function ChatTimeline({
                   </span>
                   <div>
                     <p className="text-sm font-black text-text-main">{msg.authorName}</p>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-text-muted">
+                    <p className="text-[11px] font-black uppercase tracking-widest text-text-muted">
                       {msg.isStaff ? 'Prefeitura' : msg.authorRole === 'system' ? 'Sistema' : 'Cidadão'}
                     </p>
                   </div>

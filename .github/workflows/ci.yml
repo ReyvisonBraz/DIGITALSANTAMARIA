@@ -8,7 +8,7 @@ on:
 
 jobs:
   validate:
-    name: Type Check + Lint + Tests
+    name: Type Check + Lint + Tests + Build
     runs-on: ubuntu-latest
 
     steps:
@@ -32,3 +32,6 @@ jobs:
 
       - name: Tests
         run: npm test
+
+      - name: Production build
+        run: npm run build

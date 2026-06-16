@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { AlertCircle, ArrowRight, FileText, Loader2, Search, Users } from 'lucide-react';
 import SignatureButton from '@/features/peticoes/SignatureButton';
@@ -31,10 +31,6 @@ export default function PeticoesPage() {
       },
     );
     return () => unsubscribe();
-  }, []);
-
-  const loadPetitions = useCallback(() => {
-    // mantido para compatibilidade com onCreated
   }, []);
 
   const handleSearchChange = (value: string) => {
@@ -109,7 +105,7 @@ export default function PeticoesPage() {
               <article key={petition.id} className="civic-card flex flex-col p-5">
                 <div className="relative z-10 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-primary">
+                    <span className="rounded-full bg-primary/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-widest text-primary">
                       {petition.category}
                     </span>
                     <span className="text-xs font-bold text-text-muted">
@@ -130,7 +126,6 @@ export default function PeticoesPage() {
                     <SignatureButton
                       petitionId={petition.id}
                       petitionTitle={petition.title}
-                      onSign={loadPetitions}
                       className="flex-1"
                     />
                     <Link

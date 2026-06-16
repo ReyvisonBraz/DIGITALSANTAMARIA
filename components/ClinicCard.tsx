@@ -43,7 +43,7 @@ const ClinicCard: React.FC<ClinicCardProps> = ({
             <Icon className="w-5 h-5" />
           </span>
           <div className="text-right">
-            <span className={`text-[10px] font-bold ${currentStatus.text} block tracking-wider uppercase`}>
+            <span className={`text-[11px] font-bold ${currentStatus.text} block tracking-wider uppercase`}>
               {currentStatus.label}
             </span>
             <span className="text-xl font-bold text-text-main tabular-nums">
@@ -61,7 +61,7 @@ const ClinicCard: React.FC<ClinicCardProps> = ({
       </div>
       
       <div className="pt-4 border-t border-border flex items-center justify-between">
-        <span className="text-[10px] font-bold text-text-muted/80 uppercase tracking-widest">
+        <span className="text-[11px] font-bold text-text-muted/80 uppercase tracking-widest">
           Atualizado há 2 min
         </span>
         <button 

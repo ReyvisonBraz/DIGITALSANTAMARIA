@@ -272,7 +272,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
                         : 'border-border bg-white text-text-muted',
                     )}
                   >
-                    <span className="text-[10px] font-semibold uppercase tracking-widest opacity-60">{dateOption.day}</span>
+                    <span className="text-[11px] font-semibold uppercase tracking-widest opacity-60">{dateOption.day}</span>
                     <span className="text-sm font-semibold">{dateOption.label}</span>
                   </button>
                 ))}
@@ -309,7 +309,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
             </div>
             <div className="space-y-4 rounded-2xl border-2 border-border bg-surface p-6">
               <div className="border-b border-border pb-4">
-                <span className="text-[10px] font-semibold uppercase text-text-muted">Especialidade</span>
+                <span className="text-[11px] font-semibold uppercase text-text-muted">Especialidade</span>
                 <p className="text-xl font-semibold uppercase text-text-main">{formData.specialty}</p>
               </div>
               <div className="grid grid-cols-2 gap-4">

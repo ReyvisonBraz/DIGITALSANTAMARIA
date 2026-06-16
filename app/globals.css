@@ -243,6 +243,11 @@
     color: var(--color-primary);
   }
 
+  .label-caps {
+    @apply text-[11px] font-bold uppercase tracking-[0.14em];
+    color: var(--color-text-muted);
+  }
+
   /* ── Botões ── */
   .action-button {
     @apply relative inline-flex min-h-12 items-center justify-center gap-2 overflow-hidden rounded-2xl px-6 py-3 text-sm font-bold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;

@@ -50,7 +50,7 @@ export default function BottomNavBar({ className }: BottomNavBarProps) {
                 )}
               >
                 <item.icon className={cn('h-5 w-5 transition', isActive && 'scale-110')} strokeWidth={isActive ? 2.5 : 2} />
-                <span className="max-w-full truncate text-[10px] font-bold leading-none">{item.label}</span>
+                <span className="max-w-full truncate text-[11px] font-bold leading-none">{item.label}</span>
               </motion.span>
               {isActive && (
                 <motion.span

@@ -40,7 +40,7 @@ export default function LegalPage() {
          <button 
           onClick={() => setActiveTab('termos')}
           className={cn(
-            "flex-1 py-4 rounded-3xl font-semibold text-[10px] uppercase tracking-widest transition-all active:scale-95",
+            "flex-1 py-4 rounded-3xl font-semibold text-[11px] uppercase tracking-widest transition-all active:scale-95",
             activeTab === 'termos' ? "bg-white text-tertiary shadow-lg border-2 border-tertiary/10" : "text-text-muted"
           )}
          >
@@ -49,7 +49,7 @@ export default function LegalPage() {
          <button 
           onClick={() => setActiveTab('privacidade')}
           className={cn(
-            "flex-1 py-4 rounded-3xl font-semibold text-[10px] uppercase tracking-widest transition-all active:scale-95",
+            "flex-1 py-4 rounded-3xl font-semibold text-[11px] uppercase tracking-widest transition-all active:scale-95",
             activeTab === 'privacidade' ? "bg-white text-primary shadow-lg border-2 border-primary/10" : "text-text-muted"
           )}
          >
@@ -57,7 +57,7 @@ export default function LegalPage() {
          </button>
       </div>
 
-      <div className="bg-white p-8 md:p-16 rounded-[4rem] border-2 border-border shadow-xl">
+      <div className="bg-white p-8 md:p-16 rounded-[2rem] border-2 border-border shadow-xl">
         <AnimatePresence mode="wait">
           {activeTab === 'termos' ? (
             <motion.div 
@@ -159,14 +159,14 @@ export default function LegalPage() {
       <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 bg-surface-container rounded-[2rem] border-2 border-border">
          <div className="flex items-center gap-3">
             <Info className="w-5 h-5 text-text-muted" />
-            <span className="text-[10px] font-semibold text-text-muted uppercase tracking-[0.2em]">Última atualização: 10 de Janeiro de 2026</span>
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.2em]">Última atualização: 10 de Janeiro de 2026</span>
          </div>
          <div className="flex flex-col items-end gap-2">
             <button className="flex items-center gap-2 text-xs font-semibold text-amber-700 uppercase tracking-widest opacity-60 cursor-not-allowed" disabled>
                Baixar PDF Completo
                <ChevronRight className="w-4 h-4" />
             </button>
-            <span className="text-[10px] font-semibold text-amber-600/70">Em desenvolvimento</span>
+            <span className="text-[11px] font-semibold text-amber-600/70">Em desenvolvimento</span>
          </div>
       </div>
 

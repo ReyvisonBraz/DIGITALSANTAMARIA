@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { suggestDemandResponse } from '@/lib/gemini/gemini';
 import { isRateLimited, getRateLimitHeaders } from '@/lib/rate-limit';
 import { getAuthUserId } from '@/lib/api-auth';
+import { createLogger } from '@/lib/logger';
+
+const log = createLogger('SuggestResponseAPI');
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
@@ -26,7 +29,7 @@ export async function POST(request: NextRequest) {
     const suggestion = await suggestDemandResponse(String(type), String(subject), String(text));
     return NextResponse.json({ suggestion }, { headers: getRateLimitHeaders(ip) });
   } catch (error) {
-    console.error('[/api/suggest-response]', error);
+    log.error('Falha ao sugerir resposta', {}, error);
     return NextResponse.json({ suggestion: '' });
   }
 }

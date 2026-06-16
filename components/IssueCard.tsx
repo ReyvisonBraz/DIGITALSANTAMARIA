@@ -67,7 +67,7 @@ export default function IssueCard({
       )}
       <div className="flex-grow flex flex-col">
         <div className="flex justify-between items-start mb-2">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-primary">
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-primary">
             {category}
           </span>
           <div className="flex items-center gap-1.5 px-2 py-1 bg-surface-container rounded text-xs font-bold text-primary">
@@ -85,12 +85,12 @@ export default function IssueCard({
 
         <div className="mt-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1 text-[10px] font-bold text-text-muted opacity-60 uppercase tracking-tight">
+            <div className="flex items-center gap-1 text-[11px] font-bold text-text-muted opacity-60 uppercase tracking-tight">
               <Clock className="w-3 h-3" />
               {time}
             </div>
             {location && (
-              <div className="flex items-center gap-1 text-[10px] font-bold text-text-muted opacity-60 uppercase tracking-tight">
+              <div className="flex items-center gap-1 text-[11px] font-bold text-text-muted opacity-60 uppercase tracking-tight">
                 <MapPin className="w-3 h-3" />
                 {location}
               </div>

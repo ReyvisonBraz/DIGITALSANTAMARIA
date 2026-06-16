@@ -28,7 +28,7 @@ export function getContentStatusLabel(status: ContentStatus) {
 
 export function ContentStatusBadge({ status }: { status: ContentStatus }) {
   return (
-    <span className={cn('rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest', STATUS_CLASS[status])}>
+    <span className={cn('rounded-full border px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest', STATUS_CLASS[status])}>
       {getContentStatusLabel(status)}
     </span>
   );
@@ -269,7 +269,7 @@ export function ContentPreviewDialog({
             {meta.length > 0 && (
               <div className="mb-3 flex flex-wrap gap-2">
                 {meta.filter(Boolean).map((item) => (
-                  <span key={item} className="rounded-full bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
+                  <span key={item} className="rounded-full bg-primary/10 px-2 py-1 text-[11px] font-bold uppercase tracking-widest text-primary">
                     {item}
                   </span>
                 ))}

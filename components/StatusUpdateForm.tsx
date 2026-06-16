@@ -92,7 +92,7 @@ export default function StatusUpdateForm({
               <button
                 type="button"
                 onClick={() => setShowQuickResponses((v) => !v)}
-                className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary-dark transition-colors"
+                className="inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-widest text-primary hover:text-primary-dark transition-colors"
               >
                 <Zap className="h-3 w-3" />
                 Respostas rápidas
@@ -108,7 +108,7 @@ export default function StatusUpdateForm({
                   const label = { solicitar_dados: 'Solicitar dados', encaminhamento: 'Encaminhamento', resolucao: 'Resolução', rejeicao: 'Rejeição' }[group];
                   return (
                     <div key={group}>
-                      <span className="text-[10px] font-black uppercase tracking-[0.15em] text-text-muted/60">{label}</span>
+                      <span className="text-[11px] font-black uppercase tracking-[0.15em] text-text-muted/60">{label}</span>
                       <div className="mt-1 flex flex-wrap gap-1.5">
                         {items.map((item) => (
                           <button key={item.label} type="button" onClick={() => applyTemplate(item.text)}

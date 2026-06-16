@@ -29,7 +29,7 @@ const SEVERITIES: { value: TrafficAlert['severity']; label: string }[] = [
 ];
 
 const SEVERITY_BADGE: Record<TrafficAlert['severity'], string> = {
-  baixa: 'bg-blue-50 text-blue-700 border-blue-200',
+  baixa: 'bg-blue-50 text-primary-dark border-blue-200',
   media: 'bg-amber-50 text-amber-700 border-amber-200',
   alta: 'bg-orange-50 text-orange-700 border-orange-200',
   critica: 'bg-rose-50 text-rose-700 border-rose-200',
@@ -276,11 +276,11 @@ export default function TrafficAdmin() {
               <article key={alert.id} className="civic-card flex flex-col gap-3 p-4 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest', SEVERITY_BADGE[alert.severity])}>
+                    <span className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest', SEVERITY_BADGE[alert.severity])}>
                       <AlertTriangle className="h-3 w-3" />
                       {alert.severity}
                     </span>
-                    <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+                    <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
                       {alert.type}
                     </span>
                     <span className="text-xs font-bold text-text-muted">{formatDate(alert.createdAt)}</span>
@@ -292,7 +292,7 @@ export default function TrafficAdmin() {
                     {alert.location}
                   </p>
                   {alert.validUntil && (
-                    <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-text-muted">
+                    <p className="mt-1 text-[11px] font-bold uppercase tracking-widest text-text-muted">
                       Vigente ate {alert.validUntil}
                     </p>
                   )}

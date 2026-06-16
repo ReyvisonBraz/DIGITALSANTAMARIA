@@ -1,8 +1,10 @@
 import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { createLogger } from '@/lib/logger';
 import type { AdminAuditLog, CreateAdminAuditLogInput } from '@/types';
 
 const COLLECTION = 'admin_audit_logs';
+const log = createLogger('AdminAuditService');
 
 export async function createAdminAuditLog(input: CreateAdminAuditLogInput): Promise<string> {
   const docRef = await addDoc(collection(db, COLLECTION), {
@@ -16,7 +18,7 @@ export async function tryCreateAdminAuditLog(input: CreateAdminAuditLogInput): P
   try {
     await createAdminAuditLog(input);
   } catch (error) {
-    console.warn('[admin-audit] Falha ao registrar auditoria', error);
+    log.warn('Falha ao registrar auditoria', {}, error);
   }
 }
 

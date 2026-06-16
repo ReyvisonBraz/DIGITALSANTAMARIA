@@ -47,7 +47,7 @@ export default function ObrasPage() {
               address={item.address}
               extra={
                 <div className="space-y-2 pt-2">
-                  <div className="flex items-center justify-between text-[10px] font-semibold text-text-muted uppercase tracking-widest">
+                  <div className="flex items-center justify-between text-[11px] font-semibold text-text-muted uppercase tracking-widest">
                     <span>Progresso</span>
                     <span>{item.progress}%</span>
                   </div>
@@ -57,7 +57,7 @@ export default function ObrasPage() {
                       style={{ width: `${item.progress}%` }}
                     />
                   </div>
-                  <p className="text-[10px] font-semibold text-text-muted uppercase">
+                  <p className="text-[11px] font-semibold text-text-muted uppercase">
                     Orçamento: R$ {item.budget.toLocaleString('pt-BR')}
                   </p>
                 </div>

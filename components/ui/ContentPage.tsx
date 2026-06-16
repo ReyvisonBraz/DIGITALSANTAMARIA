@@ -85,7 +85,7 @@ export default function ContentPage({
         {onRetry && (
           <button
             onClick={onRetry}
-            className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold text-[10px] uppercase tracking-widest hover:brightness-110 transition-all"
+            className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold text-[11px] uppercase tracking-widest hover:brightness-110 transition-all"
           >
             <RefreshCcw className="w-4 h-4" />
             Tentar Novamente

@@ -12,7 +12,7 @@ export default function SignatureProgress({ current, goal }: SignatureProgressPr
 
   return (
     <div className="space-y-2">
-      <div className="flex justify-between items-end text-[9px] md:text-[10px] font-black uppercase tracking-[0.1em]">
+      <div className="flex justify-between items-end text-[11px] md:text-[11px] font-black uppercase tracking-[0.1em]">
         <span className="text-tertiary">
           {current.toLocaleString()} / {goal.toLocaleString()} assinaturas
         </span>

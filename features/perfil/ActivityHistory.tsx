@@ -297,11 +297,11 @@ export default function ActivityHistory({
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="truncate text-sm font-black text-text-main">{item.title}</p>
-                  <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                  <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-black uppercase tracking-widest text-text-muted">
                     {item.status}
                   </span>
                   {item.unreadByCitizen && (
-                    <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-blue-800">
+                    <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-black uppercase tracking-widest text-blue-800">
                       Nova resposta
                     </span>
                   )}
@@ -317,7 +317,7 @@ export default function ActivityHistory({
                   <button
                     type="button"
                     onClick={() => setOpenItemId(isOpen ? null : itemKey)}
-                    className="inline-flex items-center gap-1 rounded-lg border border-border bg-white px-2 py-1 text-[10px] font-black uppercase tracking-widest text-primary hover:border-primary"
+                    className="inline-flex items-center gap-1 rounded-lg border border-border bg-white px-2 py-1 text-[11px] font-black uppercase tracking-widest text-primary hover:border-primary"
                   >
                     {isOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                     Conversa
@@ -327,7 +327,7 @@ export default function ActivityHistory({
                   <button
                     type="button"
                     onClick={() => setCancelTarget(item)}
-                    className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-white px-2 py-1 text-[10px] font-black uppercase tracking-widest text-rose-600 hover:bg-rose-50"
+                    className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-white px-2 py-1 text-[11px] font-black uppercase tracking-widest text-rose-600 hover:bg-rose-50"
                   >
                     <XCircle className="h-3.5 w-3.5" />
                     Cancelar

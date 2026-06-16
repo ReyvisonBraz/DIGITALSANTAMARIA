@@ -41,7 +41,7 @@ export default function EmpregosPage() {
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto min-h-screen p-4 md:p-12 pb-32 gap-10 md:gap-14 bg-background">
       <section className="space-y-6">
-        <div className="ring-highlight-dark relative overflow-hidden rounded-[2.5rem] md:rounded-[3rem] bg-gradient-to-br from-primary-dark via-primary to-primary-dark animate-drift p-8 md:p-14 text-white shadow-[0_26px_70px_rgba(14,58,140,0.30)]">
+        <div className="ring-highlight-dark relative overflow-hidden rounded-[2.5rem] md:rounded-[2rem] bg-gradient-to-br from-primary-dark via-primary to-primary-dark animate-drift p-8 md:p-14 text-white shadow-[0_26px_70px_rgba(14,58,140,0.30)]">
           <div aria-hidden className="hero-grid-overlay" />
           <div aria-hidden className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-accent-success/25 blur-3xl" />
           <div aria-hidden className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-secondary/25 blur-3xl" />
@@ -89,7 +89,7 @@ export default function EmpregosPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className="sheen-on-hover bg-white p-8 md:p-10 rounded-[3rem] border-2 border-border shadow-sm hover:border-primary/40 hover:shadow-2xl transition-all group"
+            className="sheen-on-hover bg-white p-8 md:p-10 rounded-[2rem] border-2 border-border shadow-sm hover:border-primary/40 hover:shadow-2xl transition-all group"
           >
             <div className="flex justify-between items-start mb-6">
               <div className="w-14 h-14 rounded-2xl bg-surface flex items-center justify-center border-2 border-border">
@@ -102,27 +102,27 @@ export default function EmpregosPage() {
             </div>
             <div className="flex flex-wrap gap-2 mb-6">
               {job.tags.map((tag) => (
-                <span key={tag} className="px-3 py-1 bg-surface border border-border rounded-lg text-[8px] font-semibold text-text-muted uppercase">{tag}</span>
+                <span key={tag} className="px-3 py-1 bg-surface border border-border rounded-lg text-[11px] font-semibold text-text-muted uppercase">{tag}</span>
               ))}
             </div>
             <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-border/50">
-              <div className="flex items-center gap-1.5 text-[9px] font-semibold text-text-muted uppercase">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-text-muted uppercase">
                 <MapPin className="w-3.5 h-3.5 text-primary" />
                 {job.location}
               </div>
               {job.salary && (
-                <div className="flex items-center gap-1.5 text-[9px] font-semibold text-text-muted uppercase">
+                <div className="flex items-center gap-1.5 text-[11px] font-semibold text-text-muted uppercase">
                   <DollarSign className="w-3.5 h-3.5 text-primary" />
                   {job.salary}
                 </div>
               )}
-              <div className="flex items-center gap-1.5 text-[9px] font-semibold text-text-muted uppercase">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-text-muted uppercase">
                 <Clock className="w-3.5 h-3.5 text-primary" />
                 {job.type}
               </div>
               <button
                 onClick={() => setSelectedJob(job)}
-                className="ml-auto px-6 py-3 bg-primary text-white rounded-xl font-semibold text-[9px] uppercase tracking-widest shadow-lg hover:brightness-110 active:scale-95 transition-all"
+                className="ml-auto px-6 py-3 bg-primary text-white rounded-xl font-semibold text-[11px] uppercase tracking-widest shadow-lg hover:brightness-110 active:scale-95 transition-all"
               >
                 Candidatar-se
               </button>

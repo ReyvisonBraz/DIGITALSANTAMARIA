@@ -160,7 +160,7 @@ export default function AppointmentsAdmin() {
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest ${STATUS_CLASS[appointment.status]}`}>
+                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest ${STATUS_CLASS[appointment.status]}`}>
                       {getStatusLabel(appointment.status)}
                     </span>
                     <span className="text-xs font-bold text-text-muted">

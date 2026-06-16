@@ -27,14 +27,14 @@ export default function HealthHistoryPanel({ isOpen, onClose }: HealthHistoryPan
   return (
     <SidePanel isOpen={isOpen} onClose={onClose} title="Meu Histórico de Saúde">
       <div className="p-8 space-y-10 pb-32">
-        <div className="bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[3.5rem] text-white space-y-6 relative overflow-hidden shadow-[0_20px_50px_rgba(26,86,196,0.28)] group">
+        <div className="bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[2rem] text-white space-y-6 relative overflow-hidden shadow-[0_20px_50px_rgba(26,86,196,0.28)] group">
           <div className="relative z-10 flex flex-col gap-6">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 backdrop-blur shadow-inner">
                 <ClipboardList className="w-8 h-8 text-primary" />
               </div>
               <div className="space-y-0.5">
-                <h4 className="text-[10px] font-semibold text-accent uppercase tracking-widest">Acesso Restrito</h4>
+                <h4 className="text-[11px] font-semibold text-accent uppercase tracking-widest">Acesso Restrito</h4>
                 <p className="text-2xl font-semibold tracking-tighter leading-none uppercase">Prontuário <br/> Digital.</p>
               </div>
             </div>
@@ -67,9 +67,9 @@ export default function HealthHistoryPanel({ isOpen, onClose }: HealthHistoryPan
               </div>
               <div className="flex-grow bg-white p-6 rounded-[2rem] border-2 border-border shadow-sm hover:shadow-xl transition-all">
                 <div className="flex justify-between items-start mb-3">
-                  <span className="text-[8px] font-semibold uppercase tracking-[0.2em] opacity-40">{item.date}</span>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.2em] opacity-40">{item.date}</span>
                   <div className={cn(
-                    "px-3 py-1 rounded-full text-[8px] font-semibold uppercase tracking-widest flex items-center gap-1.5",
+                    "px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest flex items-center gap-1.5",
                     item.status === 'completed' ? "bg-green-50 text-green-600" : "bg-primary/5 text-primary"
                   )}>
                     {item.status === 'completed' ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
@@ -78,7 +78,7 @@ export default function HealthHistoryPanel({ isOpen, onClose }: HealthHistoryPan
                 </div>
                 <h4 className="text-lg font-semibold text-text-main leading-none uppercase tracking-tight">{item.specialty}</h4>
                 <div className="mt-4 pt-4 border-t border-border/50 flex flex-wrap gap-4">
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                  <div className="flex items-center gap-2 text-[11px] font-bold text-text-muted uppercase tracking-wider">
                     <MapPin className="w-3 h-3 text-primary" />
                     {item.unitName}
                   </div>
@@ -88,7 +88,7 @@ export default function HealthHistoryPanel({ isOpen, onClose }: HealthHistoryPan
           ))}
         </div>
 
-        <div className="bg-surface p-8 rounded-[3rem] border-2 border-border border-dashed space-y-6 relative overflow-hidden group">
+        <div className="bg-surface p-8 rounded-[2rem] border-2 border-border border-dashed space-y-6 relative overflow-hidden group">
           <div className="flex items-center gap-4 relative z-10">
             <div className="p-3 bg-white rounded-xl shadow-inner text-tertiary">
               <AlertCircle className="w-6 h-6" />

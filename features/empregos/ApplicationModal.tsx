@@ -79,7 +79,7 @@ export default function ApplicationModal({ isOpen, onClose, jobId, jobTitle }: A
         ) : (
           <>
             <div className="space-y-2">
-              <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
+              <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-text-muted">
                 Carta de apresentação (opcional)
               </label>
               <textarea
@@ -90,7 +90,7 @@ export default function ApplicationModal({ isOpen, onClose, jobId, jobTitle }: A
                 onChange={(event) => setCoverLetter(event.target.value)}
                 className="font-ui w-full resize-none rounded-xl border-2 border-border bg-surface p-4 font-bold shadow-inner outline-none transition-all placeholder:opacity-30 focus:border-primary"
               />
-              <p className="text-right text-[10px] font-bold text-text-muted">{coverLetter.length}/2000</p>
+              <p className="text-right text-[11px] font-bold text-text-muted">{coverLetter.length}/2000</p>
             </div>
             <button
               type="button"

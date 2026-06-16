@@ -32,7 +32,7 @@ const log = createLogger('NotificationsPanel');
 const TONE_STYLES: Record<NotificationTone, string> = {
   success: 'bg-green-50 border-green-200 text-green-600',
   alert: 'bg-rose-50 border-rose-200 text-rose-600',
-  update: 'bg-blue-50 border-blue-200 text-blue-600',
+  update: 'bg-blue-50 border-blue-200 text-primary',
 };
 
 const KIND_ICONS: Record<NotificationKind, LucideIcon> = {
@@ -133,7 +133,7 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
                     <div className="min-w-0">
                       <h4 className="text-sm font-semibold uppercase tracking-normal text-text-main">{notification.title}</h4>
                       <p className="mt-1 text-xs font-medium leading-5 text-text-muted">{notification.message}</p>
-                      <div className="mt-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+                      <div className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
                         <Clock className="h-3 w-3" />
                         <time>{formatRelativeTime(notification.createdAt)}</time>
                       </div>
@@ -151,7 +151,7 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
               type="button"
               onClick={markAllAsRead}
               disabled={unreadCount === 0}
-              className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary transition hover:underline disabled:cursor-not-allowed disabled:text-text-muted disabled:no-underline"
+              className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary transition hover:underline disabled:cursor-not-allowed disabled:text-text-muted disabled:no-underline"
             >
               Marcar todas como lidas
             </button>

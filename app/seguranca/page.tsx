@@ -90,7 +90,7 @@ export default function SegurancaPage() {
 
         <form onSubmit={handleEmergencySubmit} className="grid gap-3 md:grid-cols-2">
           <label htmlFor="alert-type" className="space-y-1.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Tipo</span>
+            <span className="text-[11px] font-black uppercase tracking-widest text-red-800">Tipo</span>
             <select
               id="alert-type"
               value={alertType}
@@ -106,7 +106,7 @@ export default function SegurancaPage() {
             </select>
           </label>
           <label htmlFor="alert-location" className="space-y-1.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Localização</span>
+            <span className="text-[11px] font-black uppercase tracking-widest text-red-800">Localização</span>
             <input
               id="alert-location"
               value={location}
@@ -117,7 +117,7 @@ export default function SegurancaPage() {
             />
           </label>
           <label htmlFor="alert-description" className="space-y-1.5 md:col-span-2">
-            <span className="text-[10px] font-black uppercase tracking-widest text-red-800">Descrição</span>
+            <span className="text-[11px] font-black uppercase tracking-widest text-red-800">Descrição</span>
             <textarea
               id="alert-description"
               value={description}
@@ -159,7 +159,7 @@ export default function SegurancaPage() {
               phone={item.emergencyPhone}
               extra={
                 item.is24h ? (
-                  <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[8px] font-semibold uppercase tracking-widest mt-2 border border-emerald-200">
+                  <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[11px] font-semibold uppercase tracking-widest mt-2 border border-emerald-200">
                     24h
                   </span>
                 ) : null

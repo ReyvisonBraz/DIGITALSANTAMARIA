@@ -17,7 +17,7 @@ export default function DevBadge({ status, className }: DevBadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.12em]',
+        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-black uppercase tracking-[0.12em]',
         isDevelopment
           ? 'bg-amber-100 text-amber-700 border border-amber-300'
           : 'bg-slate-100 text-slate-500 border border-slate-300',

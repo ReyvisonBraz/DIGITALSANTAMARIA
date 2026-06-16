@@ -48,7 +48,7 @@ export default function PetitionCard({
         </div>
       )}
       <div className="flex-grow flex flex-col">
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-tertiary">
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-tertiary">
           {category}
         </span>
         <h4 className="font-display font-bold text-xl text-text-main mt-1 mb-2">

@@ -213,7 +213,7 @@ export default function ReportForm() {
                   <Icon className="h-4 w-4" />
                 </span>
                 <span className="text-sm font-bold leading-tight text-text-main">{option.label}</span>
-                <span className="text-[10px] font-medium leading-4 text-text-muted">{option.hint}</span>
+                <span className="text-[11px] font-medium leading-4 text-text-muted">{option.hint}</span>
               </button>
             );
           })}
@@ -250,7 +250,7 @@ export default function ReportForm() {
           placeholder="Conte o que está acontecendo, quando começou e a quem afeta."
           className="w-full rounded-xl border-2 border-border bg-white p-4 font-medium leading-6 text-text-main outline-none transition focus:border-primary"
         />
-        <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-text-muted">
           {description.length}/1000
         </p>
       </div>

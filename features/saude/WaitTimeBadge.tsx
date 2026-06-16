@@ -19,7 +19,7 @@ const colors: Record<WaitTimeLevel, string> = {
 export default function WaitTimeBadge({ waitTime, level }: WaitTimeBadgeProps) {
   return (
     <div className={cn(
-      'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border',
+      'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest border',
       colors[level]
     )}>
       <Clock className="w-3 h-3" />

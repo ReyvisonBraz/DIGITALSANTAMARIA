@@ -439,11 +439,11 @@ export default function EventsAdmin() {
               <article key={event.id} className="civic-card flex flex-col gap-3 p-4 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary">
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest text-primary">
                       {event.category}
                     </span>
                     <ContentStatusBadge status={event.status} />
-                    <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+                    <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
                       {event.isFree ? 'Gratuito' : event.price}
                     </span>
                     <span className="text-xs font-bold text-text-muted">
@@ -456,7 +456,7 @@ export default function EventsAdmin() {
                     <MapPin className="h-3.5 w-3.5 text-primary" />
                     {event.location}{event.address ? ` — ${event.address}` : ''}
                   </p>
-                  <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-text-muted">
+                  <p className="mt-1 text-[11px] font-bold uppercase tracking-widest text-text-muted">
                     Publicado em {formatDate(event.createdAt)}
                   </p>
                 </div>

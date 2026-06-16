@@ -71,7 +71,7 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
             className="pointer-events-auto flex items-center gap-3 bg-accent-danger text-white px-5 py-3 rounded-full shadow-2xl border-2 border-white/20 hover:scale-105 active:scale-95 transition-all group"
           >
             <BellRing className="w-5 h-5 animate-pulse" />
-            <span className="text-[10px] font-semibold uppercase tracking-widest">Alerta Ativo</span>
+            <span className="text-[11px] font-semibold uppercase tracking-widest">Alerta Ativo</span>
             <ChevronUp className="w-4 h-4 opacity-50" />
           </motion.button>
         ) : (
@@ -90,7 +90,7 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
                 <div className="bg-rose-500/10 p-2 rounded-xl border border-rose-500/20">
                   <AlertCircle className="w-5 h-5 text-rose-500" />
                 </div>
-                <h4 className="text-[10px] font-bold uppercase tracking-widest text-rose-500">Aviso Urgente</h4>
+                <h4 className="text-[11px] font-bold uppercase tracking-widest text-rose-500">Aviso Urgente</h4>
               </div>
               <div className="flex items-center gap-1">
                 <button 
@@ -118,7 +118,7 @@ export default function AlertBanner({ message, type = 'urgent' }: AlertBannerPro
             <div className="flex items-center gap-3">
               <Link 
                 href="/avisos" 
-                className="flex-grow text-center py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95"
+                className="flex-grow text-center py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-[11px] uppercase tracking-widest transition-all shadow-lg active:scale-95"
               >
                 Ver Detalhes
               </Link>

@@ -11,7 +11,7 @@ export default function TransitoPage() {
   const { data, loading, error, refresh } = useContent<TrafficAlert>('traffic_alerts');
 
   const severityColors: Record<string, string> = {
-    baixa: 'bg-blue-100 text-blue-700 border border-blue-200',
+    baixa: 'bg-blue-100 text-primary-dark border border-blue-200',
     media: 'bg-yellow-100 text-yellow-700 border border-yellow-200',
     alta: 'bg-orange-100 text-orange-700 border border-orange-200',
     critica: 'bg-red-100 text-red-700 border border-red-200',

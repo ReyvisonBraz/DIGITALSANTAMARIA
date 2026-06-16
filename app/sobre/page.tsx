@@ -59,9 +59,9 @@ export default function SobrePage() {
           </div>
         </div>
         <div className="relative aspect-square order-1 lg:order-2">
-           <div className="absolute inset-0 bg-primary/10 rounded-[4rem] rotate-6 scale-95" />
-           <div className="absolute inset-0 bg-tertiary/10 rounded-[4rem] -rotate-3 scale-95" />
-           <div className="relative w-full h-full rounded-[4rem] overflow-hidden border-8 border-white shadow-2xl shadow-primary/20">
+           <div className="absolute inset-0 bg-primary/10 rounded-[2rem] rotate-6 scale-95" />
+           <div className="absolute inset-0 bg-tertiary/10 rounded-[2rem] -rotate-3 scale-95" />
+           <div className="relative w-full h-full rounded-[2rem] overflow-hidden border-8 border-white shadow-2xl shadow-primary/20">
               <Image 
                  src="https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=800&h=800&fit=crop" 
                  alt="Cidade de Santa Maria do Pará" 
@@ -97,7 +97,7 @@ export default function SobrePage() {
             color: 'bg-primary'
           }
         ].map((item, idx) => (
-          <div key={item.title} className="bg-white p-10 rounded-[3rem] border-2 border-border hover:border-primary transition-all group shadow-sm flex flex-col gap-6">
+          <div key={item.title} className="bg-white p-10 rounded-[2rem] border-2 border-border hover:border-primary transition-all group shadow-sm flex flex-col gap-6">
             <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform", item.color)}>
               <item.icon className="w-8 h-8" />
             </div>
@@ -122,7 +122,7 @@ export default function SobrePage() {
                </div>
                <div>
                   <h4 className="text-base font-semibold text-text-main tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>{t.name}</h4>
-                  <p className="text-[10px] font-bold text-text-muted uppercase tracking-[0.18em] mt-0.5">{t.role}</p>
+                  <p className="text-[11px] font-bold text-text-muted uppercase tracking-[0.18em] mt-0.5">{t.role}</p>
                </div>
             </div>
           ))}
@@ -130,7 +130,7 @@ export default function SobrePage() {
       </section>
 
       {/* Footer CTA */}
-      <section className="bg-gradient-to-br from-primary-dark via-primary to-primary-dark p-12 md:p-20 rounded-[3rem] text-white flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden shadow-[0_26px_70px_rgba(14,58,140,0.30)] animate-drift">
+      <section className="bg-gradient-to-br from-primary-dark via-primary to-primary-dark p-12 md:p-20 rounded-[2rem] text-white flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden shadow-[0_26px_70px_rgba(14,58,140,0.30)] animate-drift">
          <div className="relative z-10 space-y-6 max-w-xl">
             <h2 className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.0]" style={{ fontFamily: 'var(--font-display)' }}>Participe da construção</h2>
             <p className="text-lg opacity-85 font-medium leading-relaxed">O portal evolui com base no que os cidadãos enviam pela Ouvidoria. Sua voz molda a próxima versão.</p>

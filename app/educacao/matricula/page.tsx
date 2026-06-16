@@ -153,7 +153,7 @@ export default function MatriculaPage() {
         </button>
         <div className="flex items-center gap-2 rounded-full border-2 border-border bg-surface px-4 py-2">
           <ShieldCheck className="h-4 w-4 text-green-500" />
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-text-muted">Conexão segura SSL</span>
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-text-muted">Conexão segura SSL</span>
         </div>
       </div>
 
@@ -183,7 +183,7 @@ export default function MatriculaPage() {
             </div>
             <span
               className={cn(
-                'hidden text-[9px] font-semibold uppercase tracking-widest md:block',
+                'hidden text-[11px] font-semibold uppercase tracking-widest md:block',
                 currentStep >= step.id ? 'text-primary' : 'text-text-muted opacity-50',
               )}
             >
@@ -193,7 +193,7 @@ export default function MatriculaPage() {
         ))}
       </div>
 
-      <div className="flex min-h-[400px] flex-col rounded-[3.5rem] border-2 border-border bg-white p-8 shadow-2xl md:p-12">
+      <div className="flex min-h-[400px] flex-col rounded-[2rem] border-2 border-border bg-white p-8 shadow-2xl md:p-12">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
@@ -255,7 +255,7 @@ export default function MatriculaPage() {
                     value={formData.address}
                     onChange={(value) => updateField('address', value)}
                   />
-                  <p className="font-ui text-[10px] font-bold text-text-muted">
+                  <p className="font-ui text-[11px] font-bold text-text-muted">
                     O zoneamento escolar é baseado no endereço de residência do aluno.
                   </p>
                 </div>
@@ -303,7 +303,7 @@ export default function MatriculaPage() {
             onClick={prevStep}
             disabled={currentStep === 1 || submitted}
             className={cn(
-              'flex items-center gap-2 rounded-xl px-6 py-4 text-[10px] font-semibold uppercase tracking-widest transition-all',
+              'flex items-center gap-2 rounded-xl px-6 py-4 text-[11px] font-semibold uppercase tracking-widest transition-all',
               currentStep === 1 || submitted
                 ? 'pointer-events-none opacity-0'
                 : 'border-2 border-border bg-surface text-text-muted hover:border-primary hover:text-primary',
@@ -371,7 +371,7 @@ function TextField({
 }) {
   return (
     <label className="space-y-2">
-      <span className="ml-1 text-[10px] font-semibold uppercase tracking-widest text-text-muted">{label}</span>
+      <span className="ml-1 text-[11px] font-semibold uppercase tracking-widest text-text-muted">{label}</span>
       <input
         type={type}
         placeholder={placeholder}
@@ -403,7 +403,7 @@ function ReviewView({ formData }: { formData: FormData }) {
       </div>
       <div className="flex flex-col items-center gap-3 rounded-3xl border-2 border-dashed border-border bg-surface p-6">
         <Info className="h-6 w-6 text-primary" />
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-text-muted">
           Lembre-se de apresentar os documentos físicos na unidade escolar após convocação.
         </p>
       </div>
@@ -414,7 +414,7 @@ function ReviewView({ formData }: { formData: FormData }) {
 function ReviewRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-4">
-      <span className="text-[10px] font-bold text-text-muted">{label}:</span>
+      <span className="text-[11px] font-bold text-text-muted">{label}:</span>
       <span className="text-right text-xs font-semibold">{value}</span>
     </div>
   );
@@ -436,7 +436,7 @@ function SuccessView({ protocol, onBack }: { protocol: string; onBack: () => voi
         <div className="flex items-center justify-center gap-3">
           <ClipboardList className="h-6 w-6 text-primary" />
           <div className="text-left">
-            <p className="text-[9px] font-semibold uppercase tracking-widest text-text-muted">Protocolo</p>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-text-muted">Protocolo</p>
             <p className="font-mono text-xl font-semibold tracking-wider text-text-main">{protocol}</p>
           </div>
         </div>

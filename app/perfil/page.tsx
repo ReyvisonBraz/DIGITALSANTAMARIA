@@ -190,7 +190,7 @@ export default function PerfilPage() {
           <div className="min-w-0">
             <div className="inline-flex items-center gap-2">
               <p className="text-xs font-semibold uppercase tracking-widest text-primary">Painel do Cidadão</p>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-success/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-accent-success">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-success/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-widest text-accent-success">
                 <span className="h-1.5 w-1.5 rounded-full bg-accent-success" />
                 Conectado
               </span>
@@ -316,7 +316,7 @@ export default function PerfilPage() {
               <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">Dados básicos</p>
               <button
                 onClick={() => setSettingsMode('edit')}
-                className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
+                className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-[11px] font-semibold uppercase tracking-widest text-text-main transition hover:border-primary hover:text-primary"
               >
                 <Settings className="h-3.5 w-3.5" />
                 Editar

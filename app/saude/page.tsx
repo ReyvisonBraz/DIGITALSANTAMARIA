@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { 
   Plus, 
   Search, 
@@ -100,7 +99,8 @@ export default function SaudePage() {
   const [activeTab, setActiveTab] = useState<HealthTab>('unidades');
   const [modalOpen, setModalOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
-  const visiblePharmacyItems: PharmacyDisplayItem[] = pharmacyItems.length > 0 ? pharmacyItems : fallbackMedicines;
+  const usingFallbackMedicines = pharmacyItems.length === 0 && !pharmacyLoading && !pharmacyError;
+  const visiblePharmacyItems: PharmacyDisplayItem[] = usingFallbackMedicines ? fallbackMedicines : pharmacyItems;
 
   const exportVaccineCertificate = () => {
     const content = [
@@ -148,7 +148,7 @@ export default function SaudePage() {
                      key={cat.id}
                      onClick={() => setActiveTab(cat.id)}
                      className={cn(
-                        "flex-1 py-3 rounded-xl font-semibold text-[10px] uppercase tracking-widest transition-all",
+                        "flex-1 py-3 rounded-xl font-semibold text-[11px] uppercase tracking-widest transition-all",
                         activeTab === cat.id ? "bg-white text-sky-500 shadow-lg border border-sky-500/10" : "text-text-muted hover:text-text-main"
                      )}
                   >
@@ -181,8 +181,8 @@ export default function SaudePage() {
                   >
                      <div className="space-y-4">
                         <div className="flex items-center justify-between px-2">
-                           <h3 className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">Tempos de Espera (Live)</h3>
-                           <div className="flex items-center gap-1.5 text-[8px] font-semibold text-green-500">
+                           <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">Tempos de Espera (Live)</h3>
+                           <div className="flex items-center gap-1.5 text-[11px] font-semibold text-green-500">
                               <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
                               VERIFICADO
                            </div>
@@ -195,11 +195,11 @@ export default function SaudePage() {
                         ) : status === 'error' ? (
                           <div className="text-center py-8 space-y-3">
                             <AlertTriangle className="w-8 h-8 text-sky-500 mx-auto" />
-                            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">{error}</p>
+                            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">{error}</p>
                           </div>
                         ) : units.length === 0 ? (
                           <div className="text-center py-8">
-                            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">Nenhuma unidade disponível</p>
+                            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">Nenhuma unidade disponível</p>
                           </div>
                         ) : (
                           units.map((unit) => (
@@ -216,7 +216,7 @@ export default function SaudePage() {
                                  </div>
                                  <div className="space-y-0.5">
                                     <h4 className="text-sm font-semibold text-text-main uppercase leading-tight group-hover:text-sky-500 transition-colors">{unit.name}</h4>
-                                    <p className="text-[9px] font-bold text-text-muted uppercase tracking-widest flex items-center gap-1.5">
+                                    <p className="text-[11px] font-bold text-text-muted uppercase tracking-widest flex items-center gap-1.5">
                                        <MapPin className="w-3 h-3 text-sky-500" />
                                        {unit.address.split('-')[0]}
                                     </p>
@@ -224,7 +224,7 @@ export default function SaudePage() {
                               </div>
                               <div className="text-right">
                                  <p className="text-xl font-semibold text-text-main tabular-nums leading-none">{unit.waitTime}</p>
-                                 <p className="text-[8px] font-semibold text-text-muted uppercase tracking-widest opacity-60">
+                                 <p className="text-[11px] font-semibold text-text-muted uppercase tracking-widest opacity-60">
                                     {unit.isOpen ? unit.type.toUpperCase() : 'FECHADA'}
                                  </p>
                               </div>
@@ -240,7 +240,7 @@ export default function SaudePage() {
                      animate={{ opacity: 1, x: 0 }}
                      className="space-y-6"
                   >
-                     <div className="ring-highlight-dark bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[3rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">
+                     <div className="ring-highlight-dark bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[2rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">
                         <div aria-hidden className="hero-grid-overlay" />
                         <div aria-hidden className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-secondary/30 blur-3xl" />
                         <div className="relative z-10 flex flex-col h-full justify-between gap-6">
@@ -250,7 +250,7 @@ export default function SaudePage() {
                            </div>
                            <button 
                               onClick={() => setHistoryOpen(true)}
-                              className="w-full py-4 bg-white text-text-main rounded-2xl font-semibold text-[10px] uppercase tracking-widest hover:bg-sky-50 transition-all shadow-xl"
+                              className="w-full py-4 bg-white text-text-main rounded-2xl font-semibold text-[11px] uppercase tracking-widest hover:bg-sky-50 transition-all shadow-xl"
                            >
                               Acessar Prontuário
                            </button>
@@ -258,7 +258,7 @@ export default function SaudePage() {
                         <Activity className="absolute -right-8 -bottom-8 w-48 h-48 opacity-[0.05] rotate-12 group-hover:scale-110 transition-transform" />
                      </div>
 
-                  <div className="bg-white p-8 rounded-[3rem] border-2 border-border border-dashed space-y-6 shadow-sm">
+                  <div className="bg-white p-8 rounded-[2rem] border-2 border-border border-dashed space-y-6 shadow-sm">
                      <DevBanner
                         title="Carteira de vacinação digital em desenvolvimento"
                         description="A emissão do certificado vacinal real com QR code validável e exportação oficial estará disponível em breve. Consulte a unidade de saúde mais próxima enquanto isso."
@@ -273,16 +273,24 @@ export default function SaudePage() {
                            </div>
                         </div>
                         <div className="flex flex-col items-center gap-4 py-4 bg-surface rounded-3xl border-2 border-border shadow-inner relative group">
-                           <Image 
-                              src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=DIGITAL-VAX-ID-2026-USER" 
-                              alt="Vax QR" 
-                              width={160} 
-                              height={160} 
-                              className="grayscale opacity-80 contrast-125 mix-blend-multiply transition-all group-hover:scale-105"
-                              referrerPolicy="no-referrer"
-                           />
+                           <div
+                              aria-label="QR code demonstrativo"
+                              className="grid h-40 w-40 grid-cols-5 gap-1 rounded-2xl bg-white p-4 shadow-inner"
+                           >
+                              {Array.from({ length: 25 }).map((_, index) => (
+                                 <span
+                                    key={index}
+                                    className={cn(
+                                       'rounded-[2px]',
+                                       [0, 1, 3, 4, 5, 9, 15, 19, 20, 21, 23, 24, 7, 12, 17].includes(index)
+                                          ? 'bg-sky-900'
+                                          : 'bg-sky-100',
+                                    )}
+                                 />
+                              ))}
+                           </div>
                            <div className="text-center space-y-1">
-                              <span className="text-[8px] font-semibold text-sky-500 uppercase flex items-center justify-center gap-1.5 font-mono">
+                              <span className="text-[11px] font-semibold text-sky-500 uppercase flex items-center justify-center gap-1.5 font-mono">
                                  <div className="w-1.5 h-1.5 bg-sky-500 rounded-full" />
                                  ASSINATURA DIGITAL ATIVA
                               </span>
@@ -290,7 +298,7 @@ export default function SaudePage() {
                         </div>
                         <button 
                            onClick={exportVaccineCertificate}
-                           className="w-full py-4 bg-sky-500/5 border-2 border-sky-500/20 rounded-2xl font-semibold text-[9px] uppercase tracking-widest text-sky-600 hover:bg-sky-500 hover:text-white transition-all flex items-center justify-center gap-2"
+                           className="w-full py-4 bg-sky-500/5 border-2 border-sky-500/20 rounded-2xl font-semibold text-[11px] uppercase tracking-widest text-sky-600 hover:bg-sky-500 hover:text-white transition-all flex items-center justify-center gap-2"
                         >
                            <Download className="w-4 h-4" />
                            Exportar para Viagem
@@ -306,7 +314,7 @@ export default function SaudePage() {
                   >
                      <div className="space-y-4">
                         <div className="flex items-center justify-between px-2">
-                           <h3 className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">Estoque Popular</h3>
+                           <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">Estoque Popular</h3>
                            <Pill className="w-4 h-4 text-sky-500" />
                         </div>
                         
@@ -317,48 +325,56 @@ export default function SaudePage() {
                         ) : pharmacyError ? (
                           <div className="rounded-3xl border-2 border-border bg-white p-5 text-center">
                             <AlertTriangle className="mx-auto h-8 w-8 text-sky-500" />
-                            <p className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+                            <p className="mt-3 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
                               Não foi possível carregar o estoque.
                             </p>
                             <button
                               type="button"
                               onClick={refreshPharmacy}
-                              className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-[10px] font-black uppercase tracking-widest text-sky-600"
+                              className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-[11px] font-black uppercase tracking-widest text-sky-600"
                             >
                               <RefreshCcw className="h-3.5 w-3.5" />
                               Tentar novamente
                             </button>
                           </div>
                         ) : (
-                          visiblePharmacyItems.map((med) => (
+                          <>
+                          {usingFallbackMedicines && (
+                            <DevBanner
+                              title="Estoque demonstrativo"
+                              description="Medicamentos, quantidades e disponibilidade abaixo sao exemplos ate a publicacao do estoque real pela Secretaria de Saude."
+                            />
+                          )}
+                          {visiblePharmacyItems.map((med) => (
                            <div key={med.id} className="bg-white p-5 rounded-3xl border-2 border-border flex items-center justify-between gap-4 group cursor-pointer hover:border-sky-500 transition-all">
                               <div className="min-w-0 space-y-0.5">
                                  <h4 className="text-sm font-semibold text-text-main uppercase">{med.title}</h4>
-                                 <p className="text-[9px] font-bold text-text-muted uppercase tracking-widest">
+                                 <p className="text-[11px] font-bold text-text-muted uppercase tracking-widest">
                                     {med.quantity} {med.unit} - {med.location}
                                  </p>
                                  {med.requiresPrescription && (
-                                   <p className="text-[8px] font-bold uppercase tracking-widest text-sky-500">Exige receita</p>
+                                   <p className="text-[11px] font-bold uppercase tracking-widest text-sky-500">Exige receita</p>
                                  )}
                               </div>
                               <span className={cn(
-                                 "shrink-0 px-3 py-1 rounded-full text-[8px] font-semibold uppercase tracking-widest",
+                                 "shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest",
                                  med.stockStatus === 'available' ? "bg-green-100 text-green-600" : (med.stockStatus === 'low_stock' ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-600")
                               )}>
                                  {stockLabel[med.stockStatus]}
                               </span>
                            </div>
-                          ))
+                          ))}
+                          </>
                         )}
                      </div>
 
-                     <div className="bg-sky-500 p-8 rounded-[3rem] text-white space-y-6 relative overflow-hidden group">
+                     <div className="bg-sky-500 p-8 rounded-[2rem] text-white space-y-6 relative overflow-hidden group">
                         <div className="relative z-10 flex flex-col gap-4">
                            <h3 className="text-2xl font-semibold leading-[1.02] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Receita digital</h3>
                            <p className="text-sm opacity-85 font-medium leading-relaxed">Sincronize suas receitas assinadas digitalmente para retirada rápida em qualquer UBS.</p>
                            <button 
                               onClick={() => toast('Abrindo scanner de receitas digitais...', 'info')}
-                              className="w-full py-4 bg-white text-sky-500 rounded-2xl font-semibold text-[9px] uppercase tracking-widest shadow-xl flex items-center justify-center gap-3"
+                              className="w-full py-4 bg-white text-sky-500 rounded-2xl font-semibold text-[11px] uppercase tracking-widest shadow-xl flex items-center justify-center gap-3"
                            >
                               <SearchIcon className="w-4 h-4" />
                               Validar Receita
@@ -375,16 +391,10 @@ export default function SaudePage() {
 
       {/* Main Content: Map View */}
       <section className="flex-grow relative bg-slate-200">
-         <div className="absolute inset-0 z-0">
-            <Image 
-               src="https://picsum.photos/seed/healthmap/1920/1080" 
-               alt="Mapa da Saúde" 
-               fill 
-               priority
-               sizes="(min-width: 768px) calc(100vw - 480px), 100vw"
-               className="object-cover grayscale contrast-125 brightness-110"
-               referrerPolicy="no-referrer"
-            />
+         <div className="absolute inset-0 z-0 bg-[linear-gradient(90deg,rgba(14,58,140,0.08)_1px,transparent_1px),linear-gradient(0deg,rgba(14,58,140,0.08)_1px,transparent_1px)] bg-[size:56px_56px]">
+            <div className="absolute inset-0 bg-gradient-to-br from-sky-100 via-slate-100 to-white" />
+            <div className="absolute left-1/4 top-0 h-full w-24 rotate-12 bg-sky-300/20 blur-sm" />
+            <div className="absolute left-2/3 top-0 h-full w-16 -rotate-12 bg-primary/10 blur-sm" />
             
             {/* Mock Map Markers */}
             <div className="absolute top-1/2 left-1/3 group cursor-pointer">
@@ -392,8 +402,8 @@ export default function SaudePage() {
                   <BriefcaseMedical className="w-6 h-6" />
                </div>
                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-white p-3 rounded-2xl shadow-2xl border-2 border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
-                  <p className="text-xs font-semibold text-text-main uppercase">UPA Central</p>
-                  <p className="text-[8px] font-semibold text-green-500 uppercase">Espera: 15 min</p>
+                  <p className="text-xs font-semibold text-text-main uppercase">Unidade exemplo</p>
+                  <p className="text-[11px] font-semibold text-green-500 uppercase">Tempo demonstrativo</p>
                </div>
             </div>
 
@@ -402,10 +412,17 @@ export default function SaudePage() {
                   <Hospital className="w-6 h-6" />
                </div>
                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-white p-3 rounded-2xl shadow-2xl border-2 border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
-                  <p className="text-xs font-semibold text-text-main uppercase">Hospital Municipal</p>
-                  <p className="text-[8px] font-semibold text-sky-500 uppercase">Espera: 120 min</p>
+                  <p className="text-xs font-semibold text-text-main uppercase">Unidade exemplo</p>
+                  <p className="text-[11px] font-semibold text-sky-500 uppercase">Tempo demonstrativo</p>
                </div>
             </div>
+         </div>
+
+         <div className="absolute left-8 top-8 z-10 max-w-md">
+            <DevBanner
+               title="Mapa demonstrativo"
+               description="A visualizacao cartografica e os marcadores sao ilustrativos ate a integracao com dados georreferenciados oficiais."
+            />
          </div>
 
          {/* Map Legend/Controls */}
@@ -413,15 +430,15 @@ export default function SaudePage() {
             <div className="bg-white/80 backdrop-blur-md p-4 rounded-3xl border-2 border-border shadow-2xl space-y-3">
                <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-green-500 rounded-full" />
-                  <span className="text-[9px] font-semibold uppercase text-text-main tracking-widest">Espera Menor</span>
+                  <span className="text-[11px] font-semibold uppercase text-text-main tracking-widest">Espera Menor</span>
                </div>
                <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-amber-500 rounded-full" />
-                  <span className="text-[9px] font-semibold uppercase text-text-main tracking-widest">Espera Média</span>
+                  <span className="text-[11px] font-semibold uppercase text-text-main tracking-widest">Espera Média</span>
                </div>
                <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-sky-500 rounded-full" />
-                  <span className="text-[9px] font-semibold uppercase text-text-main tracking-widest">Espera Alta</span>
+                  <span className="text-[11px] font-semibold uppercase text-text-main tracking-widest">Espera Alta</span>
                </div>
             </div>
          </div>
@@ -445,18 +462,18 @@ export default function SaudePage() {
                    exit={{ opacity: 0, y: 100, scale: 0.9 }}
                    className="absolute bottom-8 left-8 right-8 md:right-auto md:w-[420px] z-20"
                 >
-                   <div className="bg-white p-8 rounded-[3rem] border-2 border-sky-500 shadow-2xl space-y-6 relative overflow-hidden group">
+                   <div className="bg-white p-8 rounded-[2rem] border-2 border-sky-500 shadow-2xl space-y-6 relative overflow-hidden group">
                       <div className="flex justify-between items-start relative z-10">
                          <div className="space-y-1">
-                            <span className="text-[9px] font-semibold text-sky-500 uppercase tracking-widest">{selectedClinic.type.toUpperCase()}</span>
+                            <span className="text-[11px] font-semibold text-sky-500 uppercase tracking-widest">{selectedClinic.type.toUpperCase()}</span>
                             <h4 className="text-2xl font-semibold text-text-main tracking-tight leading-[1.05]" style={{ fontFamily: 'var(--font-display)' }}>{selectedClinic.name}</h4>
-                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-text-muted">
+                            <div className="flex items-center gap-1.5 text-[11px] font-bold text-text-muted">
                                <MapPin className="w-3 h-3 text-sky-500" />
                                {selectedClinic.address}
                             </div>
                          </div>
                          <div className={cn(
-                            "px-4 py-2 rounded-2xl text-[10px] font-semibold shadow-lg",
+                            "px-4 py-2 rounded-2xl text-[11px] font-semibold shadow-lg",
                             selectedClinic.waitLevel === 'low' ? "bg-green-500 text-white" : (selectedClinic.waitLevel === 'medium' ? "bg-amber-500 text-white" : (selectedClinic.waitLevel === 'critical' ? "bg-red-500 text-white" : "bg-sky-500 text-white"))
                          )}>
                             {selectedClinic.waitTime}
@@ -466,7 +483,7 @@ export default function SaudePage() {
                       <div className="grid grid-cols-2 gap-3 relative z-10">
                          {selectedClinic.specialties.slice(0, 2).map((spec) => (
                            <div key={spec} className="bg-surface p-3 rounded-2xl border border-border">
-                              <p className="text-[8px] font-semibold text-text-muted uppercase tracking-widest mb-1">{spec}</p>
+                              <p className="text-[11px] font-semibold text-text-muted uppercase tracking-widest mb-1">{spec}</p>
                               <p className="text-xs font-semibold text-text-main">Disponível</p>
                            </div>
                          ))}
@@ -475,7 +492,7 @@ export default function SaudePage() {
                       <div className="flex gap-4 relative z-10">
                          <button 
                             onClick={() => setSelectedClinic(null)}
-                            className="px-6 py-4 bg-surface border-2 border-border rounded-2xl text-[9px] font-semibold uppercase tracking-widest text-text-muted hover:border-sky-500/30 transition-all font-ui font-bold"
+                            className="px-6 py-4 bg-surface border-2 border-border rounded-2xl text-[11px] font-semibold uppercase tracking-widest text-text-muted hover:border-sky-500/30 transition-all font-ui font-bold"
                          >
                             Fechar
                          </button>
@@ -483,7 +500,7 @@ export default function SaudePage() {
                             type="button"
                             onClick={() => setModalOpen(true)}
                             disabled={!selectedClinic.isOpen}
-                            className="flex-grow bg-sky-500 text-white px-8 py-4 rounded-2xl font-semibold text-[10px] uppercase tracking-widest shadow-xl shadow-sky-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex-grow bg-sky-500 text-white px-8 py-4 rounded-2xl font-semibold text-[11px] uppercase tracking-widest shadow-xl shadow-sky-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:cursor-not-allowed disabled:opacity-50"
                          >
                             {selectedClinic.isOpen ? 'Agendar aqui' : 'Unidade fechada'}
                             <ArrowRight className="w-4 h-4" />

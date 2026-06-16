@@ -124,7 +124,7 @@ export default function GuidedHelp() {
                   <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent/30 blur-3xl" />
                   <div className="relative flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/12 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/90">
+                      <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/12 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/90">
                         <CircleHelp className="h-3.5 w-3.5" />
                         {guide.eyebrow}
                       </span>

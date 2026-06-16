@@ -227,8 +227,8 @@ export default function JobsAdmin() {
               <article key={job.id} className="civic-card flex flex-col gap-3 p-4 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary">{job.type}</span>
-                    {job.isFeatured && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-amber-700">Destaque</span>}
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest text-primary">{job.type}</span>
+                    {job.isFeatured && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest text-amber-700">Destaque</span>}
                     <span className="text-xs font-bold text-text-muted">{job.applicationCount} candidatura{job.applicationCount === 1 ? '' : 's'}</span>
                   </div>
                   <h4 className="mt-2 text-base font-semibold text-text-main">{job.title}</h4>

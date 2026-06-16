@@ -38,7 +38,7 @@ const PRIORITIES: { value: Notice['priority']; label: string }[] = [
 ];
 
 const PRIORITY_BADGE: Record<Notice['priority'], string> = {
-  low: 'bg-blue-50 text-blue-700 border-blue-200',
+  low: 'bg-blue-50 text-primary-dark border-blue-200',
   medium: 'bg-amber-50 text-amber-700 border-amber-200',
   high: 'bg-orange-50 text-orange-700 border-orange-200',
   critical: 'bg-rose-50 text-rose-700 border-rose-200',
@@ -382,11 +382,11 @@ export default function NoticesAdmin() {
               <article key={notice.id} className="civic-card flex flex-col gap-3 p-4 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className={cn('rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest', PRIORITY_BADGE[notice.priority])}>
+                    <span className={cn('rounded-full border px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest', PRIORITY_BADGE[notice.priority])}>
                       {notice.priority}
                     </span>
                     <ContentStatusBadge status={notice.status} />
-                    <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted">
+                    <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
                       {notice.type}
                     </span>
                     <span className="text-xs font-bold text-text-muted">{formatDate(notice.createdAt)}</span>

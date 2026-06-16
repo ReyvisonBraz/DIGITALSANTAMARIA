@@ -230,8 +230,8 @@ export default function HealthUnitsAdmin() {
               <article key={unit.id} className="civic-card flex flex-col gap-3 p-4 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-sky-700">{unit.type}</span>
-                    <span className={unit.isOpen ? 'rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-green-700' : 'rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-rose-700'}>
+                    <span className="rounded-full bg-sky-500/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest text-sky-700">{unit.type}</span>
+                    <span className={unit.isOpen ? 'rounded-full bg-green-50 px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest text-green-700' : 'rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-bold uppercase tracking-widest text-rose-700'}>
                       {unit.isOpen ? 'Aberta' : 'Fechada'}
                     </span>
                     <span className="text-xs font-bold text-text-muted">{unit.waitTime}</span>
