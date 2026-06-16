@@ -1,4 +1,5 @@
 import type { Demand, DemandStatus, DemandType, Report, ReportStatus, ReportType } from '@/types';
+import { DEMAND_STATUS_LABEL, REPORT_STATUS_LABEL } from '@/lib/constants/protocols';
 import {
   AlertCircle,
   Building2,
@@ -12,13 +13,8 @@ import {
 
 // ─── Demandas ────────────────────────────────────────────────────────────────
 
-export const demandStatusLabel: Record<DemandStatus, string> = {
-  pending: 'Pendente',
-  analyzing: 'Em análise',
-  solved: 'Resolvida',
-  rejected: 'Recusada',
-  cancelled: 'Cancelada',
-};
+/** Fonte de verdade: {@link DEMAND_STATUS_LABEL} em lib/constants/protocols.ts */
+export const demandStatusLabel: Record<DemandStatus, string> = DEMAND_STATUS_LABEL;
 
 export const demandTypeLabel: Record<DemandType, string> = {
   reclamacao: 'Reclamação',
@@ -109,13 +105,8 @@ export function buildDemandSearchText(demand: Demand) {
 
 // ─── Relatos ─────────────────────────────────────────────────────────────────
 
-export const reportStatusLabel: Record<ReportStatus, string> = {
-  pending:   'Pendente',
-  in_review: 'Em análise',
-  resolved:  'Resolvido',
-  rejected:  'Recusado',
-  cancelled: 'Cancelado',
-};
+/** Fonte de verdade: {@link REPORT_STATUS_LABEL} em lib/constants/protocols.ts */
+export const reportStatusLabel: Record<ReportStatus, string> = REPORT_STATUS_LABEL;
 
 export const reportTypeLabel: Record<ReportType, string> = {
   infrastructure: 'Infraestrutura',
