@@ -29,7 +29,7 @@
 | P1 | Allowlist de imagens (`next/image`) | 🔴 | Segurança/Config | — | ✅ Concluída | Removido wildcard; mantidos apenas Storage e avatar Google. |
 | P2 | Reativar Storage + upload de fotos | 🔴 | UX/Infra | — | ✅ Concluída | Upload real para relato, avatar e logo; regras de Storage ajustadas. |
 | P3 | Auditoria de dados mockados | 🔴 | Produto/Confiança | — | ✅ Concluída | Inventário em `docs/INVENTARIO_DADOS.md`; mocks externos removidos/sinalizados. |
-| P4 | Portão de build/CI verde | 🔴 | Processo | — | ✅ Concluída | CI inclui build; artefatos não trackeados. Branch protection exige ajuste no GitHub. |
+| P4 | Portão de build/CI verde | 🔴 | Processo | — | ✅ Concluída | CI inclui build; artefatos não trackeados. Branch protection será configurada por Codex assim que o acesso via cowork for liberado. |
 | P5 | Acessibilidade — mínimo de tipografia | 🟠 | A11y/Design | — | ✅ Concluída | Zero `text-[8px]`, `text-[9px]` e `text-[10px]`; criada `.label-caps`. |
 | P6 | Cobertura de testes dos `services/` | 🟠 | Qualidade | — | ✅ Concluída | Testes dos services críticos adicionados; testes de protocolo consolidados. |
 | P7 | Unificar linguagem visual / tokens | 🟠 | Design System | P5 | ✅ Concluída | Removidos `blue-600/700`, sombras fora de escala e raios 3rem+. |
@@ -287,3 +287,15 @@ Trabalho de design já aplicado e validado (`tsc`/`lint` verdes):
 
 **Pontos fortes confirmados:** higiene de segredos (gitignore correto), `firestore.rules` robusto (15KB),
 arquitetura por features + 14 services, CI configurado, baseline de `aria-*` (106 ocorrências).
+
+---
+
+## Próximos passos operacionais
+
+> A executar pelo Codex assim que o acesso via cowork for liberado.
+
+1. Configurar branch protection da `main` no GitHub exigindo o check `validate` verde antes de merge.
+2. Rodar `npm run firebase:storage:check` e, se passar, publicar com `npm run firebase:storage:deploy`.
+3. Validar em ambiente real os uploads de foto em `/relatar`, avatar em `/perfil` e logo de comércio.
+4. Fazer QA visual rápido nas páginas afetadas por tipografia/tokens: Saúde, Educação, Empregos, Perfil e Gestão.
+5. Avaliar a migração futura de `middleware.ts` para `proxy`, conforme aviso do `next build`.
