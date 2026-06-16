@@ -195,7 +195,7 @@ export default function MyBusinessesSection() {
     if (!editing) return;
 
     if (!editing.title.trim() || !editing.description.trim() || !editing.address.trim()) {
-      toast('Preencha nome, descricao e endereco.', 'error');
+      toast('Preencha nome, descrição e endereço.', 'error');
       return;
     }
 
@@ -369,7 +369,7 @@ export default function MyBusinessesSection() {
               required
               maxLength={200}
               onChange={(event) => setEditing({ ...editing, address: event.target.value })}
-              placeholder="Rua, numero, bairro"
+              placeholder="Rua, número, bairro"
               className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
             />
           </label>
@@ -504,7 +504,7 @@ export default function MyBusinessesSection() {
         <div className="rounded-xl border border-dashed border-border bg-surface p-6 text-center">
           <p className="text-sm font-bold uppercase tracking-widest text-text-main">Nenhum negocio cadastrado</p>
           <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-            Quando voce cadastrar um comercio ou servico, ele aparece aqui com o status da aprovacao.
+            Quando você cadastrar um comércio ou serviço, ele aparece aqui com o status da aprovação.
           </p>
         </div>
       ) : (

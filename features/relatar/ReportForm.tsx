@@ -87,7 +87,7 @@ export default function ReportForm() {
       return;
     }
     if (photoURL.trim() && !photoURL.trim().startsWith('https://')) {
-      toast('Informe um link publico de imagem iniciando com https://.', 'error');
+      toast('Informe um link público de imagem iniciando com https://.', 'error');
       return;
     }
 
