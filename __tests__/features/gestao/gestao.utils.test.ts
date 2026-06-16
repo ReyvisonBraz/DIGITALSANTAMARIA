@@ -29,6 +29,7 @@ describe('normalizeDemandStatus', () => {
     expect(normalizeDemandStatus('analyzing')).toBe('analyzing');
     expect(normalizeDemandStatus('solved')).toBe('solved');
     expect(normalizeDemandStatus('rejected')).toBe('rejected');
+    expect(normalizeDemandStatus('cancelled')).toBe('cancelled');
   });
 
   it('maps legacy "in_review" to "analyzing"', () => {
@@ -69,6 +70,7 @@ describe('getDemandStatusLabel', () => {
     expect(getDemandStatusLabel('analyzing')).toBe('Em análise');
     expect(getDemandStatusLabel('solved')).toBe('Resolvida');
     expect(getDemandStatusLabel('rejected')).toBe('Recusada');
+    expect(getDemandStatusLabel('cancelled')).toBe('Cancelada');
   });
 
   it('handles legacy "in_review" via normalization', () => {
@@ -185,6 +187,12 @@ describe('buildDemandSearchText', () => {
   it('produces fully lowercase output', () => {
     const text = buildDemandSearchText(demand);
     expect(text).toBe(text.toLowerCase());
+  });
+
+  it('includes "cancelada" in search text for cancelled demand', () => {
+    const d: Demand = { ...demand, status: 'cancelled' };
+    const text = buildDemandSearchText(d);
+    expect(text).toContain('cancelada');
   });
 });
 
