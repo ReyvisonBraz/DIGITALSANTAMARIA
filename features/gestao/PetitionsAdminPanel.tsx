@@ -226,7 +226,7 @@ export default function PetitionsAdminPanel() {
           </select>
         </div>
         <p className="mt-3 text-xs font-bold text-text-muted">
-          Mostrando {filteredPetitions.length} de {petitions.length} peticoes.
+          Mostrando {filteredPetitions.length} de {petitions.length} petições.
         </p>
       </div>
 

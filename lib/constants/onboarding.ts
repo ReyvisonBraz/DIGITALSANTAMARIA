@@ -19,8 +19,8 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
   {
     id: 'home',
     title: 'Bem-vindo ao Conecta Santa Maria',
-    eyebrow: 'Inicio',
-    summary: 'Aqui você encontra os principais caminhos do portal: solicitar atendimento, acompanhar protocolos, ver serviços e participar das decisoes da cidade.',
+    eyebrow: 'Início',
+    summary: 'Aqui você encontra os principais caminhos do portal: solicitar atendimento, acompanhar protocolos, ver serviços e participar das decisões da cidade.',
     primaryAction: 'Comece por "Abrir solicitação" se precisa falar com a prefeitura.',
     steps: [
       {
@@ -28,13 +28,13 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
         body: 'Os cards de acesso rápido levam direto para as tarefas mais usadas, como abrir solicitação, consultar protocolo, petições e painel do cidadão.',
       },
       {
-        title: 'Use o mapa de servicos',
+        title: 'Use o mapa de serviços',
         body: 'O botão "Serviços" no topo mostra todas as áreas do app em uma grade simples. E o melhor caminho quando você não sabe exatamente onde clicar.',
       },
       {
         title: 'Acompanhe tudo pelo painel',
         body: 'Depois de enviar uma solicitação, relato, matrícula, candidatura ou agendamento, o andamento aparece no Painel do Cidadão.',
-        tip: 'O símbolo ? fica disponivel para rever esta explicacao quando quiser.',
+        tip: 'O símbolo ? fica disponível para rever esta explicação quando quiser.',
       },
     ],
   },
@@ -46,8 +46,8 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
     primaryAction: 'Informe tipo, categoria, detalhes e acompanhe a resposta pelo protocolo.',
     steps: [
       {
-        title: 'Registre a manifestacao',
-        body: 'Escolha se e reclamacao, sugestao, denuncia ou elogio. Depois descreva o assunto com o maximo de clareza possivel.',
+        title: 'Registre a manifestação',
+        body: 'Escolha se é reclamação, sugestão, denúncia ou elogio. Depois descreva o assunto com o máximo de clareza possível.',
       },
       {
         title: 'Guarde o protocolo',
@@ -63,12 +63,12 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
     id: 'relatar',
     title: 'Como relatar um problema urbano',
     eyebrow: 'Relatos',
-    summary: 'Use esta área para avisar sobre buracos, iluminação, lixo, risco ambiental, seguranca e outros problemas da cidade.',
+    summary: 'Use esta área para avisar sobre buracos, iluminação, lixo, risco ambiental, segurança e outros problemas da cidade.',
     primaryAction: 'Foto e localização ajudam a equipe a entender e resolver mais rápido.',
     steps: [
       {
         title: 'Escolha o tipo de problema',
-        body: 'Selecione a categoria mais proxima: infraestrutura, meio ambiente, seguranca ou outros.',
+        body: 'Selecione a categoria mais próxima: infraestrutura, meio ambiente, segurança ou outros.',
       },
       {
         title: 'Mostre onde aconteceu',
@@ -76,7 +76,7 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
       },
       {
         title: 'Revise antes de enviar',
-        body: 'Confira os dados antes da confirmacao. Depois do envio, o relato aparece no seu painel com status e mensagens.',
+        body: 'Confira os dados antes da confirmação. Depois do envio, o relato aparece no seu painel com status e mensagens.',
       },
     ],
   },
@@ -89,11 +89,11 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
     steps: [
       {
         title: 'Veja suas atividades',
-        body: 'Solicitacoes, relatos, agendamentos, matriculas, candidaturas e alertas aparecem em uma lista unica.',
+        body: 'Solicitações, relatos, agendamentos, matrículas, candidaturas e alertas aparecem em uma lista única.',
       },
       {
         title: 'Abra conversas pendentes',
-        body: 'Quando houver nova resposta, o painel mostra um aviso. Abra o item para ler e responder, se necessario.',
+        body: 'Quando houver nova resposta, o painel mostra um aviso. Abra o item para ler e responder, se necessário.',
       },
       {
         title: 'Mantenha seus dados atualizados',
@@ -106,25 +106,25 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
     title: 'Petições e participação',
     eyebrow: 'Participação',
     summary: 'Aqui a comunidade cria e assina causas públicas. As petições mostram meta, progresso e resposta oficial quando houver.',
-    primaryAction: 'Assinar uma peticao pode exigir login para evitar assinaturas duplicadas.',
+    primaryAction: 'Assinar uma petição pode exigir login para evitar assinaturas duplicadas.',
     steps: [
       {
         title: 'Escolha uma causa',
         body: 'A lista mostra petições abertas e o progresso de assinaturas. Abra uma petição para ler os detalhes.',
       },
       {
-        title: 'Assine com seguranca',
+        title: 'Assine com segurança',
         body: 'O sistema verifica se você já assinou para manter a contagem correta e transparente.',
       },
       {
-        title: 'Crie uma nova peticao',
-        body: 'Se a causa ainda nao existe, use a opcao de criar peticao e explique objetivo, motivo e meta.',
+        title: 'Crie uma nova petição',
+        body: 'Se a causa ainda não existe, use a opção de criar petição e explique objetivo, motivo e meta.',
       },
     ],
   },
   {
     id: 'peticao-detalhe',
-    title: 'Detalhes da peticao',
+    title: 'Detalhes da petição',
     eyebrow: 'Participação',
     summary: 'Nesta tela você confere o texto completo da causa, acompanha a meta e pode registrar sua assinatura.',
     steps: [
@@ -144,9 +144,9 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
   },
   {
     id: 'saude',
-    title: 'Saude facil',
-    eyebrow: 'Servicos',
-    summary: 'Consulte unidades de saude, tempos de espera, farmacia popular e agendamentos disponiveis.',
+    title: 'Saúde fácil',
+    eyebrow: 'Serviços',
+    summary: 'Consulte unidades de saúde, tempos de espera, farmácia popular e agendamentos disponíveis.',
     primaryAction: 'Para agendar, escolha a unidade, especialidade, data e confirme.',
     steps: [
       {
@@ -165,8 +165,8 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
   },
   {
     id: 'educacao',
-    title: 'Educacao municipal',
-    eyebrow: 'Servicos',
+    title: 'Educação municipal',
+    eyebrow: 'Serviços',
     summary: 'Consulte escolas municipais e acesse a matrícula escolar digital.',
     primaryAction: 'Para nova matrícula, entre em "Matrícula" e preencha as etapas com os dados do responsável e do aluno.',
     steps: [
@@ -187,8 +187,8 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
   {
     id: 'matricula',
     title: 'Matrícula escolar',
-    eyebrow: 'Educacao',
-    summary: 'Este formulario coleta os dados necessarios para solicitar vaga escolar de forma organizada.',
+    eyebrow: 'Educação',
+    summary: 'Este formulário coleta os dados necessários para solicitar vaga escolar de forma organizada.',
     steps: [
       {
         title: 'Preencha por etapas',
@@ -227,7 +227,7 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
   },
   {
     id: 'comercio',
-    title: 'Comercio local',
+    title: 'Comércio local',
     eyebrow: 'Economia',
     summary: 'A vitrine mostra negócios aprovados da cidade, com contatos, horário de funcionamento e localização.',
     primaryAction: 'Para cadastrar seu negócio, use a área "Meus Negócios" no Painel do Cidadão.',
@@ -242,7 +242,7 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
       },
       {
         title: 'Cadastre seu negócio',
-        body: 'O cadastro passa por aprovacao da gestao antes de aparecer publicamente.',
+        body: 'O cadastro passa por aprovação da gestão antes de aparecer publicamente.',
       },
     ],
   },
@@ -250,7 +250,7 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
     id: 'servicos',
     title: 'Diretório de serviços',
     eyebrow: 'Portal',
-    summary: 'Esta area organiza serviços públicos municipais por categoria, local, horário e departamento.',
+    summary: 'Esta área organiza serviços públicos municipais por categoria, local, horário e departamento.',
     steps: [
       {
         title: 'Busque pelo nome',
@@ -274,15 +274,15 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
     steps: [
       {
         title: 'Leia a prioridade',
-        body: 'Avisos podem ser informativos, alertas ou urgencias. Prioridades maiores merecem atencao imediata.',
+        body: 'Avisos podem ser informativos, alertas ou urgências. Prioridades maiores merecem atenção imediata.',
       },
       {
         title: 'Confira a validade',
-        body: 'Alguns avisos expiram depois de uma data. O portal filtra comunicados antigos quando necessario.',
+        body: 'Alguns avisos expiram depois de uma data. O portal filtra comunicados antigos quando necessário.',
       },
       {
         title: 'Volte para atualizações',
-        body: 'Novos avisos tambem podem aparecer no topo do app quando forem urgentes.',
+        body: 'Novos avisos também podem aparecer no topo do app quando forem urgentes.',
       },
     ],
   },
@@ -322,7 +322,7 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
       },
       {
         title: 'Volte para a agenda',
-        body: 'A lista de eventos mostra outras atividades disponiveis na cidade.',
+        body: 'A lista de eventos mostra outras atividades disponíveis na cidade.',
       },
     ],
   },
@@ -358,7 +358,7 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
       },
       {
         title: 'Leia as atualizações',
-        body: 'A linha do tempo ajuda a acompanhar mudancas, etapas concluidas e comunicados.',
+        body: 'A linha do tempo ajuda a acompanhar mudanças, etapas concluídas e comunicados.',
       },
       {
         title: 'Compare com outras obras',
@@ -375,7 +375,7 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
     steps: [
       {
         title: 'Escolha uma enquete',
-        body: 'Leia a pergunta e as opcoes antes de votar.',
+        body: 'Leia a pergunta e as opções antes de votar.',
       },
       {
         title: 'Vote com cuidado',
@@ -389,18 +389,18 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
   },
   {
     id: 'seguranca',
-    title: 'Seguranca cidada',
-    eyebrow: 'Servicos',
-    summary: 'Consulte zonas seguras e use recursos de alerta de emergencia quando necessario.',
-    primaryAction: 'Use o SOS apenas em situacoes reais de risco.',
+    title: 'Segurança cidadã',
+    eyebrow: 'Serviços',
+    summary: 'Consulte zonas seguras e use recursos de alerta de emergência quando necessário.',
+    primaryAction: 'Use o SOS apenas em situações reais de risco.',
     steps: [
       {
         title: 'Consulte zonas',
-        body: 'As zonas mostram areas cadastradas e nivel de risco para orientar deslocamentos.',
+        body: 'As zonas mostram áreas cadastradas e nível de risco para orientar deslocamentos.',
       },
       {
         title: 'Acione emergencia com responsabilidade',
-        body: 'O botao SOS gera alerta e protocolo para a fila de atendimento.',
+        body: 'O botão SOS gera alerta e protocolo para a fila de atendimento.',
       },
       {
         title: 'Acompanhe pelo painel',
@@ -410,8 +410,8 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
   },
   {
     id: 'transito',
-    title: 'Transito e mobilidade',
-    eyebrow: 'Servicos',
+    title: 'Trânsito e mobilidade',
+    eyebrow: 'Serviços',
     summary: 'Veja alertas de acidentes, obras, desvios, congestionamentos e validade das informações.',
     steps: [
       {
@@ -451,8 +451,8 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
   {
     id: 'social',
     title: 'Programas sociais',
-    eyebrow: 'Servicos',
-    summary: 'Veja programas, benefícios, requisitos, locais de atendimento e orientacoes sociais do municipio.',
+    eyebrow: 'Serviços',
+    summary: 'Veja programas, benefícios, requisitos, locais de atendimento e orientações sociais do município.',
     steps: [
       {
         title: 'Leia os requisitos',
@@ -471,8 +471,8 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
   {
     id: 'meio-ambiente',
     title: 'Meio ambiente',
-    eyebrow: 'Servicos',
-    summary: 'Acompanhe dados e alertas ambientais, como qualidade da agua, ar, areas verdes e ocorrencias.',
+    eyebrow: 'Serviços',
+    summary: 'Acompanhe dados e alertas ambientais, como qualidade da água, ar, áreas verdes e ocorrências.',
     steps: [
       {
         title: 'Entenda o indicador',
@@ -480,11 +480,11 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
       },
       {
         title: 'Veja a localização',
-        body: 'Alguns dados se aplicam a areas especificas do municipio.',
+        body: 'Alguns dados se aplicam a áreas específicas do município.',
       },
       {
         title: 'Relate problemas',
-        body: 'Para lixo irregular, risco ambiental ou situacao urgente, use Relatar Problema ou Ouvidoria.',
+        body: 'Para lixo irregular, risco ambiental ou situação urgente, use Relatar Problema ou Ouvidoria.',
       },
     ],
   },
@@ -492,11 +492,11 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
     id: 'comunidade',
     title: 'Comunidade',
     eyebrow: 'Vida urbana',
-    summary: 'Encontre grupos, iniciativas e atividades comunitarias cadastradas no municipio.',
+    summary: 'Encontre grupos, iniciativas e atividades comunitárias cadastradas no município.',
     steps: [
       {
         title: 'Procure por categoria',
-        body: 'Filtre grupos por tema, bairro ou interesse quando essas informações estiverem disponiveis.',
+        body: 'Filtre grupos por tema, bairro ou interesse quando essas informações estiverem disponíveis.',
       },
       {
         title: 'Leia a descrição',
@@ -544,8 +544,8 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
         body: 'Quando quiser explicar o app para outra pessoa, esta página resume a finalidade do projeto.',
       },
       {
-        title: 'Volte aos servicos',
-        body: 'Depois de entender o portal, use o menu para acessar a area que precisa.',
+        title: 'Volte aos serviços',
+        body: 'Depois de entender o portal, use o menu para acessar a área que precisa.',
       },
     ],
   },
@@ -565,7 +565,7 @@ export const ONBOARDING_GUIDES: readonly OnboardingGuide[] = [
       },
       {
         title: 'Volte quando precisar',
-        body: 'O link fica disponivel no rodape para consulta futura.',
+        body: 'O link fica disponível no rodapé para consulta futura.',
       },
     ],
   },

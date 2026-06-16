@@ -125,7 +125,7 @@ export default function ReportForm() {
       log.error('Failed to create report', {}, error);
       const message = error instanceof Error && error.message
         ? error.message
-        : 'Nao foi possivel enviar agora. Tente novamente em instantes.';
+        : 'Não foi possível enviar agora. Tente novamente em instantes.';
       toast(message, 'error');
       setSubmitting(false);
     }
@@ -140,7 +140,7 @@ export default function ReportForm() {
         <div>
           <h3 className="text-lg font-semibold tracking-normal text-text-main">Entre para relatar</h3>
           <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
-            Relatos sao identificados para que o municipio possa retornar com a solucao. Use sua conta Google para entrar.
+            Relatos são identificados para que o município possa retornar com a solução. Use sua conta Google para entrar.
           </p>
         </div>
         <button
@@ -247,7 +247,7 @@ export default function ReportForm() {
           maxLength={1000}
           required
           rows={5}
-          placeholder="Conte o que esta acontecendo, quando comecou e a quem afeta."
+          placeholder="Conte o que está acontecendo, quando começou e a quem afeta."
           className="w-full rounded-xl border-2 border-border bg-white p-4 font-medium leading-6 text-text-main outline-none transition focus:border-primary"
         />
         <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">

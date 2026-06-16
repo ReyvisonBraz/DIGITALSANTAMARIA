@@ -109,10 +109,10 @@ export default function TrafficAdmin() {
 
       if (editingId) {
         await service.update(editingId, payload);
-        toast('Alerta de transito atualizado.', 'success');
+        toast('Alerta de trânsito atualizado.', 'success');
       } else {
         await service.create(payload);
-        toast('Alerta de transito publicado.', 'success');
+        toast('Alerta de trânsito publicado.', 'success');
       }
 
       resetForm();
@@ -149,7 +149,7 @@ export default function TrafficAdmin() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Mobilidade</p>
             <h2 className="text-xl font-semibold tracking-normal text-text-main">
-              {editingId ? 'Editar alerta de transito' : 'Publicar alerta de transito'}
+              {editingId ? 'Editar alerta de trânsito' : 'Publicar alerta de trânsito'}
             </h2>
             <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
               Aparece em <code className="font-mono text-xs text-primary">/transito</code> imediatamente.
@@ -260,7 +260,7 @@ export default function TrafficAdmin() {
         <div className="mb-5 flex items-end justify-between border-b border-border pb-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Ativos</p>
-            <h3 className="text-lg font-semibold text-text-main">Alertas de transito ({alerts.length})</h3>
+            <h3 className="text-lg font-semibold text-text-main">Alertas de trânsito ({alerts.length})</h3>
           </div>
         </div>
 
@@ -269,7 +269,7 @@ export default function TrafficAdmin() {
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
           </div>
         ) : alerts.length === 0 ? (
-          <EmptyState title="Nenhum alerta ativo" description="Use o formulario acima para publicar um alerta de transito." />
+          <EmptyState title="Nenhum alerta ativo" description="Use o formulário acima para publicar um alerta de trânsito." />
         ) : (
           <div className="space-y-3">
             {alerts.map((alert) => (

@@ -47,7 +47,7 @@ export default function PhotoUpload({ imageURL, onImageURLChange }: PhotoUploadP
       </div>
 
       <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">
-        Use uma imagem publica em HTTPS. Upload direto fica desativado enquanto o Storage nao estiver ativo.
+        Use uma imagem pública em HTTPS. Upload direto fica desativado enquanto o Storage não estiver ativo.
       </p>
 
       {canPreview ? (

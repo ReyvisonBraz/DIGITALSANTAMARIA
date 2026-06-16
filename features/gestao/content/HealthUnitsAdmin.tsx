@@ -137,7 +137,7 @@ export default function HealthUnitsAdmin() {
             <Hospital className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Rede de saude</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Rede de saúde</p>
             <h2 className="text-xl font-semibold tracking-normal text-text-main">
               {editingId ? 'Editar unidade' : 'Cadastrar unidade'}
             </h2>
@@ -166,7 +166,7 @@ export default function HealthUnitsAdmin() {
           </label>
 
           <label className="space-y-1.5 md:col-span-2">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Endereco</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Endereço</span>
             <input value={form.address} onChange={(event) => updateField('address', event.target.value)} className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
           </label>
 
@@ -223,7 +223,7 @@ export default function HealthUnitsAdmin() {
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
           </div>
         ) : units.length === 0 ? (
-          <EmptyState title="Nenhuma unidade cadastrada" description="Use o formulario acima para cadastrar a primeira unidade." />
+          <EmptyState title="Nenhuma unidade cadastrada" description="Use o formulário acima para cadastrar a primeira unidade." />
         ) : (
           <div className="space-y-3">
             {units.map((unit) => (

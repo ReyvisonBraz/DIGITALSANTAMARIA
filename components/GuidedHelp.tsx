@@ -220,7 +220,7 @@ export default function GuidedHelp() {
                         onClick={nextStep}
                         className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-white shadow-[0_14px_28px_rgba(26,86,196,0.24)] transition hover:bg-primary-dark"
                       >
-                        {isLastStep ? 'Entendi' : 'Proximo'}
+                        {isLastStep ? 'Entendi' : 'Próximo'}
                         {isLastStep ? <Check className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
                       </button>
                     </div>

@@ -113,7 +113,7 @@ export async function signPetition(petitionId: string, userName: string): Promis
 
   await callable({
     petitionId,
-    userName: userName || 'Cidadao',
+    userName: userName || 'Cidadão',
   });
 }
 

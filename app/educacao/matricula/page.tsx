@@ -27,7 +27,7 @@ import { cn } from '@/lib/utils';
 const steps = [
   { id: 1, title: 'Responsável', icon: User },
   { id: 2, title: 'Aluno(a)', icon: FileText },
-  { id: 3, title: 'Endereco', icon: Home },
+  { id: 3, title: 'Endereço', icon: Home },
   { id: 4, title: 'Unidade', icon: School },
   { id: 5, title: 'Confirmação', icon: CheckCircle2 },
 ] as const;
@@ -241,7 +241,7 @@ export default function MatriculaPage() {
             )}
 
             {currentStep === 3 && (
-              <FormStep title="Endereco de residencia">
+              <FormStep title="Endereço de residência">
                 <div className="space-y-4">
                   <TextField
                     label="CEP"
@@ -256,7 +256,7 @@ export default function MatriculaPage() {
                     onChange={(value) => updateField('address', value)}
                   />
                   <p className="font-ui text-[10px] font-bold text-text-muted">
-                    O zoneamento escolar e baseado no endereco de residencia do aluno.
+                    O zoneamento escolar é baseado no endereço de residência do aluno.
                   </p>
                 </div>
               </FormStep>

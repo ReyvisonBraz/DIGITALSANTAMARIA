@@ -133,7 +133,7 @@ export default function TopAppBar() {
             >
               <span className="flex min-w-0 items-center gap-3">
                 <Search className="h-4 w-4 shrink-0 text-primary" />
-                <span className="truncate text-xs font-medium">Buscar servicos...</span>
+                <span className="truncate text-xs font-medium">Buscar serviços...</span>
               </span>
               <span className="flex items-center gap-1 opacity-40">
                 <Command className="h-3 w-3" />

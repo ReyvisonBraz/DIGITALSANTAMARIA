@@ -28,10 +28,10 @@ function UserAdminCard({ user, onSaved }: { user: UserProfile; onSaved: () => vo
         phone: phone.trim() || null,
         neighborhood: neighborhood.trim() || null,
       });
-      toast('Usuario atualizado.', 'success');
+      toast('Usuário atualizado.', 'success');
       onSaved();
     } catch {
-      toast('Erro ao atualizar usuario.', 'error');
+      toast('Erro ao atualizar usuário.', 'error');
     } finally {
       setSaving(false);
     }
@@ -46,7 +46,7 @@ function UserAdminCard({ user, onSaved }: { user: UserProfile; onSaved: () => vo
               {user.photoURL ? (
                 <Image
                   src={user.photoURL}
-                  alt={user.displayName || 'Usuario'}
+                  alt={user.displayName || 'Usuário'}
                   fill
                   sizes="48px"
                   className="object-cover"
@@ -107,7 +107,7 @@ function UserAdminCard({ user, onSaved }: { user: UserProfile; onSaved: () => vo
               className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:opacity-60 sm:w-auto"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              Salvar usuario
+              Salvar usuário
             </button>
           </div>
         </div>
@@ -165,7 +165,7 @@ export default function UsersAdminPanel() {
           />
         </label>
         <p className="mt-3 text-xs font-bold text-text-muted">
-          Mostrando {filteredUsers.length} de {users.length} usuarios.
+          Mostrando {filteredUsers.length} de {users.length} usuários.
         </p>
       </div>
 

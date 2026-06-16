@@ -28,8 +28,8 @@ export default function ComercioPage() {
       <ContentHero
         icon={Store}
         label="Economia local"
-        title="Comercio Local"
-        subtitle="Restaurantes, farmacias, lojas e servicos de Santa Maria do Para: fale direto no WhatsApp."
+        title="Comércio Local"
+        subtitle="Restaurantes, farmácias, lojas e serviços de Santa Maria do Pará: fale direto no WhatsApp."
         accent="accent"
       />
 
@@ -82,8 +82,8 @@ export default function ComercioPage() {
           </div>
           <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
             {category === 'all'
-              ? 'Nenhum comercio cadastrado ainda.'
-              : 'Nenhum negocio nesta categoria.'}
+              ? 'Nenhum comércio cadastrado ainda.'
+              : 'Nenhum negócio nesta categoria.'}
           </p>
         </div>
       ) : (

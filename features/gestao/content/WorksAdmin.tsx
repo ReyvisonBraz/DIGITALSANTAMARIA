@@ -232,7 +232,7 @@ export default function WorksAdmin() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Infraestrutura</p>
             <h2 className="text-xl font-semibold tracking-normal text-text-main">
-              {editingId ? 'Editar obra publica' : 'Publicar obra publica'}
+              {editingId ? 'Editar obra pública' : 'Publicar obra pública'}
             </h2>
             <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
               Aparece em <code className="font-mono text-xs text-primary">/obras</code> com barra de progresso e informações.
@@ -361,7 +361,7 @@ export default function WorksAdmin() {
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
           </div>
         ) : works.length === 0 ? (
-          <EmptyState title="Nenhuma obra cadastrada" description="Use o formulario acima para registrar a primeira obra." />
+          <EmptyState title="Nenhuma obra cadastrada" description="Use o formulário acima para registrar a primeira obra." />
         ) : visibleWorks.length === 0 ? (
           <EmptyState title="Nenhuma obra encontrada" description="Ajuste a busca ou os filtros para ver mais registros." />
         ) : (

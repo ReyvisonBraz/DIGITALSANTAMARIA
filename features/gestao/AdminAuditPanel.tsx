@@ -97,7 +97,7 @@ export default function AdminAuditPanel() {
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Auditoria</p>
             <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">Histórico administrativo</h2>
             <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-text-muted">
-              Últimas ações sensíveis registradas pelo painel: publicações, arquivamentos, aprovacoes e mudancas de status.
+              Últimas ações sensíveis registradas pelo painel: publicações, arquivamentos, aprovações e mudanças de status.
             </p>
           </div>
           <button

@@ -252,7 +252,7 @@ export function ContentPreviewDialog({
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
           <div>
             <p className="text-xs font-black uppercase tracking-widest text-primary">{eyebrow}</p>
-            <h3 className="mt-1 text-lg font-semibold text-text-main">Como o cidadao deve ver</h3>
+            <h3 className="mt-1 text-lg font-semibold text-text-main">Como o cidadão deve ver</h3>
           </div>
           <button
             type="button"

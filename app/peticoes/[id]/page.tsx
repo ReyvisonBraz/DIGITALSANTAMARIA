@@ -70,7 +70,7 @@ export default function PetitionDetailPage() {
         <h2 className="text-xl font-semibold text-text-main">Petição não encontrada</h2>
         <p className="text-sm font-medium text-text-muted">{error || 'Verifique o link e tente novamente.'}</p>
         <Link href="/peticoes" className="text-sm font-bold text-primary hover:underline">
-          Voltar para peticoes
+          Voltar para petições
         </Link>
       </div>
     );

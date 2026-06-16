@@ -81,7 +81,7 @@ export default function SegurancaPage() {
           </div>
           <div>
             <p className="text-xs font-black uppercase tracking-widest text-red-700">Alerta emergencial</p>
-            <h2 className="mt-1 text-xl font-semibold text-text-main">Acione a equipe de seguranca</h2>
+            <h2 className="mt-1 text-xl font-semibold text-text-main">Acione a equipe de segurança</h2>
             <p className="mt-2 text-sm font-medium leading-6 text-red-900/70">
               Use este canal para registrar uma ocorrência urgente com localização e descrição objetiva.
             </p>

@@ -33,7 +33,7 @@ export default function AvatarUpload() {
       setDisplayUrl(nextURL || null);
       toast(nextURL ? 'Foto atualizada.' : 'Foto removida.', 'success');
     } catch {
-      toast('Nao foi possivel atualizar a foto agora.', 'error');
+      toast('Não foi possível atualizar a foto agora.', 'error');
     } finally {
       setSaving(false);
     }
@@ -89,7 +89,7 @@ export default function AvatarUpload() {
           </button>
         </div>
         <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">
-          Upload direto fica desativado enquanto o Storage nao estiver ativo.
+          Upload direto fica desativado enquanto o Storage não estiver ativo.
         </p>
       </div>
     </div>

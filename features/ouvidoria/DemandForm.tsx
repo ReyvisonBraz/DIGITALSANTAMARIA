@@ -154,7 +154,7 @@ export default function DemandForm({ onSuccess }: DemandFormProps) {
         <input
           value={formData.subject}
           onChange={(event) => setFormData({ ...formData, subject: event.target.value })}
-          placeholder="Ex: Iluminacao apagada na rua principal"
+          placeholder="Ex: Iluminação apagada na rua principal"
           maxLength={200}
           className="h-12 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold text-text-main outline-none transition placeholder:font-medium focus:border-primary"
         />

@@ -34,7 +34,7 @@ export async function uploadFile(
   const url = await withTimeout(
     getDownloadURL(snapshot.ref),
     10_000,
-    'A imagem foi enviada, mas nao foi possivel obter o link publico agora.',
+    'A imagem foi enviada, mas não foi possível obter o link público agora.',
   );
   return {
     url,

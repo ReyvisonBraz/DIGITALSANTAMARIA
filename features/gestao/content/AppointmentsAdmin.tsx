@@ -114,10 +114,10 @@ export default function AppointmentsAdmin() {
             <CalendarCheck className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Agenda de saude</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Agenda de saúde</p>
             <h2 className="text-xl font-semibold tracking-normal text-text-main">Consultas solicitadas</h2>
             <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
-              Confirme, conclua ou cancele agendamentos feitos pelos cidadaos.
+              Confirme, conclua ou cancele agendamentos feitos pelos cidadãos.
             </p>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function AppointmentsAdmin() {
 
       <AdminQueueToolbar
         search={search}
-        searchPlaceholder="Buscar por cidadao, especialidade, unidade ou data"
+        searchPlaceholder="Buscar por cidadão, especialidade, unidade ou data"
         filter={filter}
         statusOptions={STATUS_OPTIONS}
         loading={loading}
