@@ -152,7 +152,7 @@ export default function ApplicationsAdmin() {
           <Loader2 className="h-5 w-5 animate-spin text-primary" />
         </div>
       ) : filtered.length === 0 ? (
-        <EmptyState title="Nenhuma candidatura encontrada" description="As candidaturas aparecem aqui quando os usuarios se inscreverem." />
+        <EmptyState title="Nenhuma candidatura encontrada" description="As candidaturas aparecem aqui quando os usuários se inscreverem." />
       ) : (
         <div className="space-y-3">
           {filtered.map((application) => (

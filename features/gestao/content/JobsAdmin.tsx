@@ -220,7 +220,7 @@ export default function JobsAdmin() {
         {loading ? (
           <div className="flex min-h-32 items-center justify-center"><Loader2 className="h-5 w-5 animate-spin text-primary" /></div>
         ) : jobs.length === 0 ? (
-          <EmptyState title="Nenhuma vaga ativa" description="Use o formulario acima para publicar uma vaga." />
+          <EmptyState title="Nenhuma vaga ativa" description="Use o formulário acima para publicar uma vaga." />
         ) : (
           <div className="space-y-3">
             {jobs.map((job) => (

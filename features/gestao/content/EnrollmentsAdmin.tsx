@@ -173,7 +173,7 @@ export default function EnrollmentsAdmin() {
                   <div className="mt-2 grid gap-2 rounded-xl bg-surface-muted px-3 py-2 text-sm font-medium leading-6 text-text-muted md:grid-cols-2">
                     <span>Nascimento: {enrollment.studentBirth}</span>
                     <span>Escola: {enrollment.schoolPreference}</span>
-                    <span className="md:col-span-2">Endereco: {enrollment.address}</span>
+                    <span className="md:col-span-2">Endereço: {enrollment.address}</span>
                     {enrollment.cep && <span>CEP: {enrollment.cep}</span>}
                   </div>
                 </div>

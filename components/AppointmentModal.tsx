@@ -84,7 +84,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
 
   const handleConfirm = async () => {
     if (!formData.specialty || !formData.unit || !formData.date || !formData.time) {
-      toast('Escolha especialidade, unidade, data e horario.', 'error');
+      toast('Escolha especialidade, unidade, data e horário.', 'error');
       return;
     }
 
@@ -133,7 +133,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
 
   const goToReview = () => {
     if (!formData.date || !formData.time) {
-      toast('Escolha data e horario para continuar.', 'error');
+      toast('Escolha data e horário para continuar.', 'error');
       return;
     }
     setStep(4);
@@ -180,7 +180,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
             <h4 className="pl-1 text-xs font-semibold uppercase tracking-widest text-text-muted">Escolha a especialidade</h4>
             {specialties.length === 0 ? (
               <div className="rounded-2xl border-2 border-dashed border-border bg-surface p-6 text-center text-xs font-semibold uppercase tracking-widest text-text-muted">
-                Nenhuma especialidade disponivel no momento.
+                Nenhuma especialidade disponível no momento.
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-3">
@@ -217,7 +217,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
             <div className="grid grid-cols-1 gap-3">
               {units.length === 0 ? (
                 <div className="rounded-2xl border-2 border-dashed border-border bg-surface p-6 text-center text-xs font-semibold uppercase tracking-widest text-text-muted">
-                  Nenhuma unidade disponivel no momento.
+                  Nenhuma unidade disponível no momento.
                 </div>
               ) : units.map((unit) => (
                 <button

@@ -38,7 +38,7 @@ import type { Business, ContentStatus } from '@/types';
 
 const STATUS_META: Record<ContentStatus, { label: string; tone: string; icon: typeof Clock3 }> = {
   pending_approval: {
-    label: 'Aguardando aprovacao',
+    label: 'Aguardando aprovação',
     tone: 'bg-amber-50 text-amber-700 border-amber-200',
     icon: Clock3,
   },
@@ -48,7 +48,7 @@ const STATUS_META: Record<ContentStatus, { label: string; tone: string; icon: ty
     icon: CheckCircle2,
   },
   archived: {
-    label: 'Nao aprovado',
+    label: 'Não aprovado',
     tone: 'bg-rose-50 text-rose-700 border-rose-200',
     icon: AlertCircle,
   },
@@ -142,7 +142,7 @@ export default function MyBusinessesSection() {
       () => {
         setBusinesses([]);
         setLoading(false);
-        toast('Nao foi possivel carregar seus negocios agora.', 'error');
+        toast('Não foi possível carregar seus negócios agora.', 'error');
       },
     );
 
@@ -195,7 +195,7 @@ export default function MyBusinessesSection() {
     if (!editing) return;
 
     if (!editing.title.trim() || !editing.description.trim() || !editing.address.trim()) {
-      toast('Preencha nome, descricao e endereco.', 'error');
+      toast('Preencha nome, descrição e endereço.', 'error');
       return;
     }
 
@@ -204,7 +204,7 @@ export default function MyBusinessesSection() {
       return;
     }
     if (!isLogoURL(editing.imageURL)) {
-      toast('Informe uma URL de logo publica iniciando com https:// ou escolha uma logo generica.', 'error');
+      toast('Informe uma URL de logo pública iniciando com https:// ou escolha uma logo genérica.', 'error');
       return;
     }
 
@@ -217,20 +217,20 @@ export default function MyBusinessesSection() {
           toast('Cadastro corrigido e reenviado para analise.', 'success');
         } else {
           await updateOwnedBusiness(editing.id, patch);
-          toast('Negocio atualizado.', 'success');
+          toast('Negócio atualizado.', 'success');
         }
       } else {
         await registerBusiness({
           ...patch,
           ownerId: user.uid,
-          ownerName: user.displayName || user.email || 'Cidadao',
+          ownerName: user.displayName || user.email || 'Cidadão',
         });
-        toast('Cadastro enviado. Aguarde a aprovacao da prefeitura.', 'success');
+        toast('Cadastro enviado. Aguarde a aprovação da prefeitura.', 'success');
       }
 
       cancelEdit();
     } catch {
-      toast('Nao foi possivel salvar agora.', 'error');
+      toast('Não foi possível salvar agora.', 'error');
     } finally {
       setSaving(false);
     }
@@ -242,17 +242,17 @@ export default function MyBusinessesSection() {
     try {
       await deleteOwnedBusiness(deleteTarget.id);
       if (editing?.id === deleteTarget.id) setEditing(null);
-      toast(deleteTarget.status === 'pending_approval' ? 'Cadastro cancelado.' : 'Negocio excluido.', 'success');
+      toast(deleteTarget.status === 'pending_approval' ? 'Cadastro cancelado.' : 'Negócio excluído.', 'success');
       setDeleteTarget(null);
     } catch (error) {
       const code = typeof error === 'object' && error && 'code' in error
         ? String((error as { code?: unknown }).code)
         : '';
       const message = code === 'permission-denied'
-        ? 'Sem permissao para cancelar este cadastro. Publique as regras do Firestore ou confirme se ele pertence a sua conta.'
+        ? 'Sem permissão para cancelar este cadastro. Publique as regras do Firestore ou confirme se ele pertence à sua conta.'
         : error instanceof Error && error.message
           ? error.message
-          : 'Nao foi possivel remover este negocio agora.';
+          : 'Não foi possível remover este negócio agora.';
       toast(message, 'error');
     } finally {
       setDeleting(false);
@@ -265,13 +265,13 @@ export default function MyBusinessesSection() {
         <div>
           <p className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-widest text-primary">
             <Store className="h-3.5 w-3.5" />
-            Comercio
+            Comércio
           </p>
           <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">
-            Meus negocios
+            Meus negócios
           </h2>
           <p className="mt-1 text-xs font-medium leading-5 text-text-muted">
-            Cadastre seu comercio ou servico. Depois da aprovacao da prefeitura, ele aparece em <code className="font-mono text-primary">/comercio</code>.
+            Cadastre seu comércio ou serviço. Depois da aprovação da prefeitura, ele aparece em <code className="font-mono text-primary">/comercio</code>.
           </p>
         </div>
 
@@ -282,7 +282,7 @@ export default function MyBusinessesSection() {
             className="action-button-primary self-start sm:self-auto"
           >
             <Plus className="h-4 w-4" />
-            Cadastrar negocio
+            Cadastrar negócio
           </button>
         )}
       </div>
@@ -292,11 +292,11 @@ export default function MyBusinessesSection() {
           <div className="flex items-center justify-between border-b border-border pb-3 md:col-span-2">
             <div>
               <h3 className="text-sm font-bold uppercase tracking-widest text-primary">
-                {editing.id ? 'Editar negocio' : 'Novo cadastro'}
+                {editing.id ? 'Editar negócio' : 'Novo cadastro'}
               </h3>
               {editing.currentStatus === 'archived' && (
                 <p className="mt-1 text-xs font-semibold text-rose-700">
-                  Ao salvar, este cadastro volta para a fila de aprovacao.
+                  Ao salvar, este cadastro volta para a fila de aprovação.
                 </p>
               )}
             </div>
@@ -311,20 +311,20 @@ export default function MyBusinessesSection() {
           </div>
 
           <label className="space-y-1.5 md:col-span-2">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Nome do negocio</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Nome do negócio</span>
             <input
               type="text"
               value={editing.title}
               required
               maxLength={120}
               onChange={(event) => setEditing({ ...editing, title: event.target.value })}
-              placeholder='Ex: "Padaria Sao Jose"'
+              placeholder='Ex: "Padaria São José"'
               className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary"
             />
           </label>
 
           <label className="space-y-1.5 md:col-span-2">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descricao</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descrição</span>
             <textarea
               value={editing.description}
               required
@@ -350,7 +350,7 @@ export default function MyBusinessesSection() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Horario</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Horário</span>
             <input
               type="text"
               value={editing.hours}
@@ -362,14 +362,14 @@ export default function MyBusinessesSection() {
           </label>
 
           <label className="space-y-1.5 md:col-span-2">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Endereco</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Endereço</span>
             <input
               type="text"
               value={editing.address}
               required
               maxLength={200}
               onChange={(event) => setEditing({ ...editing, address: event.target.value })}
-              placeholder="Rua, numero, bairro"
+              placeholder="Rua, número, bairro"
               className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary"
             />
           </label>
@@ -446,7 +446,7 @@ export default function MyBusinessesSection() {
                   ))}
                 </div>
                 <p className="text-[11px] font-semibold leading-5 text-text-muted">
-                  Use uma imagem publica em HTTPS ou escolha uma logo generica. Upload direto fica desativado enquanto o Storage nao estiver ativo.
+                  Use uma imagem pública em HTTPS ou escolha uma logo genérica. Upload direto fica desativado enquanto o Storage não estiver ativo.
                 </p>
               </div>
             </div>
@@ -490,7 +490,7 @@ export default function MyBusinessesSection() {
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {editing.id ? 'Salvar alteracoes' : 'Enviar para aprovacao'}
+              {editing.id ? 'Salvar alterações' : 'Enviar para aprovação'}
             </button>
           </div>
         </form>
@@ -502,16 +502,16 @@ export default function MyBusinessesSection() {
         </div>
       ) : businesses.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-surface p-6 text-center">
-          <p className="text-sm font-bold uppercase tracking-widest text-text-main">Nenhum negocio cadastrado</p>
+          <p className="text-sm font-bold uppercase tracking-widest text-text-main">Nenhum negócio cadastrado</p>
           <p className="mt-2 text-sm font-medium leading-6 text-text-muted">
-            Quando voce cadastrar um comercio ou servico, ele aparece aqui com o status da aprovacao.
+            Quando você cadastrar um comércio ou serviço, ele aparece aqui com o status da aprovação.
           </p>
         </div>
       ) : (
         <div className="space-y-3">
           {pendingCount > 0 && (
             <p className="text-xs font-bold text-text-muted">
-              {pendingCount} cadastro{pendingCount === 1 ? '' : 's'} aguardando aprovacao.
+              {pendingCount} cadastro{pendingCount === 1 ? '' : 's'} aguardando aprovação.
             </p>
           )}
 
@@ -583,7 +583,7 @@ export default function MyBusinessesSection() {
 
                 {business.status === 'archived' && business.reviewNote && (
                   <p className="mt-3 rounded-lg border border-rose-200 bg-rose-50/80 p-3 text-xs font-medium leading-5 text-rose-900">
-                    <strong className="font-bold uppercase tracking-widest text-rose-700">Motivo da reprovacao:</strong>
+                    <strong className="font-bold uppercase tracking-widest text-rose-700">Motivo da reprovação:</strong>
                     <br />
                     {business.reviewNote}
                   </p>
@@ -614,8 +614,8 @@ export default function MyBusinessesSection() {
 
       <ConfirmDialog
         isOpen={!!deleteTarget}
-        title={deleteTarget?.status === 'pending_approval' ? 'Cancelar cadastro' : 'Excluir negocio'}
-        description={deleteTarget ? `O cadastro "${deleteTarget.title}" deixara de aparecer no seu painel e na vitrine publica.` : ''}
+        title={deleteTarget?.status === 'pending_approval' ? 'Cancelar cadastro' : 'Excluir negócio'}
+        description={deleteTarget ? `O cadastro "${deleteTarget.title}" deixará de aparecer no seu painel e na vitrine pública.` : ''}
         confirmLabel={deleteTarget?.status === 'pending_approval' ? 'Cancelar cadastro' : 'Excluir'}
         loading={deleting}
         tone="danger"

@@ -49,7 +49,7 @@ export async function registerBusiness(input: RegisterBusinessInput): Promise<st
   });
 }
 
-/** Dono edita o proprio negocio sem mudar status nem ownerId. */
+/** Dono edita o próprio negócio sem mudar status nem ownerId. */
 export async function updateOwnedBusiness(
   id: string,
   patch: Partial<Pick<Business, 'title' | 'description' | 'category' | 'address' | 'phone' | 'whatsapp' | 'hours' | 'isOpen' | 'imageURL' | 'mapURL'>>,
@@ -72,12 +72,12 @@ export async function resubmitOwnedBusiness(
   });
 }
 
-/** Dono cancela/exclui o proprio cadastro sem remover fisicamente do Firestore. */
+/** Dono cancela/exclui o próprio cadastro sem remover fisicamente do Firestore. */
 export async function deleteOwnedBusiness(id: string): Promise<void> {
   const ref = doc(db, COLLECTION, id);
   await updateDoc(ref, {
     status: 'archived',
-    reviewNote: 'Cancelado pelo proprietario.',
+    reviewNote: 'Cancelado pelo proprietário.',
     deletedAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -132,7 +132,7 @@ export async function rejectBusiness(id: string, note?: string): Promise<void> {
   }
 }
 
-/** Lista negocios pendentes para o painel de moderacao. */
+/** Lista negócios pendentes para o painel de moderação. */
 export async function listPendingBusinesses(): Promise<Business[]> {
   const ref = collection(db, COLLECTION);
   const q = query(ref, where('status', '==', 'pending_approval'));
@@ -143,7 +143,7 @@ export async function listPendingBusinesses(): Promise<Business[]> {
     .sort(byCreatedAtDesc);
 }
 
-/** Stream em tempo real dos negocios de um cidadao, em qualquer status. */
+/** Stream em tempo real dos negócios de um cidadão, em qualquer status. */
 export function listenToOwnedBusinesses(
   ownerId: string,
   onChange: (businesses: Business[]) => void,

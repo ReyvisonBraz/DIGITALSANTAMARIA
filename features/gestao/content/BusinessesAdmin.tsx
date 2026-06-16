@@ -166,7 +166,7 @@ export default function BusinessesAdmin() {
     if (!rejectingId) return;
     const note = rejectNote.trim();
     if (note.length < 10) {
-      toast('Informe um motivo com pelo menos 10 caracteres para orientar o cidadao.', 'error');
+      toast('Informe um motivo com pelo menos 10 caracteres para orientar o cidadão.', 'error');
       return;
     }
 
@@ -370,14 +370,14 @@ export default function BusinessesAdmin() {
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <label className="md:col-span-2 space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Nome do negocio</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Nome do negócio</span>
             <input
               type="text"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               maxLength={120}
               required
-              placeholder='Ex: "Padaria Sao Jose"'
+              placeholder='Ex: "Padaria São José"'
               className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none focus:border-primary"
             />
           </label>
@@ -409,7 +409,7 @@ export default function BusinessesAdmin() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Horario</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Horário</span>
             <input
               type="text"
               value={hours}
@@ -423,7 +423,7 @@ export default function BusinessesAdmin() {
           <ContentStatusSelect value={status} onChange={setStatus} />
 
           <label className="md:col-span-2 space-y-1.5">
-            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Endereco</span>
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Endereço</span>
             <input
               type="text"
               value={address}
@@ -573,14 +573,14 @@ export default function BusinessesAdmin() {
                     </p>
                   )}
                   {biz.hours && (
-                    <p className="text-text-muted md:col-span-2">Horario: {biz.hours}</p>
+                    <p className="text-text-muted md:col-span-2">Horário: {biz.hours}</p>
                   )}
                 </div>
 
                 {rejectingId === biz.id && (
                   <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
                     <label className="space-y-2">
-                      <span className="text-xs font-black uppercase tracking-widest text-rose-700">Motivo da reprovacao</span>
+                      <span className="text-xs font-black uppercase tracking-widest text-rose-700">Motivo da reprovação</span>
                       <textarea
                         value={rejectNote}
                         onChange={(event) => setRejectNote(event.target.value)}
@@ -614,7 +614,7 @@ export default function BusinessesAdmin() {
                         className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-rose-600 px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         <XCircle className="h-4 w-4" />
-                        Confirmar reprovacao
+                        Confirmar reprovação
                       </button>
                       <button
                         type="button"
@@ -649,7 +649,7 @@ export default function BusinessesAdmin() {
         <div className="mb-5 flex items-end justify-between border-b border-border pb-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Workflow editorial</p>
-            <h3 className="text-lg font-semibold text-text-main">Comercios cadastrados ({businesses.length})</h3>
+            <h3 className="text-lg font-semibold text-text-main">Comércios cadastrados ({businesses.length})</h3>
           </div>
         </div>
 
@@ -666,7 +666,7 @@ export default function BusinessesAdmin() {
           <ContentListControls
             search={searchTerm}
             sort={sortMode}
-            searchPlaceholder="Buscar por negocio, endereco, categoria, telefone ou proprietario"
+            searchPlaceholder="Buscar por negócio, endereço, categoria, telefone ou proprietário"
             onSearchChange={setSearchTerm}
             onSortChange={setSortMode}
           />

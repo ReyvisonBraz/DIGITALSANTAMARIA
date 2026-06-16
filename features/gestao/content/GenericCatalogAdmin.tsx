@@ -65,7 +65,7 @@ function getOptionsVoteTotal(value: unknown): number {
 }
 
 const baseFields: CatalogField[] = [
-  { name: 'title', label: 'Título', type: 'text', required: true, placeholder: 'Nome exibido ao cidadao' },
+  { name: 'title', label: 'Título', type: 'text', required: true, placeholder: 'Nome exibido ao cidadão' },
   { name: 'description', label: 'Descrição', type: 'textarea', required: true, placeholder: 'Resumo público deste item' },
 ];
 
@@ -188,11 +188,11 @@ export default function GenericCatalogAdmin({ config }: { config: CatalogAdminCo
           .map((item) => item.trim())
           .filter(Boolean);
         if (options.length < 2) {
-          toast(`Informe pelo menos duas opcoes em ${field.label.toLowerCase()}.`, 'error');
+          toast(`Informe pelo menos duas opções em ${field.label.toLowerCase()}.`, 'error');
           return;
         }
         if (new Set(options.map((item) => item.toLowerCase())).size !== options.length) {
-          toast(`Remova opcoes duplicadas em ${field.label.toLowerCase()}.`, 'error');
+          toast(`Remova opções duplicadas em ${field.label.toLowerCase()}.`, 'error');
           return;
         }
       }
@@ -334,7 +334,7 @@ export default function GenericCatalogAdmin({ config }: { config: CatalogAdminCo
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
           </div>
         ) : items.length === 0 ? (
-          <EmptyState title={config.emptyTitle} description="Use o formulario acima para publicar o primeiro item." />
+          <EmptyState title={config.emptyTitle} description="Use o formulário acima para publicar o primeiro item." />
         ) : (
           <div className="space-y-3">
             {items.map((item) => (

@@ -68,7 +68,7 @@ export default function EditProfileForm({ onSaved }: { onSaved?: () => void }) {
     <div className="space-y-4">
       <label className="block space-y-2">
         <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
-          Nome de exibicao
+          Nome de exibição
         </span>
         <span className="relative block">
           <User className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-muted/50" />
@@ -111,7 +111,7 @@ export default function EditProfileForm({ onSaved }: { onSaved?: () => void }) {
       </label>
 
       <Button onClick={handleSave} isLoading={saving} className="min-h-11 w-full justify-center">
-        Salvar alteracoes
+        Salvar alterações
       </Button>
     </div>
   );

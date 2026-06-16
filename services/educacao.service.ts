@@ -4,6 +4,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   orderBy,
   query,
   serverTimestamp,
@@ -47,9 +48,9 @@ export async function createEnrollment(
   return protocol;
 }
 
-export async function getAllEnrollments(): Promise<Enrollment[]> {
+export async function getAllEnrollments(max = 500): Promise<Enrollment[]> {
   const ref = collection(db, COLLECTION).withConverter(enrollmentConverter);
-  const q = query(ref, orderBy('createdAt', 'desc'));
+  const q = query(ref, orderBy('createdAt', 'desc'), limit(max));
   const snap = await getDocs(q);
   return snap.docs.map((document) => document.data());
 }

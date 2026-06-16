@@ -57,7 +57,7 @@ export default function OuvidoriaPage() {
                 },
                 {
                   icon: Phone,
-                  text: 'Em emergência, use também canais telefônicos ou presenciais do municipio.',
+                  text: 'Em emergência, use também canais telefônicos ou presenciais do município.',
                 },
                 {
                   icon: Clock3,

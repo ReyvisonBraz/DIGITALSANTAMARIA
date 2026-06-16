@@ -108,7 +108,7 @@ type ActivityItem =
       id: string;
       source: null;
       protocol: string;
-      type: 'Consulta' | 'Candidatura' | 'Matricula' | 'Emergência';
+      type: 'Consulta' | 'Candidatura' | 'Matrícula' | 'Emergência';
       title: string;
       status: string;
       unreadByCitizen: false;
@@ -200,7 +200,7 @@ export default function ActivityHistory({
       id: enrollment.id,
       source: null,
       protocol: enrollment.protocol,
-      type: 'Matricula',
+      type: 'Matrícula',
       title: enrollment.studentName,
       status: enrollmentStatusLabel[enrollment.status],
       unreadByCitizen: false,

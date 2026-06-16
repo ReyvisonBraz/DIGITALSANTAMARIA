@@ -80,7 +80,7 @@ export default function ApplicationModal({ isOpen, onClose, jobId, jobTitle }: A
           <>
             <div className="space-y-2">
               <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-text-muted">
-                Carta de apresentacao (opcional)
+                Carta de apresentação (opcional)
               </label>
               <textarea
                 rows={6}

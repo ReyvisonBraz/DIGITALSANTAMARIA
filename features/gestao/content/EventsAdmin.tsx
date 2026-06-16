@@ -493,7 +493,7 @@ export default function EventsAdmin() {
       <ConfirmDialog
         isOpen={!!archiveId}
         title="Arquivar evento"
-        description="Este evento deixa de aparecer na agenda publica, mas o registro continua salvo no Firebase."
+        description="Este evento deixa de aparecer na agenda pública, mas o registro continua salvo no Firebase."
         confirmLabel="Arquivar"
         loading={archiving}
         tone="danger"

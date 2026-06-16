@@ -163,7 +163,7 @@ export default function AdminOverview({
           contentTab: 'enrollments' as ContentTab,
         },
         {
-          label: 'Emergencias',
+          label: 'Emergências',
           value: emergencyActive,
           total: queues.emergencies.length,
           helper: 'Alertas ativos agora',
@@ -191,7 +191,7 @@ export default function AdminOverview({
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Visao geral operacional</p>
             <h2 className="mt-1 text-2xl font-semibold tracking-normal text-text-main">Fila de trabalho do painel</h2>
             <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-text-muted">
-              Resumo das areas que exigem acompanhamento administrativo. Use os atalhos para entrar direto nas filas.
+              Resumo das áreas que exigem acompanhamento administrativo. Use os atalhos para entrar direto nas filas.
             </p>
           </div>
 

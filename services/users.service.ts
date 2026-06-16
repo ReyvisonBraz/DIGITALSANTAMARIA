@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, limit, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { userConverter } from '@/lib/firebase/converters';
 import type { UserProfile } from '@/types';
@@ -9,8 +9,9 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   return snap.exists() ? snap.data() : null;
 }
 
-export async function getAllUsers(): Promise<UserProfile[]> {
-  const snap = await getDocs(collection(db, 'users').withConverter(userConverter));
+export async function getAllUsers(max = 500): Promise<UserProfile[]> {
+  const q = query(collection(db, 'users').withConverter(userConverter), limit(max));
+  const snap = await getDocs(q);
   return snap.docs
     .map((item) => item.data())
     .sort((a, b) => (a.displayName || a.email || '').localeCompare(b.displayName || b.email || ''));

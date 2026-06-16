@@ -97,7 +97,7 @@ export default function SobrePage() {
             color: 'bg-primary'
           }
         ].map((item, idx) => (
-          <div key={idx} className="bg-white p-10 rounded-[3rem] border-2 border-border hover:border-primary transition-all group shadow-sm flex flex-col gap-6">
+          <div key={item.title} className="bg-white p-10 rounded-[3rem] border-2 border-border hover:border-primary transition-all group shadow-sm flex flex-col gap-6">
             <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform", item.color)}>
               <item.icon className="w-8 h-8" />
             </div>
@@ -116,7 +116,7 @@ export default function SobrePage() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {team.map((t, idx) => (
-            <div key={idx} className="p-6 bg-surface rounded-2xl border-2 border-border flex items-center gap-6 group hover:bg-white hover:shadow-xl transition-all">
+            <div key={t.name} className="p-6 bg-surface rounded-2xl border-2 border-border flex items-center gap-6 group hover:bg-white hover:shadow-xl transition-all">
                <div className="w-14 h-14 bg-white rounded-xl border-2 border-border flex items-center justify-center text-primary group-hover:rotate-12 transition-transform">
                   <t.icon className="w-6 h-6" />
                </div>
