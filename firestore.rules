@@ -104,12 +104,6 @@ service cloud.firestore {
         && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'cancellation', 'updatedAt']);
     }
 
-    function validPetitionSignatureUpdate() {
-      return isSignedIn()
-        && incoming().diff(existing()).changedKeys().hasOnly(['signaturesCount', 'updatedAt'])
-        && incoming().signaturesCount == existing().signaturesCount + 1;
-    }
-
     function validAppointmentOwnerCancel() {
       return isOwner(resource.data.userId)
         && incoming().status == 'cancelled'

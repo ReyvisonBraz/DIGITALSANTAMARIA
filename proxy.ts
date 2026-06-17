@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 /**
- * Middleware de proteção server-side para rotas administrativas.
+ * Proxy de protecao server-side para rotas administrativas.
  *
  * Verifica a existencia de cookie com Firebase ID token antes de servir
- * o bundle JS do painel de gestão. Decodifica o JWT para validar payload
+ * o bundle JS do painel de gestao. Decodifica o JWT para validar payload
  * e expiracao.
  */
 
@@ -22,7 +22,7 @@ function decodeJwtPayload(token: string): { exp?: number; sub?: string } | null 
   }
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (ADMIN_ROUTES.some((route) => pathname.startsWith(route))) {
@@ -37,7 +37,6 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // Verifica expiracao
     if (payload.exp * 1000 < Date.now()) {
       return NextResponse.redirect(new URL('/', request.url));
     }

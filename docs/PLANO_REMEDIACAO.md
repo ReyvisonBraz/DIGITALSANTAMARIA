@@ -297,18 +297,24 @@ arquitetura por features + 14 services, CI configurado, baseline de `aria-*` (10
 
 1. ✅ Configurar branch protection da `main` no GitHub exigindo CI verde antes de merge.
 2. ✅ Firebase atualizado para Blaze, bucket padrão criado (`conectasantamaria-pa.firebasestorage.app`, `US-EAST1`) e `storage.rules` publicado com `npm run firebase:storage:deploy`.
-3. Validar em ambiente real os uploads de foto em `/relatar`, avatar em `/perfil` e logo de comércio com usuário autenticado.
+3. Validar em ambiente real os uploads de foto em `/relatar`, avatar em `/perfil` e logo de comércio com usuário autenticado. Pode ficar para uma sessão posterior com login real.
 4. ✅ QA visual público executado em 2026-06-17 para Saúde, Educação, Empregos, Perfil, Relatar e rota pública de Gestão em desktop/mobile; corrigida colisão mobile entre `/relatar`, botão `?` e barra inferior.
-5. Avaliar a migração futura de `middleware.ts` para `proxy`, conforme aviso do `next build`.
+5. ✅ Migração de `middleware.ts` para `proxy.ts` concluída conforme convenção atual do Next; build local sem aviso de depreciação.
 
 ### Registro operacional — 2026-06-17
 
 - `npm run firebase:storage:check` passou: bucket padrão `conectasantamaria-pa.firebasestorage.app` em `US-EAST1`; `storage.rules` compilou sem erros.
+- `npm run firebase:rules:check` passou após remover função não usada de `firestore.rules`; regras Firestore compilam sem avisos.
 - `.env` local confere com o bucket padrão do Firebase Storage.
 - `npx tsc --noEmit`, `npm run lint`, `npm test -- --runInBand` e `npm run build` passaram.
 - QA visual automatizado salvo em `output/playwright/qa-2026-06-17/`.
+- QA público de produção salvo em `output/playwright/production-qa-2026-06-17/`: home e rotas públicas principais sem erros de console e sem overflow horizontal em desktop/mobile.
+- Auditoria de produção (`npm audit --omit=dev --audit-level=moderate`) zerada com Next 16.2.9 e override controlado de `postcss`; auditoria total ainda mantém alertas moderados em dependências de desenvolvimento que exigiriam `--force` com mudanças quebráveis.
+- `proxy.ts` validado localmente com `next start`: `/gestao` sem sessão retorna `307` para `/`.
 - Ajustes aplicados:
   - `components/GuidedHelp.tsx`: no mobile, o botão `?` foi movido para o topo direito abaixo da barra superior para não cobrir ações nem a navegação inferior.
   - `features/relatar/ReportForm.tsx`: estado não autenticado do relato ficou mais compacto no mobile, com login visível antes do texto.
   - `app/relatar/page.tsx`: adicionada folga antes dos cards de dica em telas menores para a barra inferior fixa não cobrir conteúdo.
+  - `proxy.ts`: substitui `middleware.ts` mantendo a proteção server-side de `/gestao` por cookie `firebase-auth-token`.
+  - `package-lock.json`: dependências de produção atualizadas após `npm audit fix`.
 - Ponto de continuação: entrar com uma conta real no navegador e testar upload de foto em `/relatar`, avatar em `/perfil` e logo em "Meus negócios"; a rota `/gestao` completa também exige sessão admin/clerk para QA interno.
