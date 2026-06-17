@@ -13,7 +13,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Download, X } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 // ─── Tipos ──────────────────────────────────────────────────────────
 
@@ -89,35 +89,35 @@ export default function InstallPrompt() {
   if (!show || dismissed) return null;
 
   return (
-    <div className="fixed bottom-24 md:bottom-6 right-4 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
-      <div className="bg-white rounded-2xl shadow-2xl border-2 border-border p-4 w-80">
+    <div className="fixed bottom-24 right-3 z-50 max-w-[calc(100vw-1.5rem)] animate-in slide-in-from-bottom-4 fade-in duration-300 md:bottom-6 md:right-24">
+      <div className="w-[21rem] max-w-full rounded-2xl border-2 border-border bg-white p-4 shadow-2xl">
         <div className="flex items-start gap-3">
           {/* Ícone */}
-          <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Download className="w-5 h-5 text-primary" />
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10">
+            <Download className="h-5 w-5 text-primary" />
           </div>
 
           {/* Conteúdo */}
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-text-main">
               Instale o App
             </p>
-            <p className="text-xs text-text-muted mt-0.5">
+            <p className="mt-0.5 text-xs text-text-muted">
               Instale o Conecta Santa Maria na tela inicial do seu dispositivo para acesso mais rápido.
             </p>
 
             {/* Ações */}
-            <div className="flex items-center gap-2 mt-3">
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
               <button
                 onClick={handleInstall}
-                className="flex-1 px-3 py-1.5 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-lg transition-colors"
+                className="min-h-9 w-full rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-primary-dark"
                 aria-label="Instalar aplicativo"
               >
                 Instalar
               </button>
               <button
                 onClick={handleDismiss}
-                className="px-3 py-1.5 text-xs font-medium text-text-muted hover:text-text-main transition-colors"
+                className="min-h-9 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-bold text-text-muted transition-colors hover:bg-surface hover:text-text-main"
                 aria-label="Dispensar prompt de instalação"
               >
                 Agora não
