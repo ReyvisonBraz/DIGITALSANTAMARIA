@@ -250,7 +250,7 @@ export default function ReportsSection({ reports, loading, error, userId, clerkN
                             </p>
                           )}
                         </div>
-                        <ReportTimeline report={report} compact />
+                        <ReportTimeline report={report} compact autoScroll={false} />
                       </div>
 
                       <aside className="space-y-4">

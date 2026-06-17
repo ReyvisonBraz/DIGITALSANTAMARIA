@@ -72,8 +72,8 @@ export default function StatusUpdateForm({
   return (
     <>
       <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[180px_1fr]">
-          <label className="space-y-2">
+        <div className="grid grid-cols-1 gap-3">
+          <label className="min-w-0 space-y-2">
             <span className="text-xs font-black uppercase tracking-widest text-text-muted">Status</span>
             <select
               value={status}
@@ -86,13 +86,13 @@ export default function StatusUpdateForm({
             </select>
           </label>
 
-          <label className="space-y-2">
-            <div className="flex items-center justify-between">
+          <label className="min-w-0 space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="text-xs font-black uppercase tracking-widest text-text-muted">Resposta oficial</span>
               <button
                 type="button"
                 onClick={() => setShowQuickResponses((v) => !v)}
-                className="inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-widest text-primary hover:text-primary-dark transition-colors"
+                className="inline-flex min-h-8 items-center gap-1 rounded-lg px-1 text-[11px] font-black uppercase tracking-widest text-primary transition-colors hover:bg-primary/5 hover:text-primary-dark"
               >
                 <Zap className="h-3 w-3" />
                 Respostas rápidas
@@ -130,7 +130,7 @@ export default function StatusUpdateForm({
               onChange={(e) => onResponseChange(e.target.value)}
               rows={6}
               placeholder="Escreva a resposta que o cidadão verá."
-              className="w-full resize-y rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary min-h-[120px]"
+              className="min-h-[120px] w-full min-w-0 resize-y rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none focus:border-primary"
             />
           </label>
         </div>

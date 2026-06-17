@@ -61,6 +61,7 @@ interface ChatTimelineProps {
   conversationAriaLabel?: string;
   replyPlaceholder?: string;
   compact?: boolean;
+  autoScroll?: boolean;
 }
 
 const ROLE_ICON: Record<string, typeof UserRound> = {
@@ -89,6 +90,7 @@ export default function ChatTimeline({
   conversationAriaLabel = 'Conversa do protocolo',
   replyPlaceholder = 'Escreva uma resposta...',
   compact = false,
+  autoScroll = true,
 }: ChatTimelineProps) {
   const { toast } = useToast();
   const [rawMessages, setRawMessages] = useState<{ id: string; authorName: string; authorRole: string; message: string; createdAt: { seconds: number; nanoseconds?: number; toDate?: () => Date } | string }[]>([]);
@@ -122,13 +124,14 @@ export default function ChatTimeline({
 
   // ── Auto-scroll ─────────────────────────────────────────
   useEffect(() => {
+    if (!autoScroll) return;
     if (rawMessages.length > 0) {
       bottomRef.current?.scrollIntoView({
         behavior: firstLoadRef.current ? 'auto' : 'smooth',
       });
       firstLoadRef.current = false;
     }
-  }, [rawMessages.length]);
+  }, [autoScroll, rawMessages.length]);
 
   // ── Mark as read ────────────────────────────────────────
   useEffect(() => {

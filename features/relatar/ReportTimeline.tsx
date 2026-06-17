@@ -16,6 +16,7 @@ interface ReportTimelineProps {
   allowCitizenReply?: boolean;
   currentUserId?: string;
   currentUserName?: string;
+  autoScroll?: boolean;
 }
 
 const adapter: ChatTimelineAdapter = {
@@ -41,6 +42,7 @@ export default function ReportTimeline({
   allowCitizenReply = false,
   currentUserId = '',
   currentUserName = '',
+  autoScroll = true,
 }: ReportTimelineProps) {
   const isClosed = isReportClosed(report.status);
   const canReply = allowCitizenReply && currentUserId === report.reporterId && !isClosed;
@@ -67,6 +69,7 @@ export default function ReportTimeline({
       conversationAriaLabel="Conversa do relato"
       replyPlaceholder="Escreva uma nova informação ou resposta sobre este relato"
       compact={compact}
+      autoScroll={autoScroll}
     />
   );
 }

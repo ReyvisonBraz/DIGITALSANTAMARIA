@@ -258,7 +258,7 @@ export default function DemandsSection({ demands, loading, error, userId, clerkN
                             </p>
                           )}
                         </div>
-                        <DemandTimeline demand={demand} compact />
+                        <DemandTimeline demand={demand} compact autoScroll={false} />
                       </div>
 
                       <aside className="space-y-4">
@@ -284,17 +284,15 @@ export default function DemandsSection({ demands, loading, error, userId, clerkN
                             </div>
                           </dl>
                         </div>
-                        <div className="rounded-xl border border-border bg-white p-4">
-                          <StatusUpdater
-                            demandId={demand.id}
-                            clerkId={userId}
-                            clerkName={clerkName}
-                            initialStatus={safeStatus}
-                            initialResponse={demand.adminAction?.response || ''}
-                            category={demand.category}
-                            onUpdate={onRefresh}
-                          />
-                        </div>
+                        <StatusUpdater
+                          demandId={demand.id}
+                          clerkId={userId}
+                          clerkName={clerkName}
+                          initialStatus={safeStatus}
+                          initialResponse={demand.adminAction?.response || ''}
+                          category={demand.category}
+                          onUpdate={onRefresh}
+                        />
                       </aside>
                     </div>
                   </div>

@@ -17,6 +17,7 @@ interface DemandTimelineProps {
   allowCitizenReply?: boolean;
   currentUserId?: string;
   currentUserName?: string;
+  autoScroll?: boolean;
 }
 
 const adapter: ChatTimelineAdapter = {
@@ -42,6 +43,7 @@ export default function DemandTimeline({
   allowCitizenReply = false,
   currentUserId = '',
   currentUserName = '',
+  autoScroll = true,
 }: DemandTimelineProps) {
   const isClosed = isDemandClosed(demand.status);
   const canReply =
@@ -73,6 +75,7 @@ export default function DemandTimeline({
       conversationAriaLabel="Conversa do protocolo"
       replyPlaceholder="Escreva uma nova informação ou resposta sobre este protocolo"
       compact={compact}
+      autoScroll={autoScroll}
     />
   );
 }
