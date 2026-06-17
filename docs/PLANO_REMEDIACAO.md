@@ -11,6 +11,7 @@
 - Cada item é uma **Parte** (`P#`) com: severidade, área, arquivos-alvo, contexto, passos, **critérios de aceite** e dependências.
 - Pegue **uma Parte por vez**. Antes de iniciar, atualize o status na tabela de progresso para `🔄 Em andamento` com seu nome/IA.
 - Ao concluir, marque `✅ Concluída` e preencha a coluna "Notas" com o commit/resumo do que mudou.
+- Atualize este plano a cada etapa operacional concluída, incluindo data, resultado e próximo ponto de continuação.
 - **Não** inicie uma Parte cujas dependências (coluna "Dep.") ainda não estejam ✅.
 - Toda Parte deve terminar com `npx tsc --noEmit`, `npm run lint` e `npm test` **verdes**. Esse é o portão mínimo (é o que o CI roda — ver `.github/workflows/ci.yml`).
 - Não invente dados nem reintroduza mocks sem o aviso visual (`DevBanner`). Para portal público, veracidade > preencher tela.
@@ -27,9 +28,9 @@
 | # | Parte | Sev. | Área | Dep. | Status | Notas |
 |---|---|---|---|---|---|---|
 | P1 | Allowlist de imagens (`next/image`) | 🔴 | Segurança/Config | — | ✅ Concluída | Removido wildcard; mantidos apenas Storage e avatar Google. |
-| P2 | Reativar Storage + upload de fotos | 🔴 | UX/Infra | — | ✅ Concluída | Upload real para relato, avatar e logo; regras de Storage ajustadas. |
+| P2 | Reativar Storage + upload de fotos | 🔴 | UX/Infra | — | ✅ Concluída | Upload real para relato, avatar e logo; regras de Storage ajustadas. Storage Blaze ativo e regras publicadas em 2026-06-16. |
 | P3 | Auditoria de dados mockados | 🔴 | Produto/Confiança | — | ✅ Concluída | Inventário em `docs/INVENTARIO_DADOS.md`; mocks externos removidos/sinalizados. |
-| P4 | Portão de build/CI verde | 🔴 | Processo | — | ✅ Concluída | CI inclui build; artefatos não trackeados. Branch protection será configurada por Codex assim que o acesso via cowork for liberado. |
+| P4 | Portão de build/CI verde | 🔴 | Processo | — | ✅ Concluída | CI inclui build; artefatos não trackeados. Branch protection da `main` configurada no GitHub em 2026-06-16. |
 | P5 | Acessibilidade — mínimo de tipografia | 🟠 | A11y/Design | — | ✅ Concluída | Zero `text-[8px]`, `text-[9px]` e `text-[10px]`; criada `.label-caps`. |
 | P6 | Cobertura de testes dos `services/` | 🟠 | Qualidade | — | ✅ Concluída | Testes dos services críticos adicionados; testes de protocolo consolidados. |
 | P7 | Unificar linguagem visual / tokens | 🟠 | Design System | P5 | ✅ Concluída | Removidos `blue-600/700`, sombras fora de escala e raios 3rem+. |
@@ -294,8 +295,20 @@ arquitetura por features + 14 services, CI configurado, baseline de `aria-*` (10
 
 > A executar pelo Codex assim que o acesso via cowork for liberado.
 
-1. Configurar branch protection da `main` no GitHub exigindo o check `validate` verde antes de merge.
-2. Rodar `npm run firebase:storage:check` e, se passar, publicar com `npm run firebase:storage:deploy`.
-3. Validar em ambiente real os uploads de foto em `/relatar`, avatar em `/perfil` e logo de comércio.
-4. Fazer QA visual rápido nas páginas afetadas por tipografia/tokens: Saúde, Educação, Empregos, Perfil e Gestão.
+1. ✅ Configurar branch protection da `main` no GitHub exigindo CI verde antes de merge.
+2. ✅ Firebase atualizado para Blaze, bucket padrão criado (`conectasantamaria-pa.firebasestorage.app`, `US-EAST1`) e `storage.rules` publicado com `npm run firebase:storage:deploy`.
+3. Validar em ambiente real os uploads de foto em `/relatar`, avatar em `/perfil` e logo de comércio com usuário autenticado.
+4. ✅ QA visual público executado em 2026-06-17 para Saúde, Educação, Empregos, Perfil, Relatar e rota pública de Gestão em desktop/mobile; corrigida colisão mobile entre `/relatar`, botão `?` e barra inferior.
 5. Avaliar a migração futura de `middleware.ts` para `proxy`, conforme aviso do `next build`.
+
+### Registro operacional — 2026-06-17
+
+- `npm run firebase:storage:check` passou: bucket padrão `conectasantamaria-pa.firebasestorage.app` em `US-EAST1`; `storage.rules` compilou sem erros.
+- `.env` local confere com o bucket padrão do Firebase Storage.
+- `npx tsc --noEmit`, `npm run lint`, `npm test -- --runInBand` e `npm run build` passaram.
+- QA visual automatizado salvo em `output/playwright/qa-2026-06-17/`.
+- Ajustes aplicados:
+  - `components/GuidedHelp.tsx`: no mobile, o botão `?` foi movido para o topo direito abaixo da barra superior para não cobrir ações nem a navegação inferior.
+  - `features/relatar/ReportForm.tsx`: estado não autenticado do relato ficou mais compacto no mobile, com login visível antes do texto.
+  - `app/relatar/page.tsx`: adicionada folga antes dos cards de dica em telas menores para a barra inferior fixa não cobrir conteúdo.
+- Ponto de continuação: entrar com uma conta real no navegador e testar upload de foto em `/relatar`, avatar em `/perfil` e logo em "Meus negócios"; a rota `/gestao` completa também exige sessão admin/clerk para QA interno.

@@ -133,20 +133,30 @@ export default function ReportForm() {
 
   if (!user) {
     return (
-      <div className="civic-card flex flex-col items-start gap-4 p-6">
-        <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent-success/15 text-accent-success">
-          <LogIn className="h-5 w-5" />
+      <div className="civic-card flex flex-col items-start gap-3 p-4 sm:gap-4 sm:p-6">
+        <div className="flex w-full items-center justify-between gap-3 sm:block">
+          <div className="grid h-10 w-10 place-items-center rounded-2xl bg-accent-success/15 text-accent-success sm:h-12 sm:w-12">
+            <LogIn className="h-5 w-5" />
+          </div>
+          <button
+            type="button"
+            onClick={handleLogin}
+            className="action-button-primary min-h-11 px-4 py-2 sm:hidden"
+          >
+            <LogIn className="h-4 w-4" />
+            Entrar
+          </button>
         </div>
-        <div>
+        <div className="w-full">
           <h3 className="text-lg font-semibold tracking-normal text-text-main">Entre para relatar</h3>
-          <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
+          <p className="mt-1 hidden text-sm font-medium leading-6 text-text-muted sm:block">
             Relatos são identificados para que o município possa retornar com a solução. Use sua conta Google para entrar.
           </p>
         </div>
         <button
           type="button"
           onClick={handleLogin}
-          className="action-button-primary"
+          className="action-button-primary hidden min-h-11 px-4 py-2 sm:inline-flex"
         >
           <LogIn className="h-4 w-4" />
           Entrar com Google

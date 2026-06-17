@@ -44,7 +44,7 @@ export default function RelatarPage() {
           <ReportForm />
         </div>
 
-        <aside className="space-y-4">
+        <aside className="space-y-4 pt-24 lg:pt-0">
           {TIPS.map((tip) => (
             <div key={tip.title} className="civic-card p-5">
               <div className="grid h-10 w-10 place-items-center rounded-xl bg-accent-success/12 text-accent-success">

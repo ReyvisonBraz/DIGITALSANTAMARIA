@@ -91,11 +91,11 @@ export default function GuidedHelp() {
       <button
         type="button"
         onClick={openHelp}
-        className="fixed bottom-28 right-4 z-[70] inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-accent/70 bg-accent text-primary-dark shadow-[0_18px_36px_rgba(20,34,74,0.22)] transition hover:-translate-y-0.5 hover:bg-accent-dark hover:text-white focus:outline-none focus:ring-4 focus:ring-accent/30 md:bottom-6 md:right-6"
+        className="fixed right-4 top-24 z-[70] inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-accent/70 bg-accent text-primary-dark shadow-[0_18px_36px_rgba(20,34,74,0.22)] transition hover:-translate-y-0.5 hover:bg-accent-dark hover:text-white focus:outline-none focus:ring-4 focus:ring-accent/30 md:bottom-6 md:right-6 md:top-auto md:h-14 md:w-14"
         aria-label={`Abrir ajuda: ${guide.title}`}
         title="Ajuda desta tela"
       >
-        <CircleHelp className="h-7 w-7" strokeWidth={2.6} />
+        <CircleHelp className="h-6 w-6 md:h-7 md:w-7" strokeWidth={2.6} />
       </button>
 
       <AnimatePresence>
