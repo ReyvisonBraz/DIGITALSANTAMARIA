@@ -96,10 +96,8 @@ service cloud.firestore {
         && incoming().status == 'cancelled'
         && incoming().cancellation.cancelledBy == request.auth.uid
         && incoming().cancellation.cancelledAt is timestamp
-        && (
-          incoming().cancellation.reason == null
-          || incoming().cancellation.reason is string
-        )
+        && incoming().cancellation.reason is string
+        && incoming().cancellation.reason.size() >= 8
         && incoming().cancellation.keys().hasOnly(['cancelledAt', 'cancelledBy', 'reason'])
         && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'cancellation', 'updatedAt']);
     }
@@ -194,10 +192,8 @@ service cloud.firestore {
         && incoming().status == 'cancelled'
         && incoming().cancellation.cancelledBy == request.auth.uid
         && incoming().cancellation.cancelledAt is timestamp
-        && (
-          incoming().cancellation.reason == null
-          || incoming().cancellation.reason is string
-        )
+        && incoming().cancellation.reason is string
+        && incoming().cancellation.reason.size() >= 8
         && incoming().cancellation.keys().hasOnly(['cancelledAt', 'cancelledBy', 'reason'])
         && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'cancellation', 'updatedAt']);
     }

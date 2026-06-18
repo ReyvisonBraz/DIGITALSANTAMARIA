@@ -1,6 +1,7 @@
 'use client';
 
 import { AlertTriangle, Loader2 } from 'lucide-react';
+import type { ReactNode } from 'react';
 import Modal from '@/components/ui/Modal';
 
 interface ConfirmDialogProps {
@@ -11,6 +12,7 @@ interface ConfirmDialogProps {
   cancelLabel?: string;
   loading?: boolean;
   tone?: 'danger' | 'default';
+  children?: ReactNode;
   onConfirm: () => void;
   onClose: () => void;
 }
@@ -23,6 +25,7 @@ export default function ConfirmDialog({
   cancelLabel = 'Cancelar',
   loading = false,
   tone = 'default',
+  children,
   onConfirm,
   onClose,
 }: ConfirmDialogProps) {
@@ -37,6 +40,8 @@ export default function ConfirmDialog({
           </div>
           <p className="text-sm font-medium leading-6 text-text-muted">{description}</p>
         </div>
+
+        {children}
 
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <button

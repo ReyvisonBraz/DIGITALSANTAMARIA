@@ -1,11 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
+  ArrowLeft,
   ArrowRight,
   CheckCircle2,
   HardHat,
+  ImageIcon,
   Leaf,
   Loader2,
   LogIn,
@@ -47,6 +50,7 @@ export default function ReportForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submitLabel, setSubmitLabel] = useState('Enviando...');
   const [createdProtocol, setCreatedProtocol] = useState<string | null>(null);
+  const [isReviewing, setIsReviewing] = useState(false);
   const protocolCleanup = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -63,6 +67,7 @@ export default function ReportForm() {
     setPhotoURL('');
     setCreatedProtocol(null);
     setSubmitLabel('Enviando...');
+    setIsReviewing(false);
   };
 
   const handleLogin = async () => {
@@ -74,9 +79,44 @@ export default function ReportForm() {
     }
   };
 
+  const buildReportPayload = (showErrors = true) => {
+    if (title.trim().length < MIN_TITLE) {
+      if (showErrors) toast(`Dê um título com pelo menos ${MIN_TITLE} caracteres.`, 'error');
+      return null;
+    }
+    if (description.trim().length < MIN_DESCRIPTION) {
+      if (showErrors) toast(`Descreva o problema com pelo menos ${MIN_DESCRIPTION} caracteres.`, 'error');
+      return null;
+    }
+    if (photoURL.trim() && !photoURL.trim().startsWith('https://')) {
+      if (showErrors) toast('Informe um link público de imagem iniciando com https://.', 'error');
+      return null;
+    }
+
+    const trimmedAddress = address.trim();
+    const finalLocation: GeoLocation | null = location
+      ? { ...location, address: location.address || trimmedAddress }
+      : trimmedAddress
+        ? { lat: 0, lng: 0, address: trimmedAddress }
+        : null;
+
+    return {
+      title: title.trim(),
+      description: description.trim(),
+      location: finalLocation,
+      photoURL: photoURL.trim() || undefined,
+    };
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!user) return;
+
+    if (!isReviewing) {
+      if (!buildReportPayload()) return;
+      setIsReviewing(true);
+      return;
+    }
 
     if (title.trim().length < MIN_TITLE) {
       toast(`Dê um título com pelo menos ${MIN_TITLE} caracteres.`, 'error');
@@ -193,6 +233,84 @@ export default function ReportForm() {
     );
   }
 
+  const reviewPayload = buildReportPayload(false);
+  const selectedType = REPORT_TYPES.find((option) => option.value === type) ?? REPORT_TYPES[0];
+
+  if (isReviewing && reviewPayload) {
+    return (
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
+          <p className="text-xs font-black uppercase tracking-widest text-primary">Revisão final</p>
+          <h3 className="mt-2 text-xl font-semibold tracking-normal text-text-main">Confira antes de publicar</h3>
+          <p className="mt-1 text-sm font-medium leading-6 text-text-muted">
+            Depois do envio, o relato original fica preservado. Se precisar corrigir algo agora, volte para editar.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <ReviewItem label="Tipo" value={selectedType.label} />
+          <ReviewItem label="Título" value={reviewPayload.title} />
+          <ReviewItem label="Local" value={reviewPayload.location?.address || 'Sem local informado'} />
+          <ReviewItem label="Foto" value={reviewPayload.photoURL ? 'Foto anexada' : 'Sem foto'} />
+        </div>
+
+        <div className="rounded-2xl border border-border bg-white p-4">
+          <p className="text-xs font-black uppercase tracking-widest text-text-muted">Descrição</p>
+          <p className="mt-3 whitespace-pre-wrap text-sm font-medium leading-6 text-text-main">
+            {reviewPayload.description}
+          </p>
+        </div>
+
+        {reviewPayload.photoURL ? (
+          <div className="relative h-56 overflow-hidden rounded-2xl border border-border bg-surface">
+            <Image
+              src={reviewPayload.photoURL}
+              alt="Foto anexada ao relato"
+              fill
+              sizes="100vw"
+              unoptimized
+              className="object-cover"
+            />
+          </div>
+        ) : (
+          <div className="flex min-h-28 items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-white text-sm font-bold text-text-muted">
+            <ImageIcon className="h-5 w-5" />
+            Nenhuma foto anexada
+          </div>
+        )}
+
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button
+            type="button"
+            onClick={() => setIsReviewing(false)}
+            disabled={submitting}
+            className="action-button-secondary justify-center"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Editar dados
+          </button>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="action-button-primary justify-center disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {submitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {submitLabel}
+              </>
+            ) : (
+              <>
+                Confirmar envio
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <fieldset className="space-y-3">
@@ -291,11 +409,20 @@ export default function ReportForm() {
           </>
         ) : (
           <>
-            Enviar relato
+            Revisar relato
             <ArrowRight className="h-4 w-4" />
           </>
         )}
       </button>
     </form>
+  );
+}
+
+function ReviewItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-white p-4">
+      <p className="text-[11px] font-black uppercase tracking-widest text-text-muted">{label}</p>
+      <p className="mt-2 break-words text-sm font-bold text-text-main">{value}</p>
+    </div>
   );
 }

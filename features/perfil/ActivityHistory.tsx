@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import Link from 'next/link';
 import {
   Briefcase,
   CalendarCheck,
+  Camera,
   ChevronDown,
   ChevronUp,
   ClipboardList,
@@ -12,18 +13,22 @@ import {
   FileText,
   GraduationCap,
   Loader2,
+  Send,
   Siren,
+  UploadCloud,
   XCircle,
 } from 'lucide-react';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import DemandTimeline from '@/features/ouvidoria/DemandTimeline';
 import ReportTimeline from '@/features/relatar/ReportTimeline';
 import { cancelDemandByCitizen } from '@/services/demands.service';
-import { cancelReportByCitizen } from '@/services/reports.service';
+import { cancelReportByCitizen, createReportMessage } from '@/services/reports.service';
+import { uploadReportPhoto } from '@/services/storage.service';
 import {
   canCitizenCancelDemand,
   canCitizenCancelReport,
   DEMAND_STATUS_LABEL,
+  isReportClosed,
   REPORT_STATUS_LABEL,
 } from '@/lib/constants/protocols';
 import { useToast } from '@/lib/toast-context';
@@ -149,6 +154,7 @@ export default function ActivityHistory({
   const { toast } = useToast();
   const [openItemId, setOpenItemId] = useState<string | null>(null);
   const [cancelTarget, setCancelTarget] = useState<ConversationActivity | null>(null);
+  const [cancelReason, setCancelReason] = useState('');
   const [cancelling, setCancelling] = useState(false);
 
   const activities: ActivityItem[] = [
@@ -222,16 +228,22 @@ export default function ActivityHistory({
 
   const handleCancelProtocol = async () => {
     if (!cancelTarget || !currentUserId) return;
+    const reason = cancelReason.trim();
+    if (reason.length < 8) {
+      toast('Explique o motivo do cancelamento com pelo menos 8 caracteres.', 'error');
+      return;
+    }
     setCancelling(true);
     try {
       if (cancelTarget.type === 'Solicitação') {
-        await cancelDemandByCitizen(cancelTarget.id, currentUserId);
+        await cancelDemandByCitizen(cancelTarget.id, currentUserId, reason);
       } else {
-        await cancelReportByCitizen(cancelTarget.id, currentUserId);
+        await cancelReportByCitizen(cancelTarget.id, currentUserId, reason);
       }
       toast('Protocolo cancelado.', 'success');
       setOpenItemId(null);
       setCancelTarget(null);
+      setCancelReason('');
     } catch (error) {
       toast(error instanceof Error ? error.message : 'Não foi possível cancelar o protocolo.', 'error');
     } finally {
@@ -352,10 +364,16 @@ export default function ActivityHistory({
                 <ReportTimeline
                   report={item.source}
                   compact
-                  allowCitizenReply
                   currentUserId={currentUserId}
                   currentUserName={currentUserName}
                 />
+                {!isReportClosed(item.source.status) && currentUserId === item.source.reporterId && (
+                  <ReportComplementForm
+                    report={item.source}
+                    currentUserId={currentUserId}
+                    currentUserName={currentUserName}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -370,8 +388,164 @@ export default function ActivityHistory({
         loading={cancelling}
         tone="danger"
         onConfirm={handleCancelProtocol}
-        onClose={() => setCancelTarget(null)}
-      />
+        onClose={() => {
+          setCancelTarget(null);
+          setCancelReason('');
+        }}
+      >
+        <label className="block space-y-2">
+          <span className="text-xs font-black uppercase tracking-widest text-text-muted">Justificativa</span>
+          <textarea
+            value={cancelReason}
+            onChange={(event) => setCancelReason(event.target.value)}
+            rows={4}
+            maxLength={400}
+            placeholder="Explique por que este protocolo deve ser cancelado."
+            className="w-full rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 text-text-main outline-none transition focus:border-primary"
+          />
+          <span className="text-[11px] font-bold uppercase tracking-widest text-text-muted">
+            {cancelReason.trim().length}/400
+          </span>
+        </label>
+      </ConfirmDialog>
     </div>
+  );
+}
+
+function ReportComplementForm({
+  report,
+  currentUserId,
+  currentUserName,
+}: {
+  report: Report;
+  currentUserId: string;
+  currentUserName: string;
+}) {
+  const { toast } = useToast();
+  const [message, setMessage] = useState('');
+  const [photoURL, setPhotoURL] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputId = `report-complement-photo-${report.id}`;
+
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!currentUserId) {
+      toast('Entre com sua conta para anexar foto.', 'error');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const uploaded = await uploadReportPhoto(currentUserId, file);
+      setPhotoURL(uploaded.url);
+      toast('Foto complementar anexada.', 'success');
+    } catch (error) {
+      toast(error instanceof Error ? error.message : 'Não foi possível anexar a foto.', 'error');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const text = message.trim();
+    if (!text && !photoURL) {
+      toast('Informe um complemento ou anexe uma foto.', 'error');
+      return;
+    }
+
+    const payload = [
+      text,
+      photoURL ? `Foto complementar: ${photoURL}` : '',
+    ].filter(Boolean).join('\n\n');
+
+    setSubmitting(true);
+    try {
+      await createReportMessage({
+        reportId: report.id,
+        authorId: currentUserId,
+        authorName: currentUserName || report.reporterName || 'Cidadão',
+        authorRole: 'citizen',
+        message: payload,
+      });
+      setMessage('');
+      setPhotoURL('');
+      toast('Complemento adicionado ao relato.', 'success');
+    } catch (error) {
+      toast(error instanceof Error ? error.message : 'Não foi possível adicionar o complemento.', 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-4 rounded-xl border border-border bg-surface p-4">
+      <div className="flex items-start gap-3">
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+          <UploadCloud className="h-5 w-5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-black text-text-main">Complementar relato</p>
+          <p className="mt-1 text-xs font-medium leading-5 text-text-muted">
+            Use este campo para acrescentar informações ou nova foto. O relato original permanece preservado.
+          </p>
+        </div>
+      </div>
+
+      <label className="mt-3 block space-y-2">
+        <span className="text-xs font-black uppercase tracking-widest text-text-muted">Nova informação</span>
+        <textarea
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
+          rows={3}
+          maxLength={800}
+          placeholder="Ex: O problema piorou hoje pela manhã, próximo ao poste da esquina."
+          className="w-full rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 text-text-main outline-none transition focus:border-primary"
+        />
+      </label>
+
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <label
+          htmlFor={fileInputId}
+          className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-primary transition hover:border-primary"
+        >
+          {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+          {uploading ? 'Anexando...' : 'Anexar foto'}
+        </label>
+        <input
+          ref={fileInputRef}
+          id={fileInputId}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          capture="environment"
+          disabled={uploading || submitting}
+          onChange={handleFileChange}
+          className="sr-only"
+        />
+        {photoURL && (
+          <span className="rounded-lg bg-green-50 px-3 py-2 text-xs font-bold text-green-700">
+            Foto complementar pronta para enviar
+          </span>
+        )}
+      </div>
+
+      <div className="mt-3 flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <span className="text-[11px] font-bold uppercase tracking-widest text-text-muted">
+          {message.trim().length}/800
+        </span>
+        <button
+          type="submit"
+          disabled={uploading || submitting}
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          Adicionar complemento
+        </button>
+      </div>
+    </form>
   );
 }

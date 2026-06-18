@@ -268,7 +268,10 @@ export async function cancelDemandByCitizen(
   reason?: string,
 ): Promise<void> {
   const demandRef = doc(db, COLLECTION, id);
-  const cancellationReason = reason?.trim() || null;
+  const cancellationReason = reason?.trim() || '';
+  if (cancellationReason.length < 8) {
+    throw new Error('Informe uma justificativa para cancelar este protocolo.');
+  }
 
   await runTransaction(db, async (tx) => {
     const demandSnap = await tx.get(demandRef);

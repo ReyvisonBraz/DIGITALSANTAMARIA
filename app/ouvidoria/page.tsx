@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { CheckCircle2, Clock3, FileText, MessageSquare, Phone, SearchCheck, ShieldCheck } from 'lucide-react';
 import DemandForm from '@/features/ouvidoria/DemandForm';
 import ProtocolSearch from '@/features/ouvidoria/ProtocolSearch';
@@ -8,6 +8,17 @@ import ProtocolSearch from '@/features/ouvidoria/ProtocolSearch';
 export default function OuvidoriaPage() {
   const [activeTab, setActiveTab] = useState<'create' | 'search'>('create');
   const [createdProtocol, setCreatedProtocol] = useState<string | null>(null);
+  const formSectionRef = useRef<HTMLElement | null>(null);
+
+  const openPanel = (tab: 'create' | 'search') => {
+    setActiveTab(tab);
+    formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.setTimeout(() => {
+      formSectionRef.current
+        ?.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input, textarea, select')
+        ?.focus();
+    }, 360);
+  };
 
   return (
     <div className="page-shell">
@@ -31,14 +42,14 @@ export default function OuvidoriaPage() {
 
             <div className="grid grid-cols-1 gap-3 sm:flex sm:flex-wrap">
               <button
-                onClick={() => setActiveTab('create')}
+                onClick={() => openPanel('create')}
                 className={activeTab === 'create' ? 'action-button-primary' : 'action-button-secondary'}
               >
                 <MessageSquare className="h-4 w-4" />
                 Abrir solicitação
               </button>
               <button
-                onClick={() => setActiveTab('search')}
+                onClick={() => openPanel('search')}
                 className={activeTab === 'search' ? 'action-button-primary' : 'action-button-secondary'}
               >
                 <SearchCheck className="h-4 w-4" />
@@ -75,7 +86,7 @@ export default function OuvidoriaPage() {
       </section>
 
       <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 px-4 py-7 sm:px-6 md:px-10 lg:grid-cols-[1fr_0.35fr] lg:px-12">
-        <section className="glass-panel p-4 md:p-6">
+        <section ref={formSectionRef} className="scroll-mt-28 glass-panel p-4 md:p-6">
           <div className="mb-5 border-b border-border pb-5">
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">
               {activeTab === 'create' ? 'Novo protocolo' : 'Acompanhamento'}
