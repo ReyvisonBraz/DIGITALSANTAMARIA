@@ -1,7 +1,7 @@
 import { collection, doc, getDoc, getDocs, limit, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { userConverter } from '@/lib/firebase/converters';
-import type { UserProfile } from '@/types';
+import type { AccessibilityPreferences, UserProfile } from '@/types';
 
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   const ref = doc(db, 'users', uid).withConverter(userConverter);
@@ -23,6 +23,14 @@ export async function updateUserProfile(
 ): Promise<void> {
   const ref = doc(db, 'users', uid);
   await updateDoc(ref, { ...data, updatedAt: serverTimestamp() });
+}
+
+export async function updateUserAccessibilityPreferences(
+  uid: string,
+  accessibility: AccessibilityPreferences
+): Promise<void> {
+  const ref = doc(db, 'users', uid);
+  await updateDoc(ref, { accessibility, updatedAt: serverTimestamp() });
 }
 
 export async function updateUserProfileByAdmin(

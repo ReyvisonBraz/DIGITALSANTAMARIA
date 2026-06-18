@@ -90,14 +90,24 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.55;
-    letter-spacing: -0.005em;
+    letter-spacing: 0;
     min-height: 100vh;
+    --tap-target-size: calc(2.5rem * var(--layout-scale));
+  }
+
+  button,
+  input,
+  select,
+  textarea,
+  [role="button"] {
+    min-height: max(2.5rem, var(--tap-target-size));
   }
 
   /* Modo alto contraste */
   body.high-contrast {
     --color-surface: #000000;
     --color-surface-container: #0A0A0A;
+    --color-background: #000000;
     --color-text-main: #FFFFFF;
     --color-text-muted: #E5E7EB;
     --color-border: #4B5563;
@@ -105,13 +115,50 @@
     --color-primary-dark: #FFFFFF;
     --color-primary-light: #0A1730;
     --color-accent: #FFD451;
+    background: #000000;
+    color-scheme: dark;
+  }
+
+  body.dark-mode {
+    --color-surface: #0F172A;
+    --color-surface-container: #172033;
+    --color-background: #0B1120;
+    --color-text-main: #F8FAFC;
+    --color-text-muted: #CBD5E1;
+    --color-border: #334155;
+    --color-primary: #7DB3FF;
+    --color-primary-dark: #BFDBFE;
+    --color-primary-light: #142748;
+    --color-secondary: #67E8F9;
+    --color-secondary-light: #143345;
+    --color-accent: #FACC15;
+    background:
+      radial-gradient(circle at 14% -2%, rgba(125, 179, 255, 0.15), transparent 34rem),
+      radial-gradient(circle at 88% 8%, rgba(103, 232, 249, 0.09), transparent 32rem),
+      linear-gradient(180deg, #0B1120 0%, #111827 52%, #0B1120 100%);
+    color-scheme: dark;
+  }
+
+  body.dark-mode [class*="bg-white"],
+  body.high-contrast [class*="bg-white"] {
+    background-color: var(--color-surface) !important;
+  }
+
+  body.dark-mode [class*="border-white"],
+  body.high-contrast [class*="border-white"] {
+    border-color: var(--color-border) !important;
+  }
+
+  body.dark-mode [class*="shadow-"],
+  body.high-contrast [class*="shadow-"] {
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
   }
 
   /* Tipografia — títulos Poppins (marca da cidade) */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     @apply font-bold leading-[1.05];
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
     color: var(--color-text-main);
   }
 

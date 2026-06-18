@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, Check, CircleHelp, Lightbulb, X } from 'lucide-react';
 import { getOnboardingGuide, ONBOARDING_VERSION } from '@/lib/constants/onboarding';
+import { useAccessibility } from '@/lib/accessibility-context';
 import { cn } from '@/lib/utils';
 
 const STORAGE_PREFIX = 'conecta:onboarding';
@@ -14,6 +15,7 @@ type OpenReason = 'auto' | 'manual';
 export default function GuidedHelp() {
   const pathname = usePathname();
   const guide = useMemo(() => getOnboardingGuide(pathname), [pathname]);
+  const { setupCompleted, isSetupOpen } = useAccessibility();
   const [isOpen, setIsOpen] = useState(false);
   const [openReason, setOpenReason] = useState<OpenReason>('manual');
   const [currentStep, setCurrentStep] = useState(0);
@@ -25,6 +27,8 @@ export default function GuidedHelp() {
     setCurrentStep(0);
     setIsOpen(false);
 
+    if (!setupCompleted || isSetupOpen) return;
+
     const timer = window.setTimeout(() => {
       if (window.localStorage.getItem(storageKey)) return;
       setOpenReason('auto');
@@ -32,7 +36,7 @@ export default function GuidedHelp() {
     }, 900);
 
     return () => window.clearTimeout(timer);
-  }, [storageKey]);
+  }, [storageKey, setupCompleted, isSetupOpen]);
 
   useEffect(() => {
     if (!isOpen) return;

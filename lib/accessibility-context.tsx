@@ -1,127 +1,182 @@
-/**
- * @module accessibility-context
- * @description Contexto de acessibilidade do Digital Santa Maria.
- *
- * Gerencia preferências de acessibilidade:
- * - Tamanho da fonte (12px a 32px, incremento de 2px)
- * - Escala do layout (0.8x a 1.5x, incremento de 0.1)
- * - Modo de alto contraste
- *
- * Persistência:
- * - Preferências salvas no localStorage (chave: 'dsm-accessibility')
- * - Restauradas automaticamente ao carregar a página
- * - Aplicadas via CSS custom properties (--base-font-size, --layout-scale)
- *
- * @example
- * ```tsx
- * const { fontSize, increaseFontSize, toggleHighContrast } = useAccessibility();
- * ```
- */
-
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { AccessibilityColorMode, AccessibilityPreferences } from '@/types';
 
 const STORAGE_KEY = 'dsm-accessibility';
 
-interface SavedPrefs {
-  fontSize: number;
-  layoutScale: number;
-  highContrast: boolean;
+const DEFAULT_PREFS: AccessibilityPreferences = {
+  fontSize: 16,
+  layoutScale: 1,
+  colorMode: 'default',
+  setupCompleted: false,
+};
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
 }
 
-function loadPrefs(): SavedPrefs {
-  if (typeof window === 'undefined') {
-    return { fontSize: 16, layoutScale: 1, highContrast: false };
-  }
+function normalizePrefs(value: Partial<AccessibilityPreferences> | null | undefined): AccessibilityPreferences {
+  const legacyContrast = (value as { highContrast?: boolean } | null | undefined)?.highContrast;
+  const colorMode = value?.colorMode ?? (legacyContrast ? 'high-contrast' : DEFAULT_PREFS.colorMode);
+
+  return {
+    fontSize: clamp(Number(value?.fontSize ?? DEFAULT_PREFS.fontSize), 12, 32),
+    layoutScale: clamp(Number(value?.layoutScale ?? DEFAULT_PREFS.layoutScale), 0.8, 1.5),
+    colorMode: ['default', 'dark', 'high-contrast'].includes(colorMode) ? colorMode : DEFAULT_PREFS.colorMode,
+    setupCompleted: Boolean(value?.setupCompleted ?? DEFAULT_PREFS.setupCompleted),
+  };
+}
+
+function loadPrefs(): AccessibilityPreferences {
+  if (typeof window === 'undefined') return DEFAULT_PREFS;
+
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
-  } catch { /* ignore */ }
-  return { fontSize: 16, layoutScale: 1, highContrast: false };
+    return saved ? normalizePrefs(JSON.parse(saved)) : DEFAULT_PREFS;
+  } catch {
+    return DEFAULT_PREFS;
+  }
 }
 
-function savePrefs(prefs: SavedPrefs) {
+function savePrefs(prefs: AccessibilityPreferences) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-  } catch { /* ignore */ }
+  } catch {
+    /* localStorage can be blocked in private/restricted browser modes. */
+  }
 }
 
-interface AccessibilityContextType {
-  fontSize: number;
-  layoutScale: number;
+interface AccessibilityContextType extends AccessibilityPreferences {
   highContrast: boolean;
+  isReady: boolean;
+  isSetupOpen: boolean;
+  setColorMode: (mode: AccessibilityColorMode) => void;
+  setAccessibilityPrefs: (prefs: Partial<AccessibilityPreferences>) => void;
   increaseFontSize: () => void;
   decreaseFontSize: () => void;
   increaseLayoutScale: () => void;
   decreaseLayoutScale: () => void;
   toggleHighContrast: () => void;
   resetAccessibility: () => void;
+  completeAccessibilitySetup: () => void;
+  openAccessibilitySetup: () => void;
+  closeAccessibilitySetup: () => void;
 }
 
 const AccessibilityContext = createContext<AccessibilityContextType | undefined>(undefined);
 
 export function AccessibilityProvider({ children }: { children: React.ReactNode }) {
-  const [fontSize, setFontSize] = useState(16);
-  const [layoutScale, setLayoutScale] = useState(1);
-  const [highContrast, setHighContrast] = useState(false);
+  const [prefs, setPrefs] = useState<AccessibilityPreferences>(DEFAULT_PREFS);
   const [hydrated, setHydrated] = useState(false);
+  const [isSetupOpen, setIsSetupOpen] = useState(false);
 
   useEffect(() => {
-    const prefs = loadPrefs();
-    setFontSize(prefs.fontSize);
-    setLayoutScale(prefs.layoutScale);
-    setHighContrast(prefs.highContrast);
+    const loaded = loadPrefs();
+    setPrefs(loaded);
+    setIsSetupOpen(!loaded.setupCompleted);
     setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
+
     const root = document.documentElement;
-    root.style.setProperty('--base-font-size', `${fontSize}px`);
-    root.style.setProperty('--layout-scale', `${layoutScale}`);
-    document.body.classList.toggle('high-contrast', highContrast);
-    savePrefs({ fontSize, layoutScale, highContrast });
-  }, [fontSize, layoutScale, highContrast, hydrated]);
+    root.style.setProperty('--base-font-size', `${prefs.fontSize}px`);
+    root.style.setProperty('--layout-scale', `${prefs.layoutScale}`);
+
+    document.body.classList.toggle('high-contrast', prefs.colorMode === 'high-contrast');
+    document.body.classList.toggle('dark-mode', prefs.colorMode === 'dark');
+    document.body.dataset.accessibilityMode = prefs.colorMode;
+
+    savePrefs(prefs);
+  }, [prefs, hydrated]);
+
+  const setAccessibilityPrefs = useCallback((nextPrefs: Partial<AccessibilityPreferences>) => {
+    setPrefs((current) => normalizePrefs({ ...current, ...nextPrefs }));
+    if (nextPrefs.setupCompleted === false) setIsSetupOpen(true);
+    if (nextPrefs.setupCompleted === true) setIsSetupOpen(false);
+  }, []);
+
+  const setColorMode = useCallback((mode: AccessibilityColorMode) => {
+    setAccessibilityPrefs({ colorMode: mode });
+  }, [setAccessibilityPrefs]);
 
   const increaseFontSize = useCallback(() => {
-    setFontSize(prev => Math.min(prev + 2, 32));
+    setPrefs((current) => ({ ...current, fontSize: clamp(current.fontSize + 2, 12, 32) }));
   }, []);
 
   const decreaseFontSize = useCallback(() => {
-    setFontSize(prev => Math.max(prev - 2, 12));
+    setPrefs((current) => ({ ...current, fontSize: clamp(current.fontSize - 2, 12, 32) }));
   }, []);
 
   const increaseLayoutScale = useCallback(() => {
-    setLayoutScale(prev => Math.min(prev + 0.1, 1.5));
+    setPrefs((current) => ({ ...current, layoutScale: clamp(Number((current.layoutScale + 0.1).toFixed(1)), 0.8, 1.5) }));
   }, []);
 
   const decreaseLayoutScale = useCallback(() => {
-    setLayoutScale(prev => Math.max(prev - 0.1, 0.8));
+    setPrefs((current) => ({ ...current, layoutScale: clamp(Number((current.layoutScale - 0.1).toFixed(1)), 0.8, 1.5) }));
   }, []);
 
   const toggleHighContrast = useCallback(() => {
-    setHighContrast(prev => !prev);
+    setPrefs((current) => ({
+      ...current,
+      colorMode: current.colorMode === 'high-contrast' ? 'default' : 'high-contrast',
+    }));
   }, []);
 
   const resetAccessibility = useCallback(() => {
-    setFontSize(16);
-    setLayoutScale(1);
-    setHighContrast(false);
+    setPrefs({ ...DEFAULT_PREFS, setupCompleted: true });
   }, []);
 
+  const completeAccessibilitySetup = useCallback(() => {
+    setPrefs((current) => ({ ...current, setupCompleted: true }));
+    setIsSetupOpen(false);
+  }, []);
+
+  const openAccessibilitySetup = useCallback(() => {
+    setIsSetupOpen(true);
+  }, []);
+
+  const closeAccessibilitySetup = useCallback(() => {
+    setIsSetupOpen(false);
+  }, []);
+
+  const value = useMemo<AccessibilityContextType>(() => ({
+    ...prefs,
+    highContrast: prefs.colorMode === 'high-contrast',
+    isReady: hydrated,
+    isSetupOpen,
+    setColorMode,
+    setAccessibilityPrefs,
+    increaseFontSize,
+    decreaseFontSize,
+    increaseLayoutScale,
+    decreaseLayoutScale,
+    toggleHighContrast,
+    resetAccessibility,
+    completeAccessibilitySetup,
+    openAccessibilitySetup,
+    closeAccessibilitySetup,
+  }), [
+    prefs,
+    hydrated,
+    isSetupOpen,
+    setColorMode,
+    setAccessibilityPrefs,
+    increaseFontSize,
+    decreaseFontSize,
+    increaseLayoutScale,
+    decreaseLayoutScale,
+    toggleHighContrast,
+    resetAccessibility,
+    completeAccessibilitySetup,
+    openAccessibilitySetup,
+    closeAccessibilitySetup,
+  ]);
+
   return (
-    <AccessibilityContext.Provider value={{
-      fontSize,
-      layoutScale,
-      highContrast,
-      increaseFontSize,
-      decreaseFontSize,
-      increaseLayoutScale,
-      decreaseLayoutScale,
-      toggleHighContrast,
-      resetAccessibility,
-    }}>
+    <AccessibilityContext.Provider value={value}>
       {children}
     </AccessibilityContext.Provider>
   );

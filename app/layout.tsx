@@ -13,6 +13,8 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import InstallPrompt from '@/components/InstallPrompt';
 import ScrollAmbience from '@/components/ScrollAmbience';
 import GuidedHelp from '@/components/GuidedHelp';
+import AccessibilitySetup from '@/components/AccessibilitySetup';
+import AccessibilityProfileSync from '@/components/AccessibilityProfileSync';
 
 const displayFont = Fraunces({
   subsets: ['latin'],
@@ -64,6 +66,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <BottomNavBar />
                   <InstallPrompt />
                   <GuidedHelp />
+                  <AccessibilitySetup />
+                  <AccessibilityProfileSync />
                   <RootLayoutLogger />
                 </ErrorBoundary>
               </NotificationsProvider>

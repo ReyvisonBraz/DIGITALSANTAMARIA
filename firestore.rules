@@ -108,14 +108,32 @@ service cloud.firestore {
         && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']);
     }
 
+    function validAccessibilityPreferences(value) {
+      return value is map
+        && value.keys().hasOnly(['fontSize', 'layoutScale', 'colorMode', 'setupCompleted'])
+        && value.fontSize is number
+        && value.fontSize >= 12
+        && value.fontSize <= 32
+        && value.layoutScale is number
+        && value.layoutScale >= 0.8
+        && value.layoutScale <= 1.5
+        && value.colorMode in ['default', 'dark', 'high-contrast']
+        && value.setupCompleted is bool;
+    }
+
     function validUserOwnerUpdate() {
       return incoming().diff(existing()).affectedKeys().hasOnly([
           'displayName',
           'photoURL',
           'neighborhood',
           'phone',
+          'accessibility',
           'updatedAt'
-        ]);
+        ])
+        && (
+          !incoming().diff(existing()).affectedKeys().hasAny(['accessibility'])
+          || validAccessibilityPreferences(incoming().accessibility)
+        );
     }
 
     function validPetitionCreate() {

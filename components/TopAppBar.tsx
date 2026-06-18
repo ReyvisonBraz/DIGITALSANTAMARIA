@@ -8,14 +8,17 @@ import { AnimatePresence, motion } from 'motion/react';
 import {
   Bell,
   Command,
+  Contrast,
   Grid,
   Minus,
   Monitor,
+  Moon,
   Plus,
   RotateCcw,
   Search,
   ShieldCheck,
   Sun,
+  Type,
   User as UserIcon,
   X,
 } from 'lucide-react';
@@ -45,7 +48,10 @@ export default function TopAppBar() {
     increaseLayoutScale,
     decreaseLayoutScale,
     resetAccessibility,
+    setColorMode,
+    openAccessibilitySetup,
     highContrast,
+    colorMode,
     fontSize,
     layoutScale,
   } = useAccessibility();
@@ -73,6 +79,11 @@ export default function TopAppBar() {
   useEffect(() => {
     log.info('Navigation', { pathname, isAuthenticated: !!user });
   }, [pathname, user]);
+
+  const handleModeChange = useCallback((mode: 'default' | 'dark') => {
+    setColorMode(mode);
+    toast(mode === 'dark' ? 'Modo noturno ativado.' : 'Modo padrao restaurado.', 'info');
+  }, [setColorMode, toast]);
 
   const handleToggleContrast = useCallback(() => {
     const nextState = !highContrast;
@@ -173,7 +184,7 @@ export default function TopAppBar() {
                 aria-expanded={isAccessibilityOpen}
               >
                 <Monitor className="h-4 w-4" />
-                {highContrast && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-green-500" />}
+                {colorMode !== 'default' && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-green-500" />}
               </button>
 
               <AnimatePresence>
@@ -182,7 +193,7 @@ export default function TopAppBar() {
                     initial={{ opacity: 0, y: 8, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                    className="absolute right-0 z-50 mt-3 w-[calc(100vw-2rem)] max-w-80 rounded-xl border border-border bg-white p-4 shadow-xl"
+                    className="fixed left-4 right-4 top-20 z-50 rounded-xl border border-border bg-white p-4 shadow-xl md:absolute md:left-auto md:right-0 md:top-auto md:mt-3 md:w-[calc(100vw-2rem)] md:max-w-80"
                     role="menu"
                   >
                     <div className="mb-4 flex items-center justify-between">
@@ -193,41 +204,64 @@ export default function TopAppBar() {
                     </div>
 
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between rounded-xl border border-border bg-surface p-3">
+                      <div className="space-y-2 rounded-xl border border-border bg-surface p-3">
                         <span className="inline-flex items-center gap-2 text-sm font-bold text-text-main">
-                          <Sun className="h-4 w-4 text-primary" />
-                          Alto contraste
+                          <Monitor className="h-4 w-4 text-primary" />
+                          Visual do portal
                         </span>
-                        <button
-                          onClick={handleToggleContrast}
-                          className={cn('relative h-6 w-12 rounded-full p-1 transition', highContrast ? 'bg-primary' : 'bg-border')}
-                          role="switch"
-                          aria-checked={highContrast}
-                        >
-                          <span className={cn('block h-4 w-4 rounded-full bg-white shadow-sm transition', highContrast && 'translate-x-6')} />
-                        </button>
+                        <div className="grid grid-cols-3 gap-1.5">
+                          <ModeOption
+                            active={colorMode === 'default'}
+                            icon={Sun}
+                            label="Padrao"
+                            onClick={() => handleModeChange('default')}
+                          />
+                          <ModeOption
+                            active={colorMode === 'dark'}
+                            icon={Moon}
+                            label="Noturno"
+                            onClick={() => handleModeChange('dark')}
+                          />
+                          <ModeOption
+                            active={colorMode === 'high-contrast'}
+                            icon={Contrast}
+                            label="Contraste"
+                            onClick={handleToggleContrast}
+                          />
+                        </div>
                       </div>
 
                       <ControlRow
                         label="Texto"
+                        icon={Type}
                         value={`${Math.round((fontSize / 16) * 100)}%`}
                         onDecrease={decreaseFontSize}
                         onIncrease={increaseFontSize}
                       />
                       <ControlRow
                         label="Layout"
+                        icon={Monitor}
                         value={`${Math.round(layoutScale * 100)}%`}
                         onDecrease={decreaseLayoutScale}
                         onIncrease={increaseLayoutScale}
                       />
 
-                      <button
-                        onClick={resetAccessibility}
-                        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-border bg-white px-3 text-xs font-semibold uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                        Restaurar
-                      </button>
+                      <div className="grid gap-2">
+                        <button
+                          onClick={openAccessibilitySetup}
+                          className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-primary px-3 text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-primary-dark"
+                        >
+                          <Monitor className="h-4 w-4" />
+                          Ajuste guiado
+                        </button>
+                        <button
+                          onClick={resetAccessibility}
+                          className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-border bg-white px-3 text-xs font-semibold uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
+                        >
+                          <RotateCcw className="h-4 w-4" />
+                          Restaurar
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -358,13 +392,42 @@ export default function TopAppBar() {
   );
 }
 
+function ModeOption({
+  active,
+  icon: Icon,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  icon: typeof Sun;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'flex min-h-16 flex-col items-center justify-center gap-1 rounded-lg border px-1.5 text-[10px] font-bold uppercase tracking-[0.08em] transition',
+        active ? 'border-primary bg-primary text-white' : 'border-border bg-surface-container text-text-muted hover:border-primary hover:text-primary'
+      )}
+      aria-pressed={active}
+    >
+      <Icon className="h-4 w-4" />
+      {label}
+    </button>
+  );
+}
+
 function ControlRow({
   label,
+  icon: Icon,
   value,
   onDecrease,
   onIncrease,
 }: {
   label: string;
+  icon: typeof Type;
   value: string;
   onDecrease: () => void;
   onIncrease: () => void;
@@ -372,14 +435,17 @@ function ControlRow({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-widest text-text-muted">
-        <span>{label}</span>
+        <span className="inline-flex items-center gap-2">
+          <Icon className="h-3.5 w-3.5 text-primary" />
+          {label}
+        </span>
         <span>{value}</span>
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <button onClick={onDecrease} aria-label="Diminuir tamanho do texto" className="inline-flex h-10 items-center justify-center rounded-xl border border-border bg-surface text-text-main">
+        <button onClick={onDecrease} aria-label={`Diminuir ${label.toLowerCase()}`} className="inline-flex h-10 items-center justify-center rounded-xl border border-border bg-surface text-text-main">
           <Minus className="h-4 w-4" />
         </button>
-        <button onClick={onIncrease} aria-label="Aumentar tamanho do texto" className="inline-flex h-10 items-center justify-center rounded-xl border border-border bg-surface text-text-main">
+        <button onClick={onIncrease} aria-label={`Aumentar ${label.toLowerCase()}`} className="inline-flex h-10 items-center justify-center rounded-xl border border-border bg-surface text-text-main">
           <Plus className="h-4 w-4" />
         </button>
       </div>

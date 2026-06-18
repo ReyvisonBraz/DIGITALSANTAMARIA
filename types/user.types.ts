@@ -2,6 +2,15 @@ import type { Timestamp } from 'firebase/firestore';
 
 export type UserRole = 'citizen' | 'admin' | 'clerk';
 
+export type AccessibilityColorMode = 'default' | 'dark' | 'high-contrast';
+
+export interface AccessibilityPreferences {
+  fontSize: number;
+  layoutScale: number;
+  colorMode: AccessibilityColorMode;
+  setupCompleted: boolean;
+}
+
 export type Department =
   | 'saude'
   | 'educacao'
@@ -26,6 +35,7 @@ export interface UserProfile {
   cpfVerified: boolean;
   points: number;
   level: string;
+  accessibility?: AccessibilityPreferences;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }

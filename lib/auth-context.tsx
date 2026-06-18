@@ -98,6 +98,12 @@ function syncUserProfile(user: User): Promise<void> {
       cpfVerified: false,
       points: 0,
       level: 'Cidadão',
+      accessibility: {
+        fontSize: 16,
+        layoutScale: 1,
+        colorMode: 'default',
+        setupCompleted: false,
+      },
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
