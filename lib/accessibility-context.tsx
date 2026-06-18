@@ -22,7 +22,7 @@ function normalizePrefs(value: Partial<AccessibilityPreferences> | null | undefi
 
   return {
     fontSize: clamp(Number(value?.fontSize ?? DEFAULT_PREFS.fontSize), 12, 32),
-    layoutScale: clamp(Number(value?.layoutScale ?? DEFAULT_PREFS.layoutScale), 0.8, 1.5),
+    layoutScale: 1,
     colorMode: ['default', 'dark', 'high-contrast'].includes(colorMode) ? colorMode : DEFAULT_PREFS.colorMode,
     setupCompleted: Boolean(value?.setupCompleted ?? DEFAULT_PREFS.setupCompleted),
   };
@@ -55,8 +55,6 @@ interface AccessibilityContextType extends AccessibilityPreferences {
   setAccessibilityPrefs: (prefs: Partial<AccessibilityPreferences>) => void;
   increaseFontSize: () => void;
   decreaseFontSize: () => void;
-  increaseLayoutScale: () => void;
-  decreaseLayoutScale: () => void;
   toggleHighContrast: () => void;
   resetAccessibility: () => void;
   completeAccessibilitySetup: () => void;
@@ -93,7 +91,7 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
   }, [prefs, hydrated]);
 
   const setAccessibilityPrefs = useCallback((nextPrefs: Partial<AccessibilityPreferences>) => {
-    setPrefs((current) => normalizePrefs({ ...current, ...nextPrefs }));
+    setPrefs((current) => normalizePrefs({ ...current, ...nextPrefs, layoutScale: 1 }));
     if (nextPrefs.setupCompleted === false) setIsSetupOpen(true);
     if (nextPrefs.setupCompleted === true) setIsSetupOpen(false);
   }, []);
@@ -108,14 +106,6 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
 
   const decreaseFontSize = useCallback(() => {
     setPrefs((current) => ({ ...current, fontSize: clamp(current.fontSize - 2, 12, 32) }));
-  }, []);
-
-  const increaseLayoutScale = useCallback(() => {
-    setPrefs((current) => ({ ...current, layoutScale: clamp(Number((current.layoutScale + 0.1).toFixed(1)), 0.8, 1.5) }));
-  }, []);
-
-  const decreaseLayoutScale = useCallback(() => {
-    setPrefs((current) => ({ ...current, layoutScale: clamp(Number((current.layoutScale - 0.1).toFixed(1)), 0.8, 1.5) }));
   }, []);
 
   const toggleHighContrast = useCallback(() => {
@@ -151,8 +141,6 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
     setAccessibilityPrefs,
     increaseFontSize,
     decreaseFontSize,
-    increaseLayoutScale,
-    decreaseLayoutScale,
     toggleHighContrast,
     resetAccessibility,
     completeAccessibilitySetup,
@@ -166,8 +154,6 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
     setAccessibilityPrefs,
     increaseFontSize,
     decreaseFontSize,
-    increaseLayoutScale,
-    decreaseLayoutScale,
     toggleHighContrast,
     resetAccessibility,
     completeAccessibilitySetup,

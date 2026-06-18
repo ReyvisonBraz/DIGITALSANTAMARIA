@@ -38,12 +38,9 @@ export default function AccessibilitySetup() {
     isSetupOpen,
     colorMode,
     fontSize,
-    layoutScale,
     setColorMode,
     increaseFontSize,
     decreaseFontSize,
-    increaseLayoutScale,
-    decreaseLayoutScale,
     resetAccessibility,
     completeAccessibilitySetup,
     closeAccessibilitySetup,
@@ -114,9 +111,9 @@ export default function AccessibilitySetup() {
             ) : (
               <div className="space-y-5">
                 <div>
-                  <h3 className="text-xl">Ajuste tamanho e espacamento</h3>
+                  <h3 className="text-xl">Ajuste o tamanho do texto</h3>
                   <p className="mt-2 text-sm leading-relaxed text-text-muted">
-                    Use a previa ao lado para confirmar se botoes, textos e campos ficaram confortaveis.
+                    Use a previa ao lado para confirmar se titulos, botoes e campos ficaram confortaveis.
                   </p>
                 </div>
 
@@ -126,13 +123,6 @@ export default function AccessibilitySetup() {
                   value={`${Math.round((fontSize / 16) * 100)}%`}
                   onDecrease={decreaseFontSize}
                   onIncrease={increaseFontSize}
-                />
-                <SetupControl
-                  icon={Contrast}
-                  label="Layout"
-                  value={`${Math.round(layoutScale * 100)}%`}
-                  onDecrease={decreaseLayoutScale}
-                  onIncrease={increaseLayoutScale}
                 />
               </div>
             )}

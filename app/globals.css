@@ -106,47 +106,116 @@
   /* Modo alto contraste */
   body.high-contrast {
     --color-surface: #000000;
-    --color-surface-container: #0A0A0A;
+    --color-surface-container: #050505;
     --color-background: #000000;
     --color-text-main: #FFFFFF;
-    --color-text-muted: #E5E7EB;
-    --color-border: #4B5563;
-    --color-primary: #8FBEFF;
-    --color-primary-dark: #FFFFFF;
-    --color-primary-light: #0A1730;
-    --color-accent: #FFD451;
+    --color-text-muted: #F3F4F6;
+    --color-border: #FFFFFF;
+    --color-primary: #FFFF00;
+    --color-primary-dark: #FFFF00;
+    --color-primary-light: #111111;
+    --color-secondary: #00E5FF;
+    --color-secondary-light: #111111;
+    --color-accent: #FFFF00;
+    --color-accent-dark: #FFFFFF;
+    --color-accent-danger: #FF6B6B;
+    --color-accent-success: #7CFF7C;
     background: #000000;
     color-scheme: dark;
   }
 
   body.dark-mode {
-    --color-surface: #0F172A;
-    --color-surface-container: #172033;
-    --color-background: #0B1120;
+    --color-surface: #101A2B;
+    --color-surface-container: #172338;
+    --color-background: #08111F;
     --color-text-main: #F8FAFC;
-    --color-text-muted: #CBD5E1;
-    --color-border: #334155;
+    --color-text-muted: #B9C7DA;
+    --color-border: #31445F;
     --color-primary: #7DB3FF;
-    --color-primary-dark: #BFDBFE;
-    --color-primary-light: #142748;
-    --color-secondary: #67E8F9;
-    --color-secondary-light: #143345;
+    --color-primary-dark: #A8CCFF;
+    --color-primary-light: #173356;
+    --color-secondary: #65D4F2;
+    --color-secondary-dark: #37B7DA;
+    --color-secondary-light: #12384A;
     --color-accent: #FACC15;
+    --color-accent-dark: #FDE047;
+    --color-accent-danger: #FF7373;
+    --color-accent-success: #65D986;
     background:
-      radial-gradient(circle at 14% -2%, rgba(125, 179, 255, 0.15), transparent 34rem),
-      radial-gradient(circle at 88% 8%, rgba(103, 232, 249, 0.09), transparent 32rem),
-      linear-gradient(180deg, #0B1120 0%, #111827 52%, #0B1120 100%);
+      radial-gradient(circle at 14% -2%, rgba(125, 179, 255, 0.14), transparent 34rem),
+      radial-gradient(circle at 88% 8%, rgba(101, 212, 242, 0.10), transparent 32rem),
+      linear-gradient(180deg, #08111F 0%, #101A2B 52%, #08111F 100%);
     color-scheme: dark;
   }
 
   body.dark-mode [class*="bg-white"],
+  body.dark-mode [class*="bg-slate-50"],
+  body.dark-mode [class*="bg-slate-100"],
+  body.dark-mode [class*="bg-blue-50"],
+  body.dark-mode [class*="bg-primary-light"],
+  body.dark-mode [class*="bg-secondary-light"],
   body.high-contrast [class*="bg-white"] {
     background-color: var(--color-surface) !important;
   }
 
+  body.high-contrast [class*="bg-slate-50"],
+  body.high-contrast [class*="bg-slate-100"],
+  body.high-contrast [class*="bg-blue-50"],
+  body.high-contrast [class*="bg-primary-light"],
+  body.high-contrast [class*="bg-secondary-light"],
+  body.high-contrast [class*="bg-surface-container"] {
+    background-color: #050505 !important;
+  }
+
   body.dark-mode [class*="border-white"],
+  body.dark-mode [class*="border-slate-"],
+  body.dark-mode [class*="border-blue-"],
   body.high-contrast [class*="border-white"] {
     border-color: var(--color-border) !important;
+  }
+
+  body.high-contrast [class*="border-slate-"],
+  body.high-contrast [class*="border-blue-"],
+  body.high-contrast [class*="border-primary"] {
+    border-color: #FFFFFF !important;
+  }
+
+  body.dark-mode [class*="text-slate-"],
+  body.dark-mode [class*="text-gray-"],
+  body.dark-mode [class*="text-zinc-"] {
+    color: var(--color-text-muted) !important;
+  }
+
+  body.dark-mode [class*="text-slate-900"],
+  body.dark-mode [class*="text-gray-900"],
+  body.dark-mode [class*="text-black"] {
+    color: var(--color-text-main) !important;
+  }
+
+  body.high-contrast [class*="text-slate-"],
+  body.high-contrast [class*="text-gray-"],
+  body.high-contrast [class*="text-zinc-"],
+  body.high-contrast [class*="text-text-muted"] {
+    color: #FFFFFF !important;
+  }
+
+  body.high-contrast [class*="text-primary"] {
+    color: #FFFF00 !important;
+  }
+
+  body.high-contrast [class*="bg-primary"],
+  body.high-contrast [class*="bg-accent"] {
+    background-color: #FFFF00 !important;
+    color: #000000 !important;
+  }
+
+  body.high-contrast [class*="from-primary"],
+  body.high-contrast [class*="via-primary"],
+  body.high-contrast [class*="to-secondary"],
+  body.high-contrast [class*="bg-gradient"] {
+    background-image: none !important;
+    background-color: #000000 !important;
+    border-color: #FFFFFF !important;
   }
 
   body.dark-mode [class*="shadow-"],
@@ -244,6 +313,36 @@
     pointer-events: none;
   }
 
+  body.dark-mode .hero-panel,
+  body.dark-mode .glass-panel,
+  body.dark-mode .civic-card,
+  body.dark-mode .tactile-card {
+    background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+    border-color: var(--color-border);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+  }
+
+  body.dark-mode .hero-panel::after,
+  body.dark-mode .civic-card::before {
+    background: radial-gradient(circle, rgba(125, 179, 255, 0.12), transparent 64%);
+  }
+
+  body.high-contrast .page-shell::before,
+  body.high-contrast .hero-panel::after,
+  body.high-contrast .civic-card::before,
+  body.high-contrast .hero-grid-overlay {
+    display: none !important;
+  }
+
+  body.high-contrast .hero-panel,
+  body.high-contrast .glass-panel,
+  body.high-contrast .civic-card,
+  body.high-contrast .tactile-card {
+    background: #000000 !important;
+    border: 2px solid #FFFFFF !important;
+    box-shadow: none !important;
+  }
+
   .glass-panel {
     @apply border bg-white/80 backdrop-blur-xl;
     border-color: rgba(220, 229, 242, 0.9);
@@ -339,6 +438,25 @@
     transform: translateY(-1px);
   }
 
+  body.dark-mode .action-button-secondary {
+    background: var(--color-surface-container);
+    border-color: var(--color-border);
+    color: var(--color-text-main);
+  }
+
+  body.dark-mode .action-button-secondary:hover {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+  }
+
+  body.high-contrast .action-button-primary,
+  body.high-contrast .action-button-secondary {
+    background: #FFFF00 !important;
+    border: 2px solid #FFFF00 !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
   .section-title {
     @apply text-3xl md:text-5xl font-semibold tracking-tight;
     font-family: var(--font-display);
@@ -351,6 +469,12 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+
+  body.high-contrast .text-gradient {
+    background: none !important;
+    color: #FFFF00 !important;
+    -webkit-text-fill-color: #FFFF00;
   }
 
   /* Scroll horizontal com snap */

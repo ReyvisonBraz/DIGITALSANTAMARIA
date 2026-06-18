@@ -45,15 +45,12 @@ export default function TopAppBar() {
     toggleHighContrast,
     increaseFontSize,
     decreaseFontSize,
-    increaseLayoutScale,
-    decreaseLayoutScale,
     resetAccessibility,
     setColorMode,
     openAccessibilitySetup,
     highContrast,
     colorMode,
     fontSize,
-    layoutScale,
   } = useAccessibility();
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -238,14 +235,6 @@ export default function TopAppBar() {
                         onDecrease={decreaseFontSize}
                         onIncrease={increaseFontSize}
                       />
-                      <ControlRow
-                        label="Layout"
-                        icon={Monitor}
-                        value={`${Math.round(layoutScale * 100)}%`}
-                        onDecrease={decreaseLayoutScale}
-                        onIncrease={increaseLayoutScale}
-                      />
-
                       <div className="grid gap-2">
                         <button
                           onClick={openAccessibilitySetup}
