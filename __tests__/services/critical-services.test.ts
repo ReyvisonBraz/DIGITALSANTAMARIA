@@ -63,8 +63,8 @@ jest.mock('@/services/notifications.service', () => ({
   tryCreateNotification: jest.fn(),
 }));
 
-import { createDemand } from '@/services/demands.service';
-import { createPetition } from '@/services/petitions.service';
+import { createDemand, updateDemandStatus } from '@/services/demands.service';
+import { createPetition, signPetition } from '@/services/petitions.service';
 import { createReport } from '@/services/reports.service';
 import { updateUserProfile } from '@/services/users.service';
 
@@ -227,6 +227,91 @@ describe('critical services', () => {
       await expect(updateUserProfile('user-1', {
         displayName: 'Maria',
       })).rejects.toThrow('permission-denied');
+    });
+  });
+
+  // Fluxo-núcleo: assinar petição (via Cloud Function atômica).
+  describe('petitions.service — assinar', () => {
+    it('invokes the signPetitionCallable with the petition id and signer name', async () => {
+      const callable = jest.fn().mockResolvedValue({ data: { success: true } });
+      mockHttpsCallable.mockReturnValue(callable);
+
+      await expect(signPetition('pet-1', 'Maria')).resolves.toBeUndefined();
+
+      expect(mockHttpsCallable).toHaveBeenCalledWith(expect.anything(), 'signPetitionCallable');
+      expect(callable).toHaveBeenCalledWith({ petitionId: 'pet-1', userName: 'Maria' });
+    });
+
+    it('falls back to a default signer name when none is provided', async () => {
+      const callable = jest.fn().mockResolvedValue({ data: { success: true } });
+      mockHttpsCallable.mockReturnValue(callable);
+
+      await signPetition('pet-1', '');
+
+      expect(callable).toHaveBeenCalledWith({ petitionId: 'pet-1', userName: 'Cidadão' });
+    });
+
+    it('propagates Cloud Function errors when signing fails', async () => {
+      const callable = jest.fn().mockRejectedValueOnce(new Error('already-signed'));
+      mockHttpsCallable.mockReturnValue(callable);
+
+      await expect(signPetition('pet-1', 'Maria')).rejects.toThrow('already-signed');
+    });
+  });
+
+  // Fluxo-núcleo: responder protocolo (atualização de status pela gestão).
+  describe('demands.service — responder protocolo', () => {
+    function buildTx(demandData: Record<string, unknown>) {
+      return {
+        get: jest.fn().mockResolvedValue({ exists: () => true, data: () => demandData }),
+        update: jest.fn(),
+        set: jest.fn(),
+      };
+    }
+
+    it('updates the demand status and records the staff response as a message', async () => {
+      const tx = buildTx({ authorId: 'user-1', subject: 'Buraco na rua', isAnonymous: false, adminAction: { response: '' } });
+      mockRunTransaction.mockImplementation((_db: unknown, cb: (t: unknown) => Promise<unknown>) => cb(tx));
+      mockGetDoc.mockResolvedValue({ exists: () => true, data: () => ({ authorId: 'user-1', subject: 'Buraco na rua', isAnonymous: false }) });
+
+      await expect(updateDemandStatus('dem-1', 'solved', {
+        clerkId: 'clerk-1',
+        clerkName: 'Ana',
+        response: 'Equipe de obras enviada ao local.',
+      })).resolves.toBeUndefined();
+
+      expect(tx.update).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          status: 'solved',
+          adminAction: expect.objectContaining({
+            clerkId: 'clerk-1',
+            clerkName: 'Ana',
+            response: 'Equipe de obras enviada ao local.',
+            updatedAt: 'SERVER_TIMESTAMP',
+          }),
+        }),
+      );
+      // Resposta nova (diferente da anterior) gera mensagem na conversa.
+      expect(tx.set).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ demandId: 'dem-1', authorRole: 'staff', message: 'Equipe de obras enviada ao local.' }),
+      );
+    });
+
+    it('throws when the demand does not exist', async () => {
+      const tx = {
+        get: jest.fn().mockResolvedValue({ exists: () => false }),
+        update: jest.fn(),
+        set: jest.fn(),
+      };
+      mockRunTransaction.mockImplementation((_db: unknown, cb: (t: unknown) => Promise<unknown>) => cb(tx));
+
+      await expect(updateDemandStatus('missing', 'solved', {
+        clerkId: 'clerk-1',
+        clerkName: 'Ana',
+        response: 'Resolvido.',
+      })).rejects.toThrow('não encontrada');
     });
   });
 });

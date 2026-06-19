@@ -7,13 +7,13 @@ if (!admin.apps.length)
     admin.initializeApp();
 exports.signPetitionCallable = functions.https.onCall({ enforceAppCheck: false }, async (request) => {
     if (!request.auth) {
-        throw new functions.https.HttpsError('unauthenticated', 'Autenticacao necessaria para assinar peticoes.');
+        throw new functions.https.HttpsError('unauthenticated', 'Autenticação necessária para assinar petições.');
     }
     const { petitionId, userName: inputUserName } = request.data;
     const userId = request.auth.uid;
-    const userName = (inputUserName === null || inputUserName === void 0 ? void 0 : inputUserName.trim()) || request.auth.token.name || 'Cidadao';
+    const userName = (inputUserName === null || inputUserName === void 0 ? void 0 : inputUserName.trim()) || request.auth.token.name || 'Cidadão';
     if (!petitionId || typeof petitionId !== 'string') {
-        throw new functions.https.HttpsError('invalid-argument', 'petitionId e obrigatorio');
+        throw new functions.https.HttpsError('invalid-argument', 'petitionId é obrigatório');
     }
     const sigId = `${petitionId}_${userId}`;
     const petitionRef = admin.firestore().doc(`petitions/${petitionId}`);
@@ -26,14 +26,14 @@ exports.signPetitionCallable = functions.https.onCall({ enforceAppCheck: false }
                 tx.get(petitionRef),
             ]);
             if (sigSnap.exists) {
-                throw new functions.https.HttpsError('already-exists', 'Voce ja assinou esta peticao.');
+                throw new functions.https.HttpsError('already-exists', 'Você já assinou esta petição.');
             }
             if (!petitionSnap.exists) {
-                throw new functions.https.HttpsError('not-found', 'Peticao nao encontrada.');
+                throw new functions.https.HttpsError('not-found', 'Petição não encontrada.');
             }
             const petition = petitionSnap.data();
             if (petition.status !== 'active') {
-                throw new functions.https.HttpsError('failed-precondition', 'Esta peticao nao esta mais ativa.');
+                throw new functions.https.HttpsError('failed-precondition', 'Esta petição não está mais ativa.');
             }
             const nextSignaturesCount = ((_a = petition.signaturesCount) !== null && _a !== void 0 ? _a : 0) + 1;
             const nextStatus = nextSignaturesCount >= petition.goal ? 'achieved' : petition.status;

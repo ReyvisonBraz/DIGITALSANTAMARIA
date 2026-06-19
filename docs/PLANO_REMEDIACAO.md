@@ -61,9 +61,9 @@ remover a rota de `SUSPENDED_ROUTES`.
 | # | Tarefa | Sev. | Status | Notas |
 |---|---|---|---|---|
 | A1 | Esconder abas de features suspensas no painel de Gestão | 🟠 | ✅ Concluída | `ContentAdminPanel.tsx`: abas e grupos de áreas suspensas filtrados via `isTabSuspended`/`isRouteSuspended` (inclui sub-abas operacionais órfãs: farmácia, consultas, matrículas, emergências). Branches de render mantidos para reativação trivial. |
-| A2 | Deploy de produção: `firestore:rules`, `indexes`, `functions` + rodar `seed` das coleções do lançamento | 🔴 | ⬜ A fazer | Usar scripts `firebase:*` do `package.json`. |
-| A3 | QA real (login) de upload em `/relatar`, avatar em `/perfil`, logo em "Meus negócios" + sessão admin/clerk em `/gestao` | 🔴 | ⬜ A fazer | Continuação do item operacional de 2026-06-17. |
-| A4 | Smoke tests dos fluxos-núcleo (abrir solicitação, assinar petição, responder protocolo) | 🟠 | ⬜ A fazer | Reaproveitar mocks de Firestore do P6. |
+| A2 | Deploy de produção: `firestore:rules`, `indexes`, `functions` + rodar `seed` das coleções do lançamento | 🔴 | 🚧 Seed pendente | **Deploy concluído em `conectasantamaria-pa` (2026-06-19):** `rules` ✅, `indexes` ✅, `functions` ✅ (7/7: signPetitionCallable, votePollCallable, onDemandCreated, onReportCreated, onJobApplicationCreated, onDemandStatusChanged, onReportStatusChanged) + política de limpeza de artefatos configurada. **Falta só o `seed`:** baixar a SA key de `conectasantamaria-pa` na raiz e rodar `npm run firebase:seed`. ⚠️ Follow-up: runtime Node.js 20 das functions será descontinuado em **2026-10-30** — migrar antes. |
+| A3 | QA real (login) de upload em `/relatar`, avatar em `/perfil`, logo em "Meus negócios" + sessão admin/clerk em `/gestao` | 🔴 | ⬜ A fazer | Depende de login real no navegador (ação do Reyvison). |
+| A4 | Smoke tests dos fluxos-núcleo (abrir solicitação, assinar petição, responder protocolo) | 🟠 | ✅ Concluída | `__tests__/services/critical-services.test.ts`: +assinar petição (`signPetition`/Cloud Function) e +responder protocolo (`updateDemandStatus`/transação). `__tests__/lib/feature-status.test.ts`: protege a decisão de suspensão (menus nunca expõem rota suspensa). 6 suites / 79 testes verdes. |
 
 ### Trilha B — Vitrines de conteúdo + Lançamento público  ·  Dono: **outra IA**
 **Possui (edita livremente):** `app/avisos`, `app/eventos` (+ `[id]`), `app/obras` (+ `[id]`),
@@ -389,4 +389,8 @@ arquitetura por features + 14 services, CI configurado, baseline de `aria-*` (10
 - **A1 concluída:** `features/gestao/ContentAdminPanel.tsx` esconde abas/grupos de áreas suspensas (e sub-abas operacionais órfãs).
 - Trabalho dividido em duas trilhas paralelas (A: núcleo + infra; B: vitrines de conteúdo) — ver tabela de divisão no topo.
 - **Validação completa verde** (2026-06-19): `npx tsc --noEmit`, `npm run lint`, `npm test -- --runInBand` (5 suites / 67 testes) e `npm run build` — todos passaram. Base pronta para ramificar em `track-a/*` e `track-b/*`.
-- Ponto de continuação: Trilha A segue por **A2** (deploy/seed de produção) e **A3** (QA real de upload/auth).
+- **A4 concluída:** smoke tests dos fluxos-núcleo (assinar petição + responder protocolo) e teste de guarda da suspensão. Suite agora: **6 suites / 79 testes** verdes; lint limpo.
+- **A2 — deploy concluído** em `conectasantamaria-pa`: `rules`, `indexes` e as 7 `functions` deployadas; política de limpeza de artefatos configurada. As functions de 1ª geração falharam na 1ª tentativa por propagação de permissão da SA de build (APIs recém-habilitadas) e subiram na repetição.
+  - **Avisos de manutenção futura** (não bloqueiam): runtime Node.js 20 descontinuado em 2026-10-30; `firebase-functions` desatualizado em `functions/package.json` (upgrade tem breaking changes).
+- **Seed ainda pendente:** falta a SA key de `conectasantamaria-pa` na raiz para `npm run firebase:seed`.
+- Ponto de continuação: (1) Reyvison baixa a SA key de `conectasantamaria-pa` na raiz e eu rodo o `seed`; (2) **A3** (QA real com login).

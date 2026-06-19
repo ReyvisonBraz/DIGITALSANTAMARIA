@@ -7,7 +7,7 @@ if (!admin.apps.length)
     admin.initializeApp();
 exports.votePollCallable = functions.https.onCall({ enforceAppCheck: false }, async (request) => {
     if (!request.auth) {
-        throw new functions.https.HttpsError('unauthenticated', 'Autenticacao necessaria para votar.');
+        throw new functions.https.HttpsError('unauthenticated', 'Autenticação necessária para votar.');
     }
     const { pollId, optionId } = request.data;
     const userId = request.auth.uid;
@@ -27,22 +27,22 @@ exports.votePollCallable = functions.https.onCall({ enforceAppCheck: false }, as
                 tx.get(voteRef),
             ]);
             if (voteSnap.exists) {
-                throw new functions.https.HttpsError('already-exists', 'Voce ja votou nesta consulta.');
+                throw new functions.https.HttpsError('already-exists', 'Você já votou nesta consulta.');
             }
             if (!pollSnap.exists) {
-                throw new functions.https.HttpsError('not-found', 'Votacao nao encontrada.');
+                throw new functions.https.HttpsError('not-found', 'Votação não encontrada.');
             }
             const poll = pollSnap.data();
             if (poll.status !== 'published' || poll.deletedAt) {
-                throw new functions.https.HttpsError('failed-precondition', 'Esta votacao nao esta disponivel.');
+                throw new functions.https.HttpsError('failed-precondition', 'Esta votação não está disponível.');
             }
             if (poll.isActive !== true) {
-                throw new functions.https.HttpsError('failed-precondition', 'Esta votacao esta encerrada.');
+                throw new functions.https.HttpsError('failed-precondition', 'Esta votação está encerrada.');
             }
             const options = Array.isArray(poll.options) ? poll.options : [];
             const optionIndex = options.findIndex((option) => (option === null || option === void 0 ? void 0 : option.id) === optionId);
             if (optionIndex < 0) {
-                throw new functions.https.HttpsError('not-found', 'Opcao de voto nao encontrada.');
+                throw new functions.https.HttpsError('not-found', 'Opção de voto não encontrada.');
             }
             const nextOptions = options.map((option, index) => (index === optionIndex
                 ? Object.assign(Object.assign({}, option), { votes: Number(option.votes || 0) + 1 }) : option));
