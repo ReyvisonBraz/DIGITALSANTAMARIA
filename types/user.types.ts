@@ -3,11 +3,13 @@ import type { Timestamp } from 'firebase/firestore';
 export type UserRole = 'citizen' | 'admin' | 'clerk';
 
 export type AccessibilityColorMode = 'default' | 'dark' | 'high-contrast';
+export type AccessibilityContentMode = 'complete' | 'essential';
 
 export interface AccessibilityPreferences {
   fontSize: number;
   layoutScale: number;
   colorMode: AccessibilityColorMode;
+  contentMode: AccessibilityContentMode;
   setupCompleted: boolean;
 }
 

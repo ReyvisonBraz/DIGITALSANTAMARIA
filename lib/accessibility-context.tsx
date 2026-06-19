@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import type { AccessibilityColorMode, AccessibilityPreferences } from '@/types';
+import type { AccessibilityColorMode, AccessibilityContentMode, AccessibilityPreferences } from '@/types';
 
 const STORAGE_KEY = 'dsm-accessibility';
 
@@ -9,6 +9,7 @@ const DEFAULT_PREFS: AccessibilityPreferences = {
   fontSize: 16,
   layoutScale: 1,
   colorMode: 'default',
+  contentMode: 'complete',
   setupCompleted: false,
 };
 
@@ -19,11 +20,13 @@ function clamp(value: number, min: number, max: number) {
 function normalizePrefs(value: Partial<AccessibilityPreferences> | null | undefined): AccessibilityPreferences {
   const legacyContrast = (value as { highContrast?: boolean } | null | undefined)?.highContrast;
   const colorMode = value?.colorMode ?? (legacyContrast ? 'high-contrast' : DEFAULT_PREFS.colorMode);
+  const contentMode = value?.contentMode ?? DEFAULT_PREFS.contentMode;
 
   return {
     fontSize: clamp(Number(value?.fontSize ?? DEFAULT_PREFS.fontSize), 12, 32),
     layoutScale: 1,
     colorMode: ['default', 'dark', 'high-contrast'].includes(colorMode) ? colorMode : DEFAULT_PREFS.colorMode,
+    contentMode: ['complete', 'essential'].includes(contentMode) ? contentMode : DEFAULT_PREFS.contentMode,
     setupCompleted: Boolean(value?.setupCompleted ?? DEFAULT_PREFS.setupCompleted),
   };
 }
@@ -52,6 +55,7 @@ interface AccessibilityContextType extends AccessibilityPreferences {
   isReady: boolean;
   isSetupOpen: boolean;
   setColorMode: (mode: AccessibilityColorMode) => void;
+  setContentMode: (mode: AccessibilityContentMode) => void;
   setAccessibilityPrefs: (prefs: Partial<AccessibilityPreferences>) => void;
   increaseFontSize: () => void;
   decreaseFontSize: () => void;
@@ -85,7 +89,9 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
 
     document.body.classList.toggle('high-contrast', prefs.colorMode === 'high-contrast');
     document.body.classList.toggle('dark-mode', prefs.colorMode === 'dark');
+    document.body.classList.toggle('essential-mode', prefs.contentMode === 'essential');
     document.body.dataset.accessibilityMode = prefs.colorMode;
+    document.body.dataset.contentMode = prefs.contentMode;
 
     savePrefs(prefs);
   }, [prefs, hydrated]);
@@ -98,6 +104,10 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
 
   const setColorMode = useCallback((mode: AccessibilityColorMode) => {
     setAccessibilityPrefs({ colorMode: mode });
+  }, [setAccessibilityPrefs]);
+
+  const setContentMode = useCallback((mode: AccessibilityContentMode) => {
+    setAccessibilityPrefs({ contentMode: mode });
   }, [setAccessibilityPrefs]);
 
   const increaseFontSize = useCallback(() => {
@@ -138,6 +148,7 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
     isReady: hydrated,
     isSetupOpen,
     setColorMode,
+    setContentMode,
     setAccessibilityPrefs,
     increaseFontSize,
     decreaseFontSize,
@@ -151,6 +162,7 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
     hydrated,
     isSetupOpen,
     setColorMode,
+    setContentMode,
     setAccessibilityPrefs,
     increaseFontSize,
     decreaseFontSize,

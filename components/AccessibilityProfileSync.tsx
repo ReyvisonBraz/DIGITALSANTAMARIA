@@ -14,6 +14,7 @@ export default function AccessibilityProfileSync() {
     fontSize,
     layoutScale,
     colorMode,
+    contentMode,
     setupCompleted,
     isReady,
     setAccessibilityPrefs,
@@ -58,7 +59,7 @@ export default function AccessibilityProfileSync() {
   useEffect(() => {
     if (!user || profileLoadedFor !== user.uid || applyingRemote.current) return;
 
-    const accessibility = { fontSize, layoutScale, colorMode, setupCompleted };
+    const accessibility = { fontSize, layoutScale, colorMode, contentMode, setupCompleted };
     const serialized = JSON.stringify(accessibility);
     if (serialized === lastSaved.current) return;
 
@@ -73,7 +74,7 @@ export default function AccessibilityProfileSync() {
     }, 700);
 
     return () => window.clearTimeout(timeout);
-  }, [user, profileLoadedFor, fontSize, layoutScale, colorMode, setupCompleted]);
+  }, [user, profileLoadedFor, fontSize, layoutScale, colorMode, contentMode, setupCompleted]);
 
   return null;
 }

@@ -102,6 +102,7 @@ function syncUserProfile(user: User): Promise<void> {
         fontSize: 16,
         layoutScale: 1,
         colorMode: 'default',
+        contentMode: 'complete',
         setupCompleted: false,
       },
       createdAt: serverTimestamp(),

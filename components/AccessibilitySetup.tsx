@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, Contrast, Minus, Moon, Plus, RotateCcw, Sun, Type, X } from 'lucide-react';
+import { Check, Contrast, ListChecks, Minus, Moon, Plus, RotateCcw, Sun, Type, X } from 'lucide-react';
 import { useAccessibility } from '@/lib/accessibility-context';
 import { cn } from '@/lib/utils';
 import type { AccessibilityColorMode } from '@/types';
@@ -37,8 +37,10 @@ export default function AccessibilitySetup() {
     isReady,
     isSetupOpen,
     colorMode,
+    contentMode,
     fontSize,
     setColorMode,
+    setContentMode,
     increaseFontSize,
     decreaseFontSize,
     resetAccessibility,
@@ -111,10 +113,39 @@ export default function AccessibilitySetup() {
             ) : (
               <div className="space-y-5">
                 <div>
-                  <h3 className="text-xl">Ajuste o tamanho do texto</h3>
+                  <h3 className="text-xl">Ajuste sua leitura</h3>
                   <p className="mt-2 text-sm leading-relaxed text-text-muted">
-                    Use a previa ao lado para confirmar se titulos, botoes e campos ficaram confortaveis.
+                    Escolha entre mais contexto ou uma tela mais direta, com menos texto.
                   </p>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => setContentMode('complete')}
+                    className={cn(
+                      'rounded-xl border p-4 text-left transition',
+                      contentMode === 'complete' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface text-text-main hover:border-primary/50'
+                    )}
+                    aria-pressed={contentMode === 'complete'}
+                  >
+                    <Type className="mb-3 h-5 w-5" />
+                    <span className="block text-sm font-bold">Completo</span>
+                    <span className="mt-1 block text-xs leading-relaxed text-text-muted">Mais explicações e contexto.</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setContentMode('essential')}
+                    className={cn(
+                      'rounded-xl border p-4 text-left transition',
+                      contentMode === 'essential' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-surface text-text-main hover:border-primary/50'
+                    )}
+                    aria-pressed={contentMode === 'essential'}
+                  >
+                    <ListChecks className="mb-3 h-5 w-5" />
+                    <span className="block text-sm font-bold">Essencial</span>
+                    <span className="mt-1 block text-xs leading-relaxed text-text-muted">Palavras-chave e ações diretas.</span>
+                  </button>
                 </div>
 
                 <SetupControl

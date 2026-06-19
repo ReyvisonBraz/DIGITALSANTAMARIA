@@ -4,11 +4,14 @@ import { useRef, useState } from 'react';
 import { CheckCircle2, Clock3, FileText, MessageSquare, Phone, SearchCheck, ShieldCheck } from 'lucide-react';
 import DemandForm from '@/features/ouvidoria/DemandForm';
 import ProtocolSearch from '@/features/ouvidoria/ProtocolSearch';
+import { useAccessibility } from '@/lib/accessibility-context';
 
 export default function OuvidoriaPage() {
   const [activeTab, setActiveTab] = useState<'create' | 'search'>('create');
   const [createdProtocol, setCreatedProtocol] = useState<string | null>(null);
   const formSectionRef = useRef<HTMLElement | null>(null);
+  const { contentMode } = useAccessibility();
+  const isEssential = contentMode === 'essential';
 
   const openPanel = (tab: 'create' | 'search') => {
     setActiveTab(tab);
@@ -32,10 +35,20 @@ export default function OuvidoriaPage() {
             </div>
 
             <div className="max-w-3xl space-y-3 animate-float-in">
-              <h1 className="text-3xl font-semibold leading-tight tracking-normal text-text-main sm:text-5xl lg:text-6xl">
+              {isEssential && (
+                <h1 className="text-3xl font-semibold leading-tight tracking-normal text-text-main sm:text-5xl lg:text-6xl">
+                  Abrir ou consultar protocolo
+                </h1>
+              )}
+              <h1 className={isEssential ? 'hidden' : 'text-3xl font-semibold leading-tight tracking-normal text-text-main sm:text-5xl lg:text-6xl'}>
                 Ouvidoria e solicitações
               </h1>
-              <p className="max-w-2xl text-base font-medium leading-7 text-text-muted">
+              {isEssential && (
+                <p className="max-w-2xl text-base font-bold leading-7 text-text-muted">
+                  Pedido, reclamação, denúncia, elogio ou resposta.
+                </p>
+              )}
+              <p className={isEssential ? 'hidden' : 'max-w-2xl text-base font-medium leading-7 text-text-muted'}>
                 Abra uma solicitação, registre uma manifestação ou consulte o andamento pelo protocolo.
               </p>
             </div>
@@ -59,8 +72,19 @@ export default function OuvidoriaPage() {
           </div>
 
           <aside className="relative z-10 glass-panel p-4 md:p-5">
-            <h2 className="text-lg font-semibold tracking-normal text-text-main">Antes de começar</h2>
+            <h2 className="text-lg font-semibold tracking-normal text-text-main">{isEssential ? '3 passos' : 'Antes de começar'}</h2>
             <div className="mt-4 space-y-3">
+              {isEssential && [
+                { icon: FileText, text: 'Descreva o pedido.' },
+                { icon: Phone, text: 'Urgente? Ligue também.' },
+                { icon: Clock3, text: 'Login salva no painel.' },
+              ].map((item) => (
+                <div key={item.text} className="civic-card flex gap-3 p-4">
+                  <item.icon className="relative z-10 mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                  <p className="relative z-10 text-sm font-bold leading-5 text-text-main">{item.text}</p>
+                </div>
+              ))}
+              <div className={isEssential ? 'hidden' : 'space-y-3'}>
               {[
                 {
                   icon: FileText,
@@ -80,6 +104,7 @@ export default function OuvidoriaPage() {
                   <p className="relative z-10 text-sm font-medium leading-6 text-text-muted">{item.text}</p>
                 </div>
               ))}
+              </div>
             </div>
           </aside>
         </div>

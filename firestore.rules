@@ -110,7 +110,7 @@ service cloud.firestore {
 
     function validAccessibilityPreferences(value) {
       return value is map
-        && value.keys().hasOnly(['fontSize', 'layoutScale', 'colorMode', 'setupCompleted'])
+        && value.keys().hasOnly(['fontSize', 'layoutScale', 'colorMode', 'contentMode', 'setupCompleted'])
         && value.fontSize is number
         && value.fontSize >= 12
         && value.fontSize <= 32
@@ -118,6 +118,7 @@ service cloud.firestore {
         && value.layoutScale >= 0.8
         && value.layoutScale <= 1.5
         && value.colorMode in ['default', 'dark', 'high-contrast']
+        && value.contentMode in ['complete', 'essential']
         && value.setupCompleted is bool;
     }
 

@@ -21,7 +21,9 @@ import { LogoMark } from '@/components/Logo';
 import Reveal, { RevealGroup, RevealItem } from '@/components/ui/Reveal';
 import Counter from '@/components/ui/Counter';
 import TextReveal from '@/components/ui/TextReveal';
+import { useAccessibility } from '@/lib/accessibility-context';
 import { useHomeMetrics } from '@/lib/hooks/use-home-metrics';
+import { cn } from '@/lib/utils';
 
 const primaryActions = [
   {
@@ -54,6 +56,12 @@ const primaryActions = [
   },
 ] as const;
 
+const essentialActionKeywords: Record<string, readonly string[]> = {
+  '/ouvidoria': ['Pedido', 'Reclamação', 'Denúncia'],
+  '/perfil': ['Status', 'Resposta', 'Histórico'],
+  '/peticoes': ['Causas', 'Assinar', 'Acompanhar'],
+};
+
 const serviceHighlights = [
   { label: 'Empregos',  href: '/empregos',  icon: Briefcase,    tone: 'from-accent-success/12',   iconBg: 'bg-accent-success/15',   iconColor: 'text-accent-success' },
   { label: 'Comércio',  href: '/comercio',  icon: Store,        tone: 'from-secondary/15',        iconBg: 'bg-secondary/15',        iconColor: 'text-secondary' },
@@ -75,16 +83,18 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const { eventsCount, noticesCount } = useHomeMetrics();
+  const { contentMode } = useAccessibility();
+  const isEssential = contentMode === 'essential';
 
   const stats = useMemo(() => [
-    { value: 24, suffix: 'h', label: 'Canais sempre abertos' },
+    { value: 24, suffix: 'h', label: isEssential ? 'Sempre aberto' : 'Canais sempre abertos' },
     eventsCount > 0
       ? { value: eventsCount, suffix: '', label: eventsCount === 1 ? 'Evento na agenda' : 'Eventos na agenda' }
-      : { value: 14, suffix: '', label: 'Áreas de serviço' },
+      : { value: 14, suffix: '', label: isEssential ? 'Serviços' : 'Áreas de serviço' },
     noticesCount > 0
       ? { value: noticesCount, suffix: '', label: noticesCount === 1 ? 'Aviso publicado' : 'Avisos publicados' }
-      : { value: 100, suffix: '%', label: 'Digital e gratuito' },
-  ], [eventsCount, noticesCount]);
+      : { value: 100, suffix: '%', label: isEssential ? 'Online' : 'Digital e gratuito' },
+  ], [eventsCount, noticesCount, isEssential]);
   const yPanel = useTransform(scrollY, [0, 500], [0, -46]);
   const yBlob = useTransform(scrollY, [0, 500], [0, 80]);
   const yBlob2 = useTransform(scrollY, [0, 600], [0, -60]);
@@ -129,7 +139,7 @@ export default function Home() {
                   transition={{ duration: 0.7, ease }}
                   className="block"
                 >
-                  Sua cidade
+                  {isEssential ? 'O que você' : 'Sua cidade'}
                 </motion.span>{' '}
                 <motion.span
                   initial={{ opacity: 0, y: 24 }}
@@ -137,21 +147,33 @@ export default function Home() {
                   transition={{ duration: 0.7, delay: 0.1, ease }}
                   className="font-script text-[1.35em] font-bold leading-[0.8] text-gradient"
                 >
-                  conectada
+                  {isEssential ? 'precisa?' : 'conectada'}
                 </motion.span>{' '}
-                <motion.span
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, delay: 0.18, ease }}
-                >
-                  a você.
-                </motion.span>
+                {!isEssential && (
+                  <motion.span
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, delay: 0.18, ease }}
+                  >
+                    a você.
+                  </motion.span>
+                )}
               </h1>
+              {isEssential && (
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.18 }}
+                  className="mt-5 max-w-xl text-base font-bold leading-7 text-text-muted sm:text-lg"
+                >
+                  Escolha uma ação, receba protocolo e acompanhe a resposta.
+                </motion.p>
+              )}
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.26 }}
-                className="mt-5 max-w-2xl text-base font-medium leading-7 text-text-muted sm:text-lg"
+                className={cn('mt-5 max-w-2xl text-base font-medium leading-7 text-text-muted sm:text-lg', isEssential && 'hidden')}
               >
                 Solicite serviços, consulte protocolos, participe de petições e
                 acompanhe Santa Maria do Pará com mais clareza — tudo em um só lugar.
@@ -266,7 +288,7 @@ export default function Home() {
               </h2>
             </div>
             <Reveal delay={0.1}>
-              <p className="text-sm font-medium leading-6 text-text-muted">
+              <p className={cn('text-sm font-medium leading-6 text-text-muted', isEssential && 'hidden')}>
                 Os caminhos centrais ficam destacados e funcionam em fluxo direto, para cidadão e gestão.
               </p>
             </Reveal>
@@ -277,7 +299,10 @@ export default function Home() {
               <RevealItem key={action.title}>
                 <Link
                   href={action.href}
-                  className="civic-card group relative flex h-full min-h-56 flex-col justify-between overflow-hidden p-6"
+                  className={cn(
+                    'civic-card group relative flex h-full flex-col justify-between overflow-hidden p-6',
+                    isEssential ? 'min-h-44' : 'min-h-56'
+                  )}
                 >
                   {/* Faixa de cor que sobe no hover */}
                   <span className="pointer-events-none absolute inset-x-0 bottom-0 h-0 bg-gradient-to-t from-primary/8 to-transparent transition-all duration-500 group-hover:h-full" />
@@ -289,7 +314,17 @@ export default function Home() {
                       <h3 className="text-xl font-bold tracking-tight text-text-main" style={{ fontFamily: 'var(--font-display)' }}>
                         {action.title}
                       </h3>
-                      <p className="mt-2 text-sm font-medium leading-6 text-text-muted">{action.description}</p>
+                      {isEssential ? (
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {(essentialActionKeywords[action.href] ?? ['Acessar']).map((keyword) => (
+                            <span key={keyword} className="rounded-full border border-primary/20 bg-primary/8 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
+                              {keyword}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="mt-2 text-sm font-medium leading-6 text-text-muted">{action.description}</p>
+                      )}
                     </div>
                   </div>
                   <span className="relative z-10 mt-5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-primary">

@@ -10,6 +10,7 @@ import {
   Command,
   Contrast,
   Grid,
+  ListChecks,
   Minus,
   Monitor,
   Moon,
@@ -47,9 +48,11 @@ export default function TopAppBar() {
     decreaseFontSize,
     resetAccessibility,
     setColorMode,
+    setContentMode,
     openAccessibilitySetup,
     highContrast,
     colorMode,
+    contentMode,
     fontSize,
   } = useAccessibility();
 
@@ -87,6 +90,11 @@ export default function TopAppBar() {
     toggleHighContrast();
     toast(nextState ? 'Modo de acessibilidade ativado.' : 'Modo padrão restaurado.', 'info');
   }, [highContrast, toast, toggleHighContrast]);
+
+  const handleContentModeChange = useCallback((mode: 'complete' | 'essential') => {
+    setContentMode(mode);
+    toast(mode === 'essential' ? 'Modo Essencial ativado.' : 'Modo Completo ativado.', 'info');
+  }, [setContentMode, toast]);
 
   const handleLogin = useCallback(async () => {
     try {
@@ -181,7 +189,7 @@ export default function TopAppBar() {
                 aria-expanded={isAccessibilityOpen}
               >
                 <Monitor className="h-4 w-4" />
-                {colorMode !== 'default' && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-green-500" />}
+                {(colorMode !== 'default' || contentMode === 'essential') && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-green-500" />}
               </button>
 
               <AnimatePresence>
@@ -235,6 +243,26 @@ export default function TopAppBar() {
                         onDecrease={decreaseFontSize}
                         onIncrease={increaseFontSize}
                       />
+                      <div className="space-y-2 rounded-xl border border-border bg-surface p-3">
+                        <span className="inline-flex items-center gap-2 text-sm font-bold text-text-main">
+                          <ListChecks className="h-4 w-4 text-primary" />
+                          Modo de leitura
+                        </span>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          <ModeOption
+                            active={contentMode === 'complete'}
+                            icon={Type}
+                            label="Completo"
+                            onClick={() => handleContentModeChange('complete')}
+                          />
+                          <ModeOption
+                            active={contentMode === 'essential'}
+                            icon={ListChecks}
+                            label="Essencial"
+                            onClick={() => handleContentModeChange('essential')}
+                          />
+                        </div>
+                      </div>
                       <div className="grid gap-2">
                         <button
                           onClick={openAccessibilitySetup}
