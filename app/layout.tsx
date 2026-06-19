@@ -10,6 +10,7 @@ import Footer from '@/components/Footer';
 import BottomNavBar from '@/components/BottomNavBar';
 import RootLayoutLogger from './root-layout-logger';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import RouteSuspensionGate from '@/components/RouteSuspensionGate';
 import InstallPrompt from '@/components/InstallPrompt';
 import ScrollAmbience from '@/components/ScrollAmbience';
 import GuidedHelp from '@/components/GuidedHelp';
@@ -61,7 +62,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <ErrorBoundary>
                   <ScrollAmbience />
                   <TopAppBar />
-                  <main className="relative pt-20 md:pt-24">{children}</main>
+                  <main className="relative pt-20 md:pt-24">
+                    <RouteSuspensionGate>{children}</RouteSuspensionGate>
+                  </main>
                   <Footer />
                   <BottomNavBar />
                   <InstallPrompt />

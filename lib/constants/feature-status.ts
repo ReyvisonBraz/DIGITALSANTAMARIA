@@ -68,6 +68,35 @@ export const FEATURE_STATUS: readonly FeatureEntry[] = [
   },
 ];
 
+/**
+ * Rotas suspensas para a fase 2 do lançamento.
+ *
+ * Decisão de escopo (não de código): estas features podem estar prontas,
+ * mas ficam fora do MVP para focar no núcleo de atendimento ao cidadão.
+ * Elas são escondidas dos menus/dashboard e, se acessadas direto pela URL,
+ * exibem a tela "Em breve".
+ *
+ * Para reativar uma feature, basta remover a rota desta lista — nada é deletado.
+ */
+export const SUSPENDED_ROUTES: readonly string[] = [
+  '/saude',
+  '/educacao',
+  '/educacao/matricula',
+  '/tributos',
+  '/seguranca',
+  '/transito',
+  '/social',
+  '/meio-ambiente',
+  '/votos',
+  '/comunidade',
+  '/servicos',
+];
+
+/** Retorna true se a rota (ou uma rota-filha) está suspensa para a fase 2. */
+export function isRouteSuspended(route: string): boolean {
+  return SUSPENDED_ROUTES.some((r) => route === r || route.startsWith(`${r}/`));
+}
+
 export function getFeatureStatus(route: string): FeatureEntry | undefined {
   return FEATURE_STATUS.find((f) => f.route === route);
 }

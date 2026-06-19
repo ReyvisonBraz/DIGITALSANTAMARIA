@@ -9,14 +9,12 @@ import {
   Briefcase,
   CalendarDays,
   FileText,
-  GraduationCap,
-  HeartPulse,
-  Landmark,
+  HardHat,
   MapPin,
   MessageSquare,
   SearchCheck,
-  ShieldCheck,
   Sparkles,
+  Store,
   UserRound,
 } from 'lucide-react';
 import { LogoMark } from '@/components/Logo';
@@ -57,12 +55,12 @@ const primaryActions = [
 ] as const;
 
 const serviceHighlights = [
-  { label: 'Saúde',     href: '/saude',     icon: HeartPulse,    tone: 'from-secondary/15',        iconBg: 'bg-secondary/15',        iconColor: 'text-secondary' },
-  { label: 'Educação',  href: '/educacao',  icon: GraduationCap, tone: 'from-primary/12',          iconBg: 'bg-primary/12',          iconColor: 'text-primary' },
-  { label: 'Empregos',  href: '/empregos',  icon: Briefcase,     tone: 'from-accent-success/12',   iconBg: 'bg-accent-success/15',   iconColor: 'text-accent-success' },
-  { label: 'Tributos',  href: '/tributos',  icon: Landmark,      tone: 'from-accent/18',           iconBg: 'bg-accent/22',           iconColor: 'text-primary-dark' },
-  { label: 'Eventos',   href: '/eventos',   icon: CalendarDays,  tone: 'from-primary-dark/10',     iconBg: 'bg-primary-dark/12',     iconColor: 'text-primary-dark' },
-  { label: 'Serviços',  href: '/servicos',  icon: Bell,          tone: 'from-secondary/15',        iconBg: 'bg-secondary/15',        iconColor: 'text-secondary' },
+  { label: 'Empregos',  href: '/empregos',  icon: Briefcase,    tone: 'from-accent-success/12',   iconBg: 'bg-accent-success/15',   iconColor: 'text-accent-success' },
+  { label: 'Comércio',  href: '/comercio',  icon: Store,        tone: 'from-secondary/15',        iconBg: 'bg-secondary/15',        iconColor: 'text-secondary' },
+  { label: 'Eventos',   href: '/eventos',   icon: CalendarDays, tone: 'from-primary-dark/10',     iconBg: 'bg-primary-dark/12',     iconColor: 'text-primary-dark' },
+  { label: 'Obras',     href: '/obras',     icon: HardHat,      tone: 'from-accent/18',           iconBg: 'bg-accent/22',           iconColor: 'text-primary-dark' },
+  { label: 'Avisos',    href: '/avisos',    icon: Bell,         tone: 'from-primary/12',          iconBg: 'bg-primary/12',          iconColor: 'text-primary' },
+  { label: 'Petições',  href: '/peticoes',  icon: FileText,     tone: 'from-secondary/15',        iconBg: 'bg-secondary/15',        iconColor: 'text-secondary' },
 ] as const;
 
 const processSteps = [
@@ -317,10 +315,10 @@ export default function Home() {
               </h2>
               <p className="mt-3 text-sm font-medium leading-6 text-text-muted">
                 Solicitação, protocolo, painel e petições no centro da experiência.
-                As demais áreas ficam acessíveis e podem ser ativadas por etapas.
+                Novas áreas serão ativadas por etapas ao longo do lançamento.
               </p>
-              <Link href="/servicos" className="action-button-secondary mt-6">
-                Ver todos os serviços
+              <Link href="/avisos" className="action-button-secondary mt-6">
+                Ver avisos da prefeitura
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>

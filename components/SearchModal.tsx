@@ -12,6 +12,7 @@ import type { LucideIcon } from 'lucide-react';
 import { createLogger } from '@/lib/logger';
 import { useKeyboardShortcut } from '@/lib/hooks/use-keyboard-shortcut';
 import { NAV_LINKS } from '@/lib/constants';
+import { isRouteSuspended } from '@/lib/constants/feature-status';
 import { cn } from '@/lib/utils';
 
 const log = createLogger('SearchModal');
@@ -38,7 +39,7 @@ const RESULTS: readonly SearchResult[] = [
     icon: link.icon,
   })),
   ...EXTRA_RESULTS,
-] as const;
+].filter((result) => !isRouteSuspended(result.href));
 
 const FILTERS = ['Todas', ...Array.from(new Set(RESULTS.map((result) => result.category)))] as const;
 

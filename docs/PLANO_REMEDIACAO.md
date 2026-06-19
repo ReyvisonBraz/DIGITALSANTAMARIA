@@ -23,6 +23,65 @@
 
 ---
 
+## FASE DE LANÇAMENTO (Junho 2026) — Escopo enxuto + Divisão de trabalho
+
+> **Esta é a seção ativa do plano.** As Partes P1–P8 abaixo já estão ✅ concluídas (auditoria crítica
+> encerrada). O foco agora é **lançar só o essencial** e dividir o restante entre **duas trilhas paralelas**
+> (Reyvison + esta IA em uma, outra IA na outra) **sem conflito de arquivos**.
+
+### Decisão de escopo: lançamento enxuto
+Lançamento foca no **núcleo de atendimento ao cidadão**. As demais áreas ficam **suspensas para a fase 2**:
+escondidas dos menus e, se acessadas por URL, exibem a tela "Em breve". Nada foi deletado — reativar é
+remover a rota de `SUSPENDED_ROUTES`.
+
+- **No ar:** Ouvidoria · Relatar · Consultar protocolo · Petições · Painel do Cidadão · Gestão (admin) · Avisos · Eventos · Obras · Comércio · Empregos · Sobre · Termos.
+- **Suspensas (fase 2):** Saúde · Educação · Matrícula · Tributos · Segurança/SOS · Trânsito · Social · Meio Ambiente · Votos · Comunidade · Serviços.
+
+**Mecanismo (já implementado nesta sessão):**
+- [lib/constants/feature-status.ts](../lib/constants/feature-status.ts) — `SUSPENDED_ROUTES` + `isRouteSuspended()` (fonte única).
+- [lib/constants/navigation.ts](../lib/constants/navigation.ts) — `NAV_LINKS`/`DASHBOARD_MODULES`/`FOOTER_LINKS` filtram rotas suspensas.
+- [components/RouteSuspensionGate.tsx](../components/RouteSuspensionGate.tsx) + [components/ui/ComingSoon.tsx](../components/ui/ComingSoon.tsx) — gate no [layout](../app/layout.tsx).
+- [components/SearchModal.tsx](../components/SearchModal.tsx) e [app/page.tsx](../app/page.tsx) — busca e home recuradas para o conjunto do lançamento.
+
+### Regras de coordenação entre as duas trilhas
+1. **Arquivos compartilhados — NÃO editar sem combinar antes** (qualquer mudança aqui afeta as duas trilhas):
+   `lib/constants/navigation.ts`, `lib/constants/feature-status.ts`, `lib/constants/index.ts`,
+   `app/layout.tsx`, `app/globals.css`, `components/RouteSuspensionGate.tsx`, `components/ui/ComingSoon.tsx`,
+   `components/TopAppBar.tsx`, `components/Footer.tsx`, `components/SearchModal.tsx`.
+2. Cada trilha só edita os diretórios que **possui** (tabela abaixo). Se precisar tocar algo da outra trilha, abrir nota aqui antes.
+3. Toda Parte termina com `npx tsc --noEmit`, `npm run lint` e `npm test` **verdes**.
+4. Trabalhar em **branch própria por trilha** (`track-a/*`, `track-b/*`) e atualizar o status nesta seção ao concluir.
+5. Nada de dado fabricado sem `DevBanner`/`DevBadge` — portal público, veracidade > preencher tela.
+
+### Trilha A — Núcleo cívico + Backend/Infra  ·  Dono: **Reyvison + esta IA**
+**Possui (edita livremente):** `app/ouvidoria`, `app/relatar`, `app/peticoes`, `app/perfil`, `app/gestao`,
+`features/ouvidoria`, `features/relatar`, `features/peticoes`, `features/perfil`, `features/gestao`,
+`services/`, `functions/`, `scripts/seed.ts`, `firestore.rules`, `storage.rules`, `proxy.ts`, `.github/`.
+
+| # | Tarefa | Sev. | Status | Notas |
+|---|---|---|---|---|
+| A1 | Esconder abas de features suspensas no painel de Gestão | 🟠 | ✅ Concluída | `ContentAdminPanel.tsx`: abas e grupos de áreas suspensas filtrados via `isTabSuspended`/`isRouteSuspended` (inclui sub-abas operacionais órfãs: farmácia, consultas, matrículas, emergências). Branches de render mantidos para reativação trivial. |
+| A2 | Deploy de produção: `firestore:rules`, `indexes`, `functions` + rodar `seed` das coleções do lançamento | 🔴 | ⬜ A fazer | Usar scripts `firebase:*` do `package.json`. |
+| A3 | QA real (login) de upload em `/relatar`, avatar em `/perfil`, logo em "Meus negócios" + sessão admin/clerk em `/gestao` | 🔴 | ⬜ A fazer | Continuação do item operacional de 2026-06-17. |
+| A4 | Smoke tests dos fluxos-núcleo (abrir solicitação, assinar petição, responder protocolo) | 🟠 | ⬜ A fazer | Reaproveitar mocks de Firestore do P6. |
+
+### Trilha B — Vitrines de conteúdo + Lançamento público  ·  Dono: **outra IA**
+**Possui (edita livremente):** `app/avisos`, `app/eventos` (+ `[id]`), `app/obras` (+ `[id]`),
+`app/comercio`, `app/empregos`, `features/comercio`, `features/empregos`,
+`components/ui/Content*` (ContentPage/Hero/Card — só estas 5 vitrines as consomem).
+
+| # | Tarefa | Sev. | Status | Notas |
+|---|---|---|---|---|
+| B1 | Garantir que as 5 vitrines tratam loading/empty/error e exibem **só dado real** (sem número "oficial" fabricado sem `DevBanner`) | 🔴 | ⬜ A fazer | Avisos, Eventos, Obras, Comércio, Empregos. |
+| B2 | Conferir que `scripts/seed.ts` cobre `notices`, `events`, `works`, `businesses`, `jobs` com dados reais do município | 🟠 | ⬜ A fazer | Coordenar com A2 (mesmo seed) — **não editar `seed.ts`; listar o que falta aqui** e Trilha A aplica. |
+| B3 | Passada de acessibilidade/visual **só nestas páginas** (consistência com P5/P7) | 🟡 | ⬜ A fazer | Não tocar no design system compartilhado. |
+| B4 | Revisar links órfãos para rotas suspensas dentro destas páginas (devem virar "Em breve" ou ser removidos) | 🟡 | ⬜ A fazer | — |
+
+> **Conflito potencial:** `scripts/seed.ts` é da Trilha A, mas a Trilha B depende dele (B2). Por isso B2 só
+> **documenta** o que falta; a Trilha A edita o arquivo. É o único ponto de dependência cruzada.
+
+---
+
 ## Tabela de progresso
 
 | # | Parte | Sev. | Área | Dep. | Status | Notas |
@@ -318,3 +377,16 @@ arquitetura por features + 14 services, CI configurado, baseline de `aria-*` (10
   - `proxy.ts`: substitui `middleware.ts` mantendo a proteção server-side de `/gestao` por cookie `firebase-auth-token`.
   - `package-lock.json`: dependências de produção atualizadas após `npm audit fix`.
 - Ponto de continuação: entrar com uma conta real no navegador e testar upload de foto em `/relatar`, avatar em `/perfil` e logo em "Meus negócios"; a rota `/gestao` completa também exige sessão admin/clerk para QA interno.
+
+### Registro operacional — 2026-06-19
+
+- **Decisão de escopo: lançamento enxuto** (núcleo de atendimento). Ver seção "FASE DE LANÇAMENTO" no topo deste doc.
+- Implementado o mecanismo de suspensão de features (reversível, nada deletado):
+  - `lib/constants/feature-status.ts`: adicionados `SUSPENDED_ROUTES` + `isRouteSuspended()`.
+  - `lib/constants/navigation.ts`: `NAV_LINKS`/`DASHBOARD_MODULES`/`FOOTER_LINKS` agora filtram rotas suspensas.
+  - `components/RouteSuspensionGate.tsx` + `components/ui/ComingSoon.tsx`: gate no `app/layout.tsx` exibe "Em breve" no acesso direto a rota suspensa (sem montar a página nem buscar no Firestore).
+  - `components/SearchModal.tsx` e `app/page.tsx`: busca e home recuradas para o conjunto do lançamento.
+- **A1 concluída:** `features/gestao/ContentAdminPanel.tsx` esconde abas/grupos de áreas suspensas (e sub-abas operacionais órfãs).
+- Trabalho dividido em duas trilhas paralelas (A: núcleo + infra; B: vitrines de conteúdo) — ver tabela de divisão no topo.
+- **Validação completa verde** (2026-06-19): `npx tsc --noEmit`, `npm run lint`, `npm test -- --runInBand` (5 suites / 67 testes) e `npm run build` — todos passaram. Base pronta para ramificar em `track-a/*` e `track-b/*`.
+- Ponto de continuação: Trilha A segue por **A2** (deploy/seed de produção) e **A3** (QA real de upload/auth).

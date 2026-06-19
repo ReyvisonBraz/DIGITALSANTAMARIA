@@ -35,7 +35,7 @@ import ApplicationsAdmin from '@/features/gestao/content/ApplicationsAdmin';
 import EnrollmentsAdmin from '@/features/gestao/content/EnrollmentsAdmin';
 import EmergencyAlertsAdmin from '@/features/gestao/content/EmergencyAlertsAdmin';
 import GenericCatalogAdmin, { type CatalogAdminConfig } from '@/features/gestao/content/GenericCatalogAdmin';
-import { FEATURE_STATUS, type FeatureEntry } from '@/lib/constants/feature-status';
+import { FEATURE_STATUS, isRouteSuspended } from '@/lib/constants/feature-status';
 import DevBadge from '@/components/ui/DevBadge';
 import { cn } from '@/lib/utils';
 
@@ -95,6 +95,28 @@ const TABS: { value: ContentTab; label: string; icon: LucideIcon; group: Exclude
 ];
 
 const OPERATION_TABS: ContentTab[] = ['appointments', 'applications', 'enrollments', 'emergency'];
+
+// Sub-abas operacionais que não têm rota própria em feature-status, mas pertencem
+// a uma área pública suspensa para a fase 2 (sem rota pública, não há demanda nova).
+const OPERATION_TAB_ROUTE: Partial<Record<ContentTab, string>> = {
+  appointments: '/saude',
+  enrollments: '/educacao',
+  emergency: '/seguranca',
+  pharmacy: '/saude',
+};
+
+/** True se a aba pertence a uma área suspensa para o lançamento (escondida do admin). */
+function isTabSuspended(tab: ContentTab): boolean {
+  const directRoute = OPERATION_TAB_ROUTE[tab];
+  if (directRoute) return isRouteSuspended(directRoute);
+  const feature = FEATURE_STATUS.find((f) => f.adminTab === tab);
+  return feature ? isRouteSuspended(feature.route) : false;
+}
+
+// Abas e grupos ativos no lançamento (áreas suspensas removidas).
+const LAUNCH_TABS = TABS.filter((item) => !isTabSuspended(item.value));
+const LAUNCH_OPERATION_TABS = OPERATION_TABS.filter((tab) => !isTabSuspended(tab));
+const GROUPS_WITH_TABS = new Set<ContentGroup>(LAUNCH_TABS.map((item) => item.group));
 
 const CATALOGS: Record<Exclude<ContentTab, 'notices' | 'events' | 'works' | 'businesses' | 'traffic' | 'health' | 'appointments' | 'jobs' | 'applications' | 'enrollments' | 'emergency'>, CatalogAdminConfig> = {
   community: {
@@ -376,14 +398,15 @@ export default function ContentAdminPanel({ activeTab, canManageCatalog = true, 
   const [internalTab, setInternalTab] = useState<ContentTab>('notices');
   const [group, setGroup] = useState<ContentGroup>('all');
   const tab = activeTab ?? internalTab;
-  const allowedTabs = canManageCatalog ? TABS : TABS.filter((item) => OPERATION_TABS.includes(item.value));
+  const allowedTabs = canManageCatalog ? LAUNCH_TABS : LAUNCH_TABS.filter((item) => LAUNCH_OPERATION_TABS.includes(item.value));
   const activeTabAllowed = allowedTabs.some((item) => item.value === tab);
   const safeTab = activeTabAllowed ? tab : allowedTabs[0].value;
-  const availableGroups = canManageCatalog ? GROUPS : GROUPS.filter((item) => item.value === 'operations');
+  const availableGroups = (canManageCatalog ? GROUPS : GROUPS.filter((item) => item.value === 'operations'))
+    .filter((item) => item.value === 'all' || GROUPS_WITH_TABS.has(item.value));
   const visibleTabs = (group === 'all' ? allowedTabs : allowedTabs.filter((item) => item.group === group));
 
   const setTab = useCallback((nextTab: ContentTab) => {
-    if (!canManageCatalog && !OPERATION_TABS.includes(nextTab)) return;
+    if (!canManageCatalog && !LAUNCH_OPERATION_TABS.includes(nextTab)) return;
     setInternalTab(nextTab);
     onTabChange?.(nextTab);
   }, [canManageCatalog, onTabChange]);
@@ -391,11 +414,11 @@ export default function ContentAdminPanel({ activeTab, canManageCatalog = true, 
   useEffect(() => {
     if (!canManageCatalog) {
       setGroup('operations');
-      if (!OPERATION_TABS.includes(tab)) setTab(OPERATION_TABS[0]);
+      if (!LAUNCH_OPERATION_TABS.includes(tab)) setTab(LAUNCH_OPERATION_TABS[0]);
       return;
     }
 
-    const activeItem = TABS.find((item) => item.value === tab);
+    const activeItem = LAUNCH_TABS.find((item) => item.value === tab);
     if (activeItem) setGroup(activeItem.group);
   }, [canManageCatalog, setTab, tab]);
 
