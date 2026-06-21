@@ -32,6 +32,8 @@ const emptyForm = {
   isOpen: true,
   openHours: '',
   specialties: '',
+  lat: '',
+  lng: '',
 };
 
 type FormState = typeof emptyForm;
@@ -87,6 +89,8 @@ export default function HealthUnitsAdmin() {
       isOpen: unit.isOpen,
       openHours: unit.openHours,
       specialties: unit.specialties.join('\n'),
+      lat: unit.lat != null ? String(unit.lat) : '',
+      lng: unit.lng != null ? String(unit.lng) : '',
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -110,6 +114,8 @@ export default function HealthUnitsAdmin() {
         isOpen: form.isOpen,
         openHours: form.openHours.trim(),
         specialties: parseSpecialties(form.specialties),
+        lat: form.lat ? parseFloat(form.lat) : null,
+        lng: form.lng ? parseFloat(form.lng) : null,
       };
 
       if (editingId) {
@@ -185,6 +191,16 @@ export default function HealthUnitsAdmin() {
           <label className="space-y-1.5">
             <span className="text-xs font-black uppercase tracking-widest text-text-muted">Horário</span>
             <input value={form.openHours} onChange={(event) => updateField('openHours', event.target.value)} placeholder="Ex: 7h-17h" className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
+          </label>
+
+          <label className="space-y-1.5">
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Latitude (opcional)</span>
+            <input value={form.lat} onChange={(event) => updateField('lat', event.target.value)} placeholder="Ex: -1.3636" className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
+          </label>
+
+          <label className="space-y-1.5">
+            <span className="text-xs font-black uppercase tracking-widest text-text-muted">Longitude (opcional)</span>
+            <input value={form.lng} onChange={(event) => updateField('lng', event.target.value)} placeholder="Ex: -47.4481" className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-medium outline-none focus:border-primary" />
           </label>
 
           <label className="flex items-center gap-3 rounded-xl border border-border bg-white px-3 py-3">

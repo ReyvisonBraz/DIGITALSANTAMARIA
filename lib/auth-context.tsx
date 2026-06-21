@@ -130,8 +130,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         setUser(fbUser);
         // Cookie com ID token real para middleware de protecao server-side
+        const isProduction = typeof window !== 'undefined' && window.location.protocol === 'https:';
         fbUser.getIdToken().then((token) => {
-          document.cookie = `firebase-auth-token=${token}; path=/; max-age=86400; SameSite=Strict`;
+          const secureFlag = isProduction ? '; Secure' : '';
+          document.cookie = `firebase-auth-token=${token}; path=/; max-age=86400; SameSite=Strict${secureFlag}`;
         }).catch(() => { /* falha silenciosa: cookie de auth é melhor-esforço */ });
         try {
           await syncUserProfile(fbUser);

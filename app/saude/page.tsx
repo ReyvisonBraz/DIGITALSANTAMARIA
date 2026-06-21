@@ -31,6 +31,7 @@ import {
 import ClinicCard from '@/components/ClinicCard';
 import AppointmentModal from '@/components/AppointmentModal';
 import HealthHistoryPanel from '@/components/HealthHistoryPanel';
+import HealthMap from '@/components/HealthMap';
 import Modal from '@/components/ui/Modal';
 import { useToast } from '@/lib/toast-context';
 import { useContent } from '@/lib/hooks/use-content';
@@ -258,12 +259,8 @@ export default function SaudePage() {
                         <Activity className="absolute -right-8 -bottom-8 w-48 h-48 opacity-[0.05] rotate-12 group-hover:scale-110 transition-transform" />
                      </div>
 
-                  <div className="bg-white p-8 rounded-[2rem] border-2 border-border border-dashed space-y-6 shadow-sm">
-                     <DevBanner
-                        title="Carteira de vacinação digital em desenvolvimento"
-                        description="A emissão do certificado vacinal real com QR code validável e exportação oficial estará disponível em breve. Consulte a unidade de saúde mais próxima enquanto isso."
-                     />
-                     <div className="flex items-center gap-4">
+<div className="bg-white p-8 rounded-[2rem] border-2 border-border space-y-6 shadow-sm">
+                      <div className="flex items-center gap-4">
                            <div className="w-14 h-14 bg-sky-500/10 text-sky-500 rounded-2xl flex items-center justify-center border-2 border-sky-500/20 shadow-inner">
                               <Syringe className="w-8 h-8" />
                            </div>
@@ -389,41 +386,13 @@ export default function SaudePage() {
          </div>
       </aside>
 
-      {/* Main Content: Map View */}
+{/* Main Content: Map View */}
       <section className="flex-grow relative bg-slate-200">
-         <div className="absolute inset-0 z-0 bg-[linear-gradient(90deg,rgba(14,58,140,0.08)_1px,transparent_1px),linear-gradient(0deg,rgba(14,58,140,0.08)_1px,transparent_1px)] bg-[size:56px_56px]">
-            <div className="absolute inset-0 bg-gradient-to-br from-sky-100 via-slate-100 to-white" />
-            <div className="absolute left-1/4 top-0 h-full w-24 rotate-12 bg-sky-300/20 blur-sm" />
-            <div className="absolute left-2/3 top-0 h-full w-16 -rotate-12 bg-primary/10 blur-sm" />
-            
-            {/* Mock Map Markers */}
-            <div className="absolute top-1/2 left-1/3 group cursor-pointer">
-               <div className="bg-sky-500 text-white p-4 rounded-full shadow-2xl border-4 border-white animate-bounce-slow">
-                  <BriefcaseMedical className="w-6 h-6" />
-               </div>
-               <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-white p-3 rounded-2xl shadow-2xl border-2 border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
-                  <p className="text-xs font-semibold text-text-main uppercase">Unidade exemplo</p>
-                  <p className="text-[11px] font-semibold text-green-500 uppercase">Tempo demonstrativo</p>
-               </div>
-            </div>
-
-            <div className="absolute top-1/4 left-2/3 group cursor-pointer">
-               <div className="bg-primary text-white p-4 rounded-full shadow-2xl border-4 border-white">
-                  <Hospital className="w-6 h-6" />
-               </div>
-               <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-white p-3 rounded-2xl shadow-2xl border-2 border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
-                  <p className="text-xs font-semibold text-text-main uppercase">Unidade exemplo</p>
-                  <p className="text-[11px] font-semibold text-sky-500 uppercase">Tempo demonstrativo</p>
-               </div>
-            </div>
-         </div>
-
-         <div className="absolute left-8 top-8 z-10 max-w-md">
-            <DevBanner
-               title="Mapa demonstrativo"
-               description="A visualizacao cartografica e os marcadores sao ilustrativos ate a integracao com dados georreferenciados oficiais."
-            />
-         </div>
+         <HealthMap
+            units={units}
+            selectedUnitId={selectedClinic?.id ?? null}
+            onSelectUnit={(unit) => setSelectedClinic(unit)}
+         />
 
          {/* Map Legend/Controls */}
          <div className="absolute top-8 right-8 z-10 space-y-4">

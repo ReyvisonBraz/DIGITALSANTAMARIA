@@ -11,3 +11,5 @@ export { useFirestoreDoc } from './use-firestore-doc';
 export { useClickOutside } from './use-click-outside';
 export { useKeyboardShortcut } from './use-keyboard-shortcut';
 export { useContent } from './use-content';
+export { useContentItem } from './use-content-item';
+export { useHomeMetrics } from './use-home-metrics';

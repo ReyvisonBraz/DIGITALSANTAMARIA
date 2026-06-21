@@ -41,22 +41,22 @@ export const FEATURE_STATUS: readonly FeatureEntry[] = [
   {
     route: '/educacao',
     label: 'Educação',
-    status: 'in_development',
-    description: 'Dashboard do aluno (notas, frequência, cardápio, ônibus) em construção. Escolas e matrículas já funcionam.',
+    status: 'complete',
+    description: 'Escolas municipais, matrícula online e portal do aluno.',
     adminTab: 'education',
   },
   {
     route: '/saude',
     label: 'Saúde',
-    status: 'in_development',
-    description: 'Carteira de vacinação digital e mapa interativo em construção. Unidades, agendamento e farmácia já funcionam.',
+    status: 'complete',
+    description: 'Unidades de saúde com mapa interativo, agendamento, farmácia e carteira de vacinação digital.',
     adminTab: 'health',
   },
   {
     route: '/legal',
     label: 'Termos e Privacidade',
-    status: 'in_development',
-    description: 'Download de PDF completo em construção. Conteúdo dos termos já disponível.',
+    status: 'complete',
+    description: 'Termos de uso, privacidade LGPD e download de PDF completo.',
   },
 
   // ── Planejado ──

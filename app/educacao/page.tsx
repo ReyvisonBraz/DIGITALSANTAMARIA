@@ -298,12 +298,30 @@ export default function EducacaoPage() {
                exit={{ opacity: 0, x: 20 }}
                className="grid grid-cols-1 lg:grid-cols-12 gap-10 py-8"
             >
-               <div className="lg:col-span-12">
-                  <DevBanner
-                     title="Dashboard do aluno em desenvolvimento"
-                     description="Notas, frequência, cardápio e transporte escolar terão dados reais da Secretaria de Educação em breve. As escolas e matrículas já estão funcionando normalmente."
-                  />
-               </div>
+<div className="lg:col-span-12">
+                   <div className="bg-white p-8 rounded-[2rem] border-2 border-border space-y-4 shadow-sm">
+                      <div className="flex items-center gap-4">
+                         <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/20">
+                            <Calendar className="w-7 h-7" />
+                         </div>
+                         <div className="space-y-0.5">
+                            <h4 className="text-xl font-semibold text-text-main tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Acompanhamento escolar</h4>
+                            <p className="text-[11px] font-bold text-text-muted uppercase tracking-widest">Conecte-se com a secretaria de educação</p>
+                         </div>
+                      </div>
+                      <p className="text-sm font-medium text-text-muted leading-relaxed opacity-80">
+                         O portal do aluno exibirá notas, frequência, cardápio e transporte escolar quando a Secretaria de Educação publicar os dados no painel administrativo.
+                         Por enquanto, você já pode buscar unidades e fazer matrícula online.
+                      </p>
+                      <Link
+                        href="/educacao/matricula"
+                        className="inline-flex items-center gap-3 bg-primary text-white px-8 py-4 rounded-2xl font-semibold text-[11px] uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all"
+                      >
+                        Fazer matrícula
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+                   </div>
+                </div>
                {/* Quick Student Status Panel */}
                <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="ring-highlight-dark bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[2rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">

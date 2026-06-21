@@ -383,6 +383,11 @@ service cloud.firestore {
 
     match /notifications/{notificationId} {
       allow get: if isOwner(resource.data.recipientId);
+      // list necessaria para onSnapshot em tempo real, mas Firestore rules
+      // nao permitem validar o filtro where(recipientId, ==, uid) em list.
+      // Risco: usuario malicioso pode queryar todas as notificacoes.
+      // Mitigacao: notificacoes sao apenas status updates, nao dados sensiveis.
+      // TODO: migrar para subcolecao users/{uid}/notifications para isolamento real.
       allow list: if isSignedIn();
       allow create: if isStaff();
       allow update: if isOwner(resource.data.recipientId)

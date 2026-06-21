@@ -10,3 +10,6 @@ output/
 firebase-applet-config.json
 !firebase-applet-config.example.json
 *-firebase-adminsdk-*.json
+historico/
+debug.log
+functions/lib/

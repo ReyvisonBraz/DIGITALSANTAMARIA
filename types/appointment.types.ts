@@ -17,6 +17,8 @@ export interface HealthUnit {
   isOpen: boolean;
   openHours: string;
   specialties: string[];
+  lat: number | null;
+  lng: number | null;
   updatedAt: Timestamp;
 }
 

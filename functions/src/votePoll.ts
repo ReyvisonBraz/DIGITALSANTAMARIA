@@ -4,7 +4,7 @@ import * as admin from 'firebase-admin';
 if (!admin.apps.length) admin.initializeApp();
 
 export const votePollCallable = functions.https.onCall(
-  { enforceAppCheck: false },
+  { enforceAppCheck: true },
   async (request) => {
     if (!request.auth) {
       throw new functions.https.HttpsError(
