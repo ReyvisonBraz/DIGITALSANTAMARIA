@@ -1,24 +1,33 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Loader2, ShieldCheck } from 'lucide-react';
-import AdminAuditPanel from '@/features/gestao/AdminAuditPanel';
 import AdminOverview from '@/features/gestao/AdminOverview';
 import AdminSectionNav, { type AdminMainSection } from '@/features/gestao/AdminSectionNav';
 import { LoginGate, RestrictedGate } from '@/features/gestao/AuthGates';
-import ContentAdminPanel, { type ContentTab } from '@/features/gestao/ContentAdminPanel';
+import type { ContentTab } from '@/features/gestao/ContentAdminPanel';
 import DemandsSection from '@/features/gestao/DemandsSection';
-import PetitionsAdminPanel from '@/features/gestao/PetitionsAdminPanel';
 import ReportsSection from '@/features/gestao/ReportsSection';
-import UsersAdminPanel from '@/features/gestao/UsersAdminPanel';
 import { useAdminData } from '@/features/gestao/hooks/useAdminData';
 import { useAuth } from '@/lib/auth-context';
+
+const ContentAdminPanel = dynamic(() => import('@/features/gestao/ContentAdminPanel'), {
+  loading: () => <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>,
+  ssr: false,
+});
+const PetitionsAdminPanel = dynamic(() => import('@/features/gestao/PetitionsAdminPanel'), { ssr: false });
+const AdminAuditPanel = dynamic(() => import('@/features/gestao/AdminAuditPanel'), { ssr: false });
+const UsersAdminPanel = dynamic(() => import('@/features/gestao/UsersAdminPanel'), { ssr: false });
 
 
 type ActiveSection = AdminMainSection;
 
 export default function GestãoPage() {
   const { user, userRole, loading: authLoading, authError, login } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const isStaff = userRole === 'admin' || userRole === 'clerk';
   const canManageAdminCatalog = userRole === 'admin';
   const { demands, reports, loading, error, refresh } = useAdminData(!!user && isStaff);
@@ -54,6 +63,8 @@ export default function GestãoPage() {
     setLoginError(null);
     try {
       await login();
+      const redirect = searchParams.get('redirect');
+      if (redirect) router.replace(redirect);
     } catch (err) {
       setLoginError(err instanceof Error ? err.message : 'Não foi possível iniciar o login.');
     }

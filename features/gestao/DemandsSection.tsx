@@ -258,7 +258,7 @@ export default function DemandsSection({ demands, loading, error, userId, clerkN
                             </p>
                           )}
                         </div>
-                        <DemandTimeline demand={demand} compact autoScroll={false} />
+                        <DemandTimeline demand={demand} compact autoScroll={false} currentUserRole="staff" currentUserId={userId} currentUserName={clerkName} />
                       </div>
 
                       <aside className="space-y-4">

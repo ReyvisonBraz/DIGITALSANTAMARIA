@@ -6,9 +6,10 @@ import {
   listenToReportMessages,
   createReportMessage,
   markReportReadByCitizen,
+  markReportReadByStaff,
 } from '@/services/reports.service';
 import { isReportClosed } from '@/lib/constants/protocols';
-import type { Report } from '@/types';
+import type { Report, ReportMessageAuthorRole } from '@/types';
 
 interface ReportTimelineProps {
   report: Report;
@@ -16,25 +17,28 @@ interface ReportTimelineProps {
   allowCitizenReply?: boolean;
   currentUserId?: string;
   currentUserName?: string;
+  currentUserRole?: string;
   autoScroll?: boolean;
 }
 
-const adapter: ChatTimelineAdapter = {
-  listenMessages: (id, onChange, onError) =>
-    listenToReportMessages(id, (msgs) =>
-      onChange(msgs.map((m) => ({ id: m.id, authorName: m.authorName, authorRole: m.authorRole, message: m.message, createdAt: m.createdAt }))),
-      onError,
-    ),
-  createMessage: (input) =>
-    createReportMessage({
-      reportId: input.entityId,
-      authorId: input.authorId,
-      authorName: input.authorName,
-      authorRole: 'citizen',
-      message: input.message,
-    }),
-  markAsRead: markReportReadByCitizen,
-};
+function buildAdapter(role: string): ChatTimelineAdapter {
+  return {
+    listenMessages: (id, onChange, onError) =>
+      listenToReportMessages(id, (msgs) =>
+        onChange(msgs.map((m) => ({ id: m.id, authorName: m.authorName, authorRole: m.authorRole, message: m.message, createdAt: m.createdAt }))),
+        onError,
+      ),
+    createMessage: (input) =>
+      createReportMessage({
+        reportId: input.entityId,
+        authorId: input.authorId,
+        authorName: input.authorName,
+        authorRole: (input.authorRole || role) as ReportMessageAuthorRole,
+        message: input.message,
+      }),
+    markAsRead: role === 'staff' ? markReportReadByStaff : markReportReadByCitizen,
+  };
+}
 
 export default function ReportTimeline({
   report,
@@ -42,15 +46,20 @@ export default function ReportTimeline({
   allowCitizenReply = false,
   currentUserId = '',
   currentUserName = '',
+  currentUserRole = 'citizen',
   autoScroll = true,
 }: ReportTimelineProps) {
   const isClosed = isReportClosed(report.status);
-  const canReply = allowCitizenReply && currentUserId === report.reporterId && !isClosed;
+  const isStaff = currentUserRole === 'admin' || currentUserRole === 'clerk';
+  const adapter = buildAdapter(isStaff ? 'staff' : 'citizen');
 
-  const shouldMarkRead =
-    !!allowCitizenReply &&
-    currentUserId === report.reporterId &&
-    !!report.conversation?.unreadByCitizen;
+  const canReply = isStaff
+    ? !isClosed
+    : allowCitizenReply && currentUserId === report.reporterId && !isClosed;
+
+  const shouldMarkRead = isStaff
+    ? !!report.conversation?.unreadByStaff
+    : !!allowCitizenReply && currentUserId === report.reporterId && !!report.conversation?.unreadByCitizen;
 
   return (
     <ChatTimeline
@@ -64,6 +73,7 @@ export default function ReportTimeline({
       canReply={canReply}
       currentUserId={currentUserId}
       currentUserName={currentUserName}
+      currentUserRole={isStaff ? 'staff' : 'citizen'}
       shouldMarkRead={shouldMarkRead}
       title="Conversa do relato"
       conversationAriaLabel="Conversa do relato"

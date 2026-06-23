@@ -14,6 +14,11 @@ service firebase.storage {
         && request.resource.contentType.matches('image/(jpeg|png|webp)');
     }
 
+    function isStaff() {
+      return isSignedIn()
+        && exists(/databases/(default)/documents/admins/$(request.auth.uid));
+    }
+
     match /avatars/{uid}/{fileName} {
       allow read: if true;
       allow write: if isOwner(uid)
@@ -22,7 +27,7 @@ service firebase.storage {
     }
 
     match /reports/{uid}/{fileName} {
-      allow read: if true;
+      allow read: if isOwner(uid) || isStaff();
       allow write: if isOwner(uid)
         && isImage()
         && request.resource.size <= 5 * 1024 * 1024;

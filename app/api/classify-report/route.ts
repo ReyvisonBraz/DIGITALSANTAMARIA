@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
 
     const type = await classifyReport(String(title), String(description));
     return NextResponse.json({ type }, { headers: getRateLimitHeaders(ip) });
-  } catch (error) {
+} catch (error) {
     log.error('Falha ao classificar relato', {}, error);
-    return NextResponse.json({ type: 'other' });
+    return NextResponse.json({ type: 'other', degraded: true }, { status: 503 });
   }
 }

@@ -4,6 +4,7 @@ import {
   addDoc,
   getDoc,
   getDocs,
+  limit,
   onSnapshot,
   updateDoc,
   writeBatch,
@@ -243,7 +244,7 @@ export function listenToUserDemands(
 
 export async function getAllDemands(): Promise<Demand[]> {
   const ref = collection(db, COLLECTION).withConverter(demandConverter);
-  const q = query(ref, orderBy('createdAt', 'desc'));
+  const q = query(ref, orderBy('createdAt', 'desc'), limit(200));
   const snap = await getDocs(q);
   return snap.docs.map((d) => d.data());
 }

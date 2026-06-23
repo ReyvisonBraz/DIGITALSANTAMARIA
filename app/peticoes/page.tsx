@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { AlertCircle, ArrowRight, FileText, Loader2, Search, Users } from 'lucide-react';
+import { AlertCircle, ArrowRight, FileText, Loader2, Plus, Search, Users } from 'lucide-react';
 import SignatureButton from '@/features/peticoes/SignatureButton';
 import SignatureProgress from '@/features/peticoes/SignatureProgress';
+import CreatePetitionModal from '@/features/peticoes/CreatePetitionModal';
 import { listenToActivePetitions } from '@/services/petitions.service';
 import type { Petition } from '@/types';
 
@@ -14,6 +15,7 @@ export default function PeticoesPage() {
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [searchInput, setSearchInput] = useState('');
+  const [createModalOpen, setCreateModalOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -61,8 +63,15 @@ export default function PeticoesPage() {
               Petições públicas
             </h1>
             <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-              Apoie causas abertas pela comunidade para mobilizar a cidade.
+              Crie e apoie causas abertas pela comunidade para mobilizar a cidade.
             </p>
+            <button
+              onClick={() => setCreateModalOpen(true)}
+              className="mt-5 inline-flex items-center gap-2 rounded-xl bg-tertiary px-6 py-3 text-[11px] font-black uppercase tracking-widest text-white shadow-xl shadow-tertiary/20 transition-all hover:brightness-110 active:scale-95"
+            >
+              <Plus className="h-4 w-4" />
+              Criar petição
+            </button>
           </div>
         </div>
       </section>
@@ -142,6 +151,11 @@ export default function PeticoesPage() {
           </div>
         )}
       </main>
+
+      <CreatePetitionModal
+        isOpen={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+      />
     </div>
   );
 }

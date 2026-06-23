@@ -7,6 +7,7 @@ import {
   query,
   where,
   orderBy,
+  limit,
   serverTimestamp,
   updateDoc,
 } from 'firebase/firestore';
@@ -46,12 +47,11 @@ export async function createAppointment(
 
 export async function getAppointmentsByUser(userId: string): Promise<Appointment[]> {
   const ref = collection(db, APPOINTMENTS_COL).withConverter(appointmentConverter);
-  const q = query(ref, where('userId', '==', userId));
+  const q = query(ref, where('userId', '==', userId), limit(50));
   const snap = await getDocs(q);
   return snap.docs
     .map((d) => d.data())
     .sort((a, b) => {
-      // Datas estão em formato ISO (YYYY-MM-DD), localeCompare funciona para ordenação descrescente.
       if (b.date !== a.date) return b.date.localeCompare(a.date);
       return b.time.localeCompare(a.time);
     });
@@ -59,7 +59,7 @@ export async function getAppointmentsByUser(userId: string): Promise<Appointment
 
 export async function getAllAppointments(): Promise<Appointment[]> {
   const ref = collection(db, APPOINTMENTS_COL).withConverter(appointmentConverter);
-  const q = query(ref, orderBy('date', 'desc'), orderBy('time', 'desc'));
+  const q = query(ref, orderBy('date', 'desc'), orderBy('time', 'desc'), limit(100));
   const snap = await getDocs(q);
   return snap.docs.map((d) => d.data());
 }
@@ -92,7 +92,7 @@ export async function updateAppointmentStatus(
 
 export async function getHealthUnits(): Promise<HealthUnit[]> {
   const ref = collection(db, HEALTH_UNITS_COL).withConverter(healthUnitConverter);
-  const snap = await getDocs(ref);
+  const snap = await getDocs(query(ref, limit(100)));
   return snap.docs.map((d) => d.data());
 }
 

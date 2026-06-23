@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Dancing_Script, Fraunces, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
@@ -61,7 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <NotificationsProvider>
                 <ErrorBoundary>
                   <ScrollAmbience />
-                  <TopAppBar />
+                  <Suspense><TopAppBar /></Suspense>
                   <main className="relative pt-20 md:pt-24">
                     <RouteSuspensionGate>{children}</RouteSuspensionGate>
                   </main>

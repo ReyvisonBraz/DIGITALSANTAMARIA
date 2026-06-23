@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getAuthUserId } from '@/lib/api-auth';
 
 const MAX_LOG_SIZE = 10000;
 const RATE_LIMIT_WINDOW = 60000;
@@ -48,6 +49,10 @@ function formatLogEntry(entry: LogEntry): string {
 }
 
 export async function POST(request: NextRequest) {
+  if (!getAuthUserId(request)) {
+    return NextResponse.json({ error: 'Autenticação necessária.' }, { status: 401 });
+  }
+
   if (isRateLimited()) {
     return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
   }

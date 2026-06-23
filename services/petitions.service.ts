@@ -48,7 +48,7 @@ export async function createPetition(
 
 export async function getActivePetitions(): Promise<Petition[]> {
   const ref = collection(db, PETITIONS_COL).withConverter(petitionConverter);
-  const q = query(ref, where('status', '==', 'active'));
+  const q = query(ref, where('status', '==', 'active'), limit(60));
   const snap = await getDocs(q);
   return sortByCreatedAtDesc(snap.docs.map((d) => d.data()));
 }
@@ -58,7 +58,7 @@ export function listenToActivePetitions(
   onError?: (error: unknown) => void,
 ): () => void {
   const ref = collection(db, PETITIONS_COL).withConverter(petitionConverter);
-  const q = query(ref, where('status', '==', 'active'));
+  const q = query(ref, where('status', '==', 'active'), limit(60));
   return onSnapshot(
     q,
     (snap) => onChange(sortByCreatedAtDesc(snap.docs.map((d) => d.data()))),

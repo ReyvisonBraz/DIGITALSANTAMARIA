@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const PROTECTED_ROUTES = ['/gestao', '/perfil'];
+const FIREBASE_ISSUER_PREFIX = 'https://securetoken.google.com/';
+const EXPECTED_AUDIENCE = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '';
 
 function decodeJwtPayload(token: string): { sub?: string; exp?: number; iat?: number; iss?: string; aud?: string } | null {
   try {
@@ -10,6 +12,13 @@ function decodeJwtPayload(token: string): { sub?: string; exp?: number; iat?: nu
     const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf-8'));
     if (!payload.sub) return null;
     if (typeof payload.exp !== 'number' || payload.exp * 1000 < Date.now()) return null;
+    if (typeof payload.iss === 'string' && EXPECTED_AUDIENCE) {
+      const expectedIssuer = `${FIREBASE_ISSUER_PREFIX}${EXPECTED_AUDIENCE}`;
+      if (payload.iss !== expectedIssuer) return null;
+    }
+    if (typeof payload.aud === 'string' && EXPECTED_AUDIENCE) {
+      if (payload.aud !== EXPECTED_AUDIENCE) return null;
+    }
     return payload;
   } catch {
     return null;

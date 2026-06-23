@@ -24,7 +24,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import {
   User,
-  onAuthStateChanged,
+  onIdTokenChanged,
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
@@ -119,39 +119,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  /** Escuta mudanças de estado de autenticação */
+  /** Escuta mudanças de estado de autenticação e refresh de token */
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+    let firstAuth = true;
+
+    const unsubscribe = onIdTokenChanged(auth, async (fbUser) => {
       if (fbUser) {
         setAuthError(null);
-        authLogger.info('Auth state: user logged in', {
-          userId: fbUser.uid,
-          email: fbUser.email || '',
-        });
         setUser(fbUser);
-        // Cookie com ID token real para middleware de protecao server-side
+
+        if (firstAuth) {
+          authLogger.info('Auth state: user logged in', { userId: fbUser.uid, email: fbUser.email || '' });
+          try {
+            await syncUserProfile(fbUser);
+            const role = await fetchUserRole(fbUser.uid);
+            setUserRole(role);
+          } catch (err) {
+            authLogger.error('Failed to sync profile or fetch role', {}, err);
+          }
+          firstAuth = false;
+        }
+
         const isProduction = typeof window !== 'undefined' && window.location.protocol === 'https:';
         fbUser.getIdToken().then((token) => {
+          const expSeconds = 3600;
           const secureFlag = isProduction ? '; Secure' : '';
-          document.cookie = `firebase-auth-token=${token}; path=/; max-age=86400; SameSite=Strict${secureFlag}`;
-        }).catch(() => { /* falha silenciosa: cookie de auth é melhor-esforço */ });
-        try {
-          await syncUserProfile(fbUser);
-          const role = await fetchUserRole(fbUser.uid);
-          setUserRole(role);
-        } catch (err) {
-          authLogger.error('Failed to sync profile or fetch role', {}, err);
-        }
+          document.cookie = `firebase-auth-token=${token}; path=/; max-age=${expSeconds}; SameSite=Strict${secureFlag}`;
+        }).catch(() => { });
       } else {
         authLogger.info('Auth state: no user (logged out)');
         setUser(null);
         setUserRole('citizen');
-        // Remove cookie
         document.cookie = 'firebase-auth-token=; path=/; max-age=0';
       }
       setLoading(false);
     });
-    return unsubscribe;
+
+    const refreshInterval = setInterval(() => {
+      if (auth.currentUser) {
+        auth.currentUser.getIdToken(true).catch(() => {});
+      }
+    }, 55 * 60 * 1000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(refreshInterval);
+    };
   }, []);
 
   /** Inicia login com Google OAuth via popup */

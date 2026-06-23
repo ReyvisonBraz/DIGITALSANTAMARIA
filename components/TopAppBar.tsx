@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   Bell,
@@ -41,6 +41,9 @@ const log = createLogger('TopAppBar');
 export default function TopAppBar() {
   const { user, userRole, login } = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams.get('redirect');
   const { unreadCount } = useNotifications();
   const {
     toggleHighContrast,
@@ -96,13 +99,16 @@ export default function TopAppBar() {
     toast(mode === 'essential' ? 'Modo Essencial ativado.' : 'Modo Completo ativado.', 'info');
   }, [setContentMode, toast]);
 
-  const handleLogin = useCallback(async () => {
+const handleLogin = useCallback(async () => {
     try {
       await login();
+      if (redirectPath) {
+        router.replace(redirectPath);
+      }
     } catch (error) {
       toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
     }
-  }, [login, toast]);
+  }, [login, toast, redirectPath, router]);
 
   return (
     <>

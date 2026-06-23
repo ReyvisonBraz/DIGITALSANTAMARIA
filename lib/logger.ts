@@ -229,20 +229,22 @@ function createLogger(component?: string) {
     const entry = createEntry(level, message, context, error);
 
     // Seleciona o método de console apropriado
-    const consoleFn = level === 'error' ? console.error
-      : level === 'warn' ? console.warn
-      : level === 'debug' ? console.debug
-      : console.log;
+    // Espelha logs para o console apenas em desenvolvimento.
+    if (process.env.NODE_ENV !== 'production') {
+      const consoleFn = level === 'error' ? console.error
+        : level === 'warn' ? console.warn
+        : level === 'debug' ? console.debug
+        : console.log;
 
-    // Formata a saída para o console
-    const prefix = component ? `[${component}]` : '[App]';
-    const meta = ctx && Object.keys(ctx).length > 0 ? ` ${JSON.stringify(ctx)}` : '';
-    const errInfo = entry.error ? ` | Error: ${entry.error.message}` : '';
+      const prefix = component ? `[${component}]` : '[App]';
+      const meta = ctx && Object.keys(ctx).length > 0 ? ` ${JSON.stringify(ctx)}` : '';
+      const errInfo = entry.error ? ` | Error: ${entry.error.message}` : '';
 
-    if (level === 'error' && entry.error?.stack) {
-      consoleFn(`${prefix} ${message}${meta}`, entry.error.stack, entry);
-    } else {
-      consoleFn(`${prefix} ${message}${meta}${errInfo}`, entry);
+      if (level === 'error' && entry.error?.stack) {
+        consoleFn(`${prefix} ${message}${meta}`, entry.error.stack, entry);
+      } else {
+        consoleFn(`${prefix} ${message}${meta}${errInfo}`, entry);
+      }
     }
 
     // Persiste no localStorage (apenas client-side)

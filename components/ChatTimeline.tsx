@@ -54,6 +54,7 @@ interface ChatTimelineProps {
   canReply: boolean;
   currentUserId: string;
   currentUserName: string;
+  currentUserRole?: string;
   /** Deve marcar como lido? */
   shouldMarkRead: boolean;
   /** Configuração visual. */
@@ -85,6 +86,7 @@ export default function ChatTimeline({
   canReply,
   currentUserId,
   currentUserName,
+  currentUserRole = 'citizen',
   shouldMarkRead,
   title = 'Conversa do protocolo',
   conversationAriaLabel = 'Conversa do protocolo',
@@ -196,7 +198,7 @@ export default function ChatTimeline({
         entityId,
         authorId: currentUserId,
         authorName: currentUserName || 'Cidadão',
-        authorRole: 'citizen',
+        authorRole: currentUserRole,
         message,
       });
       setReply('');

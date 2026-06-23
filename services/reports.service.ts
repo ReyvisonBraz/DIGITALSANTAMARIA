@@ -243,7 +243,7 @@ export async function getPendingReports(): Promise<Report[]> {
 
 export async function getAllReports(): Promise<Report[]> {
   const ref = collection(db, COLLECTION).withConverter(reportConverter);
-  const q = query(ref, orderBy('createdAt', 'desc'));
+  const q = query(ref, orderBy('createdAt', 'desc'), limit(200));
   const snap = await getDocs(q);
   return snap.docs.map((d) => d.data());
 }

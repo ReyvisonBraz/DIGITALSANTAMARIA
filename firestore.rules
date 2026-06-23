@@ -329,7 +329,8 @@ service cloud.firestore {
     }
 
     match /petition_signatures/{sigId} {
-      allow read: if isSignedIn();
+      allow get: if isSignedIn();
+      allow list: if false;
       allow create: if isSignedIn()
         && incoming().userId == request.auth.uid
         && sigId == incoming().petitionId + '_' + request.auth.uid;
@@ -359,8 +360,8 @@ service cloud.firestore {
 
     match /jobs/{jobId} {
       allow read: if true;
-      allow create: if isSignedIn()
-        && incoming().employerId == request.auth.uid;
+      allow create: if (isSignedIn() && incoming().employerId == request.auth.uid)
+        || isAdmin();
       allow update: if isOwner(resource.data.employerId) || isAdmin();
       allow delete: if isAdmin();
     }
@@ -381,14 +382,9 @@ service cloud.firestore {
       allow update: if isStaff();
     }
 
-    match /notifications/{notificationId} {
+match /notifications/{notificationId} {
       allow get: if isOwner(resource.data.recipientId);
-      // list necessaria para onSnapshot em tempo real, mas Firestore rules
-      // nao permitem validar o filtro where(recipientId, ==, uid) em list.
-      // Risco: usuario malicioso pode queryar todas as notificacoes.
-      // Mitigacao: notificacoes sao apenas status updates, nao dados sensiveis.
-      // TODO: migrar para subcolecao users/{uid}/notifications para isolamento real.
-      allow list: if isSignedIn();
+      allow list: if isOwner(resource.data.recipientId);
       allow create: if isStaff();
       allow update: if isOwner(resource.data.recipientId)
         && incoming().diff(existing()).affectedKeys().hasOnly(['read'])
@@ -408,9 +404,10 @@ service cloud.firestore {
     match /events/{id}             { allow read: if true; allow write: if isAdmin(); }
     match /community_groups/{id}   { allow read: if true; allow write: if isAdmin(); }
 
-    // Comercio Local: admin cria direto e cidadao pode auto-cadastrar como pending_approval.
+// Comercio Local: admin cria direto e cidadao pode auto-cadastrar como pending_approval.
     match /businesses/{id} {
-      allow read, list: if true;
+      allow get, list: if isStaff()
+        || (resource.data.status == 'published' && resource.data.deletedAt == null);
       allow create: if isAdmin()
         || (isSignedIn() && validBusinessCitizenCreate());
       allow update: if isAdmin()
