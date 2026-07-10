@@ -1,31 +1,45 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { jwtVerify, createRemoteJWKSet } from 'jose';
 
 const PROTECTED_ROUTES = ['/gestao', '/perfil'];
 const FIREBASE_ISSUER_PREFIX = 'https://securetoken.google.com/';
 const EXPECTED_AUDIENCE = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '';
+const FIREBASE_JWKS_URL = 'https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com';
 
-function decodeJwtPayload(token: string): { sub?: string; exp?: number; iat?: number; iss?: string; aud?: string } | null {
+/**
+ * Firebase JWKS remote key set for JWT signature verification.
+ * Cached automatically by jose after first fetch.
+ */
+const firebaseJwks = createRemoteJWKSet(new URL(FIREBASE_JWKS_URL));
+
+/**
+ * Verifica a assinatura do JWT do Firebase usando jose (Edge Runtime compatible).
+ *
+ * Diferença da versão anterior:
+ * - Antes: decodificava base64url sem verificar assinatura (inseguro)
+ * - Agora: verifica assinatura criptográfica contra as chaves públicas do Firebase
+ *
+ * O jose biblioteca suporta Edge Runtime do Next.js (sem dependências Node.js).
+ */
+async function verifyFirebaseToken(token: string) {
   try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf-8'));
-    if (!payload.sub) return null;
-    if (typeof payload.exp !== 'number' || payload.exp * 1000 < Date.now()) return null;
-    if (typeof payload.iss === 'string' && EXPECTED_AUDIENCE) {
-      const expectedIssuer = `${FIREBASE_ISSUER_PREFIX}${EXPECTED_AUDIENCE}`;
-      if (payload.iss !== expectedIssuer) return null;
-    }
-    if (typeof payload.aud === 'string' && EXPECTED_AUDIENCE) {
-      if (payload.aud !== EXPECTED_AUDIENCE) return null;
-    }
+    if (!EXPECTED_AUDIENCE) return null;
+
+    const issuer = `${FIREBASE_ISSUER_PREFIX}${EXPECTED_AUDIENCE}`;
+
+    const { payload } = await jwtVerify(token, firebaseJwks, {
+      issuer,
+      audience: EXPECTED_AUDIENCE,
+    });
+
     return payload;
   } catch {
     return null;
   }
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isProtected = PROTECTED_ROUTES.some(
@@ -44,14 +58,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  const payload = decodeJwtPayload(token);
-  if (!payload?.sub || !payload?.exp) {
-    const url = new URL('/', request.url);
-    url.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(url);
-  }
+  const payload = await verifyFirebaseToken(token);
 
-  if (payload.exp * 1000 < Date.now()) {
+  if (!payload?.sub) {
     const url = new URL('/', request.url);
     url.searchParams.set('redirect', pathname);
     return NextResponse.redirect(url);

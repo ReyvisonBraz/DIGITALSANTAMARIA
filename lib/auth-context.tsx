@@ -145,7 +145,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const expSeconds = 3600;
           const secureFlag = isProduction ? '; Secure' : '';
           document.cookie = `firebase-auth-token=${token}; path=/; max-age=${expSeconds}; SameSite=Strict${secureFlag}`;
-        }).catch(() => { });
+        }).catch((err) => {
+          authLogger.error('Failed to set auth cookie', {}, err);
+        });
       } else {
         authLogger.info('Auth state: no user (logged out)');
         setUser(null);
@@ -157,7 +159,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const refreshInterval = setInterval(() => {
       if (auth.currentUser) {
-        auth.currentUser.getIdToken(true).catch(() => {});
+        auth.currentUser.getIdToken(true).catch((err) => {
+          authLogger.error('Failed to refresh auth token', {}, err);
+        });
       }
     }, 55 * 60 * 1000);
 

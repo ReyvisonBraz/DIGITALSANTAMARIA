@@ -397,7 +397,7 @@ export default function NoticesAdmin() {
                     <a
                       href={notice.actionURL}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="mt-2 inline-block text-xs font-bold text-primary hover:underline"
                     >
                       {notice.actionLabel || 'Abrir link'} →

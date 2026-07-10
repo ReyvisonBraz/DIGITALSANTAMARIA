@@ -1,3 +1,8 @@
+/**
+ * Valida um CPF brasileiro usando o algoritmo oficial de dois dígitos verificadores.
+ * @param cpf - CPF com ou sem formatação.
+ * @returns `true` se o CPF for válido.
+ */
 export function validateCPF(cpf: string): boolean {
   const cleaned = cpf.replace(/\D/g, '');
   if (cleaned.length !== 11 || /^(\d)\1{10}$/.test(cleaned)) return false;
@@ -18,19 +23,39 @@ export function validateCPF(cpf: string): boolean {
   return digit2 === parseInt(cleaned[10]);
 }
 
+/**
+ * Valida um endereço de e-mail usando regex padrão.
+ * @param email - Endereço de e-mail.
+ * @returns `true` se o e-mail for válido.
+ */
 export function validateEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+/**
+ * Valida um número de telefone brasileiro (10-11 dígitos).
+ * @param phone - Número de telefone com ou sem formatação.
+ * @returns `true` se o telefone for válido.
+ */
 export function validatePhone(phone: string): boolean {
   const cleaned = phone.replace(/\D/g, '');
   return cleaned.length >= 10 && cleaned.length <= 11;
 }
 
+/**
+ * Valida um CEP brasileiro (formato XXXXX-XXX ou XXXXXXXXX).
+ * @param cep - CEP com ou sem formatação.
+ * @returns `true` se o CEP for válido.
+ */
 export function validateCEP(cep: string): boolean {
   return /^\d{5}-?\d{3}$/.test(cep);
 }
 
+/**
+ * Valida se uma string não está vazia (após trim).
+ * @param value - String a ser validada.
+ * @returns `true` se a string tiver conteúdo.
+ */
 export function validateRequired(value: string): boolean {
   return value.trim().length > 0;
 }

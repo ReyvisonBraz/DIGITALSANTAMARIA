@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUserId } from '@/lib/api-auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const MAX_LOG_SIZE = 10000;
-const RATE_LIMIT_WINDOW = 60000;
-const MAX_REQUESTS_PER_WINDOW = 100;
 
 interface LogEntry {
   id: string;
@@ -12,18 +11,6 @@ interface LogEntry {
   message: string;
   context?: Record<string, unknown>;
   error?: { name?: string; message: string; stack?: string; code?: string };
-}
-
-const requestLog: number[] = [];
-
-function isRateLimited(): boolean {
-  const now = Date.now();
-  while (requestLog.length > 0 && requestLog[0] < now - RATE_LIMIT_WINDOW) {
-    requestLog.shift();
-  }
-  if (requestLog.length >= MAX_REQUESTS_PER_WINDOW) return true;
-  requestLog.push(now);
-  return false;
 }
 
 function formatLogEntry(entry: LogEntry): string {
@@ -49,11 +36,13 @@ function formatLogEntry(entry: LogEntry): string {
 }
 
 export async function POST(request: NextRequest) {
-  if (!getAuthUserId(request)) {
+  if (!(await getAuthUserId(request))) {
     return NextResponse.json({ error: 'Autenticação necessária.' }, { status: 401 });
   }
 
-  if (isRateLimited()) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const { limited } = await checkRateLimit(ip);
+  if (limited) {
     return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
   }
 
@@ -102,8 +91,8 @@ export async function GET() {
       POST: '/api/logs - Enviar logs',
     },
     rateLimit: {
-      maxRequests: MAX_REQUESTS_PER_WINDOW,
-      windowMs: RATE_LIMIT_WINDOW,
+      maxRequests: 30,
+      windowMs: 60000,
     },
   });
 }

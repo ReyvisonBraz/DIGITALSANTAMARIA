@@ -1,3 +1,9 @@
+/**
+ * Formata uma data no padrão pt-BR (dd/mm/aaaa).
+ * Aceita Date, Firestore Timestamp ou string ISO.
+ * @param date - Data a ser formatada.
+ * @returns String no formato brasileiro.
+ */
 export function formatDate(date: Date | { seconds: number; toDate?: () => Date } | string): string {
   if (date && typeof date === 'object' && 'seconds' in date) {
     return new Date((date as { seconds: number }).seconds * 1000).toLocaleDateString('pt-BR');
@@ -5,6 +11,11 @@ export function formatDate(date: Date | { seconds: number; toDate?: () => Date }
   return new Date(date as string | Date).toLocaleDateString('pt-BR');
 }
 
+/**
+ * Formata um valor numérico como moeda brasileira (R$).
+ * @param value - Valor numérico.
+ * @returns String formatada (ex: R$ 1.234,56).
+ */
 export function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -12,10 +23,21 @@ export function formatCurrency(value: number): string {
   }).format(value);
 }
 
+/**
+ * Converte um ID de protocolo para exibição (maiúsculas).
+ * @param protocolId - ID do protocolo.
+ * @returns Protocolo em maiúsculas.
+ */
 export function formatProtocol(protocolId: string): string {
   return protocolId.toUpperCase();
 }
 
+/**
+ * Formata um número de telefone brasileiro com máscara.
+ * Aceita 10 ou 11 dígitos (com ou sem nono dígito).
+ * @param phone - String contendo apenas dígitos ou com formatação.
+ * @returns Telefone formatado (ex: (51) 99999-9999).
+ */
 export function formatPhone(phone: string): string {
   const cleaned = phone.replace(/\D/g, '');
   if (cleaned.length === 11) {
@@ -27,6 +49,11 @@ export function formatPhone(phone: string): string {
   return phone;
 }
 
+/**
+ * Converte uma data em texto relativo em português ("agora", "5 min atrás", "3h atrás", etc.).
+ * @param date - Date ou Firestore Timestamp.
+ * @returns String com tempo relativo.
+ */
 export function formatRelativeTime(date: Date | { seconds: number }): string {
   const now = Date.now();
   const then = 'seconds' in date ? (date as { seconds: number }).seconds * 1000 : (date as Date).getTime();

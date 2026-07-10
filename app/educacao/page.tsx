@@ -160,6 +160,8 @@ export default function EducacaoPage() {
                <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
+                  aria-pressed={activeTab === tab}
+                  aria-label={`Alternar para aba ${tab === 'academy' ? 'Unidades' : tab === 'dashboard' ? 'Portal' : 'Recursos'}`}
                   className={cn(
                      "flex-1 md:flex-none flex items-center gap-3 px-8 py-4 rounded-[2rem] font-semibold text-[11px] uppercase tracking-widest transition-all relative overflow-hidden",
                      activeTab === tab ? "bg-white text-primary shadow-xl border border-primary/10" : "text-text-muted hover:text-text-main"
@@ -276,10 +278,11 @@ export default function EducacaoPage() {
                                 <span className="text-xl font-semibold text-text-main tabular-nums">{school.rating}</span>
                                 <span className="text-[11px] font-semibold text-text-muted uppercase tracking-widest ml-2">Avaliação Parental</span>
                              </div>
-                             <button 
-                               onClick={() => setSelectedSchool(school)}
-                               className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-Tactile active:scale-90 group/btn"
-                             >
+                              <button 
+                                onClick={() => setSelectedSchool(school)}
+                                aria-label={`Ver detalhes de ${school.title}`}
+                                className="w-14 h-14 bg-surface rounded-2xl flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-Tactile active:scale-90 group/btn"
+                              >
                                 <ChevronRight className="w-8 h-8 group-hover/btn:translate-x-1.5 transition-transform" />
                              </button>
                           </div>

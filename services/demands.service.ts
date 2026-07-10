@@ -20,6 +20,7 @@ import { generateDemandProtocolId } from '@/lib/utils/protocol';
 import { tryCreateNotification } from '@/services/notifications.service';
 import { canCitizenCancelDemand } from '@/lib/constants/protocols';
 import { byCreatedAtAsc, byCreatedAtDesc } from '@/lib/utils/sort';
+import { createLogger } from '@/lib/logger';
 import type {
   Demand,
   CreateDemandInput,
@@ -33,6 +34,7 @@ import type {
 const COLLECTION = 'demands';
 const MESSAGES_COLLECTION = 'demand_messages';
 const PROTOCOL_TIMEOUT_MS = 12_000;
+const log = createLogger('DemandsService');
 
 const STATUS_LABEL: Record<DemandStatus, string> = {
   pending: 'pendente',
@@ -268,7 +270,7 @@ export async function cancelDemandByCitizen(
   userId: string,
   reason?: string,
 ): Promise<void> {
-  const demandRef = doc(db, COLLECTION, id);
+  const demandRef = doc(db, COLLECTION, id).withConverter(demandConverter);
   const cancellationReason = reason?.trim() || '';
   if (cancellationReason.length < 8) {
     throw new Error('Informe uma justificativa para cancelar este protocolo.');
@@ -280,7 +282,7 @@ export async function cancelDemandByCitizen(
       throw new Error('Solicitação não encontrada.');
     }
 
-    const demand = demandSnap.data() as Demand;
+    const demand = demandSnap.data();
     if (demand.authorId !== userId || demand.isAnonymous) {
       throw new Error('Você não tem permissão para cancelar este protocolo.');
     }
@@ -305,7 +307,7 @@ export async function updateDemandStatus(
   status: DemandStatus,
   adminAction: Omit<AdminAction, 'updatedAt'>
 ): Promise<void> {
-  const demandRef = doc(db, COLLECTION, id);
+  const demandRef = doc(db, COLLECTION, id).withConverter(demandConverter);
   const response = adminAction.response.trim();
 
   await runTransaction(db, async (tx) => {
@@ -314,7 +316,7 @@ export async function updateDemandStatus(
       throw new Error('Demanda não encontrada.');
     }
 
-    const demand = demandSnap.data() as Demand;
+    const demand = demandSnap.data();
     const previousResponse = demand.adminAction?.response?.trim() || '';
 
     tx.update(demandRef, {
@@ -350,9 +352,9 @@ export async function updateDemandStatus(
   });
 
   try {
-    const snap = await getDoc(demandRef);
+    const snap = await getDoc(doc(db, COLLECTION, id).withConverter(demandConverter));
     if (snap.exists()) {
-      const d = snap.data() as Demand;
+      const d = snap.data();
       if (!d.isAnonymous && d.authorId) {
         await tryCreateNotification({
           recipientId: d.authorId,
@@ -365,7 +367,8 @@ export async function updateDemandStatus(
         });
       }
     }
-  } catch {
-    // silencioso
+  } catch (err) {
+    // Notificação é fire-and-forget — falha não deve quebrar o fluxo principal
+    log.warn('[Demands] Failed to send notification', undefined, err);
   }
 }

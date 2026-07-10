@@ -16,7 +16,7 @@ export default function Button({
   disabled,
   ...props
 }: ButtonProps) {
-  const variants: Record<string, string> = {
+  const variants: Record<NonNullable<ButtonProps['variant']>, string> = {
     primary:
       'bg-gradient-to-br from-primary to-primary-dark text-white shadow-[0_14px_30px_rgba(26,86,196,0.26)] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(26,86,196,0.34)]',
     secondary:

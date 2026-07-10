@@ -91,6 +91,7 @@ export default function VotosPage() {
                       type="button"
                       onClick={() => handleVote(poll, option)}
                       disabled={!poll.isActive || votingKey !== null}
+                      aria-label={`Votar em ${option.text} para ${poll.title}`}
                       className="group w-full rounded-2xl border border-border bg-white p-4 text-left transition hover:border-primary hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70"
                     >
                       <div className="mb-3 flex items-center justify-between gap-3">

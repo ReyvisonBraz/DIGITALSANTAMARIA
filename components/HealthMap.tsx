@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
-import type { HealthUnit } from '@/types';
+import type { HealthUnit, WaitTimeLevel } from '@/types';
 
 interface HealthMapProps {
   units: HealthUnit[];
@@ -10,7 +10,7 @@ interface HealthMapProps {
   onSelectUnit: (unit: HealthUnit) => void;
 }
 
-const waitColor: Record<string, string> = {
+const waitColor: Record<WaitTimeLevel, string> = {
   low: '#22c55e',
   medium: '#f59e0b',
   high: '#0ea5e9',

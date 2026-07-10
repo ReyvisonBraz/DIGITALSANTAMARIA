@@ -22,6 +22,11 @@ const COLLECTION = 'notifications';
 const FEED_LIMIT = 30;
 const log = createLogger('NotificationsService');
 
+/**
+ * Cria uma nova notificação no Firestore.
+ * @param input - Dados da notificação (userId, title, body, type, etc.)
+ * @returns ID do documento criado.
+ */
 export async function createNotification(input: CreateNotificationInput): Promise<string> {
   const docRef = await addDoc(collection(db, COLLECTION), {
     ...input,
@@ -31,6 +36,10 @@ export async function createNotification(input: CreateNotificationInput): Promis
   return docRef.id;
 }
 
+/**
+ * Tenta criar uma notificação sem lançar erro em caso de falha (fire-and-forget).
+ * @param input - Dados da notificação.
+ */
 export async function tryCreateNotification(input: CreateNotificationInput): Promise<void> {
   try {
     await createNotification(input);
@@ -44,6 +53,13 @@ export async function tryCreateNotification(input: CreateNotificationInput): Pro
   }
 }
 
+/**
+ * Escuta em tempo real as notificações de um usuário (máx. 30, ordenadas por data de criação).
+ * @param userId - ID do usuário.
+ * @param onChange - Callback chamado com a lista atualizada de notificações.
+ * @param onError - Callback opcional para erros de escuta.
+ * @returns Função para cancelar a escuta (unsubscribe).
+ */
 export function listenToUserNotifications(
   userId: string,
   onChange: (notifications: Notification[]) => void,
@@ -67,11 +83,19 @@ export function listenToUserNotifications(
   );
 }
 
+/**
+ * Marca uma notificação como lida.
+ * @param id - ID da notificação.
+ */
 export async function markNotificationAsRead(id: string): Promise<void> {
   const ref = doc(db, COLLECTION, id);
   await updateDoc(ref, { read: true });
 }
 
+/**
+ * Marca todas as notificações não lidas de um usuário como lidas (batch update).
+ * @param userId - ID do usuário.
+ */
 export async function markAllNotificationsAsRead(userId: string): Promise<void> {
   const ref = collection(db, COLLECTION).withConverter(notificationConverter);
   const q = query(ref, where('recipientId', '==', userId), where('read', '==', false));

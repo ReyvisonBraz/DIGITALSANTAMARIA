@@ -24,7 +24,7 @@ if (!apiKey || !projectId || !appId) {
   );
 }
 
-const config: Record<string, string> = { projectId, appId, apiKey };
+const config: Record<string, string | undefined> = { projectId, appId, apiKey };
 
 const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
 const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;

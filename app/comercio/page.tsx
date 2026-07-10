@@ -41,6 +41,7 @@ export default function ComercioPage() {
               key={option.value}
               type="button"
               onClick={() => setCategory(option.value)}
+              aria-pressed={active}
               className={cn(
                 'inline-flex items-center rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition',
                 active
@@ -69,6 +70,7 @@ export default function ComercioPage() {
           <button
             type="button"
             onClick={refresh}
+            aria-label="Tentar novamente carregar comércios"
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-[11px] font-semibold uppercase tracking-widest text-white transition hover:brightness-110"
           >
             <RefreshCcw className="h-4 w-4" />

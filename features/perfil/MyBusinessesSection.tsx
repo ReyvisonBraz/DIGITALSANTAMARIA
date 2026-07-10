@@ -622,7 +622,7 @@ export default function MyBusinessesSection() {
                     <a
                       href={business.mapURL}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-primary hover:underline"
                     >
                       <ExternalLink className="h-3.5 w-3.5" />

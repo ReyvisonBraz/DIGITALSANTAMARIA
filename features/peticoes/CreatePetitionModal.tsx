@@ -122,6 +122,8 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
                 onChange={(e) => updateField('title', e.target.value)}
                 placeholder="Ex: Iluminação pública no Bairro Centro"
                 maxLength={120}
+                minLength={5}
+                required
                 className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none transition focus:border-primary"
               />
             </label>
@@ -131,6 +133,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
               <select
                 value={form.category}
                 onChange={(e) => updateField('category', e.target.value)}
+                required
                 className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none transition focus:border-primary"
               >
                 {CATEGORIES.map((cat) => (
@@ -146,6 +149,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
                 value={form.goal}
                 min={10}
                 max={100000}
+                required
                 onChange={(e) => updateField('goal', Math.max(10, parseInt(e.target.value) || 10))}
                 className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none transition focus:border-primary"
               />
@@ -157,6 +161,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
             <label className="space-y-1.5">
               <span className="text-xs font-black uppercase tracking-widest text-text-muted">URL da imagem de capa (opcional)</span>
               <input
+                type="url"
                 value={form.coverImageURL}
                 onChange={(e) => updateField('coverImageURL', e.target.value)}
                 placeholder="https://..."

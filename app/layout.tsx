@@ -2,10 +2,7 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Dancing_Script, Fraunces, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
-import { AuthProvider } from '@/lib/auth-context';
-import { ToastProvider } from '@/lib/toast-context';
-import { AccessibilityProvider } from '@/lib/accessibility-context';
-import { NotificationsProvider } from '@/lib/notifications-context';
+import Providers from '@/components/Providers';
 import TopAppBar from '@/components/TopAppBar';
 import Footer from '@/components/Footer';
 import BottomNavBar from '@/components/BottomNavBar';
@@ -56,28 +53,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt-BR" className={`${displayFont.variable} ${sansFont.variable} ${scriptFont.variable}`} suppressHydrationWarning>
       <body className="antialiased min-h-screen bg-background text-text-main pt-[env(safe-area-inset-top,0px)]">
-        <AccessibilityProvider>
-          <AuthProvider>
-            <ToastProvider>
-              <NotificationsProvider>
-                <ErrorBoundary>
-                  <ScrollAmbience />
-                  <Suspense><TopAppBar /></Suspense>
-                  <main className="relative pt-20 md:pt-24">
-                    <RouteSuspensionGate>{children}</RouteSuspensionGate>
-                  </main>
-                  <Footer />
-                  <BottomNavBar />
-                  <InstallPrompt />
-                  <GuidedHelp />
-                  <AccessibilitySetup />
-                  <AccessibilityProfileSync />
-                  <RootLayoutLogger />
-                </ErrorBoundary>
-              </NotificationsProvider>
-            </ToastProvider>
-          </AuthProvider>
-        </AccessibilityProvider>
+        <Providers>
+          <ErrorBoundary>
+            <ScrollAmbience />
+            <Suspense><TopAppBar /></Suspense>
+            <main className="relative pt-20 md:pt-24">
+              <RouteSuspensionGate>{children}</RouteSuspensionGate>
+            </main>
+            <Footer />
+            <BottomNavBar />
+            <InstallPrompt />
+            <GuidedHelp />
+            <AccessibilitySetup />
+            <AccessibilityProfileSync />
+            <RootLayoutLogger />
+          </ErrorBoundary>
+        </Providers>
       </body>
     </html>
   );

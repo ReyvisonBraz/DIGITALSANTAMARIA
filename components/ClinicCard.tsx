@@ -19,14 +19,14 @@ interface ClinicCardProps {
   onDetailsClick?: () => void;
 }
 
-const ClinicCard: React.FC<ClinicCardProps> = ({ 
+const ClinicCard: React.FC<ClinicCardProps> = React.memo(function ClinicCard({ 
   name, 
   address, 
   waitTime, 
   status, 
   icon: Icon,
   onDetailsClick 
-}) => {
+}) {
   const statusColors = {
     low: { text: 'text-green-600', label: 'ESPERA BAIXA', bg: 'bg-green-50' },
     medium: { text: 'text-amber-600', label: 'ESPERA MÉDIA', bg: 'bg-amber-50' },
@@ -73,6 +73,6 @@ const ClinicCard: React.FC<ClinicCardProps> = ({
       </div>
     </div>
   );
-};
+});
 
 export default ClinicCard;

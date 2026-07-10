@@ -40,7 +40,7 @@ interface ContentCardProps {
   stats?: { label: string; value: string | number }[];
 }
 
-export default function ContentCard({
+const ContentCard = React.memo(function ContentCard({
   title, description, imageURL, status, statusColor,
   date, time, address, phone, extra, action, onClick,
   className, badge, stats,
@@ -145,4 +145,6 @@ export default function ContentCard({
       </div>
     </motion.article>
   );
-}
+});
+
+export default ContentCard;

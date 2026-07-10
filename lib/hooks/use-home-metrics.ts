@@ -8,6 +8,7 @@ interface HomeMetrics {
   eventsCount: number;
   noticesCount: number;
   loading: boolean;
+  error: string | null;
 }
 
 const PUBLISHED_FILTERS = [
@@ -25,18 +26,28 @@ async function countCollection(name: string): Promise<number> {
   }
 }
 
+/**
+ * Busca contagens de eventos e avisos publicados para exibição na homepage.
+ * Filtra por status `published` e exclui documentos marcados como `deletedAt`.
+ *
+ * @returns Objeto com `eventsCount`, `noticesCount` e `loading`.
+ */
 export function useHomeMetrics(): HomeMetrics {
-  const [metrics, setMetrics] = useState<Omit<HomeMetrics, 'loading'>>({
+  const [metrics, setMetrics] = useState<Omit<HomeMetrics, 'loading' | 'error'>>({
     eventsCount: 0,
     noticesCount: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     Promise.all([countCollection('events'), countCollection('notices')])
       .then(([eventsCount, noticesCount]) => {
         if (!cancelled) setMetrics({ eventsCount, noticesCount });
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Erro ao carregar métricas');
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -46,5 +57,5 @@ export function useHomeMetrics(): HomeMetrics {
     };
   }, []);
 
-  return { ...metrics, loading };
+  return { ...metrics, loading, error };
 }

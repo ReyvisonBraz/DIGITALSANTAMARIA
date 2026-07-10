@@ -13,7 +13,7 @@ interface ModalProps {
   className?: string;
 }
 
-export default function Modal({ isOpen, onClose, title, children, className }: ModalProps) {
+const Modal = React.memo(function Modal({ isOpen, onClose, title, children, className }: ModalProps) {
   // Lock body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -80,4 +80,6 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
       )}
     </AnimatePresence>
   );
-}
+});
+
+export default Modal;

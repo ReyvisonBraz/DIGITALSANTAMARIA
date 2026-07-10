@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertCircle, Clock, Loader2, MessageSquare, Send, ShieldCheck, UserRound, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
+import { createLogger } from '@/lib/logger';
 
 /**
  * Mensagem genérica na timeline de conversa.
@@ -75,7 +76,9 @@ function messageDate(createdAt: { seconds: number; nanoseconds?: number; toDate?
   return createdAt ? formatDate(createdAt) : 'Agora';
 }
 
-export default function ChatTimeline({
+const log = createLogger('ChatTimeline');
+
+const ChatTimeline = React.memo(function ChatTimeline({
   entityId,
   initialAuthorName,
   initialMessage,
@@ -138,7 +141,9 @@ export default function ChatTimeline({
   // ── Mark as read ────────────────────────────────────────
   useEffect(() => {
     if (!shouldMarkRead) return;
-    adapter.markAsRead(entityId).catch(() => {});
+    adapter.markAsRead(entityId).catch((err) => {
+      log.warn('[ChatTimeline] Failed to mark as read:', err);
+    });
   }, [shouldMarkRead, entityId, adapter]);
 
   // ── Monta timeline (inicial + mensagens + legado) ───────
@@ -293,4 +298,6 @@ export default function ChatTimeline({
       )}
     </section>
   );
-}
+});
+
+export default ChatTimeline;

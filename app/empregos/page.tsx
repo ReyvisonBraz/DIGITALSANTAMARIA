@@ -122,6 +122,7 @@ export default function EmpregosPage() {
               </div>
               <button
                 onClick={() => setSelectedJob(job)}
+                aria-label={`Candidatar-se para ${job.title}`}
                 className="ml-auto px-6 py-3 bg-primary text-white rounded-xl font-semibold text-[11px] uppercase tracking-widest shadow-lg hover:brightness-110 active:scale-95 transition-all"
               >
                 Candidatar-se

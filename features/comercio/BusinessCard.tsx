@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Image from 'next/image';
 import { Clock, MapPin, MessageCircle, Phone, Store } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -29,7 +30,7 @@ interface BusinessCardProps {
   business: Business;
 }
 
-export default function BusinessCard({ business }: BusinessCardProps) {
+const BusinessCard = React.memo(function BusinessCard({ business }: BusinessCardProps) {
   const categoryLabel = getBusinessCategoryLabel(business.category);
   const categoryAccent = BUSINESS_CATEGORY_ACCENT[business.category] ?? BUSINESS_CATEGORY_ACCENT.outros;
   const whatsapp = business.whatsapp || '';
@@ -124,7 +125,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
             <a
               href={getMapHref(business)}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 truncate transition hover:text-primary"
             >
               <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
@@ -145,7 +146,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
               <a
                 href={buildWhatsAppLink(whatsapp, business.title)}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-accent-success px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-accent-success/90"
               >
                 <MessageCircle className="h-4 w-4" />
@@ -166,4 +167,6 @@ export default function BusinessCard({ business }: BusinessCardProps) {
       </div>
     </motion.article>
   );
-}
+});
+
+export default BusinessCard;

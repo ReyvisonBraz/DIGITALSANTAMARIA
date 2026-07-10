@@ -20,6 +20,7 @@ import { generateProtocolId } from '@/lib/utils/protocol';
 import { tryCreateNotification } from '@/services/notifications.service';
 import { canCitizenCancelReport } from '@/lib/constants/protocols';
 import { byCreatedAtAsc, byCreatedAtDesc } from '@/lib/utils/sort';
+import { createLogger } from '@/lib/logger';
 import type {
   CreateReportInput,
   NotificationTone,
@@ -33,6 +34,7 @@ import type {
 const COLLECTION = 'reports';
 const MESSAGES_COLLECTION = 'report_messages';
 const PROTOCOL_TIMEOUT_MS = 12_000;
+const log = createLogger('ReportsService');
 
 const STATUS_LABEL: Record<ReportStatus, string> = {
   pending: 'recebido',
@@ -267,7 +269,7 @@ export async function cancelReportByCitizen(
   userId: string,
   reason?: string,
 ): Promise<void> {
-  const reportRef = doc(db, COLLECTION, id);
+  const reportRef = doc(db, COLLECTION, id).withConverter(reportConverter);
   const cancellationReason = reason?.trim() || '';
   if (cancellationReason.length < 8) {
     throw new Error('Informe uma justificativa para cancelar este relato.');
@@ -279,7 +281,7 @@ export async function cancelReportByCitizen(
       throw new Error('Relato não encontrado.');
     }
 
-    const report = reportSnap.data() as Report;
+    const report = reportSnap.data();
     if (report.reporterId !== userId) {
       throw new Error('Você não tem permissão para cancelar este relato.');
     }
@@ -306,7 +308,7 @@ export async function updateReportStatus(
   clerkName: string,
   adminResponse?: string,
 ): Promise<void> {
-  const reportRef = doc(db, COLLECTION, id);
+  const reportRef = doc(db, COLLECTION, id).withConverter(reportConverter);
   const response = (adminResponse ?? '').trim();
 
   await runTransaction(db, async (tx) => {
@@ -315,7 +317,7 @@ export async function updateReportStatus(
       throw new Error('Solicitação não encontrada.');
     }
 
-    const report = reportSnap.data() as Report;
+    const report = reportSnap.data();
     const previousResponse = (report.adminResponse ?? '').trim();
 
     const updateData: Record<string, unknown> = {
@@ -352,9 +354,9 @@ export async function updateReportStatus(
 
   // Notificação fora da transação (fire-and-forget)
   try {
-    const snap = await getDoc(reportRef);
+    const snap = await getDoc(doc(db, COLLECTION, id).withConverter(reportConverter));
     if (snap.exists()) {
-      const r = snap.data() as Report;
+      const r = snap.data();
       if (r.reporterId) {
         await tryCreateNotification({
           recipientId: r.reporterId,
@@ -367,8 +369,9 @@ export async function updateReportStatus(
         });
       }
     }
-  } catch {
-    // silencioso
+  } catch (err) {
+    // Notificação é fire-and-forget — falha não deve quebrar o fluxo principal
+    log.warn('[Reports] Failed to send notification', undefined, err);
   }
 }
 

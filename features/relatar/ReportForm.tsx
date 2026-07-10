@@ -358,6 +358,7 @@ export default function ReportForm() {
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           maxLength={120}
+          minLength={5}
           required
           placeholder="Ex: Buraco grande na Av. Brasil"
           className="w-full rounded-xl border-2 border-border bg-white p-4 font-bold text-text-main outline-none transition focus:border-primary"
@@ -373,6 +374,7 @@ export default function ReportForm() {
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           maxLength={1000}
+          minLength={10}
           required
           rows={5}
           placeholder="Conte o que está acontecendo, quando começou e a quem afeta."

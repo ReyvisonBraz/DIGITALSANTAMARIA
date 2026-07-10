@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { 
   Plus, 
   Search, 
@@ -29,9 +30,7 @@ import {
   Loader2
 } from 'lucide-react';
 import ClinicCard from '@/components/ClinicCard';
-import AppointmentModal from '@/components/AppointmentModal';
 import HealthHistoryPanel from '@/components/HealthHistoryPanel';
-import HealthMap from '@/components/HealthMap';
 import Modal from '@/components/ui/Modal';
 import { useToast } from '@/lib/toast-context';
 import { useContent } from '@/lib/hooks/use-content';
@@ -40,6 +39,16 @@ import { motion, AnimatePresence } from 'motion/react';
 import DevBanner from '@/components/ui/DevBanner';
 import { cn } from '@/lib/utils';
 import type { HealthUnit, PharmacyItem } from '@/types';
+
+const AppointmentModal = dynamic(() => import('@/components/AppointmentModal'), {
+  loading: () => <div className="flex items-center justify-center p-8"><Loader2 className="h-6 w-6 animate-spin text-sky-500" /></div>,
+  ssr: false,
+});
+
+const HealthMap = dynamic(() => import('@/components/HealthMap'), {
+  loading: () => <div className="h-64 rounded-2xl bg-surface animate-pulse" />,
+  ssr: false,
+});
 
 type HealthTab = 'unidades' | 'portal' | 'farmacia';
 
@@ -145,17 +154,19 @@ export default function SaudePage() {
 
             <div className="flex p-1.5 bg-surface rounded-2xl border-2 border-border shadow-inner">
                {categories.map((cat) => (
-                  <button 
-                     key={cat.id}
-                     onClick={() => setActiveTab(cat.id)}
-                     className={cn(
-                        "flex-1 py-3 rounded-xl font-semibold text-[11px] uppercase tracking-widest transition-all",
-                        activeTab === cat.id ? "bg-white text-sky-500 shadow-lg border border-sky-500/10" : "text-text-muted hover:text-text-main"
-                     )}
-                  >
-                     {cat.label}
-                  </button>
-               ))}
+                   <button 
+                      key={cat.id}
+                      onClick={() => setActiveTab(cat.id)}
+                      aria-pressed={activeTab === cat.id}
+                      aria-label={`Alternar para aba ${cat.label}`}
+                      className={cn(
+                         "flex-1 py-3 rounded-xl font-semibold text-[11px] uppercase tracking-widest transition-all",
+                         activeTab === cat.id ? "bg-white text-sky-500 shadow-lg border border-sky-500/10" : "text-text-muted hover:text-text-main"
+                      )}
+                   >
+                      {cat.label}
+                   </button>
+                ))}
             </div>
 
             <button 

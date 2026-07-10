@@ -37,7 +37,9 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
             error: { name: error.name, message: error.message, stack: error.stack },
           }),
         }).catch(() => {});
-      } catch {}
+      } catch (_err) {
+        // Error boundary logging is best-effort — never throw from here
+      }
     }
   }
 

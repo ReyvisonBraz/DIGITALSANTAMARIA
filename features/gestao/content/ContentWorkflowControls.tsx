@@ -283,7 +283,7 @@ export function ContentPreviewDialog({
               <a
                 href={actionURL}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="mt-4 inline-flex min-h-10 items-center justify-center rounded-xl bg-primary px-4 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-dark"
               >
                 {actionLabel || 'Abrir link'}
