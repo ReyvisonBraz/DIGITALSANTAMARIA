@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Clock, FileText, Loader2, Search } from 'lucide-react';
 import { getDemandByProtocol } from '@/services/demands.service';
 import DemandTimeline from '@/features/ouvidoria/DemandTimeline';
@@ -9,27 +10,28 @@ import { useToast } from '@/lib/toast-context';
 import { formatDate } from '@/lib/utils/formatters';
 import type { Demand, DemandStatus, DemandType } from '@/types';
 
-const statusLabel: Record<DemandStatus, string> = {
-  pending: 'Pendente',
-  analyzing: 'Em análise',
-  solved: 'Resolvida',
-  rejected: 'Recusada',
-  cancelled: 'Cancelada',
-};
-
-const typeLabel: Record<DemandType, string> = {
-  reclamacao: 'Reclamação',
-  sugestao: 'Solicitação',
-  denuncia: 'Denúncia',
-  elogio: 'Elogio',
-};
-
 export default function ProtocolSearch() {
+  const t = useTranslations('ouvidoria.search');
   const { toast } = useToast();
   const { user } = useAuth();
   const [protocolId, setProtocolId] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Demand | null>(null);
+
+  const statusLabel: Record<DemandStatus, string> = {
+    pending: t('status.pending'),
+    analyzing: t('status.analyzing'),
+    solved: t('status.solved'),
+    rejected: t('status.rejected'),
+    cancelled: t('status.cancelled'),
+  };
+
+  const typeLabel: Record<DemandType, string> = {
+    reclamacao: t('types.reclamacao'),
+    sugestao: t('types.sugestao'),
+    denuncia: t('types.denuncia'),
+    elogio: t('types.elogio'),
+  };
 
   const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -41,12 +43,12 @@ export default function ProtocolSearch() {
     try {
       const demand = await getDemandByProtocol(search, user?.uid);
       if (!demand) {
-        toast('Protocolo não encontrado.', 'error');
+        toast(t('notFound'), 'error');
         return;
       }
       setResult(demand);
     } catch {
-      toast('Não foi possível consultar o protocolo agora.', 'error');
+      toast(t('searchError'), 'error');
     } finally {
       setLoading(false);
     }
@@ -56,12 +58,12 @@ export default function ProtocolSearch() {
     <div className="space-y-5">
       <form onSubmit={handleSearch} className="civic-card p-4 md:p-6">
         <label className="block space-y-2">
-          <span className="text-xs font-black uppercase tracking-widest text-text-muted">Número do protocolo</span>
+          <span className="text-xs font-black uppercase tracking-widest text-text-muted">{t('protocolNumber')}</span>
           <div className="flex flex-col gap-3 sm:flex-row">
             <input
               value={protocolId}
               onChange={(event) => setProtocolId(event.target.value)}
-              placeholder="Ex: OUV-2026-ABC123"
+              placeholder={t('protocolPlaceholder')}
               className="h-12 min-w-0 flex-1 rounded-xl border border-border bg-white px-3 font-mono text-sm font-bold uppercase text-text-main outline-none transition focus:border-primary"
             />
             <button
@@ -70,7 +72,7 @@ export default function ProtocolSearch() {
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-black uppercase tracking-widest text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-              Consultar
+              {t('search')}
             </button>
           </div>
         </label>
@@ -80,7 +82,7 @@ export default function ProtocolSearch() {
         <article className="civic-card p-4 md:p-6">
           <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-xs font-black uppercase tracking-widest text-text-muted">Protocolo</p>
+              <p className="text-xs font-black uppercase tracking-widest text-text-muted">{t('protocol')}</p>
               <h3 className="mt-1 break-all font-mono text-lg font-black text-primary md:text-2xl">
                 {result.protocolId}
               </h3>
@@ -93,15 +95,15 @@ export default function ProtocolSearch() {
 
           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="rounded-xl bg-surface p-4">
-              <p className="text-xs font-black uppercase tracking-widest text-text-muted">Assunto</p>
+              <p className="text-xs font-black uppercase tracking-widest text-text-muted">{t('subject')}</p>
               <p className="mt-1 text-sm font-bold text-text-main">{result.subject}</p>
             </div>
             <div className="rounded-xl bg-surface p-4">
-              <p className="text-xs font-black uppercase tracking-widest text-text-muted">Tipo</p>
+              <p className="text-xs font-black uppercase tracking-widest text-text-muted">{t('type')}</p>
               <p className="mt-1 text-sm font-bold text-text-main">{typeLabel[result.type]}</p>
             </div>
             <div className="rounded-xl bg-surface p-4">
-              <p className="text-xs font-black uppercase tracking-widest text-text-muted">Criado em</p>
+              <p className="text-xs font-black uppercase tracking-widest text-text-muted">{t('createdAt')}</p>
               <p className="mt-1 text-sm font-bold text-text-main">{formatDate(result.createdAt)}</p>
             </div>
           </div>
@@ -109,7 +111,7 @@ export default function ProtocolSearch() {
           <div className="mt-5 rounded-xl border border-border p-4">
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted">
               <FileText className="h-4 w-4 text-primary" />
-              Descrição
+              {t('description')}
             </div>
             <p className="mt-3 text-sm font-medium leading-6 text-text-muted">{result.content.text}</p>
           </div>

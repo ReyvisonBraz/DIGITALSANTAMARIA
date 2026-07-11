@@ -8,6 +8,7 @@ import { useToast } from '@/lib/toast-context';
 import { createPetition } from '@/services/petitions.service';
 import { cn } from '@/lib/utils';
 import type { CreatePetitionInput } from '@/types';
+import { useTranslations } from 'next-intl';
 
 interface CreatePetitionModalProps {
   isOpen: boolean;
@@ -40,6 +41,7 @@ type FormState = typeof emptyForm;
 export default function CreatePetitionModal({ isOpen, onClose, onCreated }: CreatePetitionModalProps) {
   const { user, login } = useAuth();
   const { toast } = useToast();
+  const t = useTranslations('peticoes.create');
   const [form, setForm] = useState<FormState>(emptyForm);
   const [step, setStep] = useState<1 | 2>(1);
   const [submitting, setSubmitting] = useState(false);
@@ -60,7 +62,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
 
   const handleSubmit = async () => {
     if (!user) {
-      toast('Faça login para criar uma petição.', 'error');
+      toast(t('loginPrompt'), 'error');
       return;
     }
 
@@ -76,11 +78,11 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
         creatorName: user.displayName || user.email || 'Cidadão',
         creatorPhotoURL: user.photoURL || null,
       });
-      toast('Petição criada com sucesso!', 'success');
+      toast(t('success'), 'success');
       reset();
       onCreated?.(petitionId);
     } catch {
-      toast('Erro ao criar petição. Tente novamente.', 'error');
+      toast(t('error'), 'error');
     } finally {
       setSubmitting(false);
     }
@@ -91,19 +93,19 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
 
   if (!user && isOpen) {
     return (
-      <Modal isOpen={isOpen} onClose={handleClose} title="Criar petição">
+      <Modal isOpen={isOpen} onClose={handleClose} title={t('title')}>
         <div className="space-y-6 p-4">
           <p className="text-sm font-medium text-text-muted text-center py-8">
-            Você precisa estar logado para criar uma petição.
+            {t('loginRequired')}
           </p>
           <button
             onClick={async () => { 
               try { await login(); } 
-              catch (e) { toast(e instanceof Error ? e.message : 'Erro ao iniciar login', 'error'); } 
+              catch (e) { toast(e instanceof Error ? e.message : t('loginError'), 'error'); } 
             }}
             className="w-full rounded-xl bg-tertiary px-5 py-3 text-xs font-black uppercase tracking-widest text-white transition hover:brightness-110"
           >
-            Entrar com Google
+            {t('loginGoogle')}
           </button>
         </div>
       </Modal>
@@ -111,16 +113,16 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Criar petição">
+    <Modal isOpen={isOpen} onClose={handleClose} title={t('title')}>
       <div className="space-y-5 p-4">
         {step === 1 ? (
           <>
             <label className="space-y-1.5">
-              <span className="text-xs font-black uppercase tracking-widest text-text-muted">Título *</span>
+              <span className="text-xs font-black uppercase tracking-widest text-text-muted">{t('titleLabel')}</span>
               <input
                 value={form.title}
                 onChange={(e) => updateField('title', e.target.value)}
-                placeholder="Ex: Iluminação pública no Bairro Centro"
+                placeholder={t('titlePlaceholder')}
                 maxLength={120}
                 minLength={5}
                 required
@@ -129,7 +131,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
             </label>
 
             <label className="space-y-1.5">
-              <span className="text-xs font-black uppercase tracking-widest text-text-muted">Categoria</span>
+              <span className="text-xs font-black uppercase tracking-widest text-text-muted">{t('category')}</span>
               <select
                 value={form.category}
                 onChange={(e) => updateField('category', e.target.value)}
@@ -143,7 +145,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
             </label>
 
             <label className="space-y-1.5">
-              <span className="text-xs font-black uppercase tracking-widest text-text-muted">Meta de assinaturas</span>
+              <span className="text-xs font-black uppercase tracking-widest text-text-muted">{t('goal')}</span>
               <input
                 type="number"
                 value={form.goal}
@@ -154,12 +156,12 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
                 className="h-11 w-full rounded-xl border border-border bg-white px-3 text-sm font-bold outline-none transition focus:border-primary"
               />
               <span className="text-[11px] font-medium text-text-muted block">
-                Mínimo de 10 assinaturas para validar a petição.
+                {t('goalHelper')}
               </span>
             </label>
 
             <label className="space-y-1.5">
-              <span className="text-xs font-black uppercase tracking-widest text-text-muted">URL da imagem de capa (opcional)</span>
+              <span className="text-xs font-black uppercase tracking-widest text-text-muted">{t('coverImage')}</span>
               <input
                 type="url"
                 value={form.coverImageURL}
@@ -174,40 +176,40 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
               disabled={!canProceedToStep2}
               className="w-full rounded-xl bg-tertiary px-5 py-3 text-xs font-black uppercase tracking-widest text-white transition hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Continuar
+              {t('continue')}
             </button>
           </>
         ) : (
           <>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-widest text-text-muted">Passo 2 de 2</span>
+              <span className="text-xs font-black uppercase tracking-widest text-text-muted">{t('step2')}</span>
               <button onClick={() => setStep(1)} className="text-xs font-bold text-primary hover:underline">
-                Voltar
+                {t('back')}
               </button>
             </div>
 
             <label className="space-y-1.5">
-              <span className="text-xs font-black uppercase tracking-widest text-text-muted">Descrição *</span>
+              <span className="text-xs font-black uppercase tracking-widest text-text-muted">{t('descriptionLabel')}</span>
               <textarea
                 value={form.description}
                 onChange={(e) => updateField('description', e.target.value)}
                 rows={6}
                 maxLength={2000}
-                placeholder="Descreva o motivo da petição, o problema e o que você espera da prefeitura..."
+                placeholder={t('descriptionPlaceholder')}
                 className="w-full resize-none rounded-xl border border-border bg-white p-3 text-sm font-medium leading-6 outline-none transition focus:border-primary"
               />
             </label>
             <span className="text-[11px] font-bold text-text-muted block">
-              {form.description.trim().length}/2000 caracteres
+              {form.description.trim().length}/2000 {t('characters')}
             </span>
 
             <div className="rounded-xl border border-border bg-surface p-4 space-y-2">
-              <p className="text-xs font-black uppercase tracking-widest text-text-muted">Resumo</p>
+              <p className="text-xs font-black uppercase tracking-widest text-text-muted">{t('summary')}</p>
               <p className="text-sm font-bold text-text-main">{form.title}</p>
               <p className="text-xs font-medium text-text-muted">
-                Categoria: {CATEGORIES.find((c) => c.value === form.category)?.label}
+                {t('categoryPrefix')}{CATEGORIES.find((c) => c.value === form.category)?.label}
               </p>
-              <p className="text-xs font-medium text-text-muted">Meta: {form.goal} assinaturas</p>
+              <p className="text-xs font-medium text-text-muted">{t('goalPrefix')}{form.goal} {t('signatures')}</p>
             </div>
 
             <button
@@ -220,7 +222,7 @@ export default function CreatePetitionModal({ isOpen, onClose, onCreated }: Crea
               ) : (
                 <PenLine className="h-4 w-4" />
               )}
-              {submitting ? 'Criando...' : 'Publicar petição'}
+              {submitting ? t('creating') : t('publish')}
             </button>
           </>
         )}

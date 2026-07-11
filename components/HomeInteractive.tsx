@@ -17,6 +17,7 @@ import {
   Store,
   UserRound,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { LogoMark } from '@/components/Logo';
 import Reveal, { RevealGroup, RevealItem } from '@/components/ui/Reveal';
 import Counter from '@/components/ui/Counter';
@@ -24,43 +25,6 @@ import TextReveal from '@/components/ui/TextReveal';
 import { useAccessibility } from '@/lib/accessibility-context';
 import { useHomeMetrics } from '@/lib/hooks/use-home-metrics';
 import { cn } from '@/lib/utils';
-
-const primaryActions = [
-  {
-    title: 'Abrir solicitação',
-    description: 'Registre pedidos, reclamações, denúncias, sugestões ou problemas urbanos.',
-    href: '/ouvidoria',
-    icon: MessageSquare,
-    cta: 'Começar',
-  },
-  {
-    title: 'Consultar protocolo',
-    description: 'Acompanhe no seu painel o andamento das solicitações enviadas ao município.',
-    href: '/perfil',
-    icon: SearchCheck,
-    cta: 'Acessar',
-  },
-  {
-    title: 'Petições',
-    description: 'Apoie causas abertas e acompanhe respostas oficiais da gestão.',
-    href: '/peticoes',
-    icon: FileText,
-    cta: 'Participar',
-  },
-  {
-    title: 'Painel do Cidadão',
-    description: 'Veja seu histórico, dados básicos, protocolos e atividades.',
-    href: '/perfil',
-    icon: UserRound,
-    cta: 'Entrar',
-  },
-] as const;
-
-const essentialActionKeywords: Record<string, readonly string[]> = {
-  '/ouvidoria': ['Pedido', 'Reclamação', 'Denúncia'],
-  '/perfil': ['Status', 'Resposta', 'Histórico'],
-  '/peticoes': ['Causas', 'Assinar', 'Acompanhar'],
-};
 
 const serviceHighlights = [
   { label: 'Empregos',  href: '/empregos',  icon: Briefcase,    tone: 'from-accent-success/12',   iconBg: 'bg-accent-success/15',   iconColor: 'text-accent-success' },
@@ -71,30 +35,81 @@ const serviceHighlights = [
   { label: 'Petições',  href: '/peticoes',  icon: FileText,     tone: 'from-secondary/15',        iconBg: 'bg-secondary/15',        iconColor: 'text-secondary' },
 ] as const;
 
-const processSteps = [
-  'Descreva a necessidade',
-  'Receba um protocolo',
-  'Acompanhe a resposta',
-] as const;
+function getServiceHighlights(t: ReturnType<typeof useTranslations<'home'>>) {
+  return [
+    { label: t('services.jobs'), href: '/empregos', icon: Briefcase, tone: 'from-accent-success/12', iconBg: 'bg-accent-success/15', iconColor: 'text-accent-success' },
+    { label: t('services.commerce'), href: '/comercio', icon: Store, tone: 'from-secondary/15', iconBg: 'bg-secondary/15', iconColor: 'text-secondary' },
+    { label: t('services.events'), href: '/eventos', icon: CalendarDays, tone: 'from-primary-dark/10', iconBg: 'bg-primary-dark/12', iconColor: 'text-primary-dark' },
+    { label: t('services.publicWorks'), href: '/obras', icon: HardHat, tone: 'from-accent/18', iconBg: 'bg-accent/22', iconColor: 'text-primary-dark' },
+    { label: t('services.notices'), href: '/avisos', icon: Bell, tone: 'from-primary/12', iconBg: 'bg-primary/12', iconColor: 'text-primary' },
+    { label: t('services.petitions'), href: '/peticoes', icon: FileText, tone: 'from-secondary/15', iconBg: 'bg-secondary/15', iconColor: 'text-secondary' },
+  ];
+}
+
+function getProcessSteps(t: ReturnType<typeof useTranslations<'home'>>) {
+  return [t('process.step1'), t('process.step2'), t('process.step3')];
+}
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
 export default function HomeInteractive() {
+  const t = useTranslations('home');
+  const tc = useTranslations('common');
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const { eventsCount, noticesCount } = useHomeMetrics();
   const { contentMode } = useAccessibility();
   const isEssential = contentMode === 'essential';
 
+  const primaryActions = useMemo(() => [
+    {
+      title: t('actions.openRequest.title'),
+      description: t('actions.openRequest.description'),
+      href: '/ouvidoria',
+      icon: MessageSquare,
+      cta: t('actions.openRequest.cta'),
+    },
+    {
+      title: t('actions.checkProtocol.title'),
+      description: t('actions.checkProtocol.description'),
+      href: '/perfil',
+      icon: SearchCheck,
+      cta: t('actions.checkProtocol.cta'),
+    },
+    {
+      title: t('actions.petitions.title'),
+      description: t('actions.petitions.description'),
+      href: '/peticoes',
+      icon: FileText,
+      cta: t('actions.petitions.cta'),
+    },
+    {
+      title: t('actions.citizenPanel.title'),
+      description: t('actions.citizenPanel.description'),
+      href: '/perfil',
+      icon: UserRound,
+      cta: t('actions.citizenPanel.cta'),
+    },
+  ], [t]);
+
+  const essentialActionKeywords: Record<string, readonly string[]> = useMemo(() => ({
+    '/ouvidoria': [t('keywords.request'), t('keywords.complaint'), t('keywords.report')],
+    '/perfil': [t('keywords.status'), t('keywords.answer'), t('keywords.history')],
+    '/peticoes': [t('keywords.causes'), t('keywords.sign'), t('keywords.track')],
+  }), [t]);
+
+  const serviceHighlights = useMemo(() => getServiceHighlights(t), [t]);
+  const processSteps = useMemo(() => getProcessSteps(t), [t]);
+
   const stats = useMemo(() => [
-    { value: 24, suffix: 'h', label: isEssential ? 'Sempre aberto' : 'Canais sempre abertos' },
+    { value: 24, suffix: 'h', label: isEssential ? t('stats.alwaysOpen.essential') : t('stats.alwaysOpen.default') },
     eventsCount > 0
-      ? { value: eventsCount, suffix: '', label: eventsCount === 1 ? 'Evento na agenda' : 'Eventos na agenda' }
-      : { value: 14, suffix: '', label: isEssential ? 'Serviços' : 'Áreas de serviço' },
+      ? { value: eventsCount, suffix: '', label: eventsCount === 1 ? t('stats.events.single') : t('stats.events.plural') }
+      : { value: 14, suffix: '', label: isEssential ? t('stats.services.essential') : t('stats.services.default') },
     noticesCount > 0
-      ? { value: noticesCount, suffix: '', label: noticesCount === 1 ? 'Aviso publicado' : 'Avisos publicados' }
-      : { value: 100, suffix: '%', label: isEssential ? 'Online' : 'Digital e gratuito' },
-  ], [eventsCount, noticesCount, isEssential]);
+      ? { value: noticesCount, suffix: '', label: noticesCount === 1 ? t('stats.notices.single') : t('stats.notices.plural') }
+      : { value: 100, suffix: '%', label: isEssential ? t('stats.digital.essential') : t('stats.digital.default') },
+  ], [eventsCount, noticesCount, isEssential, t]);
   const yPanel = useTransform(scrollY, [0, 500], [0, -46]);
   const yBlob = useTransform(scrollY, [0, 500], [0, 80]);
   const yBlob2 = useTransform(scrollY, [0, 600], [0, -60]);
@@ -139,7 +154,7 @@ export default function HomeInteractive() {
                   transition={{ duration: 0.7, ease }}
                   className="block"
                 >
-                  {isEssential ? 'O que você' : 'Sua cidade'}
+                  {isEssential ? t('hero.essentialLine1') : t('hero.cityLine1')}
                 </motion.span>{' '}
                 <motion.span
                   initial={{ opacity: 0, y: 24 }}
@@ -147,7 +162,7 @@ export default function HomeInteractive() {
                   transition={{ duration: 0.7, delay: 0.1, ease }}
                   className="font-script text-[1.35em] font-bold leading-[0.8] text-gradient"
                 >
-                  {isEssential ? 'precisa?' : 'conectada'}
+                  {isEssential ? t('hero.essentialLine2') : t('hero.cityLine2')}
                 </motion.span>{' '}
                 {!isEssential && (
                   <motion.span
@@ -155,7 +170,7 @@ export default function HomeInteractive() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, delay: 0.18, ease }}
                   >
-                    a você.
+                    {t('hero.cityLine3')}
                   </motion.span>
                 )}
               </h1>
@@ -166,7 +181,7 @@ export default function HomeInteractive() {
                   transition={{ duration: 0.7, delay: 0.18 }}
                   className="mt-5 max-w-xl text-base font-bold leading-7 text-text-muted sm:text-lg"
                 >
-                  Escolha uma ação, receba protocolo e acompanhe a resposta.
+                  {t('hero.essentialSubtitle')}
                 </motion.p>
               )}
               <motion.p
@@ -175,8 +190,7 @@ export default function HomeInteractive() {
                 transition={{ duration: 0.7, delay: 0.26 }}
                 className={cn('mt-5 max-w-2xl text-base font-medium leading-7 text-text-muted sm:text-lg', isEssential && 'hidden')}
               >
-                Solicite serviços, consulte protocolos, participe de petições e
-                acompanhe Santa Maria do Pará com mais clareza — tudo em um só lugar.
+                {t('hero.subtitle')}
               </motion.p>
             </div>
 
@@ -187,11 +201,11 @@ export default function HomeInteractive() {
               className="grid grid-cols-1 gap-3 sm:flex sm:flex-wrap"
             >
               <Link href="/ouvidoria" className="action-button-primary group">
-                Abrir solicitação
+                {t('hero.ctaPrimary')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link href="/perfil" className="action-button-secondary">
-                Painel do Cidadão
+                {t('hero.ctaSecondary')}
               </Link>
             </motion.div>
 
@@ -228,10 +242,10 @@ export default function HomeInteractive() {
                 <div className="relative z-10 flex items-start justify-between gap-4">
                   <div>
                     <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
-                      Atendimento digital
+                      {t('floatingPanel.badge')}
                     </p>
                     <h2 className="mt-2 text-2xl font-bold tracking-tight text-white" style={{ fontFamily: 'var(--font-display)' }}>
-                      Comece pelo protocolo
+                      {t('floatingPanel.title')}
                     </h2>
                   </div>
                   <motion.span
@@ -262,9 +276,9 @@ export default function HomeInteractive() {
 
               <div className="mt-4 grid grid-cols-3 gap-3">
                 {[
-                  ['Seguro', 'Login Google'],
-                  ['Rápido', 'Fluxos reais'],
-                  ['Aberto', '24 horas'],
+                  [t('floatingPanel.trust.value1'), t('floatingPanel.trust.label1')],
+                  [t('floatingPanel.trust.value2'), t('floatingPanel.trust.label2')],
+                  [t('floatingPanel.trust.value3'), t('floatingPanel.trust.label3')],
                 ].map(([value, label]) => (
                   <div key={label} className="rounded-2xl border border-border bg-white/80 p-3 text-center">
                     <p className="text-sm font-bold text-text-main" style={{ fontFamily: 'var(--font-display)' }}>{value}</p>
@@ -282,14 +296,14 @@ export default function HomeInteractive() {
         <section className="space-y-8" aria-labelledby="acoes-principais">
           <div className="grid gap-3 sm:grid-cols-[1fr_0.8fr] sm:items-end">
             <div>
-              <Reveal><p className="eyebrow">Acesso rápido</p></Reveal>
+              <Reveal><p className="eyebrow">{t('section.quickAccess.eyebrow')}</p></Reveal>
               <h2 id="acoes-principais" className="section-title mt-2">
-                <TextReveal text="O que você precisa fazer?" highlight={['fazer?']} />
+                <TextReveal text={t('section.quickAccess.title')} highlight={['fazer?']} />
               </h2>
             </div>
             <Reveal delay={0.1}>
               <p className={cn('text-sm font-medium leading-6 text-text-muted', isEssential && 'hidden')}>
-                Os caminhos centrais ficam destacados e funcionam em fluxo direto, para cidadão e gestão.
+                {t('section.quickAccess.subtitle')}
               </p>
             </Reveal>
           </div>
@@ -344,16 +358,15 @@ export default function HomeInteractive() {
               <div className="grid h-12 w-12 place-items-center rounded-2xl bg-secondary/10 text-secondary">
                 <Sparkles className="h-6 w-6" />
               </div>
-              <p className="eyebrow mt-5">Portal público</p>
+              <p className="eyebrow mt-5">{t('section.services.eyebrow')}</p>
               <h2 id="servicos" className="mt-2 text-2xl font-bold tracking-tight text-text-main md:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>
-                <TextReveal text="Serviços municipais em um só lugar" highlight={['lugar']} />
+                <TextReveal text={t('section.services.title')} highlight={['lugar']} />
               </h2>
               <p className="mt-3 text-sm font-medium leading-6 text-text-muted">
-                Solicitação, protocolo, painel e petições no centro da experiência.
-                Novas áreas serão ativadas por etapas ao longo do lançamento.
+                {t('section.services.description')}
               </p>
               <Link href="/avisos" className="action-button-secondary mt-6">
-                Ver avisos da prefeitura
+                {t('section.services.cta')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -390,18 +403,18 @@ export default function HomeInteractive() {
               <div>
                 <span className="soft-chip mb-4 inline-flex">
                   <MessageSquare className="h-3.5 w-3.5" />
-                  Participação cidadã
+                  {t('petitionsCta.badge')}
                 </span>
                 <h2 className="mt-1 text-3xl font-extrabold tracking-tight text-text-main md:text-[2.6rem] md:leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>
-                  Sua voz vira{' '}
-                  <span className="text-gradient">pauta da cidade.</span>
+                  {t('petitionsCta.titlePart1')}{' '}
+                  <span className="text-gradient">{t('petitionsCta.titlePart2')}</span>
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-text-muted">
-                  Causas abertas pela comunidade ganham meta, contador de assinaturas e espaço para resposta oficial da gestão.
+                  {t('petitionsCta.description')}
                 </p>
               </div>
               <Link href="/peticoes" className="action-button-primary group shrink-0">
-                Ver petições
+                {t('petitionsCta.cta')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>

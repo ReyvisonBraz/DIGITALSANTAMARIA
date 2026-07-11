@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import { BOTTOM_NAV_ITEMS } from '@/lib/constants';
 import { createLogger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
@@ -16,10 +17,19 @@ interface BottomNavBarProps {
 
 export default function BottomNavBar({ className }: BottomNavBarProps) {
   const pathname = usePathname();
+  const t = useTranslations('bottomNav');
 
   useEffect(() => {
     log.info('Navigation', { path: pathname });
   }, [pathname]);
+
+  const labelMap: Record<string, string> = {
+    'Inicio': t('home'),
+    'Solicitar': t('request'),
+    'Protocolo': t('protocol'),
+    'Petições': t('petitions'),
+    'Painel': t('panel'),
+  };
 
   return (
     <nav
@@ -27,7 +37,7 @@ export default function BottomNavBar({ className }: BottomNavBarProps) {
         'fixed bottom-3 left-3 right-3 z-50 h-[72px] rounded-2xl border border-white/70 bg-white/90 shadow-[0_-10px_40px_rgba(15,23,42,0.14)] backdrop-blur-2xl md:hidden',
         className
       )}
-      aria-label="Navegacao principal mobile"
+      aria-label={t('mainNavigation')}
     >
       <div className="mx-auto grid h-full max-w-md grid-cols-5">
         {BOTTOM_NAV_ITEMS.map((item) => {
@@ -50,7 +60,7 @@ export default function BottomNavBar({ className }: BottomNavBarProps) {
                 )}
               >
                 <item.icon className={cn('h-5 w-5 transition', isActive && 'scale-110')} strokeWidth={isActive ? 2.5 : 2} />
-                <span className="max-w-full truncate text-[11px] font-bold leading-none">{item.label}</span>
+                <span className="max-w-full truncate text-[11px] font-bold leading-none">{labelMap[item.label] || item.label}</span>
               </motion.span>
               {isActive && (
                 <motion.span

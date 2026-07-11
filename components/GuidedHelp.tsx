@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, Check, CircleHelp, Lightbulb, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { getOnboardingGuide, ONBOARDING_VERSION } from '@/lib/constants/onboarding';
 import { useAccessibility } from '@/lib/accessibility-context';
 import { cn } from '@/lib/utils';
@@ -15,6 +16,7 @@ type OpenReason = 'auto' | 'manual';
 export default function GuidedHelp() {
   const pathname = usePathname();
   const guide = useMemo(() => getOnboardingGuide(pathname), [pathname]);
+  const t = useTranslations('guidance');
   const { setupCompleted, isSetupOpen } = useAccessibility();
   const [isOpen, setIsOpen] = useState(false);
   const [openReason, setOpenReason] = useState<OpenReason>('manual');
@@ -96,8 +98,8 @@ export default function GuidedHelp() {
         type="button"
         onClick={openHelp}
         className="fixed right-4 top-24 z-[70] inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-accent/70 bg-accent text-primary-dark shadow-[0_18px_36px_rgba(20,34,74,0.22)] transition hover:-translate-y-0.5 hover:bg-accent-dark hover:text-white focus:outline-none focus:ring-4 focus:ring-accent/30 md:bottom-6 md:right-6 md:top-auto md:h-14 md:w-14"
-        aria-label={`Abrir ajuda: ${guide.title}`}
-        title="Ajuda desta tela"
+        aria-label={t('openHelp', { title: guide.title })}
+        title={t('screenHelp')}
       >
         <CircleHelp className="h-6 w-6 md:h-7 md:w-7" strokeWidth={2.6} />
       </button>
@@ -144,7 +146,7 @@ export default function GuidedHelp() {
                       type="button"
                       onClick={closeForLater}
                       className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/40"
-                      aria-label="Fechar ajuda"
+                      aria-label={t('closeHelp')}
                     >
                       <X className="h-5 w-5" />
                     </button>
@@ -159,7 +161,7 @@ export default function GuidedHelp() {
                     </div>
                   )}
 
-                  <div className="mb-5 flex items-center gap-2" aria-label={`Passo ${currentStep + 1} de ${guide.steps.length}`}>
+                  <div className="mb-5 flex items-center gap-2" aria-label={t('stepOf', { current: currentStep + 1, total: guide.steps.length })}>
                     {guide.steps.map((item, index) => (
                       <button
                         type="button"
@@ -169,7 +171,7 @@ export default function GuidedHelp() {
                           'h-2.5 flex-1 rounded-full transition',
                           index <= currentStep ? 'bg-primary' : 'bg-border'
                         )}
-                        aria-label={`Ir para passo ${index + 1}: ${item.title}`}
+                        aria-label={t('goToStep', { index: index + 1, title: item.title })}
                       />
                     ))}
                   </div>
@@ -184,7 +186,7 @@ export default function GuidedHelp() {
                       className="min-h-44 rounded-2xl border border-border bg-surface-container p-5"
                     >
                       <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
-                        Passo {currentStep + 1} de {guide.steps.length}
+                        {t('stepOf', { current: currentStep + 1, total: guide.steps.length })}
                       </p>
                       <h3 className="mt-3 text-2xl font-bold tracking-tight text-text-main">
                         {step.title}
@@ -206,7 +208,7 @@ export default function GuidedHelp() {
                       onClick={previousStep}
                       disabled={currentStep === 0}
                       className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-white text-text-muted transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
-                      aria-label="Voltar passo"
+                      aria-label={t('backStep')}
                     >
                       <ArrowLeft className="h-4 w-4" />
                     </button>
@@ -217,14 +219,14 @@ export default function GuidedHelp() {
                         onClick={closeForLater}
                         className="inline-flex min-h-11 items-center justify-center rounded-xl px-3 text-xs font-bold uppercase tracking-[0.14em] text-text-muted transition hover:bg-surface hover:text-text-main"
                       >
-                        Ver depois
+                        {t('seeLater')}
                       </button>
                       <button
                         type="button"
                         onClick={nextStep}
                         className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-white shadow-[0_14px_28px_rgba(26,86,196,0.24)] transition hover:bg-primary-dark"
                       >
-                        {isLastStep ? 'Entendi' : 'Próximo'}
+                        {isLastStep ? t('understood') : t('next')}
                         {isLastStep ? <Check className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
                       </button>
                     </div>

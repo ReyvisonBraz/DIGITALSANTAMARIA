@@ -35,10 +35,12 @@ import { useClickOutside } from '@/lib/hooks/use-click-outside';
 import { useKeyboardShortcut } from '@/lib/hooks/use-keyboard-shortcut';
 import { createLogger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 const log = createLogger('TopAppBar');
 
 export default function TopAppBar() {
+  const t = useTranslations('topAppBar');
   const { user, userRole, login } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
@@ -85,30 +87,30 @@ export default function TopAppBar() {
 
   const handleModeChange = useCallback((mode: 'default' | 'dark') => {
     setColorMode(mode);
-    toast(mode === 'dark' ? 'Modo noturno ativado.' : 'Modo padrao restaurado.', 'info');
-  }, [setColorMode, toast]);
+    toast(mode === 'dark' ? t('darkModeActivated') : t('defaultModeRestored'), 'info');
+  }, [setColorMode, toast, t]);
 
   const handleToggleContrast = useCallback(() => {
     const nextState = !highContrast;
     toggleHighContrast();
-    toast(nextState ? 'Modo de acessibilidade ativado.' : 'Modo padrão restaurado.', 'info');
-  }, [highContrast, toast, toggleHighContrast]);
+    toast(nextState ? t('accessibilityActivated') : t('accessibilityActivated'), 'info');
+  }, [highContrast, toast, toggleHighContrast, t]);
 
   const handleContentModeChange = useCallback((mode: 'complete' | 'essential') => {
     setContentMode(mode);
-    toast(mode === 'essential' ? 'Modo Essencial ativado.' : 'Modo Completo ativado.', 'info');
-  }, [setContentMode, toast]);
+    toast(mode === 'essential' ? t('essentialActivated') : t('completeActivated'), 'info');
+  }, [setContentMode, toast, t]);
 
-const handleLogin = useCallback(async () => {
+  const handleLogin = useCallback(async () => {
     try {
       await login();
       if (redirectPath) {
         router.replace(redirectPath);
       }
     } catch (error) {
-      toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
+      toast(error instanceof Error ? error.message : t('loginError'), 'error');
     }
-  }, [login, toast, redirectPath, router]);
+  }, [login, toast, redirectPath, router, t]);
 
   return (
     <>
@@ -131,7 +133,7 @@ const handleLogin = useCallback(async () => {
             <Link
               href="/"
               className="group flex shrink-0 items-center transition-transform duration-300 hover:scale-[1.02]"
-              aria-label="Ir para a página inicial"
+              aria-label={t('homeLabel')}
             >
               <Logo size={40} withWordmark className="hidden sm:inline-flex" />
               <Logo size={38} withWordmark={false} className="sm:hidden" />
@@ -140,10 +142,10 @@ const handleLogin = useCallback(async () => {
             <button
               onClick={() => setIsExplorerOpen(true)}
               className="inline-flex min-h-10 items-center justify-center gap-2 rounded-2xl border border-border bg-white/70 px-3.5 text-xs font-semibold tracking-wide text-text-main shadow-sm transition hover:border-primary hover:bg-primary/10 hover:text-primary"
-              aria-label="Abrir menu de serviços"
+              aria-label={t('servicesMenu')}
             >
               <Grid className="h-4 w-4 text-primary" />
-              <span className="hidden lg:inline">Serviços</span>
+              <span className="hidden lg:inline">{t('services')}</span>
             </button>
           </div>
 
@@ -151,11 +153,11 @@ const handleLogin = useCallback(async () => {
             <button
               onClick={() => setIsSearchOpen(true)}
               className="flex h-10 w-full max-w-md items-center justify-between rounded-xl border border-border bg-white/70 px-4 text-text-muted shadow-inner transition hover:border-primary hover:bg-white"
-              aria-label="Abrir busca global"
+              aria-label={t('globalSearch')}
             >
               <span className="flex min-w-0 items-center gap-3">
                 <Search className="h-4 w-4 shrink-0 text-primary" />
-                <span className="truncate text-xs font-medium">Buscar serviços...</span>
+                <span className="truncate text-xs font-medium">{t('searchPlaceholder')}</span>
               </span>
               <span className="flex items-center gap-1 opacity-40">
                 <Command className="h-3 w-3" />
@@ -169,17 +171,17 @@ const handleLogin = useCallback(async () => {
               <Link
                 href="/gestao"
                 className="hidden min-h-10 items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-primary/10 px-3.5 text-[11px] font-bold uppercase tracking-[0.16em] text-primary transition hover:bg-primary hover:text-white md:inline-flex"
-                aria-label="Abrir painel de gestão"
+                aria-label={t('managementPanel')}
               >
                 <ShieldCheck className="h-4 w-4" />
-                Gestão
+                {t('management')}
               </Link>
             )}
 
             <button
               onClick={() => setIsSearchOpen(true)}
               className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white/80 text-text-muted shadow-sm transition hover:border-primary hover:text-primary lg:hidden"
-              aria-label="Abrir busca"
+              aria-label={t('openSearch')}
             >
               <Search className="h-4 w-4" />
             </button>
@@ -191,7 +193,7 @@ const handleLogin = useCallback(async () => {
                   'relative inline-flex h-10 w-10 items-center justify-center rounded-xl border transition',
                   isAccessibilityOpen ? 'border-primary bg-primary text-white shadow-[0_12px_24px_rgba(26,86,196,0.22)]' : 'border-border bg-white/80 text-text-muted shadow-sm hover:border-primary hover:text-primary'
                 )}
-                aria-label="Menu de acessibilidade"
+                aria-label={t('accessibilityMenu')}
                 aria-expanded={isAccessibilityOpen}
               >
                 <Monitor className="h-4 w-4" />
@@ -208,8 +210,8 @@ const handleLogin = useCallback(async () => {
                     role="menu"
                   >
                     <div className="mb-4 flex items-center justify-between">
-                      <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">Acessibilidade</p>
-                      <button onClick={() => setIsAccessibilityOpen(false)} className="rounded-lg p-1 text-text-muted hover:bg-surface" aria-label="Fechar">
+                      <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">{t('accessibility')}</p>
+                      <button onClick={() => setIsAccessibilityOpen(false)} className="rounded-lg p-1 text-text-muted hover:bg-surface" aria-label={t('close')}>
                         <X className="h-4 w-4" />
                       </button>
                     </div>
@@ -218,32 +220,32 @@ const handleLogin = useCallback(async () => {
                       <div className="space-y-2 rounded-xl border border-border bg-surface p-3">
                         <span className="inline-flex items-center gap-2 text-sm font-bold text-text-main">
                           <Monitor className="h-4 w-4 text-primary" />
-                          Visual do portal
+                          {t('portalVisual')}
                         </span>
                         <div className="grid grid-cols-3 gap-1.5">
                           <ModeOption
                             active={colorMode === 'default'}
                             icon={Sun}
-                            label="Padrao"
+                            label={t('defaultMode')}
                             onClick={() => handleModeChange('default')}
                           />
                           <ModeOption
                             active={colorMode === 'dark'}
                             icon={Moon}
-                            label="Noturno"
+                            label={t('darkMode')}
                             onClick={() => handleModeChange('dark')}
                           />
                           <ModeOption
                             active={colorMode === 'high-contrast'}
                             icon={Contrast}
-                            label="Contraste"
+                            label={t('contrastMode')}
                             onClick={handleToggleContrast}
                           />
                         </div>
                       </div>
 
                       <ControlRow
-                        label="Texto"
+                        label={t('text')}
                         icon={Type}
                         value={`${Math.round((fontSize / 16) * 100)}%`}
                         onDecrease={decreaseFontSize}
@@ -252,19 +254,19 @@ const handleLogin = useCallback(async () => {
                       <div className="space-y-2 rounded-xl border border-border bg-surface p-3">
                         <span className="inline-flex items-center gap-2 text-sm font-bold text-text-main">
                           <ListChecks className="h-4 w-4 text-primary" />
-                          Modo de leitura
+                          {t('readingMode')}
                         </span>
                         <div className="grid grid-cols-2 gap-1.5">
                           <ModeOption
                             active={contentMode === 'complete'}
                             icon={Type}
-                            label="Completo"
+                            label={t('completeMode')}
                             onClick={() => handleContentModeChange('complete')}
                           />
                           <ModeOption
                             active={contentMode === 'essential'}
                             icon={ListChecks}
-                            label="Essencial"
+                            label={t('essentialMode')}
                             onClick={() => handleContentModeChange('essential')}
                           />
                         </div>
@@ -275,14 +277,14 @@ const handleLogin = useCallback(async () => {
                           className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-primary px-3 text-xs font-semibold uppercase tracking-widest text-white transition hover:bg-primary-dark"
                         >
                           <Monitor className="h-4 w-4" />
-                          Ajuste guiado
+                          {t('guidedSetup')}
                         </button>
                         <button
                           onClick={resetAccessibility}
                           className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-border bg-white px-3 text-xs font-semibold uppercase tracking-widest text-text-muted transition hover:border-primary hover:text-primary"
                         >
                           <RotateCcw className="h-4 w-4" />
-                          Restaurar
+                          {t('restore')}
                         </button>
                       </div>
                     </div>
@@ -294,7 +296,7 @@ const handleLogin = useCallback(async () => {
             <button
               onClick={() => setIsNotificationsOpen(true)}
               className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white/80 text-text-muted shadow-sm transition hover:border-primary hover:text-primary"
-              aria-label={unreadCount > 0 ? `Abrir notificações (${unreadCount} não lidas)` : 'Abrir notificações'}
+              aria-label={unreadCount > 0 ? t('notificationsUnread', { count: unreadCount }) : t('notifications')}
             >
               <Bell className="h-4 w-4" />
               {unreadCount > 0 && (
@@ -303,11 +305,11 @@ const handleLogin = useCallback(async () => {
             </button>
 
             {user ? (
-              <Link href="/perfil" className="relative h-10 w-10 overflow-hidden rounded-xl border border-border bg-primary-light" aria-label="Ir para perfil">
+              <Link href="/perfil" className="relative h-10 w-10 overflow-hidden rounded-xl border border-border bg-primary-light" aria-label={t('profile')}>
                 {user.photoURL ? (
                   <Image
                     src={user.photoURL}
-                    alt="Foto de perfil"
+                    alt={t('profilePhoto')}
                     fill
                     sizes="40px"
                     priority={pathname === '/gestao'}
@@ -324,9 +326,9 @@ const handleLogin = useCallback(async () => {
               <button
                 onClick={handleLogin}
                 className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-3 text-[11px] font-semibold uppercase tracking-widest text-white shadow-[0_12px_24px_rgba(26,86,196,0.22)] transition hover:bg-primary-dark"
-                aria-label="Entrar com conta Google"
+                aria-label={t('loginGoogle')}
               >
-                <span className="hidden sm:inline">Entrar</span>
+                <span className="hidden sm:inline">{t('login')}</span>
                 <UserIcon className="h-4 w-4" />
               </button>
             )}
@@ -355,7 +357,7 @@ const handleLogin = useCallback(async () => {
               className="fixed inset-x-0 top-0 z-[100] overflow-y-auto bg-white/98 px-4 py-6 shadow-[0_32px_80px_rgba(20,34,74,0.16)] backdrop-blur-3xl md:px-8 md:py-10"
               role="dialog"
               aria-modal="true"
-              aria-label="Mapa de serviços municipais"
+              aria-label={t('citizenMap')}
               style={{ maxHeight: '92vh' }}
             >
               {/* Grade decorativa de fundo */}
@@ -370,7 +372,7 @@ const handleLogin = useCallback(async () => {
                   <div>
                     <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/8 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-primary">
                       <Grid className="h-3.5 w-3.5" />
-                      Portal do cidadão
+                      {t('citizenPortal')}
                     </span>
                     <h2 className="mt-3 text-3xl font-bold tracking-tight text-text-main md:text-5xl" style={{ fontFamily: 'var(--font-display)' }}>
                       Mapa de <span className="text-gradient">serviços</span>
@@ -379,7 +381,7 @@ const handleLogin = useCallback(async () => {
                   <button
                     onClick={() => setIsExplorerOpen(false)}
                     className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface text-text-muted transition hover:border-primary/30 hover:bg-primary/8 hover:text-primary"
-                    aria-label="Fechar menu de serviços"
+                    aria-label={t('closeServicesMenu')}
                   >
                     <X className="h-5 w-5" />
                   </button>

@@ -29,6 +29,7 @@ import {
   ArrowRight,
   Loader2
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import ClinicCard from '@/components/ClinicCard';
 import HealthHistoryPanel from '@/components/HealthHistoryPanel';
 import Modal from '@/components/ui/Modal';
@@ -90,13 +91,16 @@ const fallbackMedicines: PharmacyDisplayItem[] = [
   },
 ];
 
-const stockLabel: Record<PharmacyItem['stockStatus'], string> = {
-  available: 'Disponivel',
-  low_stock: 'Baixo estoque',
-  unavailable: 'Em falta',
-};
+function getStockLabel(t: ReturnType<typeof useTranslations<'health'>>): Record<PharmacyItem['stockStatus'], string> {
+  return {
+    available: t('available'),
+    low_stock: t('lowStock'),
+    unavailable: t('unavailable'),
+  };
+}
 
 export default function SaudePage() {
+  const t = useTranslations('health');
   const { toast } = useToast();
   const { units, status, error } = useHealthUnits();
   const {
@@ -112,9 +116,11 @@ export default function SaudePage() {
   const usingFallbackMedicines = pharmacyItems.length === 0 && !pharmacyLoading && !pharmacyError;
   const visiblePharmacyItems: PharmacyDisplayItem[] = usingFallbackMedicines ? fallbackMedicines : pharmacyItems;
 
+  const stockLabel = getStockLabel(t);
+
   const exportVaccineCertificate = () => {
     const content = [
-      'Conecta Santa Maria - Carteira de vacinacao digital',
+      'Conecta Santa Maria - Carteira de vacinação digital',
       `Emitido em: ${new Date().toLocaleString('pt-BR')}`,
       'Status: Assinatura digital ativa',
       'Identificador: DIGITAL-VAX-ID-2026-USER',
@@ -128,13 +134,13 @@ export default function SaudePage() {
     anchor.download = 'carteira-vacinacao-digital.txt';
     anchor.click();
     URL.revokeObjectURL(url);
-    toast('Carteira digital exportada.', 'success');
+    toast(t('vaccineCertificateExported'), 'success');
   };
 
   const categories: { id: HealthTab; label: string; icon: typeof Hospital }[] = [
-    { id: 'unidades', label: 'Unidades', icon: Hospital },
-    { id: 'portal', label: 'Meu Portal', icon: Activity },
-    { id: 'farmacia', label: 'Farmácia', icon: Pill },
+    { id: 'unidades', label: t('units'), icon: Hospital },
+    { id: 'portal', label: t('portal'), icon: Activity },
+    { id: 'farmacia', label: t('pharmacy'), icon: Pill },
   ];
 
   return (
@@ -147,9 +153,9 @@ export default function SaudePage() {
             <div className="space-y-1">
                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-sky-500/10 text-sky-500 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] border border-sky-500/20">
                   <Activity className="w-3.5 h-3.5" />
-                  Atenção à saúde
+                  {t('attention')}
                </div>
-               <h1 className="text-4xl font-semibold text-text-main tracking-tight leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>Saúde <span className="text-sky-500">conectada</span></h1>
+               <h1 className="text-4xl font-semibold text-text-main tracking-tight leading-[1.02]" style={{ fontFamily: 'var(--font-display)' }}>{t('title').split(' ')[0]} <span className="text-sky-500">{t('title').split(' ')[1]}</span></h1>
             </div>
 
             <div className="flex p-1.5 bg-surface rounded-2xl border-2 border-border shadow-inner">
@@ -177,7 +183,7 @@ export default function SaudePage() {
                className="w-full bg-sky-500 text-white p-4 rounded-2xl font-semibold text-xs uppercase tracking-widest shadow-xl shadow-sky-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3"
             >
                <CalendarDays className="w-4 h-4" />
-               Agendar Consulta
+               {t('schedule')}
             </button>
          </div>
 
@@ -191,28 +197,28 @@ export default function SaudePage() {
                      animate={{ opacity: 1, x: 0 }}
                      className="space-y-6"
                   >
-                     <div className="space-y-4">
-                        <div className="flex items-center justify-between px-2">
-                           <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">Tempos de Espera (Live)</h3>
-                           <div className="flex items-center gap-1.5 text-[11px] font-semibold text-green-500">
+                      <div className="space-y-4">
+                         <div className="flex items-center justify-between px-2">
+                            <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">{t('waitTimesLive')}</h3>
+                            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-green-500">
                               <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                              VERIFICADO
-                           </div>
-                        </div>
+                              {t('verified')}
+                            </div>
+                         </div>
 
-                        {status === 'loading' ? (
-                          <div className="flex items-center justify-center py-12">
-                            <Loader2 className="w-8 h-8 animate-spin text-sky-500" />
-                          </div>
-                        ) : status === 'error' ? (
-                          <div className="text-center py-8 space-y-3">
-                            <AlertTriangle className="w-8 h-8 text-sky-500 mx-auto" />
-                            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">{error}</p>
-                          </div>
-                        ) : units.length === 0 ? (
-                          <div className="text-center py-8">
-                            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">Nenhuma unidade disponível</p>
-                          </div>
+                         {status === 'loading' ? (
+                           <div className="flex items-center justify-center py-12">
+                             <Loader2 className="w-8 h-8 animate-spin text-sky-500" />
+                           </div>
+                         ) : status === 'error' ? (
+                           <div className="text-center py-8 space-y-3">
+                             <AlertTriangle className="w-8 h-8 text-sky-500 mx-auto" />
+                             <p className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">{error}</p>
+                           </div>
+                         ) : units.length === 0 ? (
+                           <div className="text-center py-8">
+                             <p className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">{t('noUnits')}</p>
+                           </div>
                         ) : (
                           units.map((unit) => (
                            <div key={unit.id} 
@@ -252,19 +258,19 @@ export default function SaudePage() {
                      animate={{ opacity: 1, x: 0 }}
                      className="space-y-6"
                   >
-                     <div className="ring-highlight-dark bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[2rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">
+                      <div className="ring-highlight-dark bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[2rem] text-white space-y-6 relative overflow-hidden group shadow-[0_20px_50px_rgba(26,86,196,0.28)]">
                         <div aria-hidden className="hero-grid-overlay" />
                         <div aria-hidden className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-secondary/30 blur-3xl" />
                         <div className="relative z-10 flex flex-col h-full justify-between gap-6">
                            <div className="space-y-1">
-                              <h3 className="text-3xl font-semibold leading-[1.02] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Minha saúde</h3>
-                              <p className="text-sm opacity-70 font-medium leading-relaxed">Histórico completo de atendimentos e laudos técnicos disponíveis para download.</p>
+                              <h3 className="text-3xl font-semibold leading-[1.02] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>{t('myHealth')}</h3>
+                              <p className="text-sm opacity-70 font-medium leading-relaxed">{t('myHealthDescription')}</p>
                            </div>
                            <button 
                               onClick={() => setHistoryOpen(true)}
                               className="w-full py-4 bg-white text-text-main rounded-2xl font-semibold text-[11px] uppercase tracking-widest hover:bg-sky-50 transition-all shadow-xl"
                            >
-                              Acessar Prontuário
+                              {t('accessRecords')}
                            </button>
                         </div>
                         <Activity className="absolute -right-8 -bottom-8 w-48 h-48 opacity-[0.05] rotate-12 group-hover:scale-110 transition-transform" />
@@ -276,8 +282,8 @@ export default function SaudePage() {
                               <Syringe className="w-8 h-8" />
                            </div>
                            <div className="space-y-0.5">
-                              <h4 className="text-sm font-semibold text-text-main tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Carteira de vacinação</h4>
-                              <p className="text-[11px] font-bold text-text-muted uppercase tracking-[0.12em]">Versão digital</p>
+                              <h4 className="text-sm font-semibold text-text-main tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>{t('vaccineCard')}</h4>
+                              <p className="text-[11px] font-bold text-text-muted uppercase tracking-[0.12em]">{t('digitalVersion')}</p>
                            </div>
                         </div>
                         <div className="flex flex-col items-center gap-4 py-4 bg-surface rounded-3xl border-2 border-border shadow-inner relative group">
@@ -300,7 +306,7 @@ export default function SaudePage() {
                            <div className="text-center space-y-1">
                               <span className="text-[11px] font-semibold text-sky-500 uppercase flex items-center justify-center gap-1.5 font-mono">
                                  <div className="w-1.5 h-1.5 bg-sky-500 rounded-full" />
-                                 ASSINATURA DIGITAL ATIVA
+                                 {t('digitalSignatureActive')}
                               </span>
                            </div>
                         </div>
@@ -309,7 +315,7 @@ export default function SaudePage() {
                            className="w-full py-4 bg-sky-500/5 border-2 border-sky-500/20 rounded-2xl font-semibold text-[11px] uppercase tracking-widest text-sky-600 hover:bg-sky-500 hover:text-white transition-all flex items-center justify-center gap-2"
                         >
                            <Download className="w-4 h-4" />
-                           Exportar para Viagem
+                           {t('exportForTravel')}
                         </button>
                      </div>
                   </motion.div>
@@ -320,39 +326,39 @@ export default function SaudePage() {
                      animate={{ opacity: 1, x: 0 }}
                      className="space-y-6"
                   >
-                     <div className="space-y-4">
-                        <div className="flex items-center justify-between px-2">
-                           <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">Estoque Popular</h3>
-                           <Pill className="w-4 h-4 text-sky-500" />
-                        </div>
-                        
-                        {pharmacyLoading ? (
-                          <div className="flex items-center justify-center py-12">
-                            <Loader2 className="w-8 h-8 animate-spin text-sky-500" />
-                          </div>
-                        ) : pharmacyError ? (
-                          <div className="rounded-3xl border-2 border-border bg-white p-5 text-center">
-                            <AlertTriangle className="mx-auto h-8 w-8 text-sky-500" />
-                            <p className="mt-3 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
-                              Não foi possível carregar o estoque.
-                            </p>
-                            <button
-                              type="button"
-                              onClick={refreshPharmacy}
-                              className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-[11px] font-black uppercase tracking-widest text-sky-600"
-                            >
-                              <RefreshCcw className="h-3.5 w-3.5" />
-                              Tentar novamente
-                            </button>
-                          </div>
-                        ) : (
-                          <>
-                          {usingFallbackMedicines && (
-                            <DevBanner
-                              title="Estoque demonstrativo"
-                              description="Medicamentos, quantidades e disponibilidade abaixo sao exemplos ate a publicacao do estoque real pela Secretaria de Saude."
-                            />
-                          )}
+                      <div className="space-y-4">
+                         <div className="flex items-center justify-between px-2">
+                            <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">{t('popularStock')}</h3>
+                            <Pill className="w-4 h-4 text-sky-500" />
+                         </div>
+                         
+                         {pharmacyLoading ? (
+                           <div className="flex items-center justify-center py-12">
+                             <Loader2 className="w-8 h-8 animate-spin text-sky-500" />
+                           </div>
+                         ) : pharmacyError ? (
+                           <div className="rounded-3xl border-2 border-border bg-white p-5 text-center">
+                             <AlertTriangle className="mx-auto h-8 w-8 text-sky-500" />
+                             <p className="mt-3 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
+                               {t('stockLoadError')}
+                             </p>
+                             <button
+                               type="button"
+                               onClick={refreshPharmacy}
+                               className="mt-4 inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-[11px] font-black uppercase tracking-widest text-sky-600"
+                             >
+                               <RefreshCcw className="h-3.5 w-3.5" />
+                               {t('tryAgain')}
+                             </button>
+                           </div>
+                         ) : (
+                           <>
+                           {usingFallbackMedicines && (
+                             <DevBanner
+                               title={t('demoStock')}
+                               description={t('demoStockDescription')}
+                             />
+                           )}
                           {visiblePharmacyItems.map((med) => (
                            <div key={med.id} className="bg-white p-5 rounded-3xl border-2 border-border flex items-center justify-between gap-4 group cursor-pointer hover:border-sky-500 transition-all">
                               <div className="min-w-0 space-y-0.5">
@@ -360,9 +366,9 @@ export default function SaudePage() {
                                  <p className="text-[11px] font-bold text-text-muted uppercase tracking-widest">
                                     {med.quantity} {med.unit} - {med.location}
                                  </p>
-                                 {med.requiresPrescription && (
-                                   <p className="text-[11px] font-bold uppercase tracking-widest text-sky-500">Exige receita</p>
-                                 )}
+                                  {med.requiresPrescription && (
+                                    <p className="text-[11px] font-bold uppercase tracking-widest text-sky-500">{t('requiresPrescription')}</p>
+                                  )}
                               </div>
                               <span className={cn(
                                  "shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest",
@@ -376,20 +382,20 @@ export default function SaudePage() {
                         )}
                      </div>
 
-                     <div className="bg-sky-500 p-8 rounded-[2rem] text-white space-y-6 relative overflow-hidden group">
-                        <div className="relative z-10 flex flex-col gap-4">
-                           <h3 className="text-2xl font-semibold leading-[1.02] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Receita digital</h3>
-                           <p className="text-sm opacity-85 font-medium leading-relaxed">Sincronize suas receitas assinadas digitalmente para retirada rápida em qualquer UBS.</p>
-                           <button 
-                              onClick={() => toast('Abrindo scanner de receitas digitais...', 'info')}
-                              className="w-full py-4 bg-white text-sky-500 rounded-2xl font-semibold text-[11px] uppercase tracking-widest shadow-xl flex items-center justify-center gap-3"
-                           >
-                              <SearchIcon className="w-4 h-4" />
-                              Validar Receita
-                           </button>
-                        </div>
-                        <Pill className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10 rotate-12 group-hover:scale-110 transition-transform" />
-                     </div>
+                      <div className="bg-sky-500 p-8 rounded-[2rem] text-white space-y-6 relative overflow-hidden group">
+                         <div className="relative z-10 flex flex-col gap-4">
+                            <h3 className="text-2xl font-semibold leading-[1.02] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>{t('digitalPrescription')}</h3>
+                            <p className="text-sm opacity-85 font-medium leading-relaxed">{t('digitalPrescriptionDescription')}</p>
+                            <button 
+                               onClick={() => toast(t('scannerOpening'), 'info')}
+                               className="w-full py-4 bg-white text-sky-500 rounded-2xl font-semibold text-[11px] uppercase tracking-widest shadow-xl flex items-center justify-center gap-3"
+                            >
+                               <SearchIcon className="w-4 h-4" />
+                               {t('validatePrescription')}
+                            </button>
+                         </div>
+                         <Pill className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10 rotate-12 group-hover:scale-110 transition-transform" />
+                      </div>
                   </motion.div>
                )}
             </AnimatePresence>
@@ -406,22 +412,22 @@ export default function SaudePage() {
          />
 
          {/* Map Legend/Controls */}
-         <div className="absolute top-8 right-8 z-10 space-y-4">
-            <div className="bg-white/80 backdrop-blur-md p-4 rounded-3xl border-2 border-border shadow-2xl space-y-3">
-               <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-green-500 rounded-full" />
-                  <span className="text-[11px] font-semibold uppercase text-text-main tracking-widest">Espera Menor</span>
-               </div>
-               <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-amber-500 rounded-full" />
-                  <span className="text-[11px] font-semibold uppercase text-text-main tracking-widest">Espera Média</span>
-               </div>
-               <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-sky-500 rounded-full" />
-                  <span className="text-[11px] font-semibold uppercase text-text-main tracking-widest">Espera Alta</span>
-               </div>
-            </div>
-         </div>
+          <div className="absolute top-8 right-8 z-10 space-y-4">
+             <div className="bg-white/80 backdrop-blur-md p-4 rounded-3xl border-2 border-border shadow-2xl space-y-3">
+                <div className="flex items-center gap-3">
+                   <div className="w-3 h-3 bg-green-500 rounded-full" />
+                   <span className="text-[11px] font-semibold uppercase text-text-main tracking-widest">{t('shorterWait')}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                   <div className="w-3 h-3 bg-amber-500 rounded-full" />
+                   <span className="text-[11px] font-semibold uppercase text-text-main tracking-widest">{t('mediumWait')}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                   <div className="w-3 h-3 bg-sky-500 rounded-full" />
+                   <span className="text-[11px] font-semibold uppercase text-text-main tracking-widest">{t('higherWait')}</span>
+                </div>
+             </div>
+          </div>
 
          <div className="absolute bottom-8 right-8 flex flex-col gap-3 z-10">
             <div className="bg-white rounded-2xl border-2 border-border shadow-2xl flex flex-col overflow-hidden text-sky-500">
@@ -460,11 +466,11 @@ export default function SaudePage() {
                          </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3 relative z-10">
+                       <div className="grid grid-cols-2 gap-3 relative z-10">
                          {selectedClinic.specialties.slice(0, 2).map((spec) => (
                            <div key={spec} className="bg-surface p-3 rounded-2xl border border-border">
                               <p className="text-[11px] font-semibold text-text-muted uppercase tracking-widest mb-1">{spec}</p>
-                              <p className="text-xs font-semibold text-text-main">Disponível</p>
+                              <p className="text-xs font-semibold text-text-main">{t('open')}</p>
                            </div>
                          ))}
                       </div>
@@ -474,7 +480,7 @@ export default function SaudePage() {
                             onClick={() => setSelectedClinic(null)}
                             className="px-6 py-4 bg-surface border-2 border-border rounded-2xl text-[11px] font-semibold uppercase tracking-widest text-text-muted hover:border-sky-500/30 transition-all font-ui font-bold"
                          >
-                            Fechar
+                            {t('close')}
                          </button>
                          <button
                             type="button"
@@ -482,7 +488,7 @@ export default function SaudePage() {
                             disabled={!selectedClinic.isOpen}
                             className="flex-grow bg-sky-500 text-white px-8 py-4 rounded-2xl font-semibold text-[11px] uppercase tracking-widest shadow-xl shadow-sky-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:cursor-not-allowed disabled:opacity-50"
                          >
-                            {selectedClinic.isOpen ? 'Agendar aqui' : 'Unidade fechada'}
+                            {selectedClinic.isOpen ? t('scheduleHere') : t('unitClosed')}
                             <ArrowRight className="w-4 h-4" />
                          </button>
                       </div>

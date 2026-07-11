@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   ArrowLeft,
   CalendarDays,
@@ -55,6 +56,7 @@ function getNextBusinessDates(count = 5) {
 }
 
 const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, units, initialUnit = null }) => {
+  const t = useTranslations('appointment');
   const { user, login } = useAuth();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
@@ -84,7 +86,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
 
   const handleConfirm = async () => {
     if (!formData.specialty || !formData.unit || !formData.date || !formData.time) {
-      toast('Escolha especialidade, unidade, data e horário.', 'error');
+      toast(t('fillAll'), 'error');
       return;
     }
 
@@ -93,7 +95,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
         await login();
       } catch (error) {
         log.error('Login failed before appointment creation', {}, error);
-        toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
+        toast(error instanceof Error ? error.message : t('loginError'), 'error');
       }
       return;
     }
@@ -112,7 +114,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
       });
       setSuccess(true);
     } catch {
-      toast('Erro ao agendar consulta.', 'error');
+      toast(t('scheduleError'), 'error');
     } finally {
       setLoading(false);
     }
@@ -133,14 +135,14 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
 
   const goToReview = () => {
     if (!formData.date || !formData.time) {
-      toast('Escolha data e horário para continuar.', 'error');
+      toast(t('chooseDateTimeError'), 'error');
       return;
     }
     setStep(4);
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title={success ? 'Agendamento confirmado' : 'Novo agendamento'}>
+    <Modal isOpen={isOpen} onClose={handleClose} title={success ? t('confirmed') : t('title')}>
       <div className="space-y-6">
         {!success && (
           <div className="mb-8 flex items-center justify-between">
@@ -167,20 +169,20 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full border-4 border-green-100 bg-green-50 text-green-600 shadow-sm">
               <CheckCircle2 className="h-10 w-10" />
             </div>
-            <h4 className="mb-2 text-2xl font-semibold uppercase tracking-tight text-text-main">Protocolo gerado</h4>
+            <h4 className="mb-2 text-2xl font-semibold uppercase tracking-tight text-text-main">{t('protocolGenerated')}</h4>
             <p className="font-ui mb-8 font-medium text-text-muted">
-              Agendamento realizado para <strong className="text-text-main">{formData.date} as {formData.time}</strong>.
+              {t('scheduledFor')} <strong className="text-text-main">{formData.date} as {formData.time}</strong>.
             </p>
             <button onClick={handleClose} className="btn-tactile w-full rounded-xl bg-primary py-4 text-xs font-semibold uppercase tracking-widest text-white shadow-lg">
-              Voltar
+              {t('back')}
             </button>
           </motion.div>
         ) : step === 1 ? (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
-            <h4 className="pl-1 text-xs font-semibold uppercase tracking-widest text-text-muted">Escolha a especialidade</h4>
+            <h4 className="pl-1 text-xs font-semibold uppercase tracking-widest text-text-muted">{t('chooseSpecialty')}</h4>
             {specialties.length === 0 ? (
               <div className="rounded-2xl border-2 border-dashed border-border bg-surface p-6 text-center text-xs font-semibold uppercase tracking-widest text-text-muted">
-                Nenhuma especialidade disponível no momento.
+                {t('noSpecialties')}
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-3">
@@ -209,15 +211,15 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
         ) : step === 2 ? (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
             <div className="mb-2 flex items-center gap-2">
-              <button type="button" onClick={() => setStep(1)} aria-label="Voltar para escolha de serviço" className="rounded-lg p-2 text-text-muted hover:bg-surface">
+              <button type="button" onClick={() => setStep(1)} aria-label={t('backToService')} className="rounded-lg p-2 text-text-muted hover:bg-surface">
                 <ArrowLeft className="h-5 w-5" />
               </button>
-              <h4 className="text-xs font-semibold uppercase tracking-widest text-text-muted">Unidade de atendimento</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-text-muted">{t('chooseUnit')}</h4>
             </div>
             <div className="grid grid-cols-1 gap-3">
               {units.length === 0 ? (
                 <div className="rounded-2xl border-2 border-dashed border-border bg-surface p-6 text-center text-xs font-semibold uppercase tracking-widest text-text-muted">
-                  Nenhuma unidade disponível no momento.
+                  {t('noUnits')}
                 </div>
               ) : units.map((unit) => (
                 <button
@@ -253,10 +255,10 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
         ) : step === 3 ? (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
             <div className="mb-2 flex items-center gap-2">
-              <button type="button" onClick={() => setStep(2)} aria-label="Voltar para escolha de unidade" className="rounded-lg p-2 text-text-muted hover:bg-surface">
+              <button type="button" onClick={() => setStep(2)} aria-label={t('backToUnit')} className="rounded-lg p-2 text-text-muted hover:bg-surface">
                 <ArrowLeft className="h-5 w-5" />
               </button>
-              <h4 className="text-xs font-semibold uppercase tracking-widest text-text-muted">Escolha data e hora</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-text-muted">{t('chooseDateTime')}</h4>
             </div>
             <div className="space-y-4">
               <div className="flex gap-2 overflow-x-auto pb-2">
@@ -296,20 +298,20 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
               </div>
             </div>
             <button type="button" onClick={goToReview} className="btn-tactile flex w-full items-center justify-center gap-3 rounded-xl bg-primary py-4 text-sm font-semibold uppercase tracking-widest text-white">
-              Continuar <ChevronRight className="h-5 w-5" />
+              {t('continue')} <ChevronRight className="h-5 w-5" />
             </button>
           </motion.div>
         ) : (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
             <div className="mb-2 flex items-center gap-2">
-              <button type="button" onClick={() => setStep(3)} aria-label="Voltar para escolha de data" className="rounded-lg p-2 text-text-muted hover:bg-surface">
+              <button type="button" onClick={() => setStep(3)} aria-label={t('backToDate')} className="rounded-lg p-2 text-text-muted hover:bg-surface">
                 <ArrowLeft className="h-5 w-5" />
               </button>
-              <h4 className="text-xs font-semibold uppercase tracking-widest text-text-muted">Confirmar agendamento</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-text-muted">{t('confirm')}</h4>
             </div>
             <div className="space-y-4 rounded-2xl border-2 border-border bg-surface p-6">
               <div className="border-b border-border pb-4">
-                <span className="text-[11px] font-semibold uppercase text-text-muted">Especialidade</span>
+                <span className="text-[11px] font-semibold uppercase text-text-muted">{t('specialty')}</span>
                 <p className="text-xl font-semibold uppercase text-text-main">{formData.specialty}</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -334,7 +336,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ isOpen, onClose, un
               className="btn-tactile flex w-full items-center justify-center gap-3 rounded-xl bg-primary py-5 text-sm font-semibold uppercase tracking-widest text-white disabled:opacity-50"
             >
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <CheckCircle2 className="h-5 w-5" />}
-              {loading ? 'Agendando...' : 'Confirmar agendamento'}
+              {loading ? t('scheduling') : t('confirm')}
             </button>
           </motion.div>
         )}

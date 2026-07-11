@@ -14,6 +14,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Download } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 // ─── Tipos ──────────────────────────────────────────────────────────
 
@@ -33,6 +34,7 @@ interface BeforeInstallPromptEvent extends Event {
 // ─── Componente ─────────────────────────────────────────────────────
 
 export default function InstallPrompt() {
+  const t = useTranslations('installPrompt');
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [show, setShow] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -100,10 +102,10 @@ export default function InstallPrompt() {
           {/* Conteúdo */}
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-text-main">
-              Instale o App
+              {t('title')}
             </p>
             <p className="mt-0.5 text-xs text-text-muted">
-              Instale o Conecta Santa Maria na tela inicial do seu dispositivo para acesso mais rápido.
+              {t('description')}
             </p>
 
             {/* Ações */}
@@ -111,16 +113,16 @@ export default function InstallPrompt() {
               <button
                 onClick={handleInstall}
                 className="min-h-9 w-full rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-primary-dark"
-                aria-label="Instalar aplicativo"
+                aria-label={t('installLabel')}
               >
-                Instalar
+                {t('install')}
               </button>
               <button
                 onClick={handleDismiss}
                 className="min-h-9 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-bold text-text-muted transition-colors hover:bg-surface hover:text-text-main"
-                aria-label="Dispensar prompt de instalação"
+                aria-label={t('dismissLabel')}
               >
-                Agora não
+                {t('dismiss')}
               </button>
             </div>
           </div>

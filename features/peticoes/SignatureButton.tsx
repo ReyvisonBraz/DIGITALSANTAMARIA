@@ -5,6 +5,7 @@ import { CheckCircle2, Loader2, PenLine } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
 import { hasUserSigned, signPetition } from '@/services/petitions.service';
+import { useTranslations } from 'next-intl';
 
 interface SignatureButtonProps {
   petitionId: string;
@@ -16,6 +17,7 @@ interface SignatureButtonProps {
 export default function SignatureButton({ petitionId, petitionTitle, onSign, className }: SignatureButtonProps) {
   const { user, login } = useAuth();
   const { toast } = useToast();
+  const t = useTranslations('peticoes.sign');
   const [loading, setLoading] = useState(false);
   const [signed, setSigned] = useState(false);
   const [checkingSignature, setCheckingSignature] = useState(false);
@@ -37,7 +39,7 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
       try {
         await login();
       } catch (error) {
-        toast(error instanceof Error ? error.message : 'Não foi possível iniciar o login.', 'error');
+        toast(error instanceof Error ? error.message : t('loginError'), 'error');
       }
       return;
     }
@@ -46,10 +48,10 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
     try {
       await signPetition(petitionId, user.displayName || user.email || 'Cidadão');
       setSigned(true);
-      toast(`Assinatura registrada em "${petitionTitle}"!`, 'success');
+      toast(t('signedSuccess', { title: petitionTitle }), 'success');
       onSign?.();
     } catch {
-      toast('Não foi possível registrar a assinatura.', 'error');
+      toast(t('signError'), 'error');
     } finally {
       setLoading(false);
     }
@@ -62,7 +64,7 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
         className={`flex items-center justify-center gap-2 rounded-xl bg-green-600 px-10 py-4 text-[11px] font-black uppercase tracking-widest text-white opacity-90 cursor-default ${className || ''}`}
       >
         <CheckCircle2 className="h-4 w-4" />
-        Assinado
+        {t('signed')}
       </button>
     );
   }
@@ -78,7 +80,7 @@ export default function SignatureButton({ petitionId, petitionTitle, onSign, cla
       ) : (
         <PenLine className="h-4 w-4" />
       )}
-      {loading ? 'Assinando...' : checkingSignature ? 'Verificando...' : 'Assinar Agora'}
+      {loading ? t('signing') : checkingSignature ? t('verifying') : t('signNow')}
     </button>
   );
 }

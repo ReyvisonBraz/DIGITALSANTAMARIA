@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { AlertCircle, ArrowRight, FileText, Loader2, Plus, Search, Users } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import SignatureButton from '@/features/peticoes/SignatureButton';
 import SignatureProgress from '@/features/peticoes/SignatureProgress';
 import CreatePetitionModal from '@/features/peticoes/CreatePetitionModal';
@@ -10,6 +11,7 @@ import { listenToActivePetitions } from '@/services/petitions.service';
 import type { Petition } from '@/types';
 
 export default function PeticoesPage() {
+  const t = useTranslations('petitions');
   const [petitions, setPetitions] = useState<Petition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,12 +30,12 @@ export default function PeticoesPage() {
         setError(null);
       },
       () => {
-        setError('Não foi possível carregar as petições.');
+        setError(t('loadError'));
         setLoading(false);
       },
     );
     return () => unsubscribe();
-  }, []);
+  }, [t]);
 
   const handleSearchChange = (value: string) => {
     setSearchInput(value);
@@ -57,20 +59,20 @@ export default function PeticoesPage() {
           <div className="relative z-10">
             <div className="soft-chip">
               <Users className="h-4 w-4" />
-              Participação cidadã
+              {t('citizenParticipation')}
             </div>
             <h1 className="mt-4 text-3xl font-semibold tracking-normal text-text-main md:text-6xl">
-              Petições públicas
+              {t('publicPetitions')}
             </h1>
             <p className="mt-3 max-w-2xl text-base font-medium leading-7 text-text-muted">
-              Crie e apoie causas abertas pela comunidade para mobilizar a cidade.
+              {t('communityDescription')}
             </p>
             <button
               onClick={() => setCreateModalOpen(true)}
               className="mt-5 inline-flex items-center gap-2 rounded-xl bg-tertiary px-6 py-3 text-[11px] font-black uppercase tracking-widest text-white shadow-xl shadow-tertiary/20 transition-all hover:brightness-110 active:scale-95"
             >
               <Plus className="h-4 w-4" />
-              Criar petição
+              {t('create')}
             </button>
           </div>
         </div>
@@ -83,8 +85,8 @@ export default function PeticoesPage() {
               <input
                 value={searchInput}
                 onChange={(event) => handleSearchChange(event.target.value)}
-                placeholder="Buscar por título, categoria ou descrição"
-                aria-label="Buscar petições"
+                placeholder={t('searchPlaceholder')}
+                aria-label={t('searchLabel')}
                 className="h-12 w-full rounded-xl border border-border bg-white/80 pl-10 pr-3 text-sm font-medium text-text-main shadow-inner outline-none transition focus:border-primary"
               />
           </label>
@@ -97,15 +99,15 @@ export default function PeticoesPage() {
         ) : error ? (
           <div className="glass-panel flex min-h-64 flex-col items-center justify-center gap-4 p-8">
             <AlertCircle className="h-10 w-10 text-red-500" />
-            <h2 className="text-xl font-semibold text-text-main">Erro ao carregar</h2>
+            <h2 className="text-xl font-semibold text-text-main">{t('errorTitle')}</h2>
             <p className="text-sm font-medium text-text-muted">{error}</p>
           </div>
         ) : filteredPetitions.length === 0 ? (
           <div className="glass-panel border-dashed p-8 text-center">
             <FileText className="mx-auto h-10 w-10 text-primary" />
-            <h2 className="mt-4 text-xl font-semibold text-text-main">Nenhuma petição encontrada</h2>
+            <h2 className="mt-4 text-xl font-semibold text-text-main">{t('noResults')}</h2>
             <p className="mt-2 text-sm font-medium text-text-muted">
-              Tente outro termo de busca.
+              {t('tryOtherTerm')}
             </p>
           </div>
         ) : (
@@ -118,7 +120,7 @@ export default function PeticoesPage() {
                       {petition.category}
                     </span>
                     <span className="text-xs font-bold text-text-muted">
-                      por {petition.creatorName}
+                      {t('by')} {petition.creatorName}
                     </span>
                   </div>
                   <h2 className="mt-3 text-xl font-semibold tracking-normal text-text-main">
@@ -141,7 +143,7 @@ export default function PeticoesPage() {
                       href={`/peticoes/${petition.id}`}
                       className="action-button-secondary flex-1"
                     >
-                      Detalhes
+                      {t('details')}
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </div>
