@@ -14,6 +14,8 @@ import ScrollAmbience from '@/components/ScrollAmbience';
 import GuidedHelp from '@/components/GuidedHelp';
 import AccessibilitySetup from '@/components/AccessibilitySetup';
 import AccessibilityProfileSync from '@/components/AccessibilityProfileSync';
+import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
+import I18nProvider from '@/components/I18nProvider';
 
 const displayFont = Fraunces({
   subsets: ['latin'],
@@ -54,7 +56,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR" className={`${displayFont.variable} ${sansFont.variable} ${scriptFont.variable}`} suppressHydrationWarning>
       <body className="antialiased min-h-screen bg-background text-text-main pt-[env(safe-area-inset-top,0px)]">
         <Providers>
-          <ErrorBoundary>
+          <I18nProvider>
+            <ErrorBoundary>
             <ScrollAmbience />
             <Suspense><TopAppBar /></Suspense>
             <main className="relative pt-20 md:pt-24">
@@ -63,11 +66,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
             <BottomNavBar />
             <InstallPrompt />
+            <ServiceWorkerRegistration />
             <GuidedHelp />
             <AccessibilitySetup />
             <AccessibilityProfileSync />
             <RootLayoutLogger />
           </ErrorBoundary>
+          </I18nProvider>
         </Providers>
       </body>
     </html>

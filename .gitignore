@@ -13,3 +13,12 @@ firebase-applet-config.json
 historico/
 debug.log
 functions/lib/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+*storybook.log
+storybook-static

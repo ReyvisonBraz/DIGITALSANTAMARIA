@@ -1,0 +1,268 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "all": "Todos",
+    "none": "Nenhum",
+    "required": "Obrigatório",
+    "optional": "Opcional",
+    "retry": "Tentar novamente",
+    "close": "Fechar",
+    "open": "Abrir",
+    "send": "Enviar",
+    "submit": "Enviar",
+    "loadingMore": "Carregando mais...",
+    "noResults": "Nenhum resultado encontrado",
+    "seeMore": "Ver mais",
+    "seeLess": "Ver menos",
+    "viewAll": "Ver todos",
+    "learnMore": "Saiba mais",
+    "contact": "Contato",
+    "share": "Compartilhar",
+    "copy": "Copiar",
+    "copied": "Copiado!",
+    "download": "Baixar",
+    "upload": "Enviar",
+    "attachFile": "Anexar arquivo",
+    "takePhoto": "Tirar foto",
+    "chooseFromGallery": "Escolher da galeria",
+    "or": "ou",
+    "and": "e",
+    "yes": "Sim",
+    "no": "Não",
+    "ok": "OK",
+    "ago": "atrás",
+    "now": "agora"
+  },
+  "nav": {
+    "home": "Início",
+    "reports": "Relatar",
+    "petitions": "Petições",
+    "votes": "Votações",
+    "health": "Saúde",
+    "education": "Educação",
+    "commerce": "Comércio",
+    "profile": "Perfil",
+    "settings": "Configurações",
+    "logout": "Sair",
+    "login": "Entrar"
+  },
+  "home": {
+    "title": "Conecta Santa Maria",
+    "subtitle": "O portal do cidadão de Santa Maria do Pará",
+    "welcome": "Bem-vindo ao Conecta Santa Maria",
+    "description": "Serviços, protocolos e participação em um só lugar.",
+    "hero": {
+      "cityLine1": "Sua cidade",
+      "essentialLine1": "O que você",
+      "essentialLine2": "precisa?",
+      "cityLine2": "conectada",
+      "cityLine3": "a você.",
+      "essentialSubtitle": "Escolha uma ação, receba protocolo e acompanhe a resposta.",
+      "subtitle": "Solicite serviços, consulte protocolos, participe de petições e acompanhe Santa Maria do Pará com mais clareza — tudo em um só lugar.",
+      "ctaPrimary": "Abrir solicitação",
+      "ctaSecondary": "Painel do Cidadão"
+    },
+    "actions": {
+      "openRequest": {
+        "title": "Abrir solicitação",
+        "description": "Registre pedidos, reclamações, denúncias, sugestões ou problemas urbanos.",
+        "cta": "Começar"
+      },
+      "checkProtocol": {
+        "title": "Consultar protocolo",
+        "description": "Acompanhe no seu painel o andamento das solicitações enviadas ao município.",
+        "cta": "Acessar"
+      },
+      "petitions": {
+        "title": "Petições",
+        "description": "Apoie causas abertas e acompanhe respostas oficiais da gestão.",
+        "cta": "Participar"
+      },
+      "citizenPanel": {
+        "title": "Painel do Cidadão",
+        "description": "Veja seu histórico, dados básicos, protocolos e atividades.",
+        "cta": "Entrar"
+      }
+    },
+    "keywords": {
+      "request": "Pedido",
+      "complaint": "Reclamação",
+      "report": "Denúncia",
+      "status": "Status",
+      "answer": "Resposta",
+      "history": "Histórico",
+      "causes": "Causas",
+      "sign": "Assinar",
+      "track": "Acompanhar"
+    },
+    "services": {
+      "jobs": "Empregos",
+      "commerce": "Comércio",
+      "events": "Eventos",
+      "publicWorks": "Obras",
+      "notices": "Avisos",
+      "petitions": "Petições"
+    },
+    "process": {
+      "step1": "Descreva a necessidade",
+      "step2": "Receba um protocolo",
+      "step3": "Acompanhe a resposta"
+    },
+    "stats": {
+      "alwaysOpen": {
+        "essential": "Sempre aberto",
+        "default": "Canais sempre abertos"
+      },
+      "events": {
+        "single": "Evento na agenda",
+        "plural": "Eventos na agenda"
+      },
+      "services": {
+        "essential": "Serviços",
+        "default": "Áreas de serviço"
+      },
+      "notices": {
+        "single": "Aviso publicado",
+        "plural": "Avisos publicados"
+      },
+      "digital": {
+        "essential": "Online",
+        "default": "Digital e gratuito"
+      }
+    },
+    "section": {
+      "quickAccess": {
+        "eyebrow": "Acesso rápido",
+        "title": "O que você precisa fazer?",
+        "subtitle": "Os caminhos centrais ficam destacados e funcionam em fluxo direto, para cidadão e gestão."
+      },
+      "services": {
+        "eyebrow": "Portal público",
+        "title": "Serviços municipais em um só lugar",
+        "description": "Solicitação, protocolo, painel e petições no centro da experiência. Novas áreas serão ativadas por etapas ao longo do lançamento.",
+        "cta": "Ver avisos da prefeitura"
+      }
+    },
+    "petitionsCta": {
+      "badge": "Participação cidadã",
+      "titlePart1": "Sua voz vira",
+      "titlePart2": "pauta da cidade.",
+      "description": "Causas abertas pela comunidade ganham meta, contador de assinaturas e espaço para resposta oficial da gestão.",
+      "cta": "Ver petições"
+    },
+    "floatingPanel": {
+      "badge": "Atendimento digital",
+      "title": "Comece pelo protocolo",
+      "trust": {
+        "value1": "Seguro",
+        "label1": "Login Google",
+        "value2": "Rápido",
+        "label2": "Fluxos reais",
+        "value3": "Aberto",
+        "label3": "24 horas"
+      }
+    },
+    "primaryActions": {
+      "report": "Relatar problema",
+      "petition": "Criar petição",
+      "vote": "Votar em enquetes"
+    }
+  },
+  "reports": {
+    "title": "Relatar Demanda",
+    "subtitle": "Registre um problema ou solicitação para a prefeitura",
+    "form": {
+      "title": "Título curto",
+      "titlePlaceholder": "Ex: Buraco grande na Av. Brasil",
+      "description": "Descreva a situação",
+      "descriptionPlaceholder": "Conte o que está acontecendo, quando começou e a quem afeta.",
+      "category": "Categoria",
+      "location": "Localização",
+      "locationPlaceholder": "Rua, bairro ou ponto conhecido...",
+      "photo": "Foto (opcional)",
+      "photoPlaceholder": "https://exemplo.com/foto.jpg",
+      "submit": "Enviar relato"
+    },
+    "categories": {
+      "infrastructure": "Infraestrutura",
+      "environment": "Meio Ambiente",
+      "security": "Segurança",
+      "health": "Saúde",
+      "education": "Educação",
+      "other": "Outros"
+    }
+  },
+  "petitions": {
+    "title": "Petições Públicas",
+    "subtitle": "Crie e apoie causas abertas pela comunidade",
+    "create": "Criar petição",
+    "sign": "Assinar",
+    "signed": "Assinado",
+    "signatures": "assinaturas",
+    "goal": "meta",
+    "expired": "Expirada",
+    "active": "Ativa"
+  },
+  "health": {
+    "title": "Saúde conectada",
+    "subtitle": "Encontre unidades de saúde, agende consultas e acompanhe sua saúde",
+    "schedule": "Agendar Consulta",
+    "units": "Unidades",
+    "portal": "Meu Portal",
+    "pharmacy": "Farmácia",
+    "open": "Aberto",
+    "closed": "Fechado",
+    "waitTime": "Tempo de espera",
+    "low": "Baixa",
+    "medium": "Média",
+    "high": "Alta"
+  },
+  "education": {
+    "title": "Educação",
+    "subtitle": "Escolas, matrículas e recursos educacionais",
+    "units": "Unidades",
+    "portal": "Portal",
+    "resources": "Recursos",
+    "enrollment": "Matrícula",
+    "schedule": "Horário",
+    "menu": "Cardápio"
+  },
+  "profile": {
+    "title": "Meu Perfil",
+    "edit": "Editar perfil",
+    "name": "Nome",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "neighborhood": "Bairro",
+    "myDemands": "Minhas Demandas",
+    "myReports": "Meus Relatos",
+    "myPetitions": "Minhas Petições"
+  },
+  "auth": {
+    "login": "Entrar",
+    "logout": "Sair",
+    "loginWithGoogle": "Entrar com Google",
+    "loginWithFacebook": "Entrar com Facebook",
+    "welcome": "Bem-vindo!",
+    "unauthorized": "Acesso não autorizado"
+  },
+  "errors": {
+    "notFound": "Página não encontrada",
+    "serverError": "Erro interno do servidor",
+    "networkError": "Erro de conexão",
+    "offline": "Sem conexão com a internet",
+    "tryAgain": "Tente novamente",
+    "goHome": "Ir para o início"
+  }
+}
