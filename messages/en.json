@@ -1,0 +1,588 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "none": "None",
+    "required": "Required",
+    "optional": "Optional",
+    "retry": "Try again",
+    "close": "Close",
+    "open": "Open",
+    "send": "Send",
+    "submit": "Submit",
+    "loadingMore": "Loading more...",
+    "noResults": "No results found",
+    "seeMore": "See more",
+    "seeLess": "See less",
+    "viewAll": "View all",
+    "learnMore": "Learn more",
+    "contact": "Contact",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "download": "Download",
+    "upload": "Upload",
+    "attachFile": "Attach file",
+    "takePhoto": "Take photo",
+    "chooseFromGallery": "Choose from gallery",
+    "or": "or",
+    "and": "and",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "ago": "ago",
+    "now": "now"
+  },
+  "nav": {
+    "home": "Home",
+    "reports": "Report",
+    "petitions": "Petitions",
+    "votes": "Votes",
+    "health": "Health",
+    "education": "Education",
+    "commerce": "Commerce",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login",
+    "openRequest": "Open request",
+    "reportProblem": "Report a problem",
+    "checkProtocol": "Check protocol",
+    "citizenPanel": "Citizen Panel",
+    "services": "Services",
+    "jobs": "Jobs",
+    "taxes": "Taxes",
+    "mobility": "Mobility",
+    "security": "Security",
+    "environment": "Environment",
+    "social": "Social",
+    "works": "Public Works",
+    "notices": "Notices",
+    "events": "Events",
+    "community": "Community",
+    "categoryService": "Service",
+    "categoryParticipation": "Participation",
+    "categoryAccount": "Account",
+    "categoryPortal": "Portal",
+    "categoryServices": "Services",
+    "categoryEconomy": "Economy",
+    "categoryManagement": "Management",
+    "categoryUrban": "Urban Life"
+  },
+  "home": {
+    "title": "Conecta Santa Maria",
+    "subtitle": "The citizen portal of Santa Maria do Pará",
+    "welcome": "Welcome to Conecta Santa Maria",
+    "description": "Services, protocols and participation in one place.",
+    "hero": {
+      "cityLine1": "Your city",
+      "essentialLine1": "What you",
+      "essentialLine2": "need?",
+      "cityLine2": "connected",
+      "cityLine3": "to you.",
+      "essentialSubtitle": "Choose an action, get a protocol and track the response.",
+      "subtitle": "Request services, check protocols, participate in petitions and follow Santa Maria do Pará with more clarity — all in one place.",
+      "ctaPrimary": "Open request",
+      "ctaSecondary": "Citizen Panel"
+    },
+    "actions": {
+      "openRequest": {
+        "title": "Open request",
+        "description": "Register requests, complaints, reports, suggestions or urban issues.",
+        "cta": "Get started"
+      },
+      "checkProtocol": {
+        "title": "Check protocol",
+        "description": "Track the status of requests submitted to the municipality in your panel.",
+        "cta": "Access"
+      },
+      "petitions": {
+        "title": "Petitions",
+        "description": "Support open causes and follow official responses from the government.",
+        "cta": "Participate"
+      },
+      "citizenPanel": {
+        "title": "Citizen Panel",
+        "description": "View your history, basic data, protocols and activities.",
+        "cta": "Enter"
+      }
+    },
+    "keywords": {
+      "request": "Request",
+      "complaint": "Complaint",
+      "report": "Report",
+      "status": "Status",
+      "answer": "Answer",
+      "history": "History",
+      "causes": "Causes",
+      "sign": "Sign",
+      "track": "Track"
+    },
+    "services": {
+      "jobs": "Jobs",
+      "commerce": "Commerce",
+      "events": "Events",
+      "publicWorks": "Public Works",
+      "notices": "Notices",
+      "petitions": "Petitions"
+    },
+    "process": {
+      "step1": "Describe the need",
+      "step2": "Receive a protocol",
+      "step3": "Track the response"
+    },
+    "stats": {
+      "alwaysOpen": {
+        "essential": "Always open",
+        "default": "Channels always open"
+      },
+      "events": {
+        "single": "Event on schedule",
+        "plural": "Events on schedule"
+      },
+      "services": {
+        "essential": "Services",
+        "default": "Service areas"
+      },
+      "notices": {
+        "single": "Notice published",
+        "plural": "Notices published"
+      },
+      "digital": {
+        "essential": "Online",
+        "default": "Digital and free"
+      }
+    },
+    "section": {
+      "quickAccess": {
+        "eyebrow": "Quick access",
+        "title": "What do you need to do?",
+        "subtitle": "Core paths are highlighted and work in a direct flow for citizens and government."
+      },
+      "services": {
+        "eyebrow": "Public portal",
+        "title": "Municipal services in one place",
+        "description": "Requests, protocol, panel and petitions at the center of the experience. New areas will be activated in stages during launch.",
+        "cta": "View city hall notices"
+      }
+    },
+    "petitionsCta": {
+      "badge": "Citizen participation",
+      "titlePart1": "Your voice becomes",
+      "titlePart2": "the city's agenda.",
+      "description": "Causes opened by the community gain a goal, signature counter and space for official government response.",
+      "cta": "View petitions"
+    },
+    "floatingPanel": {
+      "badge": "Digital service",
+      "title": "Start with the protocol",
+      "trust": {
+        "value1": "Secure",
+        "label1": "Google Login",
+        "value2": "Fast",
+        "label2": "Real flows",
+        "value3": "Open",
+        "label3": "24 hours"
+      }
+    },
+    "primaryActions": {
+      "report": "Report a problem",
+      "petition": "Create petition",
+      "vote": "Vote in polls"
+    }
+  },
+  "reports": {
+    "title": "Report a Demand",
+    "subtitle": "Register a problem or request for the city hall",
+    "form": {
+      "title": "Short title",
+      "titlePlaceholder": "e.g. Large pothole on Brazil Ave.",
+      "description": "Describe the situation",
+      "descriptionPlaceholder": "Tell us what is happening, when it started and who is affected.",
+      "category": "Category",
+      "location": "Location",
+      "locationPlaceholder": "Street, neighborhood or known landmark...",
+      "photo": "Photo (optional)",
+      "photoPlaceholder": "https://example.com/photo.jpg",
+      "submit": "Submit report"
+    },
+    "categories": {
+      "infrastructure": "Infrastructure",
+      "environment": "Environment",
+      "security": "Security",
+      "health": "Health",
+      "education": "Education",
+      "other": "Other"
+    }
+  },
+  "petitions": {
+    "title": "Public Petitions",
+    "subtitle": "Create and support causes opened by the community",
+    "create": {
+      "title": "Create petition",
+      "loginRequired": "You need to be logged in to create a petition.",
+      "loginGoogle": "Sign in with Google",
+      "loginError": "Failed to initiate login",
+      "titleLabel": "Title *",
+      "titlePlaceholder": "e.g. Public lighting in Central District",
+      "category": "Category",
+      "goal": "Signature goal",
+      "goalHelper": "Minimum of 10 signatures to validate the petition.",
+      "coverImage": "Cover image URL (optional)",
+      "continue": "Continue",
+      "step2": "Step 2 of 2",
+      "back": "Back",
+      "descriptionLabel": "Description *",
+      "descriptionPlaceholder": "Describe the reason for the petition, the problem and what you expect from the city hall...",
+      "characters": "characters",
+      "summary": "Summary",
+      "categoryPrefix": "Category: ",
+      "goalPrefix": "Goal: ",
+      "signatures": "signatures",
+      "creating": "Creating...",
+      "publish": "Publish petition",
+      "success": "Petition created successfully!",
+      "error": "Failed to create petition. Please try again.",
+      "loginPrompt": "Please log in to create a petition."
+    },
+    "sign": {
+      "loginError": "Failed to initiate login.",
+      "signedSuccess": "Signature registered on \"{title}\"!",
+      "signError": "Failed to register signature.",
+      "signed": "Signed",
+      "signing": "Signing...",
+      "verifying": "Verifying...",
+      "signNow": "Sign Now"
+    },
+    "signed": "Signed",
+    "signatures": "signatures",
+    "goal": "goal",
+    "expired": "Expired",
+    "active": "Active",
+    "citizenParticipation": "Citizen participation",
+    "publicPetitions": "Public petitions",
+    "communityDescription": "Create and support causes opened by the community to mobilize the city.",
+    "searchPlaceholder": "Search by title, category or description",
+    "searchLabel": "Search petitions",
+    "loadError": "Failed to load petitions.",
+    "errorTitle": "Error loading",
+    "noResults": "No petitions found",
+    "tryOtherTerm": "Try a different search term.",
+    "by": "by",
+    "details": "Details"
+  },
+  "ouvidoria": {
+    "officialChannel": "Official channel",
+    "essentialTitle": "Open or check a protocol",
+    "title": "Ombudsman and requests",
+    "essentialSubtitle": "Request, complaint, report, compliment or response.",
+    "subtitle": "Open a request, register a manifestation or check the status by protocol.",
+    "openRequest": "Open request",
+    "checkProtocol": "Check protocol",
+    "stepsTitle": "3 steps",
+    "stepsBefore": "Before you start",
+    "essentialSteps": {
+      "describe": "Describe the request.",
+      "call": "Urgent? Also call.",
+      "login": "Login saves to panel."
+    },
+    "steps": {
+      "details": "Provide as many details as possible to speed up the routing.",
+      "emergency": "In an emergency, also use phone or in-person channels of the municipality.",
+      "login": "Requests linked to login appear in the Citizen Panel."
+    },
+    "newProtocol": "New protocol",
+    "tracking": "Tracking",
+    "requestSuccess": "Request successfully logged.",
+    "responseDeadline": "Response deadline",
+    "responseDays": "Up to 20 business days",
+    "responseNote": "The deadline may vary depending on complexity and the responsible department.",
+    "citizenPanel": "Citizen Panel",
+    "citizenPanelNote": "Requests made with login appear automatically in the history.",
+    "form": {
+      "types": {
+        "reclamacao": "Complaint",
+        "solicitacao": "Request",
+        "denuncia": "Report",
+        "elogio": "Compliment"
+      },
+      "categories": {
+        "infraestrutura": "Infrastructure",
+        "saude": "Health",
+        "educacao": "Education",
+        "seguranca": "Security",
+        "meio_ambiente": "Environment",
+        "transporte": "Transport",
+        "tributos": "Taxes",
+        "outros": "Other"
+      },
+      "type": "Type",
+      "category": "Category",
+      "subject": "Subject",
+      "subjectPlaceholder": "e.g. Street light out on main street",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe what happened, where it happened and any important details.",
+      "anonymous": "Submit as anonymous request.",
+      "consent": "I confirm that the information is true and authorize the processing of data necessary for service.",
+      "loginInfo": "To submit, sign in with your Google account. If you check anonymous, your data will not appear in the service.",
+      "submit": "Submit request",
+      "submitError": "Could not submit the request now.",
+      "fillRequired": "Please fill in the subject and description of the request.",
+      "confirmTerms": "Please confirm the terms to submit the request.",
+      "loginError": "Failed to initiate login."
+    },
+    "search": {
+      "status": {
+        "pending": "Pending",
+        "analyzing": "Under review",
+        "solved": "Resolved",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
+      },
+      "types": {
+        "reclamacao": "Complaint",
+        "sugestao": "Request",
+        "denuncia": "Report",
+        "elogio": "Compliment"
+      },
+      "protocolNumber": "Protocol number",
+      "protocolPlaceholder": "e.g. OUV-2026-ABC123",
+      "search": "Search",
+      "protocol": "Protocol",
+      "subject": "Subject",
+      "type": "Type",
+      "createdAt": "Created at",
+      "description": "Description",
+      "notFound": "Protocol not found.",
+      "searchError": "Could not search the protocol now."
+    }
+  },
+  "relatar": {
+    "activeCitizen": "Active citizen",
+    "title": "Report a problem",
+    "subtitle": "Report potholes, illegal dumping, urban risks and other incidents. Each report is logged with a protocol and sent to the responsible team.",
+    "newReport": "New report",
+    "formTitle": "Tell us what is happening",
+    "tips": {
+      "photo": {
+        "title": "Optional photo, but helpful",
+        "body": "An image of the problem speeds up routing and avoids unnecessary field visits."
+      },
+      "location": {
+        "title": "Locate precisely",
+        "body": "Enter the reference point or use the GPS button to set the exact coordinates."
+      },
+      "track": {
+        "title": "Track in the panel",
+        "body": "You receive a protocol and can view the status in the Citizen Panel at any time."
+      }
+    },
+    "urgent": "Urgent case?",
+    "urgentNote": "In situations of immediate risk, also use the emergency channels of Civil Defense, Fire Department (193) or Police (190)."
+  },
+  "health": {
+    "title": "Connected Health",
+    "subtitle": "Find health units, schedule appointments and track your health",
+    "schedule": "Schedule Appointment",
+    "units": "Units",
+    "portal": "My Portal",
+    "pharmacy": "Pharmacy",
+    "open": "Open",
+    "closed": "Closed",
+    "waitTime": "Wait time",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "attention": "Health attention",
+    "waitTimesLive": "Wait Times (Live)",
+    "verified": "VERIFIED",
+    "noUnits": "No units available",
+    "myHealth": "My health",
+    "myHealthDescription": "Complete history of visits and technical reports available for download.",
+    "accessRecords": "Access Records",
+    "vaccineCard": "Vaccine card",
+    "digitalVersion": "Digital version",
+    "digitalSignatureActive": "DIGITAL SIGNATURE ACTIVE",
+    "exportForTravel": "Export for Travel",
+    "vaccineCertificateExported": "Digital certificate exported.",
+    "popularStock": "Popular Stock",
+    "stockLoadError": "Could not load stock.",
+    "tryAgain": "Try again",
+    "demoStock": "Demo stock",
+    "demoStockDescription": "Medications, quantities and availability below are examples until the real stock is published by the Health Department.",
+    "requiresPrescription": "Prescription required",
+    "available": "Available",
+    "lowStock": "Low stock",
+    "unavailable": "Out of stock",
+    "digitalPrescription": "Digital prescription",
+    "digitalPrescriptionDescription": "Sync your digitally signed prescriptions for quick pickup at any health unit.",
+    "validatePrescription": "Validate Prescription",
+    "scannerOpening": "Opening digital prescription scanner...",
+    "shorterWait": "Shorter Wait",
+    "mediumWait": "Medium Wait",
+    "higherWait": "Higher Wait",
+    "scheduleHere": "Schedule here",
+    "unitClosed": "Unit closed",
+    "close": "Close"
+  },
+  "education": {
+    "title": "Education",
+    "subtitle": "Schools, enrollment and educational resources",
+    "units": "Units",
+    "portal": "Portal",
+    "resources": "Resources",
+    "enrollment": "Enrollment",
+    "schedule": "Schedule",
+    "menu": "Menu"
+  },
+  "profile": {
+    "title": "My Profile",
+    "edit": "Edit profile",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "neighborhood": "Neighborhood",
+    "myDemands": "My Demands",
+    "myReports": "My Reports",
+    "myPetitions": "My Petitions"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "loginWithGoogle": "Sign in with Google",
+    "loginWithFacebook": "Sign in with Facebook",
+    "welcome": "Welcome!",
+    "unauthorized": "Unauthorized access"
+  },
+  "errors": {
+    "notFound": "Page not found",
+    "serverError": "Internal server error",
+    "networkError": "Connection error",
+    "offline": "No internet connection",
+    "tryAgain": "Try again",
+    "goHome": "Go to home"
+  },
+  "topAppBar": {
+    "homeLabel": "Go to homepage",
+    "servicesMenu": "Open services menu",
+    "services": "Services",
+    "globalSearch": "Open global search",
+    "searchPlaceholder": "Search services...",
+    "managementPanel": "Open management panel",
+    "management": "Management",
+    "openSearch": "Open search",
+    "accessibilityMenu": "Accessibility menu",
+    "accessibility": "Accessibility",
+    "close": "Close",
+    "portalVisual": "Portal view",
+    "defaultMode": "Default",
+    "darkMode": "Dark",
+    "contrastMode": "Contrast",
+    "text": "Text",
+    "readingMode": "Reading mode",
+    "completeMode": "Complete",
+    "essentialMode": "Essential",
+    "guidedSetup": "Guided setup",
+    "restore": "Restore",
+    "notifications": "Open notifications",
+    "notificationsUnread": "Open notifications ({count} unread)",
+    "profile": "Go to profile",
+    "profilePhoto": "Profile photo",
+    "loginGoogle": "Sign in with Google account",
+    "login": "Login",
+    "citizenMap": "Municipal services map",
+    "citizenPortal": "Citizen portal",
+    "closeServicesMenu": "Close services menu",
+    "darkModeActivated": "Dark mode activated.",
+    "defaultModeRestored": "Default mode restored.",
+    "accessibilityActivated": "Accessibility mode activated.",
+    "essentialActivated": "Essential mode activated.",
+    "completeActivated": "Complete mode activated.",
+    "loginError": "Failed to initiate login.",
+    "decrease": "Decrease {label}",
+    "increase": "Increase {label}"
+  },
+  "bottomNav": {
+    "mainNavigation": "Main mobile navigation",
+    "home": "Home",
+    "request": "Request",
+    "protocol": "Protocol",
+    "petitions": "Petitions",
+    "panel": "Panel"
+  },
+  "footer": {
+    "description": "Conecta Santa Maria — citizen portal and municipal services of Santa Maria do Pará.",
+    "linksLabel": "Footer links",
+    "about": "About the Portal",
+    "privacy": "Privacy",
+    "terms": "Terms of Use",
+    "openRequest": "Open request",
+    "petitions": "Petitions",
+    "citizenPanel": "Citizen Panel",
+    "contact": "Contact"
+  },
+  "appointment": {
+    "title": "New appointment",
+    "confirmed": "Appointment confirmed",
+    "chooseSpecialty": "Choose the specialty",
+    "noSpecialties": "No specialties available at the moment.",
+    "chooseUnit": "Service unit",
+    "noUnits": "No units available at the moment.",
+    "chooseDateTime": "Choose date and time",
+    "continue": "Continue",
+    "confirm": "Confirm appointment",
+    "specialty": "Specialty",
+    "protocolGenerated": "Protocol generated",
+    "scheduledFor": "Appointment scheduled for",
+    "back": "Back",
+    "backToService": "Back to service selection",
+    "backToUnit": "Back to unit selection",
+    "backToDate": "Back to date selection",
+    "scheduling": "Scheduling...",
+    "fillAll": "Choose specialty, unit, date and time.",
+    "chooseDateTimeError": "Choose date and time to continue.",
+    "scheduleError": "Error scheduling appointment.",
+    "loginError": "Failed to initiate login.",
+    "citizen": "Citizen"
+  },
+  "healthHistory": {
+    "title": "My Health History",
+    "restrictedAccess": "Restricted Access",
+    "digitalRecords": "Digital Records.",
+    "appointments": "Appointments",
+    "noAppointments": "No appointments found",
+    "completed": "Completed",
+    "privacy": "Privacy & Data Protection",
+    "privacyNote": "Your records are protected by end-to-end encryption."
+  },
+  "guidance": {
+    "openHelp": "Open help: {title}",
+    "screenHelp": "Help for this screen",
+    "closeHelp": "Close help",
+    "stepOf": "Step {current} of {total}",
+    "goToStep": "Go to step {index}: {title}",
+    "backStep": "Previous step",
+    "seeLater": "See later",
+    "understood": "Understood",
+    "next": "Next"
+  },
+  "installPrompt": {
+    "title": "Install the App",
+    "description": "Install Conecta Santa Maria on your device's home screen for faster access.",
+    "install": "Install",
+    "installLabel": "Install application",
+    "dismiss": "Not now",
+    "dismissLabel": "Dismiss installation prompt"
+  }
+}

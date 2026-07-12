@@ -1,13 +1,11 @@
-import type { NextConfig } from 'next';
+import * as Sentry from '@sentry/nextjs';
 
-const sentryOptions = {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  silent: !process.env.CI,
-  widenClientFileUpload: true,
-  hideSourceMaps: true,
-  disableLogger: true,
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  enabled: process.env.NODE_ENV === 'production',
+  tracesSampleRate: 0.1,
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 1.0,
+  debug: false,
   tunnel: '/api/sentry-tunnel',
-};
-
-export default sentryOptions;
+});

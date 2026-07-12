@@ -3,6 +3,7 @@ import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import createNextIntlPlugin from 'next-intl/plugin';
+import { withSentryConfig } from '@sentry/nextjs';
 
 const projectRoot = dirname(fileURLToPath(import.meta.url));
 
@@ -40,4 +41,17 @@ const nextConfig: NextConfig = {
   transpilePackages: ['motion'],
 };
 
-export default withNextIntl(bundleAnalyzer(nextConfig));
+export default withSentryConfig(
+  withNextIntl(bundleAnalyzer(nextConfig)),
+  {
+    org: 'reybraz-tech',
+    project: 'digitalsantamaria',
+    silent: !process.env.CI,
+    widenClientFileUpload: true,
+    sourcemaps: {
+      disable: false,
+    },
+    disableLogger: true,
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+  }
+);
