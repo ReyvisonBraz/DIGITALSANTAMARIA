@@ -86,26 +86,32 @@
     "welcome": "Welcome to Conecta Santa Maria",
     "description": "Services, protocols and participation in one place.",
     "hero": {
-      "cityLine1": "Your city",
+      "cityLine1": "Resolve what matters",
       "essentialLine1": "What you",
       "essentialLine2": "need?",
-      "cityLine2": "connected",
-      "cityLine3": "to you.",
+      "cityLine2": "in your",
+      "cityLine3": "city.",
       "essentialSubtitle": "Choose an action, get a protocol and track the response.",
-      "subtitle": "Request services, check protocols, participate in petitions and follow Santa Maria do Pará with more clarity — all in one place.",
-      "ctaPrimary": "Open request",
-      "ctaSecondary": "Citizen Panel"
+      "subtitle": "Report city issues, make a request to City Hall and track the response — all in one place.",
+      "ctaPrimary": "Report a problem",
+      "ctaSecondary": "Make a request",
+      "ctaTrack": "Track my request"
     },
     "actions": {
+      "reportProblem": {
+        "title": "Report a problem",
+        "description": "Report potholes, street lighting, illegal dumping or another urban issue. You can add a photo and location.",
+        "cta": "Report now"
+      },
       "openRequest": {
-        "title": "Open request",
-        "description": "Register requests, complaints, reports, suggestions or urban issues.",
-        "cta": "Get started"
+        "title": "Make a request",
+        "description": "Submit a request, complaint, report, suggestion or compliment to City Hall.",
+        "cta": "Make my request"
       },
       "checkProtocol": {
-        "title": "Check protocol",
-        "description": "Track the status of requests submitted to the municipality in your panel.",
-        "cta": "Access"
+        "title": "Track my request",
+        "description": "Use your panel to see the status of your request and when City Hall responds.",
+        "cta": "View status"
       },
       "petitions": {
         "title": "Petitions",
@@ -113,9 +119,9 @@
         "cta": "Participate"
       },
       "citizenPanel": {
-        "title": "Citizen Panel",
+        "title": "My area",
         "description": "View your history, basic data, protocols and activities.",
-        "cta": "Enter"
+        "cta": "View my details"
       }
     },
     "keywords": {
@@ -125,6 +131,9 @@
       "status": "Status",
       "answer": "Answer",
       "history": "History",
+      "problem": "Problem",
+      "photo": "Photo",
+      "location": "Location",
       "causes": "Causes",
       "sign": "Sign",
       "track": "Track"
@@ -167,26 +176,26 @@
     "section": {
       "quickAccess": {
         "eyebrow": "Quick access",
-        "title": "What do you need to do?",
-        "subtitle": "Core paths are highlighted and work in a direct flow for citizens and government."
+        "title": "How can we help?",
+        "subtitle": "Choose the path that fits what you need to solve right now."
       },
       "services": {
-        "eyebrow": "Public portal",
-        "title": "Municipal services in one place",
-        "description": "Requests, protocol, panel and petitions at the center of the experience. New areas will be activated in stages during launch.",
-        "cta": "View city hall notices"
+        "eyebrow": "Official information",
+        "title": "Stay up to date with the city",
+        "description": "Official notices, events and public works updates to keep you informed.",
+        "cta": "View official notices"
       }
     },
     "petitionsCta": {
-      "badge": "Citizen participation",
-      "titlePart1": "Your voice becomes",
-      "titlePart2": "the city's agenda.",
-      "description": "Causes opened by the community gain a goal, signature counter and space for official government response.",
-      "cta": "View petitions"
+      "badge": "Official information",
+      "titlePart1": "Stay informed",
+      "titlePart2": "about your city.",
+      "description": "See notices, alerts and updates published by City Hall.",
+      "cta": "View notices"
     },
     "floatingPanel": {
-      "badge": "Digital service",
-      "title": "Start with the protocol",
+      "badge": "How it works",
+      "title": "You report. City Hall responds.",
       "trust": {
         "value1": "Secure",
         "label1": "Google Login",
@@ -516,10 +525,11 @@
   "bottomNav": {
     "mainNavigation": "Main mobile navigation",
     "home": "Home",
+    "report": "Report",
     "request": "Request",
-    "protocol": "Protocol",
+    "protocol": "Track",
     "petitions": "Petitions",
-    "panel": "Panel"
+    "panel": "My area"
   },
   "footer": {
     "description": "Conecta Santa Maria — citizen portal and municipal services of Santa Maria do Pará.",

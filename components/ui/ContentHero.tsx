@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 
@@ -42,15 +42,16 @@ interface ContentHeroProps {
 export default function ContentHero({
   icon: Icon, label, title, subtitle, className, action, accent = 'primary',
 }: ContentHeroProps) {
+  const reduceMotion = useReducedMotion();
   const palette = ACCENTS[accent];
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
+      initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+      animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+      transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        'ring-highlight-dark relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] bg-gradient-to-br from-primary-dark via-primary to-primary-dark p-8 text-white shadow-[0_26px_70px_rgba(14,58,140,0.30)] animate-drift md:p-14',
+        'ring-highlight-dark relative isolate overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-primary-dark via-primary to-primary-dark p-7 text-white shadow-[0_26px_70px_rgba(14,58,140,0.30)] sm:p-10 md:rounded-[2.5rem] md:p-14',
         className,
       )}
     >
@@ -65,14 +66,14 @@ export default function ContentHero({
       {/* Anel decorativo flutuante */}
       <div
         aria-hidden
-        className="animate-slow-spin pointer-events-none absolute -right-24 top-1/2 h-80 w-80 -translate-y-1/2 rounded-full border border-white/[0.06]"
+        className="pointer-events-none absolute -right-24 top-1/2 h-80 w-80 -translate-y-1/2 rounded-full border border-white/[0.08]"
       />
 
       <div className="relative z-10 max-w-3xl space-y-5">
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+          animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          transition={{ delay: 0.04, duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
           className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] backdrop-blur"
         >
           <Icon className={cn('h-4 w-4', palette.chipIcon)} />
@@ -80,9 +81,9 @@ export default function ContentHero({
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.16, duration: 0.7 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+          animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          transition={{ delay: 0.08, duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
           className="text-4xl font-semibold leading-[1.02] tracking-tight md:text-6xl lg:text-7xl"
           style={{ fontFamily: 'var(--font-display)' }}
         >
@@ -91,9 +92,9 @@ export default function ContentHero({
 
         {subtitle && (
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.26 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            transition={{ delay: 0.14, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className={cn('max-w-2xl border-l-2 pl-5 text-base font-medium leading-relaxed text-white/75 md:text-lg', palette.subtitleBorder)}
           >
             {subtitle}
@@ -106,7 +107,7 @@ export default function ContentHero({
         <div aria-hidden className={cn('mt-1 h-px w-40 bg-gradient-to-r from-white/0', palette.accentLine, 'to-white/0')} />
       </div>
 
-      <Icon className="animate-floaty pointer-events-none absolute -bottom-10 -right-8 h-56 w-56 opacity-[0.07]" />
+      <Icon className="pointer-events-none absolute -bottom-10 -right-8 h-56 w-56 opacity-[0.07]" />
     </motion.section>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion, type Variants } from 'motion/react';
+import { motion, type Variants, useReducedMotion } from 'motion/react';
 import { cn } from '@/lib/utils';
 
 /**
@@ -38,6 +38,7 @@ export default function TextReveal({
   stagger = 0.07,
   once = true,
 }: TextRevealProps) {
+  const reduceMotion = useReducedMotion();
   const words = text.split(' ');
   const norm = (w: string) => w.replace(/[.,!?;:—]/g, '').toLowerCase();
   const hl = new Set(highlight.map((h) => h.toLowerCase()));
@@ -47,8 +48,8 @@ export default function TextReveal({
       className={cn('inline', className)}
       variants={container}
       custom={stagger}
-      initial="hidden"
-      whileInView="show"
+      initial={reduceMotion ? false : 'hidden'}
+      whileInView={reduceMotion ? undefined : 'show'}
       viewport={{ once, margin: '-12% 0px' }}
       aria-label={text}
     >

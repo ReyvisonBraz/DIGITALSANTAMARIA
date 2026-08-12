@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { BOTTOM_NAV_ITEMS } from '@/lib/constants';
@@ -17,6 +17,7 @@ interface BottomNavBarProps {
 
 export default function BottomNavBar({ className }: BottomNavBarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const t = useTranslations('bottomNav');
 
   useEffect(() => {
@@ -25,50 +26,45 @@ export default function BottomNavBar({ className }: BottomNavBarProps) {
 
   const labelMap: Record<string, string> = {
     'Inicio': t('home'),
-    'Solicitar': t('request'),
-    'Protocolo': t('protocol'),
-    'Petições': t('petitions'),
-    'Painel': t('panel'),
+    'Relatar': t('report'),
+    'Pedir': t('request'),
+    'Acompanhar': t('protocol'),
+    'Minha área': t('panel'),
   };
 
   return (
     <nav
       className={cn(
-        'fixed bottom-3 left-3 right-3 z-50 h-[72px] rounded-2xl border border-white/70 bg-white/90 shadow-[0_-10px_40px_rgba(15,23,42,0.14)] backdrop-blur-2xl md:hidden',
+        'liquid-bottom-nav fixed bottom-3 left-3 right-3 z-50 h-[72px] md:hidden',
         className
       )}
       aria-label={t('mainNavigation')}
     >
       <div className="mx-auto grid h-full max-w-md grid-cols-5">
         {BOTTOM_NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href;
+          const [itemPath, itemQuery] = item.href.split('?');
+          const itemTab = itemQuery ? new URLSearchParams(itemQuery).get('tab') : null;
+          const isActive = pathname === itemPath && (itemTab ? searchParams.get('tab') === itemTab : !searchParams.get('tab'));
           return (
             <Link
               key={`${item.href}-${item.label}`}
               href={item.href}
               className={cn(
-                'relative flex h-full min-w-0 flex-col items-center justify-center gap-1 px-1 text-text-muted transition',
-                isActive && 'text-primary'
+                'liquid-bottom-nav-item relative flex h-full min-w-0 flex-col items-center justify-center px-1 text-text-muted',
+                isActive && 'is-active text-primary'
               )}
+              data-active={isActive || undefined}
               aria-current={isActive ? 'page' : undefined}
             >
               <motion.span
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.96 }}
                 className={cn(
-                  'flex min-h-14 min-w-14 flex-col items-center justify-center gap-1 rounded-xl transition',
-                  isActive && 'bg-primary/10'
+                  'liquid-bottom-nav-button flex min-h-14 min-w-14 flex-col items-center justify-center gap-1'
                 )}
               >
-                <item.icon className={cn('h-5 w-5 transition', isActive && 'scale-110')} strokeWidth={isActive ? 2.5 : 2} />
-                <span className="max-w-full truncate text-[11px] font-bold leading-none">{labelMap[item.label] || item.label}</span>
+                <item.icon className={cn('relative z-10 h-5 w-5 transition-transform', isActive && 'scale-110')} strokeWidth={isActive ? 2.5 : 2} />
+                <span className="relative z-10 max-w-full truncate text-[11px] font-bold leading-none">{labelMap[item.label] || item.label}</span>
               </motion.span>
-              {isActive && (
-                <motion.span
-                  layoutId="active-mobile-tab"
-                  className="absolute bottom-1 h-1 w-1 rounded-full bg-primary"
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                />
-              )}
             </Link>
           );
         })}

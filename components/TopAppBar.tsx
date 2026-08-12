@@ -116,7 +116,7 @@ export default function TopAppBar() {
     <>
       <header
         className={cn(
-          'fixed left-0 right-0 top-0 z-50 flex justify-center transition-all duration-300',
+          'fixed left-0 right-0 top-0 z-50 flex justify-center transition-[padding] duration-200 ease-out',
           scrolled ? 'px-3 pt-3' : 'px-0 pt-0 md:px-6 md:pt-5'
         )}
         role="banner"
@@ -125,7 +125,7 @@ export default function TopAppBar() {
           initial={{ y: -80 }}
           animate={{ y: 0 }}
           className={cn(
-            'flex w-full max-w-7xl items-center justify-between border border-white/70 bg-white/80 px-3 shadow-[0_18px_60px_rgba(20,34,74,0.12)] backdrop-blur-2xl transition-all duration-300 md:px-8',
+            'flex w-full max-w-7xl items-center justify-between border border-white/70 bg-white/80 px-3 shadow-[0_18px_60px_rgba(20,34,74,0.12)] backdrop-blur-2xl transition-[height,border-radius,background-color,box-shadow] duration-200 ease-out md:px-8',
             scrolled ? 'h-14 rounded-2xl md:h-16' : 'h-16 rounded-none md:h-18 md:rounded-2xl'
           )}
         >
@@ -393,9 +393,9 @@ export default function TopAppBar() {
                       key={link.href}
                       href={link.href}
                       onClick={() => setIsExplorerOpen(false)}
-                      className="group flex min-h-32 flex-col justify-between rounded-2xl border border-border bg-surface-container p-4 transition-all duration-200 hover:-translate-y-1 hover:border-primary/30 hover:bg-white hover:shadow-[0_8px_24px_rgba(26,86,196,0.12)]"
+                      className="group flex min-h-32 flex-col justify-between rounded-2xl border border-border bg-surface-container p-4 transition-[transform,border-color,background-color,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:border-primary/30 hover:bg-white hover:shadow-[0_8px_24px_rgba(26,86,196,0.12)]"
                     >
-                      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-all duration-200 group-hover:bg-primary group-hover:text-white">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-[background-color,color,transform] duration-200 ease-out group-hover:bg-primary group-hover:text-white">
                         <link.icon className="h-5 w-5" />
                       </span>
                       <span>

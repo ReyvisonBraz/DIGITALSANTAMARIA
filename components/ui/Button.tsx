@@ -30,7 +30,7 @@ export default function Button({
   return (
     <button
       className={cn(
-        'relative inline-flex min-h-11 items-center justify-center gap-2 overflow-hidden rounded-2xl px-5 py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50',
+        'relative inline-flex min-h-11 items-center justify-center gap-2 overflow-hidden rounded-2xl px-5 py-2.5 text-sm font-semibold tracking-wide transition-[transform,box-shadow,background-color,border-color,color,filter] duration-200 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50',
         variants[variant],
         className
       )}

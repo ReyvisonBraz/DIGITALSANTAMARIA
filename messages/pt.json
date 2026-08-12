@@ -86,26 +86,32 @@
     "welcome": "Bem-vindo ao Conecta Santa Maria",
     "description": "Serviços, protocolos e participação em um só lugar.",
     "hero": {
-      "cityLine1": "Sua cidade",
+      "cityLine1": "Resolva o que importa",
       "essentialLine1": "O que você",
       "essentialLine2": "precisa?",
-      "cityLine2": "conectada",
-      "cityLine3": "a você.",
+      "cityLine2": "na sua",
+      "cityLine3": "cidade.",
       "essentialSubtitle": "Escolha uma ação, receba protocolo e acompanhe a resposta.",
-      "subtitle": "Solicite serviços, consulte protocolos, participe de petições e acompanhe Santa Maria do Pará com mais clareza — tudo em um só lugar.",
-      "ctaPrimary": "Abrir solicitação",
-      "ctaSecondary": "Painel do Cidadão"
+      "subtitle": "Relate problemas urbanos, faça um pedido à Prefeitura e acompanhe a resposta — tudo em um só lugar.",
+      "ctaPrimary": "Relatar um problema",
+      "ctaSecondary": "Fazer um pedido",
+      "ctaTrack": "Acompanhar meu pedido"
     },
     "actions": {
+      "reportProblem": {
+        "title": "Relatar um problema",
+        "description": "Avise sobre buracos, iluminação, descarte irregular ou outro problema urbano. Você pode enviar foto e localização.",
+        "cta": "Relatar agora"
+      },
       "openRequest": {
-        "title": "Abrir solicitação",
-        "description": "Registre pedidos, reclamações, denúncias, sugestões ou problemas urbanos.",
-        "cta": "Começar"
+        "title": "Fazer um pedido",
+        "description": "Registre um pedido, reclamação, denúncia, sugestão ou elogio para a Prefeitura.",
+        "cta": "Fazer meu pedido"
       },
       "checkProtocol": {
-        "title": "Consultar protocolo",
-        "description": "Acompanhe no seu painel o andamento das solicitações enviadas ao município.",
-        "cta": "Acessar"
+        "title": "Acompanhar meu pedido",
+        "description": "Veja no seu painel em que etapa está seu pedido e quando a Prefeitura responder.",
+        "cta": "Ver andamento"
       },
       "petitions": {
         "title": "Petições",
@@ -113,9 +119,9 @@
         "cta": "Participar"
       },
       "citizenPanel": {
-        "title": "Painel do Cidadão",
+        "title": "Minha área",
         "description": "Veja seu histórico, dados básicos, protocolos e atividades.",
-        "cta": "Entrar"
+        "cta": "Ver meus dados"
       }
     },
     "keywords": {
@@ -125,6 +131,9 @@
       "status": "Status",
       "answer": "Resposta",
       "history": "Histórico",
+      "problem": "Problema",
+      "photo": "Foto",
+      "location": "Localização",
       "causes": "Causas",
       "sign": "Assinar",
       "track": "Acompanhar"
@@ -167,26 +176,26 @@
     "section": {
       "quickAccess": {
         "eyebrow": "Acesso rápido",
-        "title": "O que você precisa fazer?",
-        "subtitle": "Os caminhos centrais ficam destacados e funcionam em fluxo direto, para cidadão e gestão."
+        "title": "Como podemos ajudar?",
+        "subtitle": "Escolha o caminho que combina com o que você precisa resolver agora."
       },
       "services": {
-        "eyebrow": "Portal público",
-        "title": "Serviços municipais em um só lugar",
-        "description": "Solicitação, protocolo, painel e petições no centro da experiência. Novas áreas serão ativadas por etapas ao longo do lançamento.",
-        "cta": "Ver avisos da prefeitura"
+        "eyebrow": "Informação oficial",
+        "title": "Acompanhe o que acontece na cidade",
+        "description": "Avisos, agenda e obras públicas para você se informar com fontes oficiais.",
+        "cta": "Ver avisos oficiais"
       }
     },
     "petitionsCta": {
-      "badge": "Participação cidadã",
-      "titlePart1": "Sua voz vira",
-      "titlePart2": "pauta da cidade.",
-      "description": "Causas abertas pela comunidade ganham meta, contador de assinaturas e espaço para resposta oficial da gestão.",
-      "cta": "Ver petições"
+      "badge": "Informação oficial",
+      "titlePart1": "Fique por dentro",
+      "titlePart2": "da cidade.",
+      "description": "Confira comunicados, alertas e atualizações publicados pela Prefeitura.",
+      "cta": "Ver avisos"
     },
     "floatingPanel": {
-      "badge": "Atendimento digital",
-      "title": "Comece pelo protocolo",
+      "badge": "Como funciona",
+      "title": "Você relata. A Prefeitura responde.",
       "trust": {
         "value1": "Seguro",
         "label1": "Login Google",
@@ -516,10 +525,11 @@
   "bottomNav": {
     "mainNavigation": "Navegacao principal mobile",
     "home": "Início",
-    "request": "Solicitar",
-    "protocol": "Protocolo",
+    "report": "Relatar",
+    "request": "Pedir",
+    "protocol": "Acompanhar",
     "petitions": "Petições",
-    "panel": "Painel"
+    "panel": "Minha área"
   },
   "footer": {
     "description": "Conecta Santa Maria — portal do cidadão e serviços municipais de Santa Maria do Pará.",

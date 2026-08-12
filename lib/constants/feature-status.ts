@@ -79,6 +79,9 @@ export const FEATURE_STATUS: readonly FeatureEntry[] = [
  * Para reativar uma feature, basta remover a rota desta lista — nada é deletado.
  */
 export const SUSPENDED_ROUTES: readonly string[] = [
+  '/peticoes',
+  '/empregos',
+  '/comercio',
   '/saude',
   '/educacao',
   '/educacao/matricula',

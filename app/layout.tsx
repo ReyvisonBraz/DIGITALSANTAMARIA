@@ -64,7 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <RouteSuspensionGate>{children}</RouteSuspensionGate>
             </main>
             <Footer />
-            <BottomNavBar />
+            <Suspense><BottomNavBar /></Suspense>
             <InstallPrompt />
             <ServiceWorkerRegistration />
             <GuidedHelp />

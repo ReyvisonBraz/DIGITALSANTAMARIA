@@ -24,7 +24,7 @@ describe('isRouteSuspended', () => {
   it('keeps launch-set routes available', () => {
     expect(isRouteSuspended('/ouvidoria')).toBe(false);
     expect(isRouteSuspended('/relatar')).toBe(false);
-    expect(isRouteSuspended('/peticoes')).toBe(false);
+    expect(isRouteSuspended('/peticoes')).toBe(true);
     expect(isRouteSuspended('/perfil')).toBe(false);
     expect(isRouteSuspended('/gestao')).toBe(false);
     expect(isRouteSuspended('/')).toBe(false);
@@ -55,6 +55,6 @@ describe('navigation surfaces exclude suspended routes', () => {
 
   it('still exposes the core attendance routes in the main menu', () => {
     const hrefs = NAV_LINKS.map((link) => link.href);
-    expect(hrefs).toEqual(expect.arrayContaining(['/ouvidoria', '/relatar', '/peticoes']));
+    expect(hrefs).toEqual(expect.arrayContaining(['/ouvidoria', '/relatar', '/avisos', '/eventos', '/obras']));
   });
 });

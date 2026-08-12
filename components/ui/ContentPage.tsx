@@ -58,11 +58,21 @@ export default function ContentPage({
   if (loading) {
     return (
       <div
-        className="flex items-center justify-center py-24"
+        className="grid grid-cols-1 gap-4 py-6 sm:grid-cols-2 lg:grid-cols-3"
         role="status"
         aria-label="Carregando conteúdo"
       >
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        {Array.from({ length: 3 }, (_, index) => (
+          <div key={index} className="min-h-52 rounded-[1.4rem] border border-border/70 bg-white/65 p-6 shadow-[0_10px_34px_rgba(20,34,74,0.04)]">
+            <div className="h-3 w-20 animate-pulse rounded-full bg-primary/10" />
+            <div className="mt-6 h-7 w-3/4 animate-pulse rounded-lg bg-slate-200/80" />
+            <div className="mt-3 h-3 w-full animate-pulse rounded-full bg-slate-200/70" />
+            <div className="mt-2 h-3 w-5/6 animate-pulse rounded-full bg-slate-200/70" />
+            <div className="mt-8 flex items-center gap-2 text-xs font-semibold text-primary">
+              {index === 0 && <Loader2 className="h-4 w-4 animate-spin" />}
+            </div>
+          </div>
+        ))}
         <span className="sr-only">Carregando...</span>
       </div>
     );
@@ -74,7 +84,7 @@ export default function ContentPage({
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center py-16 gap-4 text-center px-6"
+        className="flex flex-col items-center justify-center gap-4 rounded-[1.5rem] border border-rose-100 bg-white/65 px-6 py-16 text-center shadow-[0_12px_34px_rgba(20,34,74,0.05)]"
         role="alert"
       >
         <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center border-2 border-rose-100">
@@ -85,7 +95,7 @@ export default function ContentPage({
         {onRetry && (
           <button
             onClick={onRetry}
-            className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold text-[11px] uppercase tracking-widest hover:brightness-110 transition-all"
+            className="action-button-primary min-h-11 px-5 py-2.5 text-[11px] uppercase tracking-widest"
           >
             <RefreshCcw className="w-4 h-4" />
             Tentar Novamente
@@ -101,7 +111,7 @@ export default function ContentPage({
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center py-16 gap-4 text-center px-6"
+        className="flex flex-col items-center justify-center gap-4 rounded-[1.5rem] border border-border bg-white/65 px-6 py-16 text-center shadow-[0_12px_34px_rgba(20,34,74,0.05)]"
       >
         <div className="w-16 h-16 bg-surface border-2 border-border rounded-2xl flex items-center justify-center text-text-muted">
           {emptyIcon ?? <Inbox className="w-8 h-8" />}

@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { MapPin, Clock, ChevronRight, Calendar, Phone, Users, TrendingUp } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { cn } from '@/lib/utils';
 
 /**
@@ -45,15 +45,27 @@ const ContentCard = React.memo(function ContentCard({
   date, time, address, phone, extra, action, onClick,
   className, badge, stats,
 }: ContentCardProps) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
-      whileHover={{ y: -2 }}
+      whileHover={reduceMotion ? undefined : { y: -3 }}
+      transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
       onClick={onClick}
+      onKeyDown={onClick ? (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onClick();
+        }
+      } : undefined}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
       className={cn(
-        'bg-white rounded-[1.4rem] border border-border shadow-[0_10px_34px_rgba(20,34,74,0.07)] hover:shadow-[0_22px_50px_rgba(20,34,74,0.14)] hover:border-primary/30 transition-all duration-300 group cursor-pointer overflow-hidden',
+        'group overflow-hidden rounded-[1.4rem] border border-border bg-white shadow-[0_10px_34px_rgba(20,34,74,0.07)] transition-[box-shadow,border-color,background-color] duration-200 ease-out hover:border-primary/30 hover:shadow-[0_22px_50px_rgba(20,34,74,0.14)]',
+        onClick && 'cursor-pointer',
         className,
       )}
     >

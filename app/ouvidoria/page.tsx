@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle2, Clock3, FileText, MessageSquare, Phone, SearchCheck, ShieldCheck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import DemandForm from '@/features/ouvidoria/DemandForm';
@@ -9,14 +10,22 @@ import { useAccessibility } from '@/lib/accessibility-context';
 
 export default function OuvidoriaPage() {
   const t = useTranslations('ouvidoria');
-  const [activeTab, setActiveTab] = useState<'create' | 'search'>('create');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedTab = searchParams.get('tab') === 'search' ? 'search' : 'create';
+  const [activeTab, setActiveTab] = useState<'create' | 'search'>(requestedTab);
   const [createdProtocol, setCreatedProtocol] = useState<string | null>(null);
   const formSectionRef = useRef<HTMLElement | null>(null);
   const { contentMode } = useAccessibility();
   const isEssential = contentMode === 'essential';
 
+  useEffect(() => {
+    setActiveTab(requestedTab);
+  }, [requestedTab]);
+
   const openPanel = (tab: 'create' | 'search') => {
     setActiveTab(tab);
+    router.replace(tab === 'search' ? '/ouvidoria?tab=search' : '/ouvidoria', { scroll: false });
     formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     window.setTimeout(() => {
       formSectionRef.current

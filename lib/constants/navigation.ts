@@ -46,7 +46,7 @@ export interface DashboardModule {
 const ALL_NAV_LINKS: readonly NavLink[] = [
   { label: 'Abrir solicitação', href: '/ouvidoria', icon: MessageSquare, category: 'Atendimento' },
   { label: 'Relatar problema', href: '/relatar', icon: Megaphone, category: 'Atendimento' },
-  { label: 'Consultar protocolo', href: '/perfil', icon: SearchCheck, category: 'Atendimento' },
+  { label: 'Acompanhar pedido', href: '/ouvidoria?tab=search', icon: SearchCheck, category: 'Atendimento' },
   { label: 'Petições', href: '/peticoes', icon: FileText, category: 'Participação' },
   { label: 'Painel do Cidadão', href: '/perfil', icon: UserRound, category: 'Conta' },
   { label: 'Serviços', href: '/servicos', icon: Grid, category: 'Portal' },
@@ -73,16 +73,16 @@ export const NAV_LINKS: readonly NavLink[] = ALL_NAV_LINKS.filter(
 
 export const BOTTOM_NAV_ITEMS: readonly BottomNavItem[] = [
   { icon: Home, label: 'Inicio', href: '/' },
-  { icon: MessageSquare, label: 'Solicitar', href: '/ouvidoria' },
-  { icon: SearchCheck, label: 'Protocolo', href: '/perfil' },
-  { icon: FileText, label: 'Petições', href: '/peticoes' },
-  { icon: UserRound, label: 'Painel', href: '/perfil' },
+  { icon: Megaphone, label: 'Relatar', href: '/relatar' },
+  { icon: MessageSquare, label: 'Pedir', href: '/ouvidoria' },
+  { icon: SearchCheck, label: 'Acompanhar', href: '/ouvidoria?tab=search' },
+  { icon: UserRound, label: 'Minha área', href: '/perfil' },
 ] as const;
 
 const ALL_DASHBOARD_MODULES: readonly DashboardModule[] = [
   { icon: MessageSquare, label: 'Abrir solicitação', href: '/ouvidoria', color: 'text-primary', bg: 'bg-primary/10' },
   { icon: Megaphone, label: 'Relatar problema', href: '/relatar', color: 'text-accent-success', bg: 'bg-accent-success/10' },
-  { icon: SearchCheck, label: 'Consultar protocolo', href: '/perfil', color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
+  { icon: SearchCheck, label: 'Acompanhar pedido', href: '/ouvidoria?tab=search', color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
   { icon: FileText, label: 'Petições', href: '/peticoes', color: 'text-orange-600', bg: 'bg-orange-500/10' },
   { icon: UserRound, label: 'Painel do Cidadão', href: '/perfil', color: 'text-primary', bg: 'bg-primary/10' },
   { icon: Heart, label: 'Saúde', href: '/saude', color: 'text-rose-500', bg: 'bg-rose-500/10' },
